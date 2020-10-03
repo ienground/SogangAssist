@@ -32,6 +32,21 @@
         android:src="@drawable/ic_today"
         android:tint="@color/black"
         android:contentDescription="@string/move_today"
+        app:layout_constraintEnd_toStartOf="@id/btn_settings"
+        app:layout_constraintTop_toTopOf="@id/month"
+        app:layout_constraintBottom_toBottomOf="@id/month"/>
+
+    <ImageButton
+        android:id="@+id/btn_settings"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="18dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_settings"
+        android:tint="@color/black"
+        android:contentDescription="@string/settings"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/month"
         app:layout_constraintBottom_toBottomOf="@id/month"/>
@@ -54,12 +69,12 @@
         android:layout_height="wrap_content"
         android:background="@drawable/layout_bg"
         android:layout_margin="@dimen/usual_margin"
-        android:padding="@dimen/usual_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/calendarView">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mainWorkView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">SogangAssist</string>
     <string name="move_today">오늘로 이동</string>
+    <string name="settings">설정</string>
 </resources>
