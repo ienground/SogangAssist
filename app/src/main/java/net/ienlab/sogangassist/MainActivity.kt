@@ -1,5 +1,6 @@
 package net.ienlab.sogangassist
 
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

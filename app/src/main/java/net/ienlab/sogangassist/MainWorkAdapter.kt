@@ -1,6 +1,7 @@
 package net.ienlab.sogangassist
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 
 class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView.Adapter<PostItemHolder>() {
@@ -27,6 +29,12 @@ class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView
         Log.d(TAG, "onBindViewHolder")
 
         holder.class_name.text = mItems[position].className
+        holder.wholeView.setOnClickListener {
+            Intent(context, EditActivity::class.java).let {
+                it.putExtra("ID", mItems[position].id)
+                context.startActivity(it)
+            }
+        }
         when (mItems[position].type) {
             LMSType.HOMEWORK -> {
                 holder.icon.setImageResource(R.drawable.ic_assignment)
@@ -54,4 +62,5 @@ class PostItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val icon: ImageView = itemView.findViewById(R.id.icon)
     val class_name: TextView = itemView.findViewById(R.id.class_name)
     val sub_name: TextView = itemView.findViewById(R.id.sub_name)
+    val wholeView: ConstraintLayout = itemView.findViewById(R.id.wholeView)
 }

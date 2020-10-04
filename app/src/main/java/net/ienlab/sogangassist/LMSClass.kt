@@ -7,6 +7,8 @@ class LMSClass {
     var type: Int = 0
     var startTime: Long = 0 // ONLY HOMEWORK
     var endTime: Long = 0
+    var isRenewAllowed = true
+    var isFinished = false
 
     // TYPE = LESSON, SUP_LESSON
     var week: Int = 0

@@ -26,6 +26,8 @@ class DBHelper//생성자 - database 파일을 생성한다.
     val LESSON_WEEK = "LESSON_WEEK"
     val LESSON_LESSON = "LESSON_LESSON"
     val HOMEWORK_NAME = "HOMEWORK_NAME"
+    val ALLOW_RENEW = "ALLOW_RENEW"
+    val IS_FINISHED = "IS_FINISHED"
 
     //DB 처음 만들때 호출. - 테이블 생성 등의 초기 처리.
     override fun onCreate(db: SQLiteDatabase) {
@@ -39,7 +41,9 @@ class DBHelper//생성자 - database 파일을 생성한다.
         sb.append(" $END_TIME INTEGER, ")
         sb.append(" $LESSON_WEEK INTEGER, ")
         sb.append(" $LESSON_LESSON INTEGER, ")
-        sb.append(" $HOMEWORK_NAME TEXT )")
+        sb.append(" $HOMEWORK_NAME TEXT, ")
+        sb.append(" $ALLOW_RENEW INTEGER, ")
+        sb.append(" $IS_FINISHED INTEGER )")
 
         db.execSQL(sb.toString())
     }
@@ -62,8 +66,8 @@ class DBHelper//생성자 - database 파일을 생성한다.
 
         val sb = StringBuffer()
         sb.append(" INSERT INTO $_TABLENAME0 ( ")
-        sb.append(" $CLASS_NAME, $TIMESTAMP, $TYPE, $START_TIME, $END_TIME, $LESSON_WEEK, $LESSON_LESSON, $HOMEWORK_NAME ) ")
-        sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )")
+        sb.append(" $CLASS_NAME, $TIMESTAMP, $TYPE, $START_TIME, $END_TIME, $LESSON_WEEK, $LESSON_LESSON, $HOMEWORK_NAME, $ALLOW_RENEW, $IS_FINISHED ) ")
+        sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )")
 
         db.execSQL(sb.toString(),
                 arrayOf(
@@ -74,7 +78,9 @@ class DBHelper//생성자 - database 파일을 생성한다.
                     item.endTime,
                     item.week,
                     item.lesson,
-                    item.homework_name
+                    item.homework_name,
+                    if (item.isRenewAllowed) 1 else 0,
+                    if (item.isFinished) 1 else 0
                 )
         )
 
@@ -93,8 +99,29 @@ class DBHelper//생성자 - database 파일을 생성한다.
         value.put(LESSON_WEEK, item.week)
         value.put(LESSON_LESSON, item.lesson)
         value.put(HOMEWORK_NAME, item.homework_name)
+        value.put(ALLOW_RENEW, item.isRenewAllowed)
+        value.put(IS_FINISHED, item.isFinished)
 
         db.update(_TABLENAME0, value, "(($TYPE=${LMSType.LESSON} OR $TYPE=${LMSType.SUP_LESSON}) AND $LESSON_WEEK=${item.week} AND $LESSON_LESSON=${item.lesson} AND $CLASS_NAME='${item.className}') OR ($CLASS_NAME='${item.className}' AND $TYPE=${LMSType.HOMEWORK} AND $HOMEWORK_NAME='${item.homework_name}')", null)
+    }
+
+    fun updateItemById(item: LMSClass) {
+        val db = writableDatabase
+        val value = ContentValues()
+
+        value.put(ID, item.id)
+        value.put(CLASS_NAME, item.className)
+        value.put(TIMESTAMP, item.timeStamp)
+        value.put(TYPE, item.type)
+        value.put(START_TIME, item.startTime)
+        value.put(END_TIME, item.endTime)
+        value.put(LESSON_WEEK, item.week)
+        value.put(LESSON_LESSON, item.lesson)
+        value.put(HOMEWORK_NAME, item.homework_name)
+        value.put(ALLOW_RENEW, item.isRenewAllowed)
+        value.put(IS_FINISHED, item.isFinished)
+
+        db.update(_TABLENAME0, value, "$ID=${item.id}", null)
     }
 
     fun getItemAtLastDate(date: Long): List<LMSClass> {
@@ -106,7 +133,7 @@ class DBHelper//생성자 - database 파일을 생성한다.
         calendar.set(Calendar.MILLISECOND, 0)
 
         val sb = StringBuffer()
-        sb.append(" SELECT $ID, $CLASS_NAME, $TIMESTAMP, $TYPE, $START_TIME, $END_TIME, $LESSON_WEEK, $LESSON_LESSON, $HOMEWORK_NAME FROM $_TABLENAME0 WHERE $END_TIME >= ${calendar.timeInMillis} AND $END_TIME < ${calendar.timeInMillis + 24 * 60 * 60 * 1000} ")
+        sb.append(" SELECT $ID, $CLASS_NAME, $TIMESTAMP, $TYPE, $START_TIME, $END_TIME, $LESSON_WEEK, $LESSON_LESSON, $HOMEWORK_NAME, $ALLOW_RENEW, $IS_FINISHED FROM $_TABLENAME0 WHERE $END_TIME >= ${calendar.timeInMillis} AND $END_TIME < ${calendar.timeInMillis + 24 * 60 * 60 * 1000} ")
 
         val db = readableDatabase
         val cursor = db.rawQuery(sb.toString(), null)
@@ -124,6 +151,8 @@ class DBHelper//생성자 - database 파일을 생성한다.
                 it.week = cursor.getInt(6)
                 it.lesson = cursor.getInt(7)
                 it.homework_name = cursor.getString(8)
+                it.isRenewAllowed = cursor.getInt(9) == 1
+                it.isFinished = cursor.getInt(10) == 1
 
                 arr.add(it)
             }
@@ -133,9 +162,37 @@ class DBHelper//생성자 - database 파일을 생성한다.
         return arr
     }
 
+    fun getItemById(id: Int): LMSClass {
+
+        val sb = StringBuffer()
+        sb.append(" SELECT $ID, $CLASS_NAME, $TIMESTAMP, $TYPE, $START_TIME, $END_TIME, $LESSON_WEEK, $LESSON_LESSON, $HOMEWORK_NAME, $ALLOW_RENEW, $IS_FINISHED FROM $_TABLENAME0 WHERE $ID=$id ")
+
+        val db = readableDatabase
+        val cursor = db.rawQuery(sb.toString(), null)
+
+        LMSClass().let {
+            while (cursor.moveToNext()) {
+                it.id = cursor.getInt(0)
+                it.className = cursor.getString(1)
+                it.timeStamp = cursor.getLong(2)
+                it.type = cursor.getInt(3)
+                it.startTime = cursor.getLong(4)
+                it.endTime = cursor.getLong(5)
+                it.week = cursor.getInt(6)
+                it.lesson = cursor.getInt(7)
+                it.homework_name = cursor.getString(8)
+                it.isRenewAllowed = cursor.getInt(9) == 1
+                it.isFinished = cursor.getInt(10) == 1
+            }
+
+            cursor.close()
+            return it
+        }
+    }
+
     fun getAllData(): List<LMSClass> {
         val sb = StringBuffer()
-        sb.append(" SELECT $ID, $CLASS_NAME, $TIMESTAMP, $TYPE, $START_TIME, $END_TIME, $LESSON_WEEK, $LESSON_LESSON, $HOMEWORK_NAME FROM $_TABLENAME0 ")
+        sb.append(" SELECT $ID, $CLASS_NAME, $TIMESTAMP, $TYPE, $START_TIME, $END_TIME, $LESSON_WEEK, $LESSON_LESSON, $HOMEWORK_NAME, $ALLOW_RENEW, $IS_FINISHED FROM $_TABLENAME0 ")
 
         val db = readableDatabase
         val cursor = db.rawQuery(sb.toString(), null)
@@ -153,6 +210,8 @@ class DBHelper//생성자 - database 파일을 생성한다.
                 it.week = cursor.getInt(6)
                 it.lesson = cursor.getInt(7)
                 it.homework_name = cursor.getString(8)
+                it.isRenewAllowed = cursor.getInt(9) == 1
+                it.isFinished = cursor.getInt(10) == 1
 
                 arr.add(it)
             }

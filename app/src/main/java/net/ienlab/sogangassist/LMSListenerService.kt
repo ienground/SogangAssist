@@ -51,6 +51,7 @@ class LMSListenerService : NotificationListenerService() {
                                 it.homework_name = homework_name
                                 it.week = -1
                                 it.lesson = -1
+                                it.isRenewAllowed = true
 
                                 dbHelper.addItem(it)
                             }

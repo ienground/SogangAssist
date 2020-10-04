@@ -1,5 +1,20 @@
 <resources>
-    <string name="app_name">SogangAssist</string>
+    <string name="real_app_name">SogangAssist</string>
     <string name="move_today">오늘로 이동</string>
     <string name="settings">설정</string>
+    <string name="save">저장</string>
+    <string name="edit_detail">세부사항 수정</string>
+    <string name="classtime">수업</string>
+    <string name="sup_classtime">보강</string>
+    <string name="assignment">과제</string>
+    <string name="allow_auto_edit_lms">LMS 알림에 의한 자동 수정을 허용</string>
+    <string name="class_name">과목명</string>
+    <string name="week">주</string>
+    <string name="lesson">차시</string>
+    <string name="assignment_name">과제명</string>
+    <string name="dateFormat">yyyy년 M월 d일 (E)</string>
+    <string name="timeFormat">a h:mm</string>
+    <string name="mark_as_finish">완료로 표시</string>
+    <string name="delete">삭제</string>
+    <string name="mark_as_not_finish">완료되지 않음으로 표시</string>
 </resources>
