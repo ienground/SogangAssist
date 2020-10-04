@@ -17,6 +17,8 @@
 
         </activity>
 
+        <activity android:name=".SettingsActivity" />
+
         <service
             android:name=".LMSListenerService"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">

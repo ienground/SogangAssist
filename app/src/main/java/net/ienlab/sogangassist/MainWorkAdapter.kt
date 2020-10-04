@@ -3,6 +3,7 @@ package net.ienlab.sogangassist
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Paint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -45,6 +46,11 @@ class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView
                 holder.icon.setImageResource(R.drawable.ic_video)
                 holder.sub_name.text = String.format("%d주 %d차시", mItems[position].week, mItems[position].lesson)
             }
+        }
+
+        if (mItems[position].isFinished) {
+            holder.class_name.paintFlags = holder.class_name.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            holder.sub_name.paintFlags = holder.sub_name.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
         }
 
 

@@ -64,5 +64,11 @@ class MainActivity : AppCompatActivity() {
         btn_set_today.setOnClickListener {
             calendarView.setCurrentDate(Date(System.currentTimeMillis()))
         }
+
+        btn_settings.setOnClickListener {
+            Intent(this, SettingsActivity::class.java).let {
+                startActivity(it)
+            }
+        }
     }
 }

@@ -221,6 +221,11 @@ class DBHelper//생성자 - database 파일을 생성한다.
         return arr
     }
 
+    fun deleteData(id: Int) {
+        val db = writableDatabase
+        db.execSQL(" DELETE FROM $_TABLENAME0 WHERE $ID = $id")
+    }
+
     fun CheckIsDataAlreadyInDBorNot(dbfield: String, fieldValue: String): Boolean {
         val db = readableDatabase
         val query = "SELECT * FROM $_TABLENAME0 WHERE $dbfield = $fieldValue"

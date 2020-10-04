@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <net.ienlab.sogangassist.AppInfoPreference
+        android:key="app_title"
+        android:layout="@layout/settings_app_title"/>
+
+    <PreferenceCategory android:title="@string/notify_hw" >
+        <CheckBoxPreference
+            android:key="notify_1hour_hw"
+            android:title="@string/notify_1hour"
+            android:summaryOn="@string/notify_1hour_hw_on"
+            android:summaryOff="@string/notify_1hour_hw_off" />
+
+        <CheckBoxPreference
+            android:key="notify_2hour_hw"
+            android:title="@string/notify_2hour"
+            android:summaryOn="@string/notify_2hour_hw_on"
+            android:summaryOff="@string/notify_2hour_hw_off" />
+
+        <CheckBoxPreference
+            android:key="notify_6hour_hw"
+            android:title="@string/notify_6hour"
+            android:summaryOn="@string/notify_6hour_hw_on"
+            android:summaryOff="@string/notify_6hour_hw_off" />
+
+        <CheckBoxPreference
+            android:key="notify_12hour_hw"
+            android:title="@string/notify_12hour"
+            android:summaryOn="@string/notify_12hour_hw_on"
+            android:summaryOff="@string/notify_12hour_hw_off" />
+
+        <CheckBoxPreference
+            android:key="notify_24hour_hw"
+            android:title="@string/notify_24hour"
+            android:summaryOn="@string/notify_24hour_hw_on"
+            android:summaryOff="@string/notify_24hour_hw_off" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/notify_lec" >
+        <CheckBoxPreference
+            android:key="notify_1hour_lec"
+            android:title="@string/notify_1hour"
+            android:summaryOn="@string/notify_1hour_lec_on"
+            android:summaryOff="@string/notify_1hour_lec_off" />
+
+        <CheckBoxPreference
+            android:key="notify_2hour_lec"
+            android:title="@string/notify_2hour"
+            android:summaryOn="@string/notify_2hour_lec_on"
+            android:summaryOff="@string/notify_2hour_lec_off" />
+
+        <CheckBoxPreference
+            android:key="notify_6hour_lec"
+            android:title="@string/notify_6hour"
+            android:summaryOn="@string/notify_6hour_lec_on"
+            android:summaryOff="@string/notify_6hour_lec_off" />
+
+        <CheckBoxPreference
+            android:key="notify_12hour_lec"
+            android:title="@string/notify_12hour"
+            android:summaryOn="@string/notify_12hour_lec_on"
+            android:summaryOff="@string/notify_12hour_lec_off" />
+
+        <CheckBoxPreference
+            android:key="notify_24hour_lec"
+            android:title="@string/notify_24hour"
+            android:summaryOn="@string/notify_24hour_lec_on"
+            android:summaryOff="@string/notify_24hour_lec_off" />
+    </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="@string/info_and_ask" >
+
+        <Preference
+            android:title="@string/changelog"
+            android:key="changelog"
+            android:summary="@string/pref_changelog_exp"/>
+
+        <Preference
+            android:title="@string/ask_to_dev"
+            android:key="ask_to_dev"
+            android:summary="@string/pref_ask_exp"/>
+
+        <Preference
+            android:title="@string/open_source_license"
+            android:key="open_source"
+            android:summary="@string/pref_opens_exp"/>
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>
