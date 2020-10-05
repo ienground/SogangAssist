@@ -1,18 +1,16 @@
 package net.ienlab.sogangassist.decorators
 
 import android.app.Activity
-import androidx.core.content.ContextCompat
 
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
-import net.ienlab.sogangassist.R
 import java.util.HashSet
 
 /**
  * Decorate several days with a dot
  */
-class EventDecorator(private val color: Int, private val amount: Int, dates: Collection<CalendarDay>, context: Activity, private val isPosted: Boolean) : DayViewDecorator {
+class EventDecorator(private val color: Int, private val amount: Int, dates: Collection<CalendarDay>) : DayViewDecorator {
 
 //    var drawable = ContextCompat.getDrawable(context, R.drawable.ic_add)!!
     var dates = HashSet(dates)
@@ -22,6 +20,6 @@ class EventDecorator(private val color: Int, private val amount: Int, dates: Col
     }
 
     override fun decorate(view: DayViewFacade) {
-        view.addSpan(MyDotSpan(10f, color, amount, isPosted)) // 날자밑에 점
+        view.addSpan(MyDotSpan(10f, color, amount)) // 날자밑에 점
     }
 }

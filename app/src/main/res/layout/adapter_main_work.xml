@@ -15,21 +15,22 @@
         android:layout_height="30dp"
         android:src="@drawable/ic_video"
         android:layout_marginHorizontal="@dimen/usual_margin"
+        android:contentDescription="@string/classtime"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/class_name"
-        app:layout_constraintBottom_toBottomOf="@id/sub_name"
+        app:layout_constraintBottom_toBottomOf="@id/end_time"
         app:layout_constraintVertical_chainStyle="packed"/>
 
     <TextView
         android:id="@+id/class_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="법과지식산업(03)"
+        android:text="#CLASS"
         android:textSize="18sp"
         android:layout_marginHorizontal="@dimen/usual_margin"
         android:layout_marginTop="@dimen/usual_margin"
         app:layout_constraintStart_toEndOf="@id/icon"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/check"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/sub_name"/>
 
@@ -37,12 +38,34 @@
         android:id="@+id/sub_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="엄청난 숙제"
+        android:text="#SUB_TEXT"
+        android:layout_marginHorizontal="@dimen/usual_margin"
+        app:layout_constraintStart_toEndOf="@id/icon"
+        app:layout_constraintEnd_toStartOf="@id/check"
+        app:layout_constraintTop_toBottomOf="@id/class_name"
+        app:layout_constraintBottom_toTopOf="@id/end_time"/>
+
+    <TextView
+        android:id="@+id/end_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="#TIME"
         android:layout_marginHorizontal="@dimen/usual_margin"
         android:layout_marginBottom="@dimen/usual_margin"
         app:layout_constraintStart_toEndOf="@id/icon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/class_name"
+        app:layout_constraintEnd_toStartOf="@id/check"
+        app:layout_constraintTop_toBottomOf="@id/sub_name"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ImageView
+        android:id="@+id/check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_check"
+        android:layout_margin="@dimen/usual_margin"
+        android:contentDescription="@string/finished"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/class_name"
+        app:layout_constraintBottom_toBottomOf="@id/end_time"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

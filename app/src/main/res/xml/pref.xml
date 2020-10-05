@@ -12,31 +12,36 @@
             android:key="notify_1hour_hw"
             android:title="@string/notify_1hour"
             android:summaryOn="@string/notify_1hour_hw_on"
-            android:summaryOff="@string/notify_1hour_hw_off" />
+            android:summaryOff="@string/notify_1hour_hw_off"
+            android:defaultValue="true" />
 
         <CheckBoxPreference
             android:key="notify_2hour_hw"
             android:title="@string/notify_2hour"
             android:summaryOn="@string/notify_2hour_hw_on"
-            android:summaryOff="@string/notify_2hour_hw_off" />
+            android:summaryOff="@string/notify_2hour_hw_off"
+            android:defaultValue="true" />
 
         <CheckBoxPreference
             android:key="notify_6hour_hw"
             android:title="@string/notify_6hour"
             android:summaryOn="@string/notify_6hour_hw_on"
-            android:summaryOff="@string/notify_6hour_hw_off" />
+            android:summaryOff="@string/notify_6hour_hw_off"
+            android:defaultValue="true" />
 
         <CheckBoxPreference
             android:key="notify_12hour_hw"
             android:title="@string/notify_12hour"
             android:summaryOn="@string/notify_12hour_hw_on"
-            android:summaryOff="@string/notify_12hour_hw_off" />
+            android:summaryOff="@string/notify_12hour_hw_off"
+            android:defaultValue="true" />
 
         <CheckBoxPreference
             android:key="notify_24hour_hw"
             android:title="@string/notify_24hour"
             android:summaryOn="@string/notify_24hour_hw_on"
-            android:summaryOff="@string/notify_24hour_hw_off" />
+            android:summaryOff="@string/notify_24hour_hw_off"
+            android:defaultValue="true" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/notify_lec" >
@@ -44,31 +49,36 @@
             android:key="notify_1hour_lec"
             android:title="@string/notify_1hour"
             android:summaryOn="@string/notify_1hour_lec_on"
-            android:summaryOff="@string/notify_1hour_lec_off" />
+            android:summaryOff="@string/notify_1hour_lec_off"
+            android:defaultValue="true" />
 
         <CheckBoxPreference
             android:key="notify_2hour_lec"
             android:title="@string/notify_2hour"
             android:summaryOn="@string/notify_2hour_lec_on"
-            android:summaryOff="@string/notify_2hour_lec_off" />
+            android:summaryOff="@string/notify_2hour_lec_off"
+            android:defaultValue="true" />
 
         <CheckBoxPreference
             android:key="notify_6hour_lec"
             android:title="@string/notify_6hour"
             android:summaryOn="@string/notify_6hour_lec_on"
-            android:summaryOff="@string/notify_6hour_lec_off" />
+            android:summaryOff="@string/notify_6hour_lec_off"
+            android:defaultValue="true" />
 
         <CheckBoxPreference
             android:key="notify_12hour_lec"
             android:title="@string/notify_12hour"
             android:summaryOn="@string/notify_12hour_lec_on"
-            android:summaryOff="@string/notify_12hour_lec_off" />
+            android:summaryOff="@string/notify_12hour_lec_off"
+            android:defaultValue="true" />
 
         <CheckBoxPreference
             android:key="notify_24hour_lec"
             android:title="@string/notify_24hour"
             android:summaryOn="@string/notify_24hour_lec_on"
-            android:summaryOff="@string/notify_24hour_lec_off" />
+            android:summaryOff="@string/notify_24hour_lec_off"
+            android:defaultValue="true" />
     </PreferenceCategory>
 
 

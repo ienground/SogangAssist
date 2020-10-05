@@ -1,9 +1,11 @@
 package net.ienlab.sogangassist
 
-import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.*
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Paint
+import android.media.AudioManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -21,6 +23,8 @@ class EditActivity : AppCompatActivity() {
     lateinit var radioButtonGroup: Array<Int>
     lateinit var dateFormat: SimpleDateFormat
     lateinit var timeFormat: SimpleDateFormat
+    lateinit var sharedPreferences: SharedPreferences
+    lateinit var am: AlarmManager
 
     val startCalendar = Calendar.getInstance()
     val endCalendar = Calendar.getInstance()
@@ -39,6 +43,8 @@ class EditActivity : AppCompatActivity() {
 
         dateFormat = SimpleDateFormat(getString(R.string.dateFormat), Locale.getDefault())
         timeFormat = SimpleDateFormat(getString(R.string.timeFormat), Locale.getDefault())
+        sharedPreferences = getSharedPreferences("${packageName}_preferences",  Context.MODE_PRIVATE)
+        am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val id = intent.getIntExtra("ID", -1)
         if (id != -1) {
@@ -63,6 +69,8 @@ class EditActivity : AppCompatActivity() {
                 tv_start_time.isEnabled = false
                 tv_end_date.isEnabled = false
                 tv_end_time.isEnabled = false
+                tv_class_end_date.isEnabled = false
+                tv_class_end_time.isEnabled = false
 
                 et_class.editText?.paintFlags = et_class.editText?.paintFlags?.or(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
                 et_assignment.editText?.paintFlags = et_assignment.editText?.paintFlags?.or(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
@@ -72,6 +80,8 @@ class EditActivity : AppCompatActivity() {
                 tv_start_time.paintFlags = tv_start_time.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                 tv_end_date.paintFlags = tv_end_date.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                 tv_end_time.paintFlags = tv_end_time.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                tv_class_end_date.paintFlags = tv_class_end_date.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                tv_class_end_time.paintFlags = tv_class_end_time.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             }
 
             when (currentItem.type) {
@@ -243,6 +253,7 @@ class EditActivity : AppCompatActivity() {
                 it.type = radioButtonGroup.indexOf(radioGroup.checkedRadioButtonId)
                 it.endTime = endCalendar.timeInMillis
                 it.isFinished = isFinished
+                it.isRenewAllowed = check_auto_edit.isChecked
 
                 if (it.type == LMSType.HOMEWORK) {
                     it.startTime = startCalendar.timeInMillis
@@ -257,6 +268,91 @@ class EditActivity : AppCompatActivity() {
                 }
 
                 dbHelper.updateItemById(it)
+
+                val noti_intent = Intent(this, TimeReceiver::class.java)
+                noti_intent.putExtra("ID", it.id)
+
+                if (it.type == LMSType.HOMEWORK) {
+                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, true)) {
+                        val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
+                        noti_intent.putExtra("TRIGGER", triggerTime)
+                        noti_intent.putExtra("TIME", 1)
+                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    }
+
+                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, true)) {
+                        val triggerTime = endCalendar.timeInMillis - 2 * 60 * 60 * 1000
+                        noti_intent.putExtra("TRIGGER", triggerTime)
+                        noti_intent.putExtra("TIME", 2)
+                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    }
+
+                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, true)) {
+                        val triggerTime = endCalendar.timeInMillis - 6 * 60 * 60 * 1000
+                        noti_intent.putExtra("TRIGGER", triggerTime)
+                        noti_intent.putExtra("TIME", 6)
+                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    }
+
+                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, true)) {
+                        val triggerTime = endCalendar.timeInMillis - 12 * 60 * 60 * 1000
+                        noti_intent.putExtra("TRIGGER", triggerTime)
+                        noti_intent.putExtra("TIME", 12)
+                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    }
+
+                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, true)) {
+                        val triggerTime = endCalendar.timeInMillis - 24 * 60 * 60 * 1000
+                        noti_intent.putExtra("TRIGGER", triggerTime)
+                        noti_intent.putExtra("TIME", 24)
+                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    }
+                } else if (it.type == LMSType.LESSON || it.type == LMSType.SUP_LESSON) {
+                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, true)) {
+                        val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
+                        noti_intent.putExtra("TRIGGER", triggerTime)
+                        noti_intent.putExtra("TIME", 1)
+                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 6, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    }
+
+                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, true)) {
+                        val triggerTime = endCalendar.timeInMillis - 2 * 60 * 60 * 1000
+                        noti_intent.putExtra("TRIGGER", triggerTime)
+                        noti_intent.putExtra("TIME", 2)
+                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 7, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    }
+
+                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, true)) {
+                        val triggerTime = endCalendar.timeInMillis - 6 * 60 * 60 * 1000
+                        noti_intent.putExtra("TRIGGER", triggerTime)
+                        noti_intent.putExtra("TIME", 6)
+                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 8, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    }
+
+                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, true)) {
+                        val triggerTime = endCalendar.timeInMillis - 12 * 60 * 60 * 1000
+                        noti_intent.putExtra("TRIGGER", triggerTime)
+                        noti_intent.putExtra("TIME", 12)
+                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 9, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    }
+
+                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, true)) {
+                        val triggerTime = endCalendar.timeInMillis - 24 * 60 * 60 * 1000
+                        noti_intent.putExtra("TRIGGER", triggerTime)
+                        noti_intent.putExtra("TIME", 24)
+                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 10, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    }
+                }
             }
         } else {
             LMSClass().let {
@@ -264,6 +360,7 @@ class EditActivity : AppCompatActivity() {
             }
         }
 
+        setResult(Activity.RESULT_OK)
         finish()
     }
 
@@ -296,9 +393,9 @@ class EditActivity : AppCompatActivity() {
                         val id = intent.getIntExtra("ID", -1)
                         if (id != -1) {
                             dbHelper.deleteData(id)
-                        } else {
-                            finish()
                         }
+                        setResult(Activity.RESULT_OK)
+                        finish()
                     }
                     .setNegativeButton(getString(R.string.no)) { dialog, _ ->
                         dialog.cancel()
@@ -324,6 +421,8 @@ class EditActivity : AppCompatActivity() {
                     tv_start_time.isEnabled = true
                     tv_end_date.isEnabled = true
                     tv_end_time.isEnabled = true
+                    tv_class_end_date.isEnabled = true
+                    tv_class_end_time.isEnabled = true
 
                     et_class.editText?.paintFlags = 0
                     et_assignment.editText?.paintFlags = 0
@@ -333,6 +432,8 @@ class EditActivity : AppCompatActivity() {
                     tv_start_time.paintFlags = 0
                     tv_end_date.paintFlags = 0
                     tv_end_time.paintFlags = 0
+                    tv_class_end_date.paintFlags = 0
+                    tv_class_end_time.paintFlags = 0
 
                 } else {
                     onBackAutoSave(true)

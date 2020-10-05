@@ -3,7 +3,6 @@ package net.ienlab.sogangassist.decorators
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.text.style.LineBackgroundSpan
-import android.util.TypedValue
 
 /**
  * Span to draw a dot centered under a section of text
@@ -13,73 +12,11 @@ class MyDotSpan : LineBackgroundSpan {
     private val radius: Float
     private val color: Int
     private val amount: Int
-    private val isPosted: Boolean
-
-    /**
-     * Create a span to draw a dot using default radius and color
-     *
-     * @see .DotSpan
-     * @see .DEFAULT_RADIUS
-     */
-    constructor() {
-        this.radius = DEFAULT_RADIUS
-        this.color = 0
-        this.amount = 1
-        isPosted = true
-    }
-
-    /**
-     * Create a span to draw a dot using a specified color
-     *
-     * @param color color of the dot
-     * @see .DotSpan
-     * @see .DEFAULT_RADIUS
-     */
-    constructor(color: Int) {
-        this.radius = DEFAULT_RADIUS
-        this.color = color
-        this.amount = 1
-        isPosted = true
-    }
-
-    /**
-     * Create a span to draw a dot using a specified radius
-     *
-     * @param radius radius for the dot
-     * @see .DotSpan
-     */
-    constructor(radius: Float) {
-        this.radius = radius
-        this.color = 0
-        this.amount = 1
-        isPosted = true
-    }
-
-    /**
-     * Create a span to draw a dot using a specified radius and color
-     *
-     * @param radius radius for the dot
-     * @param color  color of the dot
-     */
-    constructor(radius: Float, color: Int) {
-        this.radius = radius
-        this.color = color
-        this.amount = 1
-        isPosted = true
-    }
 
     constructor(radius: Float, color: Int, amount: Int) {
         this.radius = radius
         this.color = color
         this.amount = amount
-        isPosted = true
-    }
-
-    constructor(radius: Float, color: Int, amount: Int, isPosted: Boolean) {
-        this.radius = radius
-        this.color = color
-        this.amount = amount
-        this.isPosted = isPosted
     }
 
     override fun drawBackground(
@@ -96,10 +33,10 @@ class MyDotSpan : LineBackgroundSpan {
             paint.color = color
         }
 
-        if (!isPosted) {
-            paint.strokeWidth = 5f
-            paint.style = Paint.Style.STROKE
-        }
+//        if (!isPosted) {
+//            paint.strokeWidth = 5f
+//            paint.style = Paint.Style.STROKE
+//        }
 
 
         if (amount <= 3) {

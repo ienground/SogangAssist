@@ -11,12 +11,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:label">
-        <activity android:name=".EditActivity"
-            android:theme="@style/AppTheme.ActionBar"
-            android:label="@string/edit_detail">
+
+        <receiver
+            android:name=".TimeReceiver"
+            android:enabled="true"
+            android:exported="true">
+
+        </receiver>
+
+        <receiver
+            android:name=".MarkFinishReceiver"
+            android:enabled="true"
+            android:exported="true">
+
+        </receiver>
+
+        <activity
+            android:name=".EditActivity"
+            android:label="@string/edit_detail"
+            android:theme="@style/AppTheme.ActionBar">
 
         </activity>
-
         <activity android:name=".SettingsActivity" />
 
         <service

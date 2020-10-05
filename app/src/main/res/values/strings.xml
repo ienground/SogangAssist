@@ -58,4 +58,11 @@
     <string name="notify_2hour_lec_off">수강기한 2시간 전 알림을 받지 않습니다.</string>
     <string name="notify_hw">과제 알림 설정</string>
     <string name="notify_lec">강의 및 보강 알림 설정</string>
+    <string name="channel_name">LMS 리마인더</string>
+    <string name="reminder_content_lec">%d주 %d차시 수업이 수강기간까지 %d시간 남았습니다. 늦지 않게 수강하세요.</string>
+    <string name="reminder_content_hw">\"%s\" 과제 마감 기간까지 %d시간 남았습니다. 늦지 않게 제출하세요.</string>
+    <string name="week_lesson_format">%d주 %d차시</string>
+    <string name="finished">완료</string>
+    <string name="deadline">마감 :\u0020</string>
+    <string name="no_deadline_today">오늘이 마감기한인 과제나 강의가 없어요.</string>
 </resources>

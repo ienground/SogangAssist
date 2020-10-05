@@ -190,6 +190,22 @@ class DBHelper//생성자 - database 파일을 생성한다.
         }
     }
 
+    fun getIdByCondition(item: LMSClass): Int {
+        val sb = StringBuffer()
+        sb.append(" SELECT $ID FROM $_TABLENAME0 WHERE (($TYPE=${LMSType.LESSON} OR $TYPE=${LMSType.SUP_LESSON}) AND $LESSON_WEEK=${item.week} AND $LESSON_LESSON=${item.lesson} AND $CLASS_NAME='${item.className}') OR ($CLASS_NAME='${item.className}' AND $TYPE=${LMSType.HOMEWORK} AND $HOMEWORK_NAME='${item.homework_name}') ")
+
+        val db = readableDatabase
+        val cursor = db.rawQuery(sb.toString(), null)
+
+        var id = -1
+        while (cursor.moveToNext()) {
+            id = cursor.getInt(0)
+        }
+
+        cursor.close()
+        return id
+    }
+
     fun getAllData(): List<LMSClass> {
         val sb = StringBuffer()
         sb.append(" SELECT $ID, $CLASS_NAME, $TIMESTAMP, $TYPE, $START_TIME, $END_TIME, $LESSON_WEEK, $LESSON_LESSON, $HOMEWORK_NAME, $ALLOW_RENEW, $IS_FINISHED FROM $_TABLENAME0 ")
