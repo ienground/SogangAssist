@@ -3,6 +3,7 @@ package net.ienlab.sogangassist
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
             duration = 300
         }
         val monthFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
+        month.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
         month.text = monthFormat.format(Date(System.currentTimeMillis()))
 //        startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
 
@@ -53,6 +55,10 @@ class MainActivity : AppCompatActivity() {
         val todayDecorator = OneDayDecorator(this)
 
         todayDecorator.setDate(Date(System.currentTimeMillis()))
+
+        val arr = mutableListOf("안녕")
+        arr.size
+        arr.reverse()
 
         calendarView.topbarVisible = false
         calendarView.addDecorators(sundayDecorator, saturdayDecorator, todayDecorator)
