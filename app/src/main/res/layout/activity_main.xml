@@ -30,7 +30,6 @@
         android:layout_height="wrap_content"
         android:minHeight="80dp"
         android:layout_marginTop="@dimen/statusbar_size"
-        android:layout_marginHorizontal="@dimen/usual_margin"
         app:maxButtonHeight="50dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

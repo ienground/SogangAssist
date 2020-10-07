@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Paint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +31,7 @@ class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView
     override fun onBindViewHolder(holder: PostItemHolder, position: Int) {
         val timeFormat = SimpleDateFormat(context.getString(R.string.timeFormat), Locale.getDefault())
 
-        holder.class_name.text = mItems[position].className + "_" + mItems[position].id
+        holder.class_name.text = mItems[position].className
         holder.end_time.text = context.getString(R.string.deadline) + timeFormat.format(Date(mItems[position].endTime))
         holder.wholeView.setOnClickListener {
             Intent(context, EditActivity::class.java).let {
@@ -48,10 +47,16 @@ class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView
                 holder.sub_name.text = mItems[position].homework_name
             }
 
-            LMSType.LESSON, LMSType.SUP_LESSON -> {
+            LMSType.LESSON -> {
                 holder.icon.setImageResource(R.drawable.ic_video)
                 holder.icon.contentDescription = context.getString(R.string.classtime)
                 holder.sub_name.text = String.format(context.getString(R.string.week_lesson_format), mItems[position].week, mItems[position].lesson)
+            }
+
+            LMSType.SUP_LESSON -> {
+                holder.icon.setImageResource(R.drawable.ic_video_sup)
+                holder.icon.contentDescription = context.getString(R.string.classtime)
+                holder.sub_name.text = String.format(context.getString(R.string.week_lesson_format), mItems[position].week, mItems[position].lesson) + context.getString(R.string.enrich_study)
             }
         }
 

@@ -13,6 +13,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_edit.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -277,22 +278,65 @@ class EditActivity : AppCompatActivity() {
     }
 
     fun onBackAutoSave(isFinished: Boolean) {
+        val view = window.decorView.rootView
+        when (radioGroup.checkedRadioButtonId) {
+            R.id.radioButton1, R.id.radioButton2 -> {
+                if (et_class.editText?.text?.toString() != "" && et_time_week.editText?.text?.toString() != ""
+                    && et_time_lesson.editText?.text?.toString() != "") {
+                    onSave(isFinished)
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                } else if (et_time_week.editText?.text?.toString() != "" && et_time_lesson.editText?.text?.toString() != "") {
+                    Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
+                } else if (et_class.editText?.text?.toString() != "" && et_time_lesson.editText?.text?.toString() != "") {
+                    Snackbar.make(view, getString(R.string.err_input_week), Snackbar.LENGTH_SHORT).show()
+                } else if (et_class.editText?.text?.toString() != "" && et_time_week.editText?.text?.toString() != "") {
+                    Snackbar.make(view, getString(R.string.err_input_lesson), Snackbar.LENGTH_SHORT).show()
+                } else {
+                    Snackbar.make(view, getString(R.string.err_input_blank), Snackbar.LENGTH_SHORT).show()
+                }
+            }
+
+            R.id.radioButton3 -> {
+                if (et_class.editText?.text?.toString() != "" && et_assignment.editText?.text?.toString() != ""
+                    && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 123
+                    onSave(isFinished)
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                } else if (et_assignment.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 23
+                    Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
+                } else if (et_class.editText?.text?.toString() != "" && et_assignment.editText?.text?.toString() != "") { // 12
+                    Snackbar.make(view, getString(R.string.err_time_late), Snackbar.LENGTH_SHORT).show()
+                } else if (et_class.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 13
+                    Snackbar.make(view, getString(R.string.err_input_assignment), Snackbar.LENGTH_SHORT).show()
+                } else if (et_class.editText?.text?.toString() != "") { // 1
+                    Snackbar.make(view, getString(R.string.err_assignment_time), Snackbar.LENGTH_SHORT).show()
+                } else if (et_assignment.editText?.text?.toString() != "") { // 2
+                    Snackbar.make(view, getString(R.string.err_class_time), Snackbar.LENGTH_SHORT).show()
+                } else if (startCalendar.timeInMillis < endCalendar.timeInMillis) { // 3
+                    Snackbar.make(view, getString(R.string.err_class_assignment), Snackbar.LENGTH_SHORT).show()
+                } else {
+                    Snackbar.make(view, getString(R.string.err_all), Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
+
+    }
+
+    fun onSave(isFinished: Boolean) {
         val id = intent.getIntExtra("ID", -1)
 
         LMSClass().let {
-            if (id != -1) {
-                it.id = id
+            it.id = if (id != -1) {
+                id
             } else {
-                it.id = dbHelper.getAllData().apply {
+                dbHelper.getAllData().apply {
                     sortedBy { l -> l.id }
                 }.last().id + 1
-
-                Log.d(TAG, "current Id : ${it.id}")
-
-                for (i in dbHelper.getAllData().apply { sortedBy { l -> l.id}}) {
-                    Log.d(TAG, "id: ${i.id}")
-                }
             }
+
             it.className = et_class.editText?.text!!.toString()
             it.type = radioButtonGroup.indexOf(radioGroup.checkedRadioButtonId)
             it.endTime = endCalendar.timeInMillis
@@ -402,9 +446,6 @@ class EditActivity : AppCompatActivity() {
                 }
             }
         }
-
-        setResult(Activity.RESULT_OK)
-        finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

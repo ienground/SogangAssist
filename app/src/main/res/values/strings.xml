@@ -91,4 +91,15 @@
     <string name="lms_install">HelloLMS 앱 설치</string>
     <string name="lms_installed">HelloLMS 앱이 설치됨</string>
     <string name="add_reminder">새 리마인더 추가</string>
+    <string name="enrich_study">(보강)</string>
+    <string name="err_input_class">과목명을 입력해 주세요</string>
+    <string name="err_input_week">주를 입력해 주세요</string>
+    <string name="err_input_lesson">차시를 입력해 주세요</string>
+    <string name="err_input_blank">빈칸을 모두 입력해 주세요</string>
+    <string name="err_time_late">마감 일시는 시작 일시보다 늦어야 합니다</string>
+    <string name="err_input_assignment">과제명을 입력해 주세요</string>
+    <string name="err_assignment_time">과제명을 입력하고, 마감 일시는 시작 일시보다 늦어야 합니다</string>
+    <string name="err_class_time">과목명을 입력하고, 마감 일시는 시작 일시보다 늦어야 합니다</string>
+    <string name="err_class_assignment">과목명과 과제명을 입력하세요</string>
+    <string name="err_all">과목명과 과제명을 입력하고, 마감 일시는 시작 일시보다 늦어야 합니다</string>
 </resources>
