@@ -6,20 +6,50 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/month"
+    <com.scwang.wave.MultiWaveHeader
+        android:id="@+id/days_graph"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="#MONTH"
-        android:textColor="@color/black"
-        android:textSize="40sp"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_marginTop="24dp"
-        android:layout_marginHorizontal="@dimen/usual_margin"
+        android:layout_height="144dp"
+        android:rotation="180"
+        android:scaleY="-1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_set_today"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:mwhStartColor="?attr/colorPrimaryDark"
+        app:mwhCloseColor="?attr/colorPrimary"
+        app:mwhColorAlpha="0.45"
+        app:mwhGradientAngle="45"
+        app:mwhProgress="1"
+        app:mwhVelocity="5"
+        app:mwhWaveHeight="50dp"
+        app:mwhWaves="MultiWave" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="80dp"
+        android:layout_marginTop="@dimen/statusbar_size"
+        android:layout_marginHorizontal="@dimen/usual_margin"
+        app:maxButtonHeight="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:id="@+id/month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#MONTH"
+            android:textColor="@android:color/white"
+            android:textSize="32sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"/>
+
+    </androidx.appcompat.widget.Toolbar>
 
     <ImageButton
         android:id="@+id/btn_set_today"
@@ -30,11 +60,12 @@
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/ic_today"
-        android:tint="@color/black"
+        android:tint="@android:color/white"
         android:contentDescription="@string/move_today"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/btn_settings"
-        app:layout_constraintTop_toTopOf="@id/month"
-        app:layout_constraintBottom_toBottomOf="@id/month"/>
+        app:layout_constraintTop_toTopOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"/>
 
     <ImageButton
         android:id="@+id/btn_settings"
@@ -45,22 +76,23 @@
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/ic_settings"
-        android:tint="@color/black"
+        android:tint="@android:color/white"
         android:contentDescription="@string/settings"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/month"
-        app:layout_constraintBottom_toBottomOf="@id/month"/>
+        app:layout_constraintTop_toBottomOf="@id/toolbar"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/calendarViewLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/layout_bg"
-        android:layout_margin="@dimen/usual_margin"
+        android:layout_marginHorizontal="@dimen/usual_margin"
+        android:layout_marginBottom="@dimen/usual_margin"
         android:padding="@dimen/usual_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/month" >
+        app:layout_constraintTop_toBottomOf="@id/toolbar" >
 
         <com.prolificinteractive.materialcalendarview.MaterialCalendarView
             android:id="@+id/calendarView"

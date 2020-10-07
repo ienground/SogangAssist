@@ -32,7 +32,7 @@ class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView
     override fun onBindViewHolder(holder: PostItemHolder, position: Int) {
         val timeFormat = SimpleDateFormat(context.getString(R.string.timeFormat), Locale.getDefault())
 
-        holder.class_name.text = mItems[position].className
+        holder.class_name.text = mItems[position].className + "_" + mItems[position].id
         holder.end_time.text = context.getString(R.string.deadline) + timeFormat.format(Date(mItems[position].endTime))
         holder.wholeView.setOnClickListener {
             Intent(context, EditActivity::class.java).let {

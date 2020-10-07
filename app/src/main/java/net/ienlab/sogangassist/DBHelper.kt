@@ -83,7 +83,6 @@ class DBHelper//생성자 - database 파일을 생성한다.
                     if (item.isFinished) 1 else 0
                 )
         )
-
     }
 
     fun updateItem(item: LMSClass) {

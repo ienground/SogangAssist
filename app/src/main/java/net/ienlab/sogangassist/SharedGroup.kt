@@ -13,5 +13,7 @@ class SharedGroup {
         val NOTIFY_6HOUR_LEC = "notify_6hour_lec"
         val NOTIFY_12HOUR_LEC = "notify_12hour_lec"
         val NOTIFY_24HOUR_LEC = "notify_24hour_lec"
+
+        val IS_FIRST_VISIT = "isFirstVisit"
     }
 }

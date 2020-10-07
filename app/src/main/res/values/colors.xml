@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="colorPrimary">#B60005</color>
+    <color name="colorPrimaryDark">#7e0000</color>
     <color name="colorAccent">#03DAC5</color>
+
+    <color name="color_sogang">#B60005</color>
+    <color name="color_sogang_sub">#f04a31</color>
 
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
@@ -68,5 +71,6 @@
     <color name="purple_50">#F3E5F5</color>
 
     <color name="card_border">#DBDBDB</color>
+    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#8F9CA3</color>
 
 </resources>

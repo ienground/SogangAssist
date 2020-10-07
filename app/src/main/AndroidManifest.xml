@@ -32,7 +32,11 @@
             android:theme="@style/AppTheme.ActionBar">
 
         </activity>
-        <activity android:name=".SettingsActivity" />
+        <activity android:name=".SettingsActivity"
+            android:theme="@style/AppTheme.Settings"/>
+
+        <activity android:name=".MainActivity" />
+        <activity android:name=".OnboardingActivity" />
 
         <service
             android:name=".LMSListenerService"
@@ -42,7 +46,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

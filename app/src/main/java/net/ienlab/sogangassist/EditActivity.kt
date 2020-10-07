@@ -27,7 +27,9 @@ class EditActivity : AppCompatActivity() {
     lateinit var am: AlarmManager
 
     val startCalendar = Calendar.getInstance()
-    val endCalendar = Calendar.getInstance()
+    val endCalendar = Calendar.getInstance().apply {
+        add(Calendar.DAY_OF_YEAR, 1)
+    }
     var isFinished = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,14 +107,37 @@ class EditActivity : AppCompatActivity() {
                     }
                 }
             }
+        } else {
+            check_auto_edit.isChecked = true
+            radioGroup.check(R.id.radioButton1)
 
+            lessonUI(endCalendar)
+            tv_class_end_date.text = dateFormat.format(endCalendar.time)
+            tv_class_end_time.text = timeFormat.format(endCalendar.time)
 
+            radioGroup.setOnCheckedChangeListener { group, checkedId ->
+                when (checkedId) {
+                    R.id.radioButton1, R.id.radioButton2 -> {
+                        lessonUI(endCalendar)
+                        tv_class_end_date.text = dateFormat.format(endCalendar.time)
+                        tv_class_end_time.text = timeFormat.format(endCalendar.time)
+                    }
+
+                    R.id.radioButton3 -> {
+                        homeworkUI(startCalendar, endCalendar)
+                        tv_start_date.text = dateFormat.format(startCalendar.time)
+                        tv_start_time.text = timeFormat.format(startCalendar.time)
+                        tv_end_date.text = dateFormat.format(endCalendar.time)
+                        tv_end_time.text = timeFormat.format(endCalendar.time)
+                    }
+                }
+            }
         }
 
 
     }
 
-    fun lessonType(currentItem: LMSClass) {
+    fun lessonUI(endCalendar: Calendar) {
         View.GONE.let {
             line.visibility = it
             ic_assignment.visibility = it
@@ -133,13 +158,6 @@ class EditActivity : AppCompatActivity() {
             tv_class_end_date.visibility = it
             tv_class_end_time.visibility = it
         }
-
-        et_time_week.editText?.setText(if (currentItem.week != -1) currentItem.week.toString() else "")
-        et_time_lesson.editText?.setText(if (currentItem.lesson != -1) currentItem.lesson.toString() else "")
-        tv_class_end_date.text = dateFormat.format(Date(currentItem.endTime))
-        tv_class_end_time.text = timeFormat.format(Date(currentItem.endTime))
-
-        endCalendar.timeInMillis = currentItem.endTime
 
         tv_class_end_date.setOnClickListener {
             DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
@@ -163,7 +181,7 @@ class EditActivity : AppCompatActivity() {
         }
     }
 
-    fun homeworkType(currentItem: LMSClass) {
+    fun homeworkUI(startCalendar: Calendar, endCalendar: Calendar) {
         View.VISIBLE.let {
             line.visibility = it
             ic_assignment.visibility = it
@@ -184,22 +202,6 @@ class EditActivity : AppCompatActivity() {
             tv_class_end_date.visibility = it
             tv_class_end_time.visibility = it
         }
-
-        et_assignment.editText?.setText(if (currentItem.homework_name != "#NONE") currentItem.homework_name else "")
-        if (currentItem.startTime != -1L) {
-            tv_start_date.text = dateFormat.format(Date(currentItem.startTime))
-            tv_start_time.text = timeFormat.format(Date(currentItem.startTime))
-            startCalendar.timeInMillis = currentItem.startTime
-        } else {
-            val startTime = Date(currentItem.endTime - 24 * 60 * 60 * 1000)
-            tv_start_date.text = dateFormat.format(startTime)
-            tv_start_time.text = timeFormat.format(startTime)
-            startCalendar.timeInMillis = startTime.time
-        }
-
-        tv_end_date.text = dateFormat.format(Date(currentItem.endTime))
-        tv_end_time.text = timeFormat.format(Date(currentItem.endTime))
-        endCalendar.timeInMillis = currentItem.endTime
 
         tv_start_date.setOnClickListener {
             DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
@@ -244,119 +246,160 @@ class EditActivity : AppCompatActivity() {
         }
     }
 
+    fun lessonType(currentItem: LMSClass) {
+        et_time_week.editText?.setText(if (currentItem.week != -1) currentItem.week.toString() else "")
+        et_time_lesson.editText?.setText(if (currentItem.lesson != -1) currentItem.lesson.toString() else "")
+        tv_class_end_date.text = dateFormat.format(Date(currentItem.endTime))
+        tv_class_end_time.text = timeFormat.format(Date(currentItem.endTime))
+
+        endCalendar.timeInMillis = currentItem.endTime
+        lessonUI(endCalendar)
+    }
+
+    fun homeworkType(currentItem: LMSClass) {
+        et_assignment.editText?.setText(if (currentItem.homework_name != "#NONE") currentItem.homework_name else "")
+        if (currentItem.startTime != -1L) {
+            tv_start_date.text = dateFormat.format(Date(currentItem.startTime))
+            tv_start_time.text = timeFormat.format(Date(currentItem.startTime))
+            startCalendar.timeInMillis = currentItem.startTime
+        } else {
+            val startTime = Date(currentItem.endTime - 24 * 60 * 60 * 1000)
+            tv_start_date.text = dateFormat.format(startTime)
+            tv_start_time.text = timeFormat.format(startTime)
+            startCalendar.timeInMillis = startTime.time
+        }
+
+        tv_end_date.text = dateFormat.format(Date(currentItem.endTime))
+        tv_end_time.text = timeFormat.format(Date(currentItem.endTime))
+        endCalendar.timeInMillis = currentItem.endTime
+
+        homeworkUI(startCalendar, endCalendar)
+    }
+
     fun onBackAutoSave(isFinished: Boolean) {
         val id = intent.getIntExtra("ID", -1)
-        if (id != -1) {
-            LMSClass().let {
+
+        LMSClass().let {
+            if (id != -1) {
                 it.id = id
-                it.className = et_class.editText?.text!!.toString()
-                it.type = radioButtonGroup.indexOf(radioGroup.checkedRadioButtonId)
-                it.endTime = endCalendar.timeInMillis
-                it.isFinished = isFinished
-                it.isRenewAllowed = check_auto_edit.isChecked
+            } else {
+                it.id = dbHelper.getAllData().apply {
+                    sortedBy { l -> l.id }
+                }.last().id + 1
 
-                if (it.type == LMSType.HOMEWORK) {
-                    it.startTime = startCalendar.timeInMillis
-                    it.homework_name = et_assignment.editText?.text!!.toString()
-                    it.week = -1
-                    it.lesson = -1
-                } else if (it.type == LMSType.LESSON || it.type == LMSType.SUP_LESSON) {
-                    it.startTime = -1
-                    it.homework_name = "#NONE"
-                    it.week = et_time_week.editText?.text!!.toString().toInt()
-                    it.lesson = et_time_lesson.editText?.text!!.toString().toInt()
-                }
+                Log.d(TAG, "current Id : ${it.id}")
 
-                dbHelper.updateItemById(it)
-
-                val noti_intent = Intent(this, TimeReceiver::class.java)
-                noti_intent.putExtra("ID", it.id)
-
-                if (it.type == LMSType.HOMEWORK) {
-                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, true)) {
-                        val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
-                        noti_intent.putExtra("TRIGGER", triggerTime)
-                        noti_intent.putExtra("TIME", 1)
-                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
-
-                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, true)) {
-                        val triggerTime = endCalendar.timeInMillis - 2 * 60 * 60 * 1000
-                        noti_intent.putExtra("TRIGGER", triggerTime)
-                        noti_intent.putExtra("TIME", 2)
-                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
-
-                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, true)) {
-                        val triggerTime = endCalendar.timeInMillis - 6 * 60 * 60 * 1000
-                        noti_intent.putExtra("TRIGGER", triggerTime)
-                        noti_intent.putExtra("TIME", 6)
-                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
-
-                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, true)) {
-                        val triggerTime = endCalendar.timeInMillis - 12 * 60 * 60 * 1000
-                        noti_intent.putExtra("TRIGGER", triggerTime)
-                        noti_intent.putExtra("TIME", 12)
-                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
-
-                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, true)) {
-                        val triggerTime = endCalendar.timeInMillis - 24 * 60 * 60 * 1000
-                        noti_intent.putExtra("TRIGGER", triggerTime)
-                        noti_intent.putExtra("TIME", 24)
-                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
-                } else if (it.type == LMSType.LESSON || it.type == LMSType.SUP_LESSON) {
-                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, true)) {
-                        val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
-                        noti_intent.putExtra("TRIGGER", triggerTime)
-                        noti_intent.putExtra("TIME", 1)
-                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 6, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
-
-                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, true)) {
-                        val triggerTime = endCalendar.timeInMillis - 2 * 60 * 60 * 1000
-                        noti_intent.putExtra("TRIGGER", triggerTime)
-                        noti_intent.putExtra("TIME", 2)
-                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 7, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
-
-                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, true)) {
-                        val triggerTime = endCalendar.timeInMillis - 6 * 60 * 60 * 1000
-                        noti_intent.putExtra("TRIGGER", triggerTime)
-                        noti_intent.putExtra("TIME", 6)
-                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 8, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
-
-                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, true)) {
-                        val triggerTime = endCalendar.timeInMillis - 12 * 60 * 60 * 1000
-                        noti_intent.putExtra("TRIGGER", triggerTime)
-                        noti_intent.putExtra("TIME", 12)
-                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 9, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
-
-                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, true)) {
-                        val triggerTime = endCalendar.timeInMillis - 24 * 60 * 60 * 1000
-                        noti_intent.putExtra("TRIGGER", triggerTime)
-                        noti_intent.putExtra("TIME", 24)
-                        val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 10, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
+                for (i in dbHelper.getAllData().apply { sortedBy { l -> l.id}}) {
+                    Log.d(TAG, "id: ${i.id}")
                 }
             }
-        } else {
-            LMSClass().let {
-//                        it.className =
+            it.className = et_class.editText?.text!!.toString()
+            it.type = radioButtonGroup.indexOf(radioGroup.checkedRadioButtonId)
+            it.endTime = endCalendar.timeInMillis
+            it.isFinished = isFinished
+            it.isRenewAllowed = check_auto_edit.isChecked
+
+            if (it.type == LMSType.HOMEWORK) {
+                it.startTime = startCalendar.timeInMillis
+                it.homework_name = et_assignment.editText?.text!!.toString()
+                it.week = -1
+                it.lesson = -1
+            } else if (it.type == LMSType.LESSON || it.type == LMSType.SUP_LESSON) {
+                it.startTime = -1
+                it.homework_name = "#NONE"
+                it.week = et_time_week.editText?.text!!.toString().toInt()
+                it.lesson = et_time_lesson.editText?.text!!.toString().toInt()
+            }
+
+            if (id != -1) {
+                dbHelper.updateItemById(it)
+            } else {
+                dbHelper.addItem(it)
+            }
+
+            val noti_intent = Intent(this, TimeReceiver::class.java)
+            noti_intent.putExtra("ID", it.id)
+
+            if (it.type == LMSType.HOMEWORK) {
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 1)
+                    val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 2 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 2)
+                    val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 6 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 6)
+                    val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 12 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 12)
+                    val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 24 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 24)
+                    val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+            } else if (it.type == LMSType.LESSON || it.type == LMSType.SUP_LESSON) {
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 1)
+                    val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 6, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 2 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 2)
+                    val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 7, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 6 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 6)
+                    val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 8, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 12 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 12)
+                    val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 9, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 24 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 24)
+                    val pendingIntent = PendingIntent.getBroadcast(this, it.id * 100 + 10, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
             }
         }
 
