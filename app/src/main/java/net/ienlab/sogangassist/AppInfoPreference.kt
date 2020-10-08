@@ -18,7 +18,7 @@ class AppInfoPreference(context: Context, attrs: AttributeSet): Preference(conte
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
         with(holder.itemView) {
-//            typo.typeface = Typeface.createFromAsset(context.assets, "fonts/gmsans_bold.otf")
+            typo.typeface = Typeface.createFromAsset(context.assets, "fonts/gmsans_bold.otf")
         }
     }
 

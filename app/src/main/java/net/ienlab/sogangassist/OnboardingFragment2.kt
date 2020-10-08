@@ -1,6 +1,9 @@
 package net.ienlab.sogangassist
 
 import android.content.Context
+import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
@@ -8,12 +11,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_onboarding2.*
+
 
 class OnboardingFragment2 : Fragment() {
 
     private var mListener: OnFragmentInteractionListener? = null
+    lateinit var intro_btn_next: ImageButton
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_onboarding2, container, false)
@@ -22,123 +29,58 @@ class OnboardingFragment2 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)
-        val inflator = requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val intro_btn_next: ImageButton = requireActivity().findViewById(R.id.intro_btn_next)
+        intro_btn_next = requireActivity().findViewById(R.id.intro_btn_next)
 
         section_label.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
         section_content.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
 
-        btn_1hour.setOnClickListener {
-            if (hours[0]) {
-                hours[0] = false
-                btn_1hour.alpha = 0.3f
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_1HOUR_HW, false).apply()
-            } else {
-                hours[0] = true
-                btn_1hour.alpha = 1.0f
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_1HOUR_HW, true).apply()
+        if (isNotiPermissionAllowed()) {
+            with (btn_noti_access) {
+                text = getString(R.string.noti_access_allowed)
+                backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+                iconTint = ColorStateList.valueOf(Color.BLACK)
+                setTextColor(Color.BLACK)
+                isEnabled = false
             }
 
-            with (intro_btn_next) {
-                if (true in hours) {
-                    isEnabled = true
-                    alpha = 1f
-                } else {
-                    isEnabled = false
-                    alpha = 0.2f
-                }
-            }
+            intro_btn_next.alpha = 1.0f
+            intro_btn_next.isEnabled = true
         }
 
-        btn_2hour.setOnClickListener {
-            if (hours[1]) {
-                hours[1] = false
-                btn_2hour.alpha = 0.3f
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_2HOUR_HW, false).apply()
-            } else {
-                hours[1] = true
-                btn_2hour.alpha = 1.0f
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_2HOUR_HW, true).apply()
-            }
-
-            with (intro_btn_next) {
-                if (true in hours) {
-                    isEnabled = true
-                    alpha = 1f
-                } else {
-                    isEnabled = false
-                    alpha = 0.2f
-                }
-            }
+        btn_noti_access.setOnClickListener {
+            startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
         }
 
-        btn_6hour.setOnClickListener {
-            if (hours[2]) {
-                hours[2] = false
-                btn_6hour.alpha = 0.3f
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_6HOUR_HW, false).apply()
-            } else {
-                hours[2] = true
-                btn_6hour.alpha = 1.0f
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_6HOUR_HW, true).apply()
-            }
+    }
 
-            with (intro_btn_next) {
-                if (true in hours) {
-                    isEnabled = true
-                    alpha = 1f
-                } else {
-                    isEnabled = false
-                    alpha = 0.2f
-                }
+    fun isNotiPermissionAllowed(): Boolean {
+        val notiListenerSet = NotificationManagerCompat.getEnabledListenerPackages(requireContext())
+        val myPackageName = requireActivity().packageName
+        for (packageName in notiListenerSet) {
+            if (packageName == null) {
+                continue
+            }
+            if (packageName == myPackageName) {
+                return true
             }
         }
+        return false
+    }
 
-        btn_12hour.setOnClickListener {
-            if (hours[3]) {
-                hours[3] = false
-                btn_12hour.alpha = 0.3f
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_12HOUR_HW, false).apply()
-            } else {
-                hours[3] = true
-                btn_12hour.alpha = 1.0f
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_12HOUR_HW, true).apply()
+    override fun onResume() {
+        super.onResume()
+        if (isNotiPermissionAllowed()) {
+            with (btn_noti_access) {
+                text = getString(R.string.noti_access_allowed)
+                backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+                iconTint = ColorStateList.valueOf(Color.BLACK)
+                setTextColor(Color.BLACK)
+                isEnabled = false
             }
 
-            with (intro_btn_next) {
-                if (true in hours) {
-                    isEnabled = true
-                    alpha = 1f
-                } else {
-                    isEnabled = false
-                    alpha = 0.2f
-                }
-            }
+            intro_btn_next.alpha = 1.0f
+            intro_btn_next.isEnabled = true
         }
-
-        btn_24hour.setOnClickListener {
-            if (hours[4]) {
-                hours[4] = false
-                btn_24hour.alpha = 0.3f
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_24HOUR_HW, false).apply()
-            } else {
-                hours[4] = true
-                btn_24hour.alpha = 1.0f
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_24HOUR_HW, true).apply()
-            }
-
-            with (intro_btn_next) {
-                if (true in hours) {
-                    isEnabled = true
-                    alpha = 1f
-                } else {
-                    isEnabled = false
-                    alpha = 0.2f
-                }
-            }
-        }
-
     }
 
     override fun onAttach(context: Context) {
@@ -165,8 +107,6 @@ class OnboardingFragment2 : Fragment() {
             val args = Bundle()
             arguments = args
         }
-
-        val hours = mutableListOf(false, false, false, false, false)
     }
 
 }

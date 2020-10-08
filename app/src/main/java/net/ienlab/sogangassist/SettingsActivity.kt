@@ -17,7 +17,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-//        titles.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
+        titles.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
 
         supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, SettingsFragment(), null).commit()

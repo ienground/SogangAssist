@@ -329,12 +329,14 @@ class EditActivity : AppCompatActivity() {
         val id = intent.getIntExtra("ID", -1)
 
         LMSClass().let {
-            it.id = if (id != -1) {
-                id
+            if (id != -1) {
+                it.id = id
             } else {
-                dbHelper.getAllData().apply {
+                val data = dbHelper.getAllData().apply {
                     sortedBy { l -> l.id }
-                }.last().id + 1
+                }
+
+                it.id = if (data.isNotEmpty()) data.last().id + 1 else 1
             }
 
             it.className = et_class.editText?.text!!.toString()

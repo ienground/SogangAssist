@@ -89,7 +89,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             email.type = "plain/text"
             val address = arrayOf("admin@ienlab.net")
             email.putExtra(Intent.EXTRA_EMAIL, address)
-            email.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name) + " " + BuildConfig.VERSION_NAME + " " + getString(R.string.ask))
+            email.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.real_app_name) + " " + BuildConfig.VERSION_NAME + " " + getString(R.string.ask))
             email.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_text) + "\n${Build.BRAND} ${Build.MODEL} Android ${Build.VERSION.RELEASE}" + "\n_\n")
             email.type = "message/rfc822"
             startActivity(email)

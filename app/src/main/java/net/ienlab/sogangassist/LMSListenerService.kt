@@ -38,8 +38,8 @@ class LMSListenerService : NotificationListenerService() {
 
         val timeFormat = SimpleDateFormat("yyyy.MM.dd a hh:mm", Locale.KOREA)
 
-//        if (sbn.packageName == "kr.co.imaxsoft.hellolms") {
-        if (sbn.packageName == "net.ienlab.notificationtest") {
+        if (sbn.packageName == "kr.co.imaxsoft.hellolms") {
+//        if (sbn.packageName == "net.ienlab.notificationtest") {
             val className = extras.getString(Notification.EXTRA_TITLE)!!
 
             with (extras.getString(Notification.EXTRA_TEXT)) {

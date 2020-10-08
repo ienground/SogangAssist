@@ -32,7 +32,7 @@ class TimeReceiver : BroadcastReceiver() {
         val triggerTime = intent.getLongExtra("TRIGGER", -1)
 
         when (item.type) {
-            LMSType.LESSON, LMSType.SUP_LESSON -> {
+            LMSType.LESSON -> {
                 NotificationCompat.Builder(context, channelId).let {
                     val markIntent = Intent(context, MarkFinishReceiver::class.java).apply {
                         putExtra("ID", item.id)
@@ -47,6 +47,29 @@ class TimeReceiver : BroadcastReceiver() {
                         .setSmallIcon(R.drawable.ic_video)
                         .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                         .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+
+                    if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
+                        nm.notify(693000 + item.id, it.build())
+                    }
+                }
+            }
+
+            LMSType.SUP_LESSON -> {
+                NotificationCompat.Builder(context, channelId).let {
+                    val markIntent = Intent(context, MarkFinishReceiver::class.java).apply {
+                        putExtra("ID", item.id)
+                    }
+
+                    val pendingIntent = PendingIntent.getBroadcast(context, 0, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                    it
+                        .setContentTitle(item.className)
+                        .setContentText(String.format(context.getString(R.string.reminder_content_lec), item.week, item.lesson, time))
+                        .setStyle(NotificationCompat.BigTextStyle())
+                        .setSmallIcon(R.drawable.ic_video_sup)
+                        .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                        .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
                         nm.notify(693000 + item.id, it.build())
                     }
@@ -68,6 +91,7 @@ class TimeReceiver : BroadcastReceiver() {
                         .setSmallIcon(R.drawable.ic_assignment)
                         .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                         .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
                         nm.notify(693000 + item.id, it.build())
                     }

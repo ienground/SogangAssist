@@ -15,5 +15,6 @@ class SharedGroup {
         val NOTIFY_24HOUR_LEC = "notify_24hour_lec"
 
         val IS_FIRST_VISIT = "isFirstVisit"
+        val LAST_VERSION = "lastVersion"
     }
 }

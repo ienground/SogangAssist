@@ -29,8 +29,6 @@ class OnboardingFragment1 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)
-        val inflator = requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val intro_btn_next: ImageButton = requireActivity().findViewById(R.id.intro_btn_next)
         val pm = requireContext().packageManager
         val lmsPackageName = "kr.co.imaxsoft.hellolms"

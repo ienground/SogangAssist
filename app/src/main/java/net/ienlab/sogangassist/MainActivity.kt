@@ -2,23 +2,32 @@ package net.ienlab.sogangassist
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.*
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import kotlinx.android.synthetic.main.activity_edit.*
 import kotlinx.android.synthetic.main.activity_main.*
 import net.ienlab.sogangassist.decorators.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.Reader
+import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,6 +37,7 @@ val REFRESH_MAIN_WORK = 2
 class MainActivity : AppCompatActivity() {
 
     lateinit var dbHelper: DBHelper
+    lateinit var sharedPreferences: SharedPreferences
     var currentDate: Long = 0
     lateinit var fadeOutAnimation: AlphaAnimation
     lateinit var fadeInAnimation: AlphaAnimation
@@ -40,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = null
 
         dbHelper = DBHelper(this, dbName, null, dbVersion)
+        sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
         fadeOutAnimation = AlphaAnimation(1f, 1f).apply {
             duration = 300
         }
@@ -98,6 +109,67 @@ class MainActivity : AppCompatActivity() {
         }
 
         setDecorators()
+
+        // 체인지로그 Dialog
+
+        val changelog_dialog_builder = AlertDialog.Builder(this)
+        val inflator = layoutInflater
+
+        val changelog_dialog_view = inflator.inflate(R.layout.dialog_changelog, null)
+        changelog_dialog_builder.setView(changelog_dialog_view)
+
+        val changelog_content = changelog_dialog_view.findViewById<TextView>(R.id.changelog_content)
+
+        changelog_dialog_builder.setPositiveButton(R.string.ok) { dialog, id ->
+            dialog.cancel()
+        }
+
+        val version: String
+        try {
+            val i = packageManager.getPackageInfo(packageName, 0)
+            version = i.versionName
+            changelog_dialog_builder.setTitle(String.format("%s %s", getString(R.string.real_app_name), version + " " + getString(R.string.changelog)))
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+
+        val changelog_dialog = changelog_dialog_builder.create()
+
+        // raw에서 체인지로그 파일 불러오기
+        try {
+            val inputStream = resources.openRawResource(R.raw.thischangelog)
+            if (inputStream != null) {
+                val stream = InputStreamReader(inputStream, Charset.forName("utf-8"))
+                val buffer = BufferedReader(stream as Reader)
+
+                var read: String
+                val sb = StringBuilder()
+
+
+                buffer.lineSequence().forEach {
+                    sb.append(it)
+                }
+                inputStream.close()
+
+                changelog_content.text = Html.fromHtml(sb.toString())
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        try {
+            val pi = packageManager.getPackageInfo(packageName, 0)
+            val nowVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) pi.longVersionCode.toInt()
+            else pi.versionCode
+            val getVersion = sharedPreferences.getInt(SharedGroup.LAST_VERSION, 0)
+
+            if (nowVersion > getVersion) {
+                sharedPreferences.edit().putInt(SharedGroup.LAST_VERSION, nowVersion).apply()
+                changelog_dialog.show()
+            }
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
     }
 
     fun setDecorators() {

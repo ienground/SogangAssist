@@ -4,17 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PowerManager
-import android.provider.Settings
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
-import com.google.android.material.snackbar.Snackbar
 import com.rd.animation.type.AnimationType
 import kotlinx.android.synthetic.main.activity_onboarding.*
 import net.ienlab.sogangassist.OnboardingFragmentTabAdapter.Companion.PAGE_NUMBER
@@ -24,7 +21,8 @@ class OnboardingActivity : AppCompatActivity(),
     OnboardingFragment0.OnFragmentInteractionListener,
     OnboardingFragment1.OnFragmentInteractionListener,
     OnboardingFragment2.OnFragmentInteractionListener,
-    OnboardingFragment3.OnFragmentInteractionListener {
+    OnboardingFragment3.OnFragmentInteractionListener,
+    OnboardingFragment4.OnFragmentInteractionListener {
 
     private val FINISH_INTERVAL_TIME: Long = 2000
     private var backPressedTime: Long = 0
@@ -77,7 +75,7 @@ class OnboardingActivity : AppCompatActivity(),
 
                         2 -> {
                             with (intro_btn_next) {
-                                if (true in OnboardingFragment2.hours) {
+                                if (isNotiPermissionAllowed()) {
                                     isEnabled = true
                                     alpha = 1f
                                 } else {
@@ -88,8 +86,20 @@ class OnboardingActivity : AppCompatActivity(),
                         }
 
                         3 -> {
-                            with (intro_btn_fine) {
+                            with (intro_btn_next) {
                                 if (true in OnboardingFragment3.hours) {
+                                    isEnabled = true
+                                    alpha = 1f
+                                } else {
+                                    isEnabled = false
+                                    alpha = 0.2f
+                                }
+                            }
+                        }
+
+                        4 -> {
+                            with (intro_btn_fine) {
+                                if (true in OnboardingFragment4.hours) {
                                     isEnabled = true
                                     alpha = 1f
                                 } else {
@@ -133,12 +143,10 @@ class OnboardingActivity : AppCompatActivity(),
         }
 
         intro_btn_fine.setOnClickListener {
-            if (true in OnboardingFragment3.hours) {
+            if (true in OnboardingFragment4.hours) {
                 sharedPreferences.edit().putBoolean(SharedGroup.IS_FIRST_VISIT, false).apply()
                 finish()
                 startActivity(Intent(this, MainActivity::class.java))
-            } else {
-
             }
         }
 
@@ -164,6 +172,20 @@ class OnboardingActivity : AppCompatActivity(),
         } catch (e: Exception) {
             false
         }
+    }
+
+    fun isNotiPermissionAllowed(): Boolean {
+        val notiListenerSet = NotificationManagerCompat.getEnabledListenerPackages(this)
+        val myPackageName = packageName
+        for (packageName in notiListenerSet) {
+            if (packageName == null) {
+                continue
+            }
+            if (packageName == myPackageName) {
+                return true
+            }
+        }
+        return false
     }
 
     override fun onFragmentInteraction(uri: Uri) {}
