@@ -27,7 +27,7 @@ class LMSListenerService : NotificationListenerService() {
         super.onCreate()
         pm = packageManager
         am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        dbHelper = DBHelper(this, dbName, null, dbVersion)
+        dbHelper = DBHelper(this, dbName, dbVersion)
         sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
     }
 

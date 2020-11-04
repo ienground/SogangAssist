@@ -13,12 +13,15 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_edit.*
+import net.ienlab.sogangassist.databinding.ActivityEditBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
 class EditActivity : AppCompatActivity() {
+
+    lateinit var binding: ActivityEditBinding
 
     lateinit var dbHelper: DBHelper
     lateinit var radioButtonGroup: Array<Int>
@@ -35,13 +38,14 @@ class EditActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_edit)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_edit)
+        binding.activity = this
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        dbHelper = DBHelper(this, dbName, null, dbVersion)
+        dbHelper = DBHelper(this, dbName, dbVersion)
         radioButtonGroup = arrayOf(R.id.radioButton1, R.id.radioButton2, R.id.radioButton3)
 
         dateFormat = SimpleDateFormat(getString(R.string.dateFormat), Locale.getDefault())
@@ -52,39 +56,39 @@ class EditActivity : AppCompatActivity() {
         val id = intent.getIntExtra("ID", -1)
         if (id != -1) {
             val currentItem = dbHelper.getItemById(id)
-            radioGroup.check(radioButtonGroup[currentItem.type])
-            et_class.editText?.setText(currentItem.className)
-            check_auto_edit.isChecked = currentItem.isRenewAllowed
+            binding.radioGroup.check(radioButtonGroup[currentItem.type])
+            binding.etClass.editText?.setText(currentItem.className)
+            binding.checkAutoEdit.isChecked = currentItem.isRenewAllowed
             isFinished = currentItem.isFinished
 
             invalidateOptionsMenu()
 
             if (isFinished) {
-                for (i in 0 until radioGroup.childCount) {
-                    radioGroup.getChildAt(i).isEnabled = false
+                for (i in 0 until binding.radioGroup.childCount) {
+                    binding.radioGroup.getChildAt(i).isEnabled = false
                 }
-                check_auto_edit.isEnabled = false
-                et_class.isEnabled = false
-                et_assignment.isEnabled = false
-                et_time_week.isEnabled = false
-                et_time_lesson.isEnabled = false
-                tv_start_date.isEnabled = false
-                tv_start_time.isEnabled = false
-                tv_end_date.isEnabled = false
-                tv_end_time.isEnabled = false
-                tv_class_end_date.isEnabled = false
-                tv_class_end_time.isEnabled = false
+                binding.checkAutoEdit.isEnabled = false
+                binding.etClass.isEnabled = false
+                binding.etAssignment.isEnabled = false
+                binding.etTimeWeek.isEnabled = false
+                binding.etTimeLesson.isEnabled = false
+                binding.tvStartDate.isEnabled = false
+                binding.tvStartTime.isEnabled = false
+                binding.tvEndDate.isEnabled = false
+                binding.tvEndTime.isEnabled = false
+                binding.tvClassEndDate.isEnabled = false
+                binding.tvClassEndTime.isEnabled = false
 
-                et_class.editText?.paintFlags = et_class.editText?.paintFlags?.or(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
-                et_assignment.editText?.paintFlags = et_assignment.editText?.paintFlags?.or(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
-                et_time_week.editText?.paintFlags = et_time_week.editText?.paintFlags?.or(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
-                et_time_lesson.editText?.paintFlags = et_time_lesson.editText?.paintFlags?.or(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
-                tv_start_date.paintFlags = tv_start_date.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                tv_start_time.paintFlags = tv_start_time.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                tv_end_date.paintFlags = tv_end_date.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                tv_end_time.paintFlags = tv_end_time.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                tv_class_end_date.paintFlags = tv_class_end_date.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                tv_class_end_time.paintFlags = tv_class_end_time.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                binding.etClass.editText?.paintFlags = binding.etClass.editText?.paintFlags?.or(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
+                binding.etAssignment.editText?.paintFlags = binding.etAssignment.editText?.paintFlags?.or(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
+                binding.etTimeWeek.editText?.paintFlags = binding.etTimeWeek.editText?.paintFlags?.or(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
+                binding.etTimeLesson.editText?.paintFlags = binding.etTimeLesson.editText?.paintFlags?.or(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
+                binding.tvStartDate.paintFlags = binding.tvStartDate.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                binding.tvStartTime.paintFlags = binding.tvStartTime.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                binding.tvEndDate.paintFlags = binding.tvEndDate.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                binding.tvEndTime.paintFlags = binding.tvEndTime.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                binding.tvClassEndDate.paintFlags = binding.tvClassEndDate.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                binding.tvClassEndTime.paintFlags = binding.tvClassEndTime.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             }
 
             when (currentItem.type) {
@@ -97,7 +101,7 @@ class EditActivity : AppCompatActivity() {
                 }
             }
 
-            radioGroup.setOnCheckedChangeListener { group, checkedId ->
+            binding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
                 when (checkedId) {
                     R.id.radioButton1, R.id.radioButton2 -> {
                         lessonType(currentItem)
@@ -109,27 +113,27 @@ class EditActivity : AppCompatActivity() {
                 }
             }
         } else {
-            check_auto_edit.isChecked = true
-            radioGroup.check(R.id.radioButton1)
+            binding.checkAutoEdit.isChecked = true
+            binding.radioGroup.check(R.id.radioButton1)
 
             lessonUI(endCalendar)
-            tv_class_end_date.text = dateFormat.format(endCalendar.time)
-            tv_class_end_time.text = timeFormat.format(endCalendar.time)
+            binding.tvClassEndDate.text = dateFormat.format(endCalendar.time)
+            binding.tvClassEndTime.text = timeFormat.format(endCalendar.time)
 
-            radioGroup.setOnCheckedChangeListener { group, checkedId ->
+            binding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
                 when (checkedId) {
                     R.id.radioButton1, R.id.radioButton2 -> {
                         lessonUI(endCalendar)
-                        tv_class_end_date.text = dateFormat.format(endCalendar.time)
-                        tv_class_end_time.text = timeFormat.format(endCalendar.time)
+                        binding.tvClassEndDate.text = dateFormat.format(endCalendar.time)
+                        binding.tvClassEndTime.text = timeFormat.format(endCalendar.time)
                     }
 
                     R.id.radioButton3 -> {
                         homeworkUI(startCalendar, endCalendar)
-                        tv_start_date.text = dateFormat.format(startCalendar.time)
-                        tv_start_time.text = timeFormat.format(startCalendar.time)
-                        tv_end_date.text = dateFormat.format(endCalendar.time)
-                        tv_end_time.text = timeFormat.format(endCalendar.time)
+                        binding.tvStartDate.text = dateFormat.format(startCalendar.time)
+                        binding.tvStartTime.text = timeFormat.format(startCalendar.time)
+                        binding.tvEndDate.text = dateFormat.format(endCalendar.time)
+                        binding.tvEndTime.text = timeFormat.format(endCalendar.time)
                     }
                 }
             }
@@ -140,43 +144,43 @@ class EditActivity : AppCompatActivity() {
 
     fun lessonUI(endCalendar: Calendar) {
         View.GONE.let {
-            line.visibility = it
-            ic_assignment.visibility = it
-            et_assignment.visibility = it
-            ic_date.visibility = it
-            tv_start_date.visibility = it
-            tv_start_time.visibility = it
-            tv_end_date.visibility = it
-            tv_end_time.visibility = it
+            binding.line.visibility = it
+            binding.icAssignment.visibility = it
+            binding.etAssignment.visibility = it
+            binding.icDate.visibility = it
+            binding.tvStartDate.visibility = it
+            binding.tvStartTime.visibility = it
+            binding.tvEndDate.visibility = it
+            binding.tvEndTime.visibility = it
         }
 
         View.VISIBLE.let {
-            ic_time.visibility = it
-            et_time_week.visibility = it
-            et_time_lesson.visibility = it
-            line_class.visibility = it
-            ic_class_date.visibility = it
-            tv_class_end_date.visibility = it
-            tv_class_end_time.visibility = it
+            binding.icTime.visibility = it
+            binding.etTimeWeek.visibility = it
+            binding.etTimeLesson.visibility = it
+            binding.lineClass.visibility = it
+            binding.icClassDate.visibility = it
+            binding.tvClassEndDate.visibility = it
+            binding.tvClassEndTime.visibility = it
         }
 
-        tv_class_end_date.setOnClickListener {
+        binding.tvClassEndDate.setOnClickListener {
             DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 endCalendar.set(Calendar.YEAR, year)
                 endCalendar.set(Calendar.MONTH, month)
                 endCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                tv_class_end_date.text = dateFormat.format(endCalendar.time)
+                binding.tvClassEndDate.text = dateFormat.format(endCalendar.time)
             }, endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH), endCalendar.get(Calendar.DAY_OF_MONTH))
                 .show()
         }
 
-        tv_class_end_time.setOnClickListener {
+        binding.tvClassEndTime.setOnClickListener {
             TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
                 endCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 endCalendar.set(Calendar.MINUTE, minute)
 
-                tv_class_end_time.text = timeFormat.format(endCalendar.time)
+                binding.tvClassEndTime.text = timeFormat.format(endCalendar.time)
             }, endCalendar.get(Calendar.HOUR_OF_DAY), endCalendar.get(Calendar.MINUTE), false)
                 .show()
         }
@@ -184,94 +188,94 @@ class EditActivity : AppCompatActivity() {
 
     fun homeworkUI(startCalendar: Calendar, endCalendar: Calendar) {
         View.VISIBLE.let {
-            line.visibility = it
-            ic_assignment.visibility = it
-            et_assignment.visibility = it
-            ic_date.visibility = it
-            tv_start_date.visibility = it
-            tv_start_time.visibility = it
-            tv_end_date.visibility = it
-            tv_end_time.visibility = it
+            binding.line.visibility = it
+            binding.icAssignment.visibility = it
+            binding.etAssignment.visibility = it
+            binding.icDate.visibility = it
+            binding.tvStartDate.visibility = it
+            binding.tvStartTime.visibility = it
+            binding.tvEndDate.visibility = it
+            binding.tvEndTime.visibility = it
         }
 
         View.GONE.let {
-            ic_time.visibility = it
-            et_time_week.visibility = it
-            et_time_lesson.visibility = it
-            line_class.visibility = it
-            ic_class_date.visibility = it
-            tv_class_end_date.visibility = it
-            tv_class_end_time.visibility = it
+            binding.icTime.visibility = it
+            binding.etTimeWeek.visibility = it
+            binding.etTimeLesson.visibility = it
+            binding.lineClass.visibility = it
+            binding.icClassDate.visibility = it
+            binding.tvClassEndDate.visibility = it
+            binding.tvClassEndTime.visibility = it
         }
 
-        tv_start_date.setOnClickListener {
+        binding.tvStartDate.setOnClickListener {
             DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 startCalendar.set(Calendar.YEAR, year)
                 startCalendar.set(Calendar.MONTH, month)
                 startCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                tv_start_date.text = dateFormat.format(startCalendar.time)
+                binding.tvStartDate.text = dateFormat.format(startCalendar.time)
             }, startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH), startCalendar.get(Calendar.DAY_OF_MONTH))
                 .show()
         }
 
-        tv_end_date.setOnClickListener {
+        binding.tvEndDate.setOnClickListener {
             DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 endCalendar.set(Calendar.YEAR, year)
                 endCalendar.set(Calendar.MONTH, month)
                 endCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                tv_end_date.text = dateFormat.format(endCalendar.time)
+                binding.tvEndDate.text = dateFormat.format(endCalendar.time)
             }, endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH), endCalendar.get(Calendar.DAY_OF_MONTH))
                 .show()
         }
 
-        tv_start_time.setOnClickListener {
+        binding.tvStartTime.setOnClickListener {
             TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                 startCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 startCalendar.set(Calendar.MINUTE, minute)
 
-                tv_start_time.text = timeFormat.format(startCalendar.time)
+                binding.tvStartTime.text = timeFormat.format(startCalendar.time)
             }, startCalendar.get(Calendar.HOUR_OF_DAY), startCalendar.get(Calendar.MINUTE), false)
                 .show()
         }
 
-        tv_end_time.setOnClickListener {
+        binding.tvEndTime.setOnClickListener {
             TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                 endCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 endCalendar.set(Calendar.MINUTE, minute)
 
-                tv_end_time.text = timeFormat.format(endCalendar.time)
+                binding.tvEndTime.text = timeFormat.format(endCalendar.time)
             }, endCalendar.get(Calendar.HOUR_OF_DAY), endCalendar.get(Calendar.MINUTE), false)
                 .show()
         }
     }
 
     fun lessonType(currentItem: LMSClass) {
-        et_time_week.editText?.setText(if (currentItem.week != -1) currentItem.week.toString() else "")
-        et_time_lesson.editText?.setText(if (currentItem.lesson != -1) currentItem.lesson.toString() else "")
-        tv_class_end_date.text = dateFormat.format(Date(currentItem.endTime))
-        tv_class_end_time.text = timeFormat.format(Date(currentItem.endTime))
+        binding.etTimeWeek.editText?.setText(if (currentItem.week != -1) currentItem.week.toString() else "")
+        binding.etTimeLesson.editText?.setText(if (currentItem.lesson != -1) currentItem.lesson.toString() else "")
+        binding.tvClassEndDate.text = dateFormat.format(Date(currentItem.endTime))
+        binding.tvClassEndTime.text = timeFormat.format(Date(currentItem.endTime))
 
         endCalendar.timeInMillis = currentItem.endTime
         lessonUI(endCalendar)
     }
 
     fun homeworkType(currentItem: LMSClass) {
-        et_assignment.editText?.setText(if (currentItem.homework_name != "#NONE") currentItem.homework_name else "")
+        binding.etAssignment.editText?.setText(if (currentItem.homework_name != "#NONE") currentItem.homework_name else "")
         if (currentItem.startTime != -1L) {
-            tv_start_date.text = dateFormat.format(Date(currentItem.startTime))
-            tv_start_time.text = timeFormat.format(Date(currentItem.startTime))
+            binding.tvStartDate.text = dateFormat.format(Date(currentItem.startTime))
+            binding.tvStartTime.text = timeFormat.format(Date(currentItem.startTime))
             startCalendar.timeInMillis = currentItem.startTime
         } else {
             val startTime = Date(currentItem.endTime - 24 * 60 * 60 * 1000)
-            tv_start_date.text = dateFormat.format(startTime)
-            tv_start_time.text = timeFormat.format(startTime)
+            binding.tvStartDate.text = dateFormat.format(startTime)
+            binding.tvStartTime.text = timeFormat.format(startTime)
             startCalendar.timeInMillis = startTime.time
         }
 
-        tv_end_date.text = dateFormat.format(Date(currentItem.endTime))
-        tv_end_time.text = timeFormat.format(Date(currentItem.endTime))
+        binding.tvEndDate.text = dateFormat.format(Date(currentItem.endTime))
+        binding.tvEndTime.text = timeFormat.format(Date(currentItem.endTime))
         endCalendar.timeInMillis = currentItem.endTime
 
         homeworkUI(startCalendar, endCalendar)
@@ -279,18 +283,18 @@ class EditActivity : AppCompatActivity() {
 
     fun onBackAutoSave(isFinished: Boolean) {
         val view = window.decorView.rootView
-        when (radioGroup.checkedRadioButtonId) {
+        when (binding.radioGroup.checkedRadioButtonId) {
             R.id.radioButton1, R.id.radioButton2 -> {
-                if (et_class.editText?.text?.toString() != "" && et_time_week.editText?.text?.toString() != ""
-                    && et_time_lesson.editText?.text?.toString() != "") {
+                if (binding.etClass.editText?.text?.toString() != "" && binding.etTimeWeek.editText?.text?.toString() != ""
+                    && binding.etTimeLesson.editText?.text?.toString() != "") {
                     onSave(isFinished)
                     setResult(Activity.RESULT_OK)
                     finish()
-                } else if (et_time_week.editText?.text?.toString() != "" && et_time_lesson.editText?.text?.toString() != "") {
+                } else if (binding.etTimeWeek.editText?.text?.toString() != "" && binding.etTimeLesson.editText?.text?.toString() != "") {
                     Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
-                } else if (et_class.editText?.text?.toString() != "" && et_time_lesson.editText?.text?.toString() != "") {
+                } else if (binding.etClass.editText?.text?.toString() != "" && binding.etTimeLesson.editText?.text?.toString() != "") {
                     Snackbar.make(view, getString(R.string.err_input_week), Snackbar.LENGTH_SHORT).show()
-                } else if (et_class.editText?.text?.toString() != "" && et_time_week.editText?.text?.toString() != "") {
+                } else if (binding.etClass.editText?.text?.toString() != "" && binding.etTimeWeek.editText?.text?.toString() != "") {
                     Snackbar.make(view, getString(R.string.err_input_lesson), Snackbar.LENGTH_SHORT).show()
                 } else {
                     Snackbar.make(view, getString(R.string.err_input_blank), Snackbar.LENGTH_SHORT).show()
@@ -298,20 +302,20 @@ class EditActivity : AppCompatActivity() {
             }
 
             R.id.radioButton3 -> {
-                if (et_class.editText?.text?.toString() != "" && et_assignment.editText?.text?.toString() != ""
+                if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != ""
                     && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 123
                     onSave(isFinished)
                     setResult(Activity.RESULT_OK)
                     finish()
-                } else if (et_assignment.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 23
+                } else if (binding.etAssignment.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 23
                     Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
-                } else if (et_class.editText?.text?.toString() != "" && et_assignment.editText?.text?.toString() != "") { // 12
+                } else if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != "") { // 12
                     Snackbar.make(view, getString(R.string.err_time_late), Snackbar.LENGTH_SHORT).show()
-                } else if (et_class.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 13
+                } else if (binding.etClass.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 13
                     Snackbar.make(view, getString(R.string.err_input_assignment), Snackbar.LENGTH_SHORT).show()
-                } else if (et_class.editText?.text?.toString() != "") { // 1
+                } else if (binding.etClass.editText?.text?.toString() != "") { // 1
                     Snackbar.make(view, getString(R.string.err_assignment_time), Snackbar.LENGTH_SHORT).show()
-                } else if (et_assignment.editText?.text?.toString() != "") { // 2
+                } else if (binding.etAssignment.editText?.text?.toString() != "") { // 2
                     Snackbar.make(view, getString(R.string.err_class_time), Snackbar.LENGTH_SHORT).show()
                 } else if (startCalendar.timeInMillis < endCalendar.timeInMillis) { // 3
                     Snackbar.make(view, getString(R.string.err_class_assignment), Snackbar.LENGTH_SHORT).show()
@@ -339,22 +343,22 @@ class EditActivity : AppCompatActivity() {
                 it.id = if (data.isNotEmpty()) data.last().id + 1 else 1
             }
 
-            it.className = et_class.editText?.text!!.toString()
-            it.type = radioButtonGroup.indexOf(radioGroup.checkedRadioButtonId)
+            it.className = binding.etClass.editText?.text!!.toString()
+            it.type = radioButtonGroup.indexOf(binding.radioGroup.checkedRadioButtonId)
             it.endTime = endCalendar.timeInMillis
             it.isFinished = isFinished
-            it.isRenewAllowed = check_auto_edit.isChecked
+            it.isRenewAllowed = binding.checkAutoEdit.isChecked
 
             if (it.type == LMSType.HOMEWORK) {
                 it.startTime = startCalendar.timeInMillis
-                it.homework_name = et_assignment.editText?.text!!.toString()
+                it.homework_name = binding.etAssignment.editText?.text!!.toString()
                 it.week = -1
                 it.lesson = -1
             } else if (it.type == LMSType.LESSON || it.type == LMSType.SUP_LESSON) {
                 it.startTime = -1
                 it.homework_name = "#NONE"
-                it.week = et_time_week.editText?.text!!.toString().toInt()
-                it.lesson = et_time_lesson.editText?.text!!.toString().toInt()
+                it.week = binding.etTimeWeek.editText?.text!!.toString().toInt()
+                it.lesson = binding.etTimeLesson.editText?.text!!.toString().toInt()
             }
 
             if (id != -1) {
@@ -495,31 +499,31 @@ class EditActivity : AppCompatActivity() {
                     item.setIcon(R.drawable.ic_check)
                     item.title = getString(R.string.mark_as_finish)
 
-                    for (i in 0 until radioGroup.childCount) {
-                        radioGroup.getChildAt(i).isEnabled = true
+                    for (i in 0 until binding.radioGroup.childCount) {
+                        binding.radioGroup.getChildAt(i).isEnabled = true
                     }
-                    check_auto_edit.isEnabled = true
-                    et_class.isEnabled = true
-                    et_assignment.isEnabled = true
-                    et_time_week.isEnabled = true
-                    et_time_lesson.isEnabled = true
-                    tv_start_date.isEnabled = true
-                    tv_start_time.isEnabled = true
-                    tv_end_date.isEnabled = true
-                    tv_end_time.isEnabled = true
-                    tv_class_end_date.isEnabled = true
-                    tv_class_end_time.isEnabled = true
+                    binding.checkAutoEdit.isEnabled = true
+                    binding.etClass.isEnabled = true
+                    binding.etAssignment.isEnabled = true
+                    binding.etTimeWeek.isEnabled = true
+                    binding.etTimeLesson.isEnabled = true
+                    binding.tvStartDate.isEnabled = true
+                    binding.tvStartTime.isEnabled = true
+                    binding.tvEndDate.isEnabled = true
+                    binding.tvEndTime.isEnabled = true
+                    binding.tvClassEndDate.isEnabled = true
+                    binding.tvClassEndTime.isEnabled = true
 
-                    et_class.editText?.paintFlags = 0
-                    et_assignment.editText?.paintFlags = 0
-                    et_time_week.editText?.paintFlags = 0
-                    et_time_lesson.editText?.paintFlags = 0
-                    tv_start_date.paintFlags = 0
-                    tv_start_time.paintFlags = 0
-                    tv_end_date.paintFlags = 0
-                    tv_end_time.paintFlags = 0
-                    tv_class_end_date.paintFlags = 0
-                    tv_class_end_time.paintFlags = 0
+                    binding.etClass.editText?.paintFlags = 0
+                    binding.etAssignment.editText?.paintFlags = 0
+                    binding.etTimeWeek.editText?.paintFlags = 0
+                    binding.etTimeLesson.editText?.paintFlags = 0
+                    binding.tvStartDate.paintFlags = 0
+                    binding.tvStartTime.paintFlags = 0
+                    binding.tvEndDate.paintFlags = 0
+                    binding.tvEndTime.paintFlags = 0
+                    binding.tvClassEndDate.paintFlags = 0
+                    binding.tvClassEndTime.paintFlags = 0
 
                 } else {
                     onBackAutoSave(true)

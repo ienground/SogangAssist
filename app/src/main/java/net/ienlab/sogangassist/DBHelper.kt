@@ -10,9 +10,7 @@ import kotlin.collections.ArrayList
 val dbName = "SogangLMSAssistData.db"
 val dbVersion = 2
 
-class DBHelper//생성자 - database 파일을 생성한다.
-(context: Context, name: String, factory: SQLiteDatabase.CursorFactory?, version: Int) :
-        SQLiteOpenHelper(context, name, factory, version) {
+class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(context, name, null, version) {
 
     val _TABLENAME0 = "LMS_ASSIST"
     val _CREATE0 = "CREATE TABLE IF NOT EXISTS $_TABLENAME0("
@@ -52,13 +50,6 @@ class DBHelper//생성자 - database 파일을 생성한다.
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS $_TABLENAME0")
         onCreate(db)
-
-//        if (oldVersion < 3) {
-//            try {
-//                db.beginTransaction()
-//                db.execSQL("ALTER TABLE $_TABLENAME0 ADD COLUMN ")
-//            }
-//        }
     }
 
     fun addItem(item: LMSClass) {

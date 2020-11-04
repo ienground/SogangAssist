@@ -14,7 +14,6 @@
         android:layout_marginStart="@dimen/usual_margin"
         android:layout_marginEnd="@dimen/usual_margin"
         android:src="@drawable/img_logo"
-
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,13 +26,12 @@
         android:id="@+id/typo"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
+        android:textSize="24sp"
         android:textAlignment="textEnd"
         android:gravity="end"
         android:textColor="@color/black"
         android:text="@string/real_app_name"
         android:layout_marginEnd="@dimen/usual_margin"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/logo"
         app:layout_constraintTop_toTopOf="@id/logo"

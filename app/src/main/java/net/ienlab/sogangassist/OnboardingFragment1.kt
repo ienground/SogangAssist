@@ -14,30 +14,32 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_onboarding1.*
-
+import net.ienlab.sogangassist.databinding.FragmentOnboarding1Binding
 
 class OnboardingFragment1 : Fragment() {
 
+    lateinit var binding: FragmentOnboarding1Binding
     private var mListener: OnFragmentInteractionListener? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_onboarding1, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_onboarding1, container, false)
+        binding.fragment = this
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val intro_btn_next: ImageButton = requireActivity().findViewById(R.id.intro_btn_next)
         val pm = requireContext().packageManager
         val lmsPackageName = "kr.co.imaxsoft.hellolms"
 
-        section_label.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
-        section_content.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
+        binding.sectionLabel.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
+        binding.sectionContent.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
 
         if (isPackageInstalled(lmsPackageName, pm)) {
-            with (btn_check_lms) {
+            with (binding.btnCheckLms) {
                 text = getString(R.string.lms_installed)
                 backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorAccent))
                 iconTint = ColorStateList.valueOf(Color.BLACK)
@@ -45,7 +47,7 @@ class OnboardingFragment1 : Fragment() {
                 isEnabled = false
             }
         } else {
-            with (btn_check_lms) {
+            with (binding.btnCheckLms) {
                 setOnClickListener {
                     try {
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$lmsPackageName")))
@@ -55,9 +57,6 @@ class OnboardingFragment1 : Fragment() {
                 }
             }
         }
-
-
-
     }
 
     fun isPackageInstalled(packageName: String, pm: PackageManager): Boolean {

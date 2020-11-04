@@ -13,29 +13,33 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_onboarding2.*
+import net.ienlab.sogangassist.databinding.FragmentOnboarding2Binding
 
 
 class OnboardingFragment2 : Fragment() {
 
+    lateinit var binding: FragmentOnboarding2Binding
     private var mListener: OnFragmentInteractionListener? = null
-    lateinit var intro_btn_next: ImageButton
+    lateinit var introBtnNext: ImageButton
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_onboarding2, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_onboarding2, container, false)
+        binding.fragment = this
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        intro_btn_next = requireActivity().findViewById(R.id.intro_btn_next)
+        introBtnNext = requireActivity().findViewById(R.id.intro_btn_next)
 
-        section_label.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
-        section_content.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
+        binding.sectionLabel.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
+        binding.sectionContent.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
 
         if (isNotiPermissionAllowed()) {
-            with (btn_noti_access) {
+            with (binding.btnNotiAccess) {
                 text = getString(R.string.noti_access_allowed)
                 backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorAccent))
                 iconTint = ColorStateList.valueOf(Color.BLACK)
@@ -43,11 +47,11 @@ class OnboardingFragment2 : Fragment() {
                 isEnabled = false
             }
 
-            intro_btn_next.alpha = 1.0f
-            intro_btn_next.isEnabled = true
+            introBtnNext.alpha = 1.0f
+            introBtnNext.isEnabled = true
         }
 
-        btn_noti_access.setOnClickListener {
+        binding.btnNotiAccess.setOnClickListener {
             startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
         }
 
@@ -70,7 +74,7 @@ class OnboardingFragment2 : Fragment() {
     override fun onResume() {
         super.onResume()
         if (isNotiPermissionAllowed()) {
-            with (btn_noti_access) {
+            with (binding.btnNotiAccess) {
                 text = getString(R.string.noti_access_allowed)
                 backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorAccent))
                 iconTint = ColorStateList.valueOf(Color.BLACK)
@@ -78,8 +82,8 @@ class OnboardingFragment2 : Fragment() {
                 isEnabled = false
             }
 
-            intro_btn_next.alpha = 1.0f
-            intro_btn_next.isEnabled = true
+            introBtnNext.alpha = 1.0f
+            introBtnNext.isEnabled = true
         }
     }
 

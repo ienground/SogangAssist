@@ -1,7 +1,9 @@
 package net.ienlab.sogangassist
 
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -19,10 +21,10 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prolificinteractive.materialcalendarview.CalendarDay
-import kotlinx.android.synthetic.main.activity_edit.*
-import kotlinx.android.synthetic.main.activity_main.*
+import net.ienlab.sogangassist.databinding.ActivityMainBinding
 import net.ienlab.sogangassist.decorators.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -36,6 +38,8 @@ val REFRESH_MAIN_WORK = 2
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var binding: ActivityMainBinding
+
     lateinit var dbHelper: DBHelper
     lateinit var sharedPreferences: SharedPreferences
     var currentDate: Long = 0
@@ -44,12 +48,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.activity = this
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
 
-        dbHelper = DBHelper(this, dbName, null, dbVersion)
+        dbHelper = DBHelper(this, dbName, dbVersion)
         sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
         fadeOutAnimation = AlphaAnimation(1f, 1f).apply {
             duration = 300
@@ -58,30 +63,118 @@ class MainActivity : AppCompatActivity() {
             duration = 300
         }
         val monthFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
-        month.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
-        month.text = monthFormat.format(Date(System.currentTimeMillis()))
+        binding.month.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
+        binding.month.text = monthFormat.format(Date(System.currentTimeMillis()))
 //        startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+
+        val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val datas = dbHelper.getAllData()
+        for (data in datas) {
+            val noti_intent = Intent(this, TimeReceiver::class.java)
+            noti_intent.putExtra("ID", data.id)
+
+            val endCalendar = Calendar.getInstance().apply {
+                timeInMillis = data.endTime
+            }
+
+            if (data.type == LMSType.HOMEWORK) {
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 1)
+                    val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 2 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 2)
+                    val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 6 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 6)
+                    val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 12 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 12)
+                    val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 24 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 24)
+                    val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+            } else if (data.type == LMSType.LESSON || data.type == LMSType.SUP_LESSON) {
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 1)
+                    val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 6, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 2 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 2)
+                    val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 7, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 6 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 6)
+                    val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 8, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 12 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 12)
+                    val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 9, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+
+                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
+                    val triggerTime = endCalendar.timeInMillis - 24 * 60 * 60 * 1000
+                    noti_intent.putExtra("TRIGGER", triggerTime)
+                    noti_intent.putExtra("TIME", 24)
+                    val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 10, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+            }
+        }
 
         val todayWork = dbHelper.getItemAtLastDate(System.currentTimeMillis()).toMutableList().apply {
             sortWith( compareBy ({ it.isFinished }, {it.type}))
         }
-        mainWorkView.adapter = MainWorkAdapter(todayWork)
-        mainWorkView.layoutManager = LinearLayoutManager(this)
-        tv_no_deadline.visibility = if (todayWork.isEmpty()) View.VISIBLE else View.GONE
+        binding.mainWorkView.adapter = MainWorkAdapter(todayWork)
+        binding.mainWorkView.layoutManager = LinearLayoutManager(this)
+        binding.tvNoDeadline.visibility = if (todayWork.isEmpty()) View.VISIBLE else View.GONE
 
-        val arr = mutableListOf("안녕")
-        arr.size
-        arr.reverse()
-
-        calendarView.topbarVisible = false
-
-        calendarView.arrowColor = ContextCompat.getColor(this, R.color.black)
+        binding.calendarView.topbarVisible = false
+        binding.calendarView.arrowColor = ContextCompat.getColor(this, R.color.black)
         currentDate = System.currentTimeMillis()
-        calendarView.setOnDateChangedListener { _, date, _ ->
+        binding.calendarView.setOnDateChangedListener { _, date, _ ->
             val work = dbHelper.getItemAtLastDate(date.date.time).toMutableList().apply {
                 sortWith( compareBy ({ it.isFinished }, {it.type}))
             }
-            mainWorkView.let {
+            binding.mainWorkView.let {
                 it.startAnimation(fadeOutAnimation)
                 it.visibility = View.INVISIBLE
 
@@ -93,7 +186,7 @@ class MainActivity : AppCompatActivity() {
                 it.startAnimation(fadeInAnimation)
             }
 
-            tv_no_deadline.let {
+            binding.tvNoDeadline.let {
                 if (work.isEmpty()) {
                     it.startAnimation(fadeOutAnimation)
                     it.visibility = View.INVISIBLE
@@ -104,8 +197,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        calendarView.setOnMonthChangedListener { _, date ->
-            month.text = monthFormat.format(date.date)
+        binding.calendarView.setOnMonthChangedListener { _, date ->
+            binding.month.text = monthFormat.format(date.date)
         }
 
         setDecorators()
@@ -173,7 +266,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setDecorators() {
-        calendarView.removeDecorators()
+        binding.calendarView.removeDecorators()
 
         val sundayDecorator = SundayDecorator(this)
         val saturdayDecorator = SaturdayDecorator(this)
@@ -181,9 +274,9 @@ class MainActivity : AppCompatActivity() {
             setDate(Date(System.currentTimeMillis()))
         }
 
-        calendarView.addDecorators(sundayDecorator, saturdayDecorator, todayDecorator)
+        binding.calendarView.addDecorators(sundayDecorator, saturdayDecorator, todayDecorator)
         if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
-            calendarView.addDecorator(NightModeDecorator(this))
+            binding.calendarView.addDecorator(NightModeDecorator(this))
         }
 
         val datas = dbHelper.getAllData()
@@ -207,7 +300,7 @@ class MainActivity : AppCompatActivity() {
 
         for (time in timeCount) {
             val decorator = EventDecorator(ContextCompat.getColor(this, R.color.colorAccent), time.value, arrayListOf(CalendarDay.from(Date(time.key))))
-            calendarView.addDecorator(decorator)
+            binding.calendarView.addDecorator(decorator)
         }
     }
 
@@ -220,9 +313,9 @@ class MainActivity : AppCompatActivity() {
                     val work = dbHelper.getItemAtLastDate(currentDate).toMutableList().apply {
                         sortWith( compareBy ({ it.isFinished }, {it.type}))
                     }
-                    mainWorkView.adapter = MainWorkAdapter(work)
-                    mainWorkView.layoutManager = LinearLayoutManager(this)
-                    tv_no_deadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
+                    binding.mainWorkView.adapter = MainWorkAdapter(work)
+                    binding.mainWorkView.layoutManager = LinearLayoutManager(this)
+                    binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
 
                     setDecorators()
                 }
@@ -255,7 +348,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_set_today -> {
-                calendarView.setCurrentDate(Date(System.currentTimeMillis()))
+                binding.calendarView.setCurrentDate(Date(System.currentTimeMillis()))
                 currentDate = System.currentTimeMillis()
             }
 

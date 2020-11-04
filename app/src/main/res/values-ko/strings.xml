@@ -1,5 +1,5 @@
 <resources>
-    <string name="real_app_name">서강 LMS 어시스트</string>
+    <string name="real_app_name">알바트로스 알리미</string>
     <string name="move_today">오늘로 이동</string>
     <string name="settings">설정</string>
     <string name="save">저장</string>
@@ -65,7 +65,7 @@
 
     <!--Onboarding-->
     <string name="intro_page0_title">환영합니다.</string>
-    <string name="intro_page0_exp">과제와 강의를 늦지 않도록 알림을 주는 어플리케이션, 서강 LMS 어시스트를 설치해주셔서 감사합니다.</string>
+    <string name="intro_page0_exp">과제와 강의를 늦지 않도록 알림을 주는 어플리케이션, 알바트로스 알리미를 설치해주셔서 감사합니다.</string>
     <string name="intro_page1_title">HelloLMS 설치 여부</string>
     <string name="intro_page1_exp">이 어플리케이션은 HelloLMS와 함께 작동합니다. 설치된 상태로 어플리케이션을 사용해 주세요.</string>
     <string name="intro_page2_title">알림 액세스 허용</string>

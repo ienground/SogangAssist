@@ -11,10 +11,11 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import com.rd.animation.type.AnimationType
-import kotlinx.android.synthetic.main.activity_onboarding.*
 import net.ienlab.sogangassist.OnboardingFragmentTabAdapter.Companion.PAGE_NUMBER
+import net.ienlab.sogangassist.databinding.ActivityOnboardingBinding
 import kotlin.system.exitProcess
 
 class OnboardingActivity : AppCompatActivity(),
@@ -28,10 +29,12 @@ class OnboardingActivity : AppCompatActivity(),
     private var backPressedTime: Long = 0
 
     var page = 0
+    lateinit var binding: ActivityOnboardingBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_onboarding)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_onboarding)
+        binding.activity = this
 
         val sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
         val lmsPackageName = "kr.co.imaxsoft.hellolms"
@@ -42,7 +45,7 @@ class OnboardingActivity : AppCompatActivity(),
 
         // Fragment Tab 설정
         val adapter = OnboardingFragmentTabAdapter(supportFragmentManager, applicationContext)
-        with (viewPager) {
+        with (binding.viewPager) {
             this.adapter = adapter
             currentItem = page
             setAllowedSwipeDirection(SwipeDirection.none)
@@ -51,18 +54,18 @@ class OnboardingActivity : AppCompatActivity(),
                 override fun onPageScrollStateChanged(state: Int) {}
                 override fun onPageSelected(position: Int) {
                     page = position
-                    pageIndicator.selection = position
+                    binding.pageIndicator.selection = position
 
                     when (position) {
                         0 -> {
-                            with (intro_btn_next) {
+                            with (binding.introBtnNext) {
                                 isEnabled = true
                                 alpha = 1f
                             }
                         }
 
                         1 -> {
-                            with (intro_btn_next) {
+                            with (binding.introBtnNext) {
                                 if (isPackageInstalled(lmsPackageName, packageManager) || BuildConfig.DEBUG) {
                                     isEnabled = true
                                     alpha = 1f
@@ -74,7 +77,7 @@ class OnboardingActivity : AppCompatActivity(),
                         }
 
                         2 -> {
-                            with (intro_btn_next) {
+                            with (binding.introBtnNext) {
                                 if (isNotiPermissionAllowed()) {
                                     isEnabled = true
                                     alpha = 1f
@@ -86,7 +89,7 @@ class OnboardingActivity : AppCompatActivity(),
                         }
 
                         3 -> {
-                            with (intro_btn_next) {
+                            with (binding.introBtnNext) {
                                 if (true in OnboardingFragment3.hours) {
                                     isEnabled = true
                                     alpha = 1f
@@ -98,7 +101,7 @@ class OnboardingActivity : AppCompatActivity(),
                         }
 
                         4 -> {
-                            with (intro_btn_fine) {
+                            with (binding.introBtnFine) {
                                 if (true in OnboardingFragment4.hours) {
                                     isEnabled = true
                                     alpha = 1f
@@ -111,38 +114,38 @@ class OnboardingActivity : AppCompatActivity(),
                     }
 
                     if (position == PAGE_NUMBER - 1) {
-                        intro_btn_fine.visibility = View.VISIBLE
-                        intro_btn_next.visibility = View.GONE
+                        binding.introBtnFine.visibility = View.VISIBLE
+                        binding.introBtnNext.visibility = View.GONE
                     } else {
-                        intro_btn_fine.visibility = View.GONE
-                        intro_btn_next.visibility = View.VISIBLE
+                        binding.introBtnFine.visibility = View.GONE
+                        binding.introBtnNext.visibility = View.VISIBLE
                     }
 
-                    intro_btn_prev.visibility = if (position == 0) View.GONE
+                    binding.introBtnPrev.visibility = if (position == 0) View.GONE
                     else View.VISIBLE
                 }
             })
         }
 
-        pageIndicator.selection = page
-        pageIndicator.setAnimationType(AnimationType.WORM)
+        binding.pageIndicator.selection = page
+        binding.pageIndicator.setAnimationType(AnimationType.WORM)
 
-        intro_btn_prev.visibility = View.GONE
-        intro_btn_fine.visibility = View.GONE
+        binding.introBtnPrev.visibility = View.GONE
+        binding.introBtnFine.visibility = View.GONE
 
-        intro_btn_prev.setOnClickListener {
+        binding.introBtnPrev.setOnClickListener {
             page -= 1
-            viewPager.currentItem = page
-            pageIndicator.selection = page
+            binding.viewPager.currentItem = page
+            binding.pageIndicator.selection = page
         }
 
-        intro_btn_next.setOnClickListener {
+        binding.introBtnNext.setOnClickListener {
             page += 1
-            viewPager.currentItem = page
-            pageIndicator.selection = page
+            binding.viewPager.currentItem = page
+            binding.pageIndicator.selection = page
         }
 
-        intro_btn_fine.setOnClickListener {
+        binding.introBtnFine.setOnClickListener {
             if (true in OnboardingFragment4.hours) {
                 sharedPreferences.edit().putBoolean(SharedGroup.IS_FIRST_VISIT, false).apply()
                 finish()
@@ -150,11 +153,11 @@ class OnboardingActivity : AppCompatActivity(),
             }
         }
 
-        intro_btn_next.visibility = if (page + 1 == PAGE_NUMBER) View.GONE else View.VISIBLE
-        intro_btn_fine.visibility = if (page + 1 == PAGE_NUMBER) View.VISIBLE else View.GONE
+        binding.introBtnNext.visibility = if (page + 1 == PAGE_NUMBER) View.GONE else View.VISIBLE
+        binding.introBtnFine.visibility = if (page + 1 == PAGE_NUMBER) View.VISIBLE else View.GONE
 
         if (page == 0) {
-            intro_btn_next.let {
+            binding.introBtnNext.let {
                 it.isEnabled = true
                 it.alpha = 0.5f
             }

@@ -18,7 +18,7 @@ class TimeReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        dbHelper = DBHelper(context, dbName, null, dbVersion)
+        dbHelper = DBHelper(context, dbName, dbVersion)
 
         val channelId = "ReminderLMS"
 
