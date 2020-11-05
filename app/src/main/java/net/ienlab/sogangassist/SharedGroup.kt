@@ -16,5 +16,6 @@ class SharedGroup {
 
         val IS_FIRST_VISIT = "isFirstVisit"
         val LAST_VERSION = "lastVersion"
+        val FULL_AD_CHARGE = "fullAdCharge"
     }
 }

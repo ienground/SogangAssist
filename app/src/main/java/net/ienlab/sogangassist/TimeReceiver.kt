@@ -20,10 +20,8 @@ class TimeReceiver : BroadcastReceiver() {
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         dbHelper = DBHelper(context, dbName, dbVersion)
 
-        val channelId = "ReminderLMS"
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId, context.getString(R.string.channel_name), NotificationManager.IMPORTANCE_HIGH)
+            val channel = NotificationChannel(ChannelId.DEFAULT_ID, context.getString(R.string.channel_name), NotificationManager.IMPORTANCE_HIGH)
             nm.createNotificationChannel(channel)
         }
 
@@ -33,7 +31,7 @@ class TimeReceiver : BroadcastReceiver() {
 
         when (item.type) {
             LMSType.LESSON -> {
-                NotificationCompat.Builder(context, channelId).let {
+                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).let {
                     val markIntent = Intent(context, MarkFinishReceiver::class.java).apply {
                         putExtra("ID", item.id)
                     }
@@ -55,7 +53,7 @@ class TimeReceiver : BroadcastReceiver() {
             }
 
             LMSType.SUP_LESSON -> {
-                NotificationCompat.Builder(context, channelId).let {
+                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).let {
                     val markIntent = Intent(context, MarkFinishReceiver::class.java).apply {
                         putExtra("ID", item.id)
                     }
@@ -77,7 +75,7 @@ class TimeReceiver : BroadcastReceiver() {
             }
 
             LMSType.HOMEWORK -> {
-                NotificationCompat.Builder(context, channelId).let {
+                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).let {
                     val markIntent = Intent(context, MarkFinishReceiver::class.java).apply {
                         putExtra("ID", item.id)
                     }

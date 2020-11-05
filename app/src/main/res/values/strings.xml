@@ -103,4 +103,7 @@
     <string name="err_class_time">Please enter the subject name, and the deadline must be later than the start date.</string>
     <string name="err_class_assignment">Please enter the class and assignment name.</string>
     <string name="err_all">Please enter the class and assignment name, and the deadline must be later than the start date.</string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-8050897224557020/6527850959</string>
+    <string name="full_ad_unit_id">ca-app-pub-8050897224557020/5023197593</string>
 </resources>

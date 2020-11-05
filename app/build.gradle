@@ -11,8 +11,8 @@ android {
         applicationId "net.ienlab.sogangassist"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 2
-        versionName "0.9.1"
+        versionCode 3
+        versionName "0.9.9"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,8 +41,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:18.0.0'
     implementation 'com.google.firebase:firebase-messaging:21.0.0'
     implementation 'com.google.firebase:firebase-analytics:18.0.0'
-//    implementation 'com.google.firebase:firebase-ads:19.4.0'
-//    implementation 'com.google.android.gms:play-services-ads:19.4.0'
+    implementation 'com.google.firebase:firebase-ads:19.5.0'
+    implementation 'com.google.android.gms:play-services-ads:19.5.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-core-utils:1.0.0'
@@ -65,7 +65,7 @@ dependencies {
     implementation 'com.romandanylyk:pageindicatorview:1.0.3@aar'
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.12.0'
 
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 

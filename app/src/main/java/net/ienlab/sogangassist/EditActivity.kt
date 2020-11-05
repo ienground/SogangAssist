@@ -14,6 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.google.android.gms.ads.*
 import com.google.android.material.snackbar.Snackbar
 import net.ienlab.sogangassist.databinding.ActivityEditBinding
 import java.text.SimpleDateFormat
@@ -29,6 +30,7 @@ class EditActivity : AppCompatActivity() {
     lateinit var timeFormat: SimpleDateFormat
     lateinit var sharedPreferences: SharedPreferences
     lateinit var am: AlarmManager
+    lateinit var interstitialAd: InterstitialAd
 
     val startCalendar = Calendar.getInstance()
     val endCalendar = Calendar.getInstance().apply {
@@ -44,6 +46,9 @@ class EditActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        setFullAd(this)
+        displayAd(this)
 
         dbHelper = DBHelper(this, dbName, dbVersion)
         radioButtonGroup = arrayOf(R.id.radioButton1, R.id.radioButton2, R.id.radioButton3)
@@ -140,6 +145,46 @@ class EditActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    fun setFullAd(context: Context) {
+        interstitialAd = InterstitialAd(context)
+        interstitialAd.adUnitId = context.getString(R.string.full_ad_unit_id)
+        val adRequest2 = AdRequest.Builder()
+        if (BuildConfig.DEBUG) {
+            RequestConfiguration.Builder()
+                .setTestDeviceIds(mutableListOf(testDevice)).let {
+                    MobileAds.setRequestConfiguration(it.build())
+                }
+        }
+
+        interstitialAd.loadAd(adRequest2.build())
+        interstitialAd.adListener = object : AdListener() { //전면 광고의 상태를 확인하는 리스너 등록
+            override fun onAdClosed() { //전면 광고가 열린 뒤에 닫혔을 때
+                val adRequest3 = AdRequest.Builder()
+                if (BuildConfig.DEBUG) {
+                    RequestConfiguration.Builder()
+                        .setTestDeviceIds(mutableListOf(testDevice)).let {
+                            MobileAds.setRequestConfiguration(it.build())
+                        }
+                }
+                interstitialAd.loadAd(adRequest3.build())
+            }
+        }
+    }
+
+    fun displayAd(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(context.packageName + "_preferences", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putInt(SharedGroup.FULL_AD_CHARGE,
+            sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0) + 1).apply()
+        Log.d("AdTAG", "ad:" + sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0))
+        Log.d("AdTAG", "isLoaded:" + interstitialAd.isLoaded)
+
+        if (interstitialAd.isLoaded && sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0) >= 3
+            && sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0) != 0) {
+            interstitialAd.show()
+            sharedPreferences.edit().putInt(SharedGroup.FULL_AD_CHARGE, 0).apply()
+        }
     }
 
     fun lessonUI(endCalendar: Calendar) {
