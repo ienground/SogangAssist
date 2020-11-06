@@ -106,4 +106,12 @@
 
     <string name="banner_ad_unit_id">ca-app-pub-8050897224557020/6527850959</string>
     <string name="full_ad_unit_id">ca-app-pub-8050897224557020/5023197593</string>
+
+    <string name="format_new_assignment">New assignment is posted</string>
+    <string name="format_change_assignment">Edited assignment is posted</string>
+    <string name="format_new_lecture">online course started</string>
+    <string name="format_change_lecture">online course is changed</string>
+    <string name="format_lms_date">MMM dd, yyyy a hh:mm</string>
+    <string name="format_assignment_regex">^.+\"(.+)\" \\(Period:(.+) ~ (.+)\\)$</string>
+    <string name="format_lecture_regex">^Week(\\d+) Hour (\\d+).*\\(Must complete the course by: (.+) \\)$</string>
 </resources>

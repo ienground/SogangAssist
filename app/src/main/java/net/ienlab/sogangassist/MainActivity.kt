@@ -19,9 +19,13 @@ import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.TextView
+import android.widget.Toast
+import android.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
@@ -50,6 +54,10 @@ class MainActivity : AppCompatActivity() {
     var currentDate: Long = 0
     lateinit var fadeOutAnimation: AlphaAnimation
     lateinit var fadeInAnimation: AlphaAnimation
+
+    // 뒤로가기 시간
+    private val FINISH_INTERVAL_TIME: Long = 2000
+    private var backPressedTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -279,6 +287,7 @@ class MainActivity : AppCompatActivity() {
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
+
     }
 
     fun setDecorators() {
@@ -449,7 +458,6 @@ class MainActivity : AppCompatActivity() {
         return super.onPrepareOptionsMenu(menu)
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return super.onCreateOptionsMenu(menu)
@@ -474,4 +482,14 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onBackPressed() {
+        val tempTime = System.currentTimeMillis()
+        val intervalTime = tempTime - backPressedTime
+        if (intervalTime in 0..FINISH_INTERVAL_TIME) {
+            super.onBackPressed()
+        } else {
+            backPressedTime = tempTime
+            Toast.makeText(applicationContext, getString(R.string.press_back_to_exit), Toast.LENGTH_SHORT).show()
+        }
+    }
 }

@@ -36,16 +36,16 @@ class LMSListenerService : NotificationListenerService() {
         val notification = sbn.notification
         val extras = notification.extras
 
-        val timeFormat = SimpleDateFormat("yyyy.MM.dd a hh:mm", Locale.KOREA)
+        val timeFormat = SimpleDateFormat(getString(R.string.format_lms_date), Locale.KOREA)
 
-        if (sbn.packageName == "kr.co.imaxsoft.hellolms") {
-//        if (sbn.packageName == "net.ienlab.notificationtest") {
-            val className = extras.getString(Notification.EXTRA_TITLE)!!
+//        if (sbn.packageName == "kr.co.imaxsoft.hellolms") {
+        if (sbn.packageName == "net.ienlab.notificationtest") {
+            val className = extras.getString(Notification.EXTRA_TITLE) ?: ""
 
             with (extras.getString(Notification.EXTRA_TEXT)) {
                 when {
-                    this?.contains("새로운 과제가 있습니다") ?: false -> {
-                        val regex = "^.+\"(.+)\" \\(기간:(.+) ~ (.+)\\)$".toRegex()
+                    this?.contains(getString(R.string.format_new_assignment)) ?: false -> {
+                        val regex = getString(R.string.format_assignment_regex).toRegex()
                         val matchResult = regex.matchEntire(this as CharSequence)
 
                         if (matchResult != null) {
@@ -54,8 +54,8 @@ class LMSListenerService : NotificationListenerService() {
                                 it.className = className
                                 it.timeStamp = sbn.postTime
                                 it.type = LMSType.HOMEWORK
-                                it.startTime = timeFormat.parse(startTime)!!.time
-                                it.endTime = timeFormat.parse(endTime)!!.time
+                                it.startTime = timeFormat.parse(startTime)?.time ?: 0L
+                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
                                 it.homework_name = homework_name
                                 it.week = -1
                                 it.lesson = -1
@@ -125,8 +125,8 @@ class LMSListenerService : NotificationListenerService() {
                         }
                     }
 
-                    this?.contains("변경된 과제가 있습니다") ?: false -> {
-                        val regex = "^.+\"(.+)\" \\(기간:(.+) ~ (.+)\\)$".toRegex()
+                    this?.contains(getString(R.string.format_change_assignment)) ?: false -> {
+                        val regex = getString(R.string.format_assignment_regex).toRegex()
                         val matchResult = regex.matchEntire(this as CharSequence)
 
                         if (matchResult != null) {
@@ -135,8 +135,8 @@ class LMSListenerService : NotificationListenerService() {
                                 it.className = className
                                 it.timeStamp = sbn.postTime
                                 it.type = LMSType.HOMEWORK
-                                it.startTime = timeFormat.parse(startTime)!!.time
-                                it.endTime = timeFormat.parse(endTime)!!.time
+                                it.startTime = timeFormat.parse(startTime)?.time ?: 0L
+                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
                                 it.homework_name = homework_name
                                 it.week = -1
                                 it.lesson = -1
@@ -152,8 +152,8 @@ class LMSListenerService : NotificationListenerService() {
                         }
                     }
 
-                    this?.contains("온라인 강의를 시작") ?: false -> {
-                        val regex = "^(\\d+)주 (\\d+)차시.*\\(학습마감: (.+) 까지\\)$".toRegex()
+                    this?.contains(getString(R.string.format_new_lecture)) ?: false -> {
+                        val regex = getString(R.string.format_lecture_regex).toRegex()
                         val matchResult = regex.matchEntire(this as CharSequence)
 
                         if (matchResult != null) {
@@ -163,7 +163,7 @@ class LMSListenerService : NotificationListenerService() {
                                 it.timeStamp = sbn.postTime
                                 it.type = LMSType.LESSON
                                 it.startTime = -1
-                                it.endTime = timeFormat.parse(endTime)!!.time
+                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
                                 it.homework_name = "#NONE"
                                 it.week = week.toInt()
                                 it.lesson = lesson.toInt()
@@ -173,8 +173,8 @@ class LMSListenerService : NotificationListenerService() {
                         }
                     }
 
-                    this?.contains("온라인 강의가 변경") ?: false -> {
-                        val regex = "^(\\d+)주 (\\d+)차시.*\\(학습마감: (.+) 까지\\)$".toRegex()
+                    this?.contains(getString(R.string.format_change_lecture)) ?: false -> {
+                        val regex = getString(R.string.format_lecture_regex).toRegex()
                         val matchResult = regex.matchEntire(this as CharSequence)
 
                         if (matchResult != null) {
@@ -184,7 +184,7 @@ class LMSListenerService : NotificationListenerService() {
                                 it.timeStamp = sbn.postTime
                                 it.type = LMSType.LESSON
                                 it.startTime = -1
-                                it.endTime = timeFormat.parse(endTime)!!.time
+                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
                                 it.homework_name = "#NONE"
                                 it.week = week.toInt()
                                 it.lesson = lesson.toInt()
