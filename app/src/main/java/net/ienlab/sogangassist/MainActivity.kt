@@ -14,6 +14,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -85,7 +86,7 @@ class MainActivity : AppCompatActivity() {
         for (data in datas) {
             val noti_intent = Intent(this, TimeReceiver::class.java)
             noti_intent.putExtra("ID", data.id)
-
+            Log.d(TAG, data.id.toString() + " ${data.className} ${data.homework_name}")
             val endCalendar = Calendar.getInstance().apply {
                 timeInMillis = data.endTime
             }

@@ -32,6 +32,7 @@ class LMSListenerService : NotificationListenerService() {
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
+        Log.d(TAG, "onNotificationPosted")
         super.onNotificationPosted(sbn)
         val notification = sbn.notification
         val extras = notification.extras
@@ -63,9 +64,11 @@ class LMSListenerService : NotificationListenerService() {
 
                                 dbHelper.addItem(it)
 
-                                /*
+
                                 val noti_intent = Intent(applicationContext, TimeReceiver::class.java)
                                 noti_intent.putExtra("ID", it.id)
+                                Log.d(TAG, it.id.toString())
+                                Log.d(TAG, dbHelper.getAllData().size.toString())
                                 val pendingIntent = PendingIntent.getBroadcast(applicationContext, it.id, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                                 if (it.type == LMSType.HOMEWORK) {
@@ -119,8 +122,6 @@ class LMSListenerService : NotificationListenerService() {
                                         am.setExact(AlarmManager.RTC_WAKEUP, it.endTime - 24 * 60 * 60 * 1000, pendingIntent)
                                     }
                                 }
-
-                                 */
                             }
                         }
                     }
@@ -146,7 +147,7 @@ class LMSListenerService : NotificationListenerService() {
                                 it.isRenewAllowed = oldItem.isRenewAllowed
 
                                 if (oldItem.isRenewAllowed) {
-                                    dbHelper.updateItem(it)
+                                    dbHelper.updateItem(it) // check
                                 }
                             }
                         }

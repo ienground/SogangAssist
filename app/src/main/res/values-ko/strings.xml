@@ -111,7 +111,7 @@
     <string name="format_change_assignment">변경된 과제가 있습니다</string>
     <string name="format_new_lecture">온라인 강의를 시작</string>
     <string name="format_change_lecture">온라인 강의가 변경</string>
-    <string name="format_lms_date">yyyy.MM.dd a hh:mm</string>
+    <string name="format_lms_date">yyyy.MM.dd a h:mm</string>
     <string name="format_assignment_regex">^.+\"(.+)\" \\(기간:(.+) ~ (.+)\\)$</string>
     <string name="format_lecture_regex">^(\\d+)주 (\\d+)차시.*\\(학습마감: (.+) 까지\\)$</string>
 </resources>

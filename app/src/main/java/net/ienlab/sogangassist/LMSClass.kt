@@ -1,7 +1,7 @@
 package net.ienlab.sogangassist
 
 class LMSClass {
-    var id: Int = 0
+    var id: Int = -1
     lateinit var className: String
     var timeStamp: Long = 0
     var type: Int = 0
