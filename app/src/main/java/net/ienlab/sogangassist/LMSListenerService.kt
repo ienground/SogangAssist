@@ -330,6 +330,149 @@ class LMSListenerService : NotificationListenerService() {
                             }
                         }
                     }
+
+                    this?.contains(getString(R.string.format_new_sup_lecture)) ?: false -> {
+                        val regex = getString(R.string.format_lecture_regex).toRegex()
+                        val matchResult = regex.matchEntire(this as CharSequence)
+
+                        if (matchResult != null) {
+                            val (week, lesson, endTime) = matchResult.destructured
+                            LMSClass().let {
+                                it.className = className
+                                it.timeStamp = sbn.postTime
+                                it.type = LMSType.SUP_LESSON
+                                it.startTime = -1
+                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
+                                it.homework_name = "#NONE"
+                                it.week = week.toInt()
+                                it.lesson = lesson.toInt()
+
+                                dbHelper.addItem(it)
+
+                                val noti_intent = Intent(applicationContext, TimeReceiver::class.java)
+                                val id = dbHelper.getAllData().last().id
+                                noti_intent.putExtra("ID", id)
+
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
+                                    val triggerTime = it.endTime - 1 * 60 * 60 * 1000
+                                    noti_intent.putExtra("TRIGGER", triggerTime)
+                                    noti_intent.putExtra("TIME", 1)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
+
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
+                                    val triggerTime = it.endTime - 2 * 60 * 60 * 1000
+                                    noti_intent.putExtra("TRIGGER", triggerTime)
+                                    noti_intent.putExtra("TIME", 2)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
+
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
+                                    val triggerTime = it.endTime - 6 * 60 * 60 * 1000
+                                    noti_intent.putExtra("TRIGGER", triggerTime)
+                                    noti_intent.putExtra("TIME", 6)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
+
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
+                                    val triggerTime = it.endTime - 12 * 60 * 60 * 1000
+                                    noti_intent.putExtra("TRIGGER", triggerTime)
+                                    noti_intent.putExtra("TIME", 12)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
+
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
+                                    val triggerTime = it.endTime - 24 * 60 * 60 * 1000
+                                    noti_intent.putExtra("TRIGGER", triggerTime)
+                                    noti_intent.putExtra("TIME", 24)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
+                            }
+                        }
+                    }
+
+                    this?.contains(getString(R.string.format_change_sup_lecture)) ?: false -> {
+                        val regex = getString(R.string.format_lecture_regex).toRegex()
+                        val matchResult = regex.matchEntire(this as CharSequence)
+
+                        if (matchResult != null) {
+                            val (week, lesson, endTime) = matchResult.destructured
+                            LMSClass().let {
+                                it.className = className
+                                it.timeStamp = sbn.postTime
+                                it.type = LMSType.SUP_LESSON
+                                it.startTime = -1
+                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
+                                it.homework_name = "#NONE"
+                                it.week = week.toInt()
+                                it.lesson = lesson.toInt()
+
+                                val id: Int
+                                if (dbHelper.checkItemByData(it)) {
+                                    val oldItem = dbHelper.getItemById(dbHelper.getIdByCondition(it))
+                                    it.id = oldItem.id
+                                    it.isFinished = oldItem.isFinished
+                                    it.isRenewAllowed = oldItem.isRenewAllowed
+                                    if (oldItem.isRenewAllowed) {
+                                        dbHelper.updateItem(it) // check
+                                    }
+                                    id = it.id
+                                } else {
+                                    dbHelper.addItem(it)
+                                    id = dbHelper.getAllData().last().id
+                                }
+
+                                val noti_intent = Intent(applicationContext, TimeReceiver::class.java)
+                                noti_intent.putExtra("ID", id)
+
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
+                                    val triggerTime = it.endTime - 1 * 60 * 60 * 1000
+                                    noti_intent.putExtra("TRIGGER", triggerTime)
+                                    noti_intent.putExtra("TIME", 1)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
+
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
+                                    val triggerTime = it.endTime - 2 * 60 * 60 * 1000
+                                    noti_intent.putExtra("TRIGGER", triggerTime)
+                                    noti_intent.putExtra("TIME", 2)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
+
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
+                                    val triggerTime = it.endTime - 6 * 60 * 60 * 1000
+                                    noti_intent.putExtra("TRIGGER", triggerTime)
+                                    noti_intent.putExtra("TIME", 6)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
+
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
+                                    val triggerTime = it.endTime - 12 * 60 * 60 * 1000
+                                    noti_intent.putExtra("TRIGGER", triggerTime)
+                                    noti_intent.putExtra("TIME", 12)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
+
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
+                                    val triggerTime = it.endTime - 24 * 60 * 60 * 1000
+                                    noti_intent.putExtra("TRIGGER", triggerTime)
+                                    noti_intent.putExtra("TIME", 24)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
+                            }
+                        }
+                    }
+
                     else -> {
 
                     }
