@@ -27,46 +27,35 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_margin="@dimen/usual_margin"
-                    android:weightSum="5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" >
 
                     <RadioButton
                         android:id="@+id/radioButton1"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/classtime"
-                        android:textAlignment="textEnd"
-                        android:layout_weight="1"/>
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
+                        android:textAlignment="textStart"
+                        android:layoutDirection="rtl"/>
 
                     <RadioButton
                         android:id="@+id/radioButton2"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/sup_classtime"
-                        android:textAlignment="textEnd"
-                        android:layout_weight="1"/>
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
+                        android:textAlignment="textStart"
+                        android:layoutDirection="rtl"/>
 
                     <RadioButton
                         android:id="@+id/radioButton3"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/assignment"
-                        android:textAlignment="textEnd"
-                        android:layout_weight="1"/>
+                        android:textAlignment="textStart"
+                        android:layoutDirection="rtl"/>
                 </RadioGroup>
 
                 <com.google.android.material.checkbox.MaterialCheckBox

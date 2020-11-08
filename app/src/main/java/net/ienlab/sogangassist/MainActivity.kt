@@ -2,7 +2,6 @@ package net.ienlab.sogangassist
 
 import android.app.Activity
 import android.app.AlarmManager
-import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -19,9 +18,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toolbar
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -80,6 +81,8 @@ class MainActivity : AppCompatActivity() {
         binding.month.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
         binding.month.text = monthFormat.format(Date(System.currentTimeMillis()))
 //        startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+
+        if (BuildConfig.DEBUG) binding.adView.visibility = View.GONE
 
         am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val datas = dbHelper.getAllData()
@@ -228,53 +231,6 @@ class MainActivity : AppCompatActivity() {
 
         setDecorators()
 
-        // 체인지로그 Dialog
-
-        val changelog_dialog_builder = AlertDialog.Builder(this)
-        val inflator = layoutInflater
-
-        val changelog_dialog_view = inflator.inflate(R.layout.dialog_changelog, null)
-        changelog_dialog_builder.setView(changelog_dialog_view)
-
-        val changelog_content = changelog_dialog_view.findViewById<TextView>(R.id.changelog_content)
-
-        changelog_dialog_builder.setPositiveButton(R.string.ok) { dialog, id ->
-            dialog.cancel()
-        }
-
-        val version: String
-        try {
-            val i = packageManager.getPackageInfo(packageName, 0)
-            version = i.versionName
-            changelog_dialog_builder.setTitle(String.format("%s %s", getString(R.string.real_app_name), version + " " + getString(R.string.changelog)))
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-        }
-
-        val changelog_dialog = changelog_dialog_builder.create()
-
-        // raw에서 체인지로그 파일 불러오기
-        try {
-            val inputStream = resources.openRawResource(R.raw.thischangelog)
-            if (inputStream != null) {
-                val stream = InputStreamReader(inputStream, Charset.forName("utf-8"))
-                val buffer = BufferedReader(stream as Reader)
-
-                var read: String
-                val sb = StringBuilder()
-
-
-                buffer.lineSequence().forEach {
-                    sb.append(it)
-                }
-                inputStream.close()
-
-                changelog_content.text = Html.fromHtml(sb.toString())
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
         try {
             val pi = packageManager.getPackageInfo(packageName, 0)
             val nowVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) pi.longVersionCode.toInt()
@@ -283,7 +239,18 @@ class MainActivity : AppCompatActivity() {
 
             if (nowVersion > getVersion) {
                 sharedPreferences.edit().putInt(SharedGroup.LAST_VERSION, nowVersion).apply()
-                changelog_dialog.show()
+                AlertDialog.Builder(this).apply {
+                    val changelogDialogView = layoutInflater.inflate(R.layout.dialog_changelog, LinearLayout(context), false)
+                    val content: TextView = changelogDialogView.findViewById(R.id.content)
+
+                    setTitle("${getString(R.string.real_app_name)} ${BuildConfig.VERSION_NAME}")
+                    setPositiveButton(R.string.ok) { dialog, _ ->
+                        dialog.cancel()
+                    }
+                    content.text = MyUtils.fromHtml(MyUtils.readTextFromRaw(resources, R.raw.changelog))
+                    setView(changelogDialogView)
+
+                }.show()
             }
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()

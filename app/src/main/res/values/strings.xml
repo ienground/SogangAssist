@@ -10,7 +10,7 @@
     <string name="allow_auto_edit_lms">Allows automatic edit by LMS notification</string>
     <string name="class_name">Subject Name</string>
     <string name="week">Week</string>
-    <string name="lesson">Period</string>
+    <string name="lesson">Hour</string>
     <string name="assignment_name">Assignment Name</string>
     <string name="dateFormat">MMM dd, yyyy (EEE)</string>
     <string name="timeFormat">a h:mm</string>
@@ -55,9 +55,9 @@
     <string name="notify_hw">Assignment Notify</string>
     <string name="notify_lec">Lecture Notify</string>
     <string name="channel_name">LMS Reminder</string>
-    <string name="reminder_content_lec">%d week(s) %d period: %d hours left until the class deadline. Take the class on time.</string>
+    <string name="reminder_content_lec">%d week(s) %d hour: %d hours left until the class deadline. Take the class on time.</string>
     <string name="reminder_content_hw">\"%s\" %d hour(s) left until the assignment deadline. Don\' be late.</string>
-    <string name="week_lesson_format">%d week(s) %d period</string>
+    <string name="week_lesson_format">%d week(s) %d hour</string>
     <string name="finished">Complete</string>
     <string name="deadline">Deadline :\u0020</string>
     <string name="no_deadline_today">There are no assignments or lectures until today.</string>
@@ -95,7 +95,7 @@
     <string name="enrich_study">(Sup)</string>
     <string name="err_input_class">Please enter the subject name.</string>
     <string name="err_input_week">Please enter the week.</string>
-    <string name="err_input_lesson">Please enter the period.</string>
+    <string name="err_input_lesson">Please enter the hour.</string>
     <string name="err_input_blank">Please fill out all blanks.</string>
     <string name="err_time_late">The deadline must be later than the start date.</string>
     <string name="err_input_assignment">Please enter the assignment name.</string>

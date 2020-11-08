@@ -59,6 +59,7 @@ class EditActivity : AppCompatActivity() {
         am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val id = intent.getIntExtra("ID", -1)
+        Log.d(TAG, "Edit: ${id}")
         if (id != -1) {
             val currentItem = dbHelper.getItemById(id)
             binding.radioGroup.check(radioButtonGroup[currentItem.type])

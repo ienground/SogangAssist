@@ -2,7 +2,7 @@ package net.ienlab.sogangassist
 
 class LMSClass {
     var id: Int = -1
-    lateinit var className: String
+    var className: String = ""
     var timeStamp: Long = 0
     var type: Int = 0
     var startTime: Long = 0 // ONLY HOMEWORK
