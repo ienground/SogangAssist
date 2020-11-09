@@ -1,18 +1,20 @@
 package net.ienlab.sogangassist
 
-import android.app.*
+import android.app.AlarmManager
+import android.app.DatePickerDialog
+import android.app.PendingIntent
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Paint
-import android.media.AudioManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.ads.*
 import com.google.android.material.snackbar.Snackbar
@@ -31,6 +33,9 @@ class EditActivity : AppCompatActivity() {
     lateinit var sharedPreferences: SharedPreferences
     lateinit var am: AlarmManager
     lateinit var interstitialAd: InterstitialAd
+
+    lateinit var currentItem: LMSClass
+    var id = -1
 
     val startCalendar = Calendar.getInstance()
     val endCalendar = Calendar.getInstance().apply {
@@ -58,10 +63,9 @@ class EditActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("${packageName}_preferences",  Context.MODE_PRIVATE)
         am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val id = intent.getIntExtra("ID", -1)
-        Log.d(TAG, "Edit: ${id}")
+        id = intent.getIntExtra("ID", -1)
         if (id != -1) {
-            val currentItem = dbHelper.getItemById(id)
+            currentItem = dbHelper.getItemById(id)
             binding.radioGroup.check(radioButtonGroup[currentItem.type])
             binding.etClass.editText?.setText(currentItem.className)
             binding.checkAutoEdit.isChecked = currentItem.isRenewAllowed
@@ -143,6 +147,7 @@ class EditActivity : AppCompatActivity() {
                     }
                 }
             }
+            currentItem = LMSClass()
         }
 
 
@@ -328,13 +333,87 @@ class EditActivity : AppCompatActivity() {
     }
 
     fun onBackAutoSave(isFinished: Boolean) {
+        if (id != -1) {
+            if (currentItem.className != binding.etClass.editText?.text?.toString()
+                || currentItem.type != radioButtonGroup.indexOf(binding.radioGroup.checkedRadioButtonId)
+                || currentItem.endTime != endCalendar.timeInMillis
+                || currentItem.isFinished != isFinished
+                || currentItem.isRenewAllowed != binding.checkAutoEdit.isChecked
+                || (currentItem.type == LMSType.HOMEWORK
+                        && (currentItem.startTime != startCalendar.timeInMillis
+                        || currentItem.homework_name != binding.etAssignment.editText?.text?.toString()))
+                || ((currentItem.type == LMSType.SUP_LESSON || currentItem.type == LMSType.LESSON)
+                        && (currentItem.week != binding.etTimeWeek.editText?.text?.toString()?.toInt()
+                        || currentItem.lesson != binding.etTimeLesson.editText?.text?.toString()?.toInt()))) {
+                AlertDialog.Builder(this).apply {
+                    setMessage(R.string.save_ask)
+                    setPositiveButton(R.string.save) { dialog, _ ->
+                        onAutoSave(isFinished)
+                        dialog.dismiss()
+                    }
+                    setNegativeButton(R.string.not_save) { _, _ ->
+                        finish()
+                    }
+                    setNeutralButton(R.string.delete) { _, _ ->
+                        AlertDialog.Builder(this@EditActivity)
+                            .setTitle(R.string.delete)
+                            .setMessage(R.string.delete_msg)
+                            .setPositiveButton(R.string.yes) { dialog, _ ->
+                                val id = intent.getIntExtra("ID", -1)
+                                if (id != -1) {
+                                    dbHelper.deleteData(id)
+                                }
+                                setResult(RESULT_OK)
+                                finish()
+                            }
+                            .setNegativeButton(R.string.no) { dialog, _ ->
+                                dialog.cancel()
+                            }
+                            .show()
+                    }
+                }.show()
+            } else {
+                finish()
+            }
+        } else {
+            AlertDialog.Builder(this).apply {
+                setMessage(R.string.save_ask)
+                setPositiveButton(R.string.save) { dialog, _ ->
+                    onAutoSave(isFinished)
+                    dialog.dismiss()
+                }
+                setNegativeButton(R.string.not_save) { _, _ ->
+                    finish()
+                }
+                setNeutralButton(R.string.delete) { _, _ ->
+                    AlertDialog.Builder(this@EditActivity)
+                        .setTitle(R.string.delete)
+                        .setMessage(R.string.delete_msg)
+                        .setPositiveButton(R.string.yes) { dialog, _ ->
+                            val id = intent.getIntExtra("ID", -1)
+                            if (id != -1) {
+                                dbHelper.deleteData(id)
+                            }
+                            setResult(RESULT_OK)
+                            finish()
+                        }
+                        .setNegativeButton(R.string.no) { dialog, _ ->
+                            dialog.cancel()
+                        }
+                        .show()
+                }
+            }.show()
+        }
+    }
+
+    fun onAutoSave(isFinished: Boolean) {
         val view = window.decorView.rootView
         when (binding.radioGroup.checkedRadioButtonId) {
             R.id.radioButton1, R.id.radioButton2 -> {
                 if (binding.etClass.editText?.text?.toString() != "" && binding.etTimeWeek.editText?.text?.toString() != ""
                     && binding.etTimeLesson.editText?.text?.toString() != "") {
                     onSave(isFinished)
-                    setResult(Activity.RESULT_OK)
+                    setResult(RESULT_OK)
                     finish()
                 } else if (binding.etTimeWeek.editText?.text?.toString() != "" && binding.etTimeLesson.editText?.text?.toString() != "") {
                     Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
@@ -351,7 +430,7 @@ class EditActivity : AppCompatActivity() {
                 if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != ""
                     && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 123
                     onSave(isFinished)
-                    setResult(Activity.RESULT_OK)
+                    setResult(RESULT_OK)
                     finish()
                 } else if (binding.etAssignment.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 23
                     Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
@@ -370,9 +449,6 @@ class EditActivity : AppCompatActivity() {
                 }
             }
         }
-
-
-
     }
 
     fun onSave(isFinished: Boolean) {
@@ -523,17 +599,17 @@ class EditActivity : AppCompatActivity() {
 
             R.id.menu_delete -> {
                 AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.delete))
-                    .setMessage(getString(R.string.delete_msg))
-                    .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                    .setTitle(R.string.delete)
+                    .setMessage(R.string.delete_msg)
+                    .setPositiveButton(R.string.yes) { dialog, _ ->
                         val id = intent.getIntExtra("ID", -1)
                         if (id != -1) {
                             dbHelper.deleteData(id)
                         }
-                        setResult(Activity.RESULT_OK)
+                        setResult(RESULT_OK)
                         finish()
                     }
-                    .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                    .setNegativeButton(R.string.no) { dialog, _ ->
                         dialog.cancel()
                     }
                     .show()
@@ -560,19 +636,19 @@ class EditActivity : AppCompatActivity() {
                     binding.tvClassEndDate.isEnabled = true
                     binding.tvClassEndTime.isEnabled = true
 
-                    binding.etClass.editText?.paintFlags = 0
-                    binding.etAssignment.editText?.paintFlags = 0
-                    binding.etTimeWeek.editText?.paintFlags = 0
-                    binding.etTimeLesson.editText?.paintFlags = 0
-                    binding.tvStartDate.paintFlags = 0
-                    binding.tvStartTime.paintFlags = 0
-                    binding.tvEndDate.paintFlags = 0
-                    binding.tvEndTime.paintFlags = 0
-                    binding.tvClassEndDate.paintFlags = 0
-                    binding.tvClassEndTime.paintFlags = 0
+                    binding.etClass.editText?.paintFlags = binding.etClass.editText?.paintFlags?.xor(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
+                    binding.etAssignment.editText?.paintFlags = binding.etAssignment.editText?.paintFlags?.xor(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
+                    binding.etTimeWeek.editText?.paintFlags = binding.etTimeWeek.editText?.paintFlags?.xor(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
+                    binding.etTimeLesson.editText?.paintFlags = binding.etTimeLesson.editText?.paintFlags?.xor(Paint.STRIKE_THRU_TEXT_FLAG) ?: Paint.STRIKE_THRU_TEXT_FLAG
+                    binding.tvStartDate.paintFlags = binding.tvStartDate.paintFlags xor Paint.STRIKE_THRU_TEXT_FLAG
+                    binding.tvStartTime.paintFlags = binding.tvStartTime.paintFlags xor Paint.STRIKE_THRU_TEXT_FLAG
+                    binding.tvEndDate.paintFlags = binding.tvEndDate.paintFlags xor Paint.STRIKE_THRU_TEXT_FLAG
+                    binding.tvEndTime.paintFlags = binding.tvEndTime.paintFlags xor Paint.STRIKE_THRU_TEXT_FLAG
+                    binding.tvClassEndDate.paintFlags = binding.tvClassEndDate.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    binding.tvClassEndTime.paintFlags = binding.tvClassEndTime.paintFlags xor Paint.STRIKE_THRU_TEXT_FLAG
 
                 } else {
-                    onBackAutoSave(true)
+                    onAutoSave(true)
                 }
             }
         }

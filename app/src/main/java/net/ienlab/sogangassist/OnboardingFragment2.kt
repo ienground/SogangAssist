@@ -38,7 +38,7 @@ class OnboardingFragment2 : Fragment() {
         binding.sectionLabel.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
         binding.sectionContent.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
 
-        if (isNotiPermissionAllowed()) {
+        if (MyUtils.isNotiPermissionAllowed(requireContext())) {
             with (binding.btnNotiAccess) {
                 text = getString(R.string.noti_access_allowed)
                 backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorAccent))
@@ -52,28 +52,14 @@ class OnboardingFragment2 : Fragment() {
         }
 
         binding.btnNotiAccess.setOnClickListener {
-            startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+                startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
         }
 
-    }
-
-    fun isNotiPermissionAllowed(): Boolean {
-        val notiListenerSet = NotificationManagerCompat.getEnabledListenerPackages(requireContext())
-        val myPackageName = requireActivity().packageName
-        for (packageName in notiListenerSet) {
-            if (packageName == null) {
-                continue
-            }
-            if (packageName == myPackageName) {
-                return true
-            }
-        }
-        return false
     }
 
     override fun onResume() {
         super.onResume()
-        if (isNotiPermissionAllowed()) {
+        if (MyUtils.isNotiPermissionAllowed(requireContext())) {
             with (binding.btnNotiAccess) {
                 text = getString(R.string.noti_access_allowed)
                 backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorAccent))

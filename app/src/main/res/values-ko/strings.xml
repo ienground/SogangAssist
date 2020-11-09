@@ -56,6 +56,7 @@
     <string name="notify_lec">강의 및 보강 알림 설정</string>
     <string name="channel_name">LMS 리마인더</string>
     <string name="reminder_content_lec">%d주 %d차시 수업이 수강기간까지 %d시간 남았습니다. 늦지 않게 수강하세요.</string>
+    <string name="reminder_content_sup_lec">%d주 %d차시 보강이 수강기간까지 %d시간 남았습니다. 늦지 않게 수강하세요.</string>
     <string name="reminder_content_hw">\"%s\" 과제 마감 기간까지 %d시간 남았습니다. 늦지 않게 제출하세요.</string>
     <string name="week_lesson_format">%d주 %d차시</string>
     <string name="finished">완료</string>
@@ -116,4 +117,8 @@
     <string name="format_lms_date">yyyy.MM.dd a h:mm</string>
     <string name="format_assignment_regex">^.+\"(.+)\" \\(기간:(.+) ~ (.+)\\)$</string>
     <string name="format_lecture_regex">^(\\d+)주 (\\d+)차시.*\\(학습마감: (.+) 까지\\)$</string>
+
+    <!--EditActivity-->
+    <string name="save_ask">저장할까요?</string>
+    <string name="not_save">저장 안함</string>
 </resources>

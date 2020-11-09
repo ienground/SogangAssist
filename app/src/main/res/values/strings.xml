@@ -56,6 +56,7 @@
     <string name="notify_lec">Lecture Notify</string>
     <string name="channel_name">LMS Reminder</string>
     <string name="reminder_content_lec">%d week(s) %d hour: %d hours left until the class deadline. Take the class on time.</string>
+    <string name="reminder_content_sup_lec">%d week(s) %d hour: %d hours left until the make-up class deadline. Take the class on time.</string>
     <string name="reminder_content_hw">\"%s\" %d hour(s) left until the assignment deadline. Don\' be late.</string>
     <string name="week_lesson_format">%d week(s) %d hour</string>
     <string name="finished">Complete</string>
@@ -116,4 +117,8 @@
     <string name="format_lms_date">MMM dd, yyyy a h:mm</string>
     <string name="format_assignment_regex">^.+\"(.+)\" \\(Period:(.+) ~ (.+)\\)$</string>
     <string name="format_lecture_regex">^Week(\\d+) Hour (\\d+).*\\(Must complete the course by: (.+) \\)$</string>
+
+    <!--EditActivity-->
+    <string name="save_ask">Save?</string>
+    <string name="not_save">Not Save</string>
 </resources>

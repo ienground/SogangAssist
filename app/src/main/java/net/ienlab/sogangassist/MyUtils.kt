@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.text.Html
 import android.text.Spanned
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getSystemService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,6 +44,20 @@ class MyUtils {
             inputStream.close()
 
             return builder.toString()
+        }
+
+        fun isNotiPermissionAllowed(context: Context): Boolean {
+            val notiListenerSet = NotificationManagerCompat.getEnabledListenerPackages(context)
+            val myPackageName = context.packageName
+            for (packageName in notiListenerSet) {
+                if (packageName == null) {
+                    continue
+                }
+                if (packageName == myPackageName) {
+                    return true
+                }
+            }
+            return false
         }
 
         fun isServiceRunning(context: Context, serviceClass: Class<*>): Boolean {

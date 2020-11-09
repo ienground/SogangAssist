@@ -9,9 +9,11 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.*
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Html
 import android.util.Log
 import android.view.Menu
@@ -44,7 +46,7 @@ import java.util.*
 val TAG = "SogangAssistTAG"
 val REFRESH_MAIN_WORK = 2
 val SETTINGS_CHANGED = 3
-val testDevice = "5EB5321DADDD6ABD85DAB10C76FE8EFA"
+val testDevice = "C539956A287753EFC92BF75B93D6D291"
 
 class MainActivity : AppCompatActivity() {
 
@@ -80,9 +82,20 @@ class MainActivity : AppCompatActivity() {
         val monthFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
         binding.month.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
         binding.month.text = monthFormat.format(Date(System.currentTimeMillis()))
-//        startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
 
         if (BuildConfig.DEBUG) binding.adView.visibility = View.GONE
+
+        if (!MyUtils.isNotiPermissionAllowed(this)) {
+            AlertDialog.Builder(this).apply {
+                setTitle(R.string.intro_page2_title)
+                setMessage(R.string.intro_page2_exp)
+                setPositiveButton(R.string.ok) { dialog, _ ->
+                    startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+                    dialog.dismiss()
+                }
+                setNegativeButton(R.string.cancel) { _, _ ->}
+            }.show()
+        }
 
         am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val datas = dbHelper.getAllData()
@@ -231,29 +244,24 @@ class MainActivity : AppCompatActivity() {
 
         setDecorators()
 
-        try {
-            val pi = packageManager.getPackageInfo(packageName, 0)
-            val nowVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) pi.longVersionCode.toInt()
-            else pi.versionCode
-            val getVersion = sharedPreferences.getInt(SharedGroup.LAST_VERSION, 0)
+        val info = packageManager.getPackageInfo(packageName, 0)
+        val currentVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.longVersionCode.toInt() else info.versionCode
+        val lastVersion = sharedPreferences.getInt(SharedGroup.LAST_VERSION, 0)
 
-            if (nowVersion > getVersion) {
-                sharedPreferences.edit().putInt(SharedGroup.LAST_VERSION, nowVersion).apply()
-                AlertDialog.Builder(this).apply {
-                    val changelogDialogView = layoutInflater.inflate(R.layout.dialog_changelog, LinearLayout(context), false)
-                    val content: TextView = changelogDialogView.findViewById(R.id.content)
+        if (currentVersion > lastVersion) {
+            sharedPreferences.edit().putInt(SharedGroup.LAST_VERSION, currentVersion).apply()
+            AlertDialog.Builder(this).apply {
+                val changelogDialogView = layoutInflater.inflate(R.layout.dialog_changelog, LinearLayout(context), false)
+                val content: TextView = changelogDialogView.findViewById(R.id.content)
 
-                    setTitle("${getString(R.string.real_app_name)} ${BuildConfig.VERSION_NAME}")
-                    setPositiveButton(R.string.ok) { dialog, _ ->
-                        dialog.cancel()
-                    }
-                    content.text = MyUtils.fromHtml(MyUtils.readTextFromRaw(resources, R.raw.changelog))
-                    setView(changelogDialogView)
+                setTitle("${getString(R.string.real_app_name)} ${BuildConfig.VERSION_NAME}")
+                setPositiveButton(R.string.ok) { dialog, _ ->
+                    dialog.cancel()
+                }
+                content.text = MyUtils.fromHtml(MyUtils.readTextFromRaw(resources, R.raw.changelog))
+                setView(changelogDialogView)
 
-                }.show()
-            }
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
+            }.show()
         }
 
     }

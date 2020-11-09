@@ -62,7 +62,7 @@ class TimeReceiver : BroadcastReceiver() {
 
                     it
                         .setContentTitle(item.className)
-                        .setContentText(String.format(context.getString(R.string.reminder_content_lec), item.week, item.lesson, time))
+                        .setContentText(String.format(context.getString(R.string.reminder_content_sup_lec), item.week, item.lesson, time))
                         .setStyle(NotificationCompat.BigTextStyle())
                         .setSmallIcon(R.drawable.ic_video_sup)
                         .setColor(ContextCompat.getColor(context, R.color.colorPrimary))

@@ -71,9 +71,6 @@ class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView
             holder.end_time.paintFlags = holder.end_time.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             holder.check.visibility = View.VISIBLE
         } else {
-            holder.class_name.paintFlags = 0
-            holder.sub_name.paintFlags = 0
-            holder.end_time.paintFlags = 0
             holder.check.visibility = View.GONE
         }
     }
