@@ -1,3 +1,1 @@
-- Initial Release<br>
-- Report bug to admin@ienlab.net<br>
-- Developed by ienlab (Sogang Univ. SMAS 20 Ericano Rhee)
+- Bug Fix
