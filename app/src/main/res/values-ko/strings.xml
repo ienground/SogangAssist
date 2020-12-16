@@ -55,14 +55,24 @@
     <string name="notify_hw">과제 알림 설정</string>
     <string name="notify_lec">강의 및 보강 알림 설정</string>
     <string name="channel_name">LMS 리마인더</string>
-    <string name="reminder_content_lec">%d주 %d차시 수업이 수강기간까지 %d시간 남았습니다. 늦지 않게 수강하세요.</string>
-    <string name="reminder_content_sup_lec">%d주 %d차시 보강이 수강기간까지 %d시간 남았습니다. 늦지 않게 수강하세요.</string>
-    <string name="reminder_content_hw">\"%s\" 과제 마감 기간까지 %d시간 남았습니다. 늦지 않게 제출하세요.</string>
-    <string name="week_lesson_format">%d주 %d차시</string>
+    <string name="reminder_content_lec">%1$d주 %2$d차시 수업이 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
+    <string name="reminder_content_sup_lec">%1$d주 %2$d차시 보강이 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
+    <string name="reminder_content_hw">\"%1$s\" 과제 마감 기간까지 %2$d시간 남았습니다. 늦지 않게 제출하세요.</string>
+    <string name="reminder_content_lec_register">%1$d주 %2$d차시 수업이 등록되었습니다. %3$s까지 수강하세요.</string>
+    <string name="reminder_content_sup_lec_register">%1$d주 %2$d차시 보강이 등록되었습니다. %3$s까지 수강하세요.</string>
+    <string name="reminder_content_hw_register">\"%1$s\" 과제가 등록되었습니다. %2$s까지 제출하세요.</string>
+    <string name="reminder_content_lec_update">%1$d주 %2$d차시 수업이 업데이트되었습니다. %3$s까지 수강하세요.</string>
+    <string name="reminder_content_sup_lec_update">%1$d주 %2$d차시 보강이 업데이트되었습니다. %3$s까지 수강하세요.</string>
+    <string name="reminder_content_hw_update">\"%1$s\" 과제가 업데이트되었습니다. %2$s까지 제출하세요.</string>
+    <string name="week_lesson_format">%1$d주 %2$d차시</string>
     <string name="finished">완료</string>
     <string name="deadline">마감 :\u0020</string>
     <string name="no_deadline_today">오늘이 마감기한인 과제나 강의가 없어요.</string>
     <string name="dev_ienlab">Designed, Developed By ienlab</string>
+    <string name="other_settings">기타 설정</string>
+    <string name="notify_when_lms">LMS 정보 수신 시 알림</string>
+    <string name="notify_when_lms_sum_on">LMS로부터 정보를 받았을 때 알림으로 띄웁니다.</string>
+    <string name="notify_when_lms_sum_off">LMS로부터 정보를 받아도 알림으로 띄우지 않습니다.</string>
 
     <!--Onboarding-->
     <string name="intro_page0_title">환영합니다.</string>
@@ -121,4 +131,5 @@
     <!--EditActivity-->
     <string name="save_ask">저장할까요?</string>
     <string name="not_save">저장 안함</string>
+
 </resources>

@@ -264,6 +264,15 @@ class MainActivity : AppCompatActivity() {
             }.show()
         }
 
+        val id = intent.getIntExtra("ID", -1)
+        if (id != -1) {
+            Log.d(TAG, "id: $id")
+            Intent(this, EditActivity::class.java).let {
+                it.putExtra("ID", id)
+                startActivityForResult(it, REFRESH_MAIN_WORK)
+            }
+        }
+
     }
 
     fun setDecorators() {
@@ -416,22 +425,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-
-        for (i in 0 until menu.size()) {
-            val item = menu.getItem(i)
-            val icon = item.icon.apply {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    colorFilter = BlendModeColorFilter(Color.WHITE, BlendMode.SRC_IN)
-                } else {
-                    setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
-                }
-            }
-            item.icon = icon
-        }
-        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

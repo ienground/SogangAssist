@@ -55,13 +55,13 @@ class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView
             LMSType.LESSON -> {
                 holder.icon.setImageResource(R.drawable.ic_video)
                 holder.icon.contentDescription = context.getString(R.string.classtime)
-                holder.sub_name.text = String.format(context.getString(R.string.week_lesson_format), mItems[position].week, mItems[position].lesson)
+                holder.sub_name.text = context.getString(R.string.week_lesson_format, mItems[position].week, mItems[position].lesson)
             }
 
             LMSType.SUP_LESSON -> {
                 holder.icon.setImageResource(R.drawable.ic_video_sup)
                 holder.icon.contentDescription = context.getString(R.string.classtime)
-                holder.sub_name.text = String.format(context.getString(R.string.week_lesson_format), mItems[position].week, mItems[position].lesson) + context.getString(R.string.enrich_study)
+                holder.sub_name.text = context.getString(R.string.week_lesson_format, mItems[position].week, mItems[position].lesson) + context.getString(R.string.enrich_study)
             }
         }
 

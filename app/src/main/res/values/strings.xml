@@ -55,14 +55,24 @@
     <string name="notify_hw">Assignment Notify</string>
     <string name="notify_lec">Lecture Notify</string>
     <string name="channel_name">LMS Reminder</string>
-    <string name="reminder_content_lec">%d week(s) %d hour: %d hours left until the class deadline. Take the class on time.</string>
-    <string name="reminder_content_sup_lec">%d week(s) %d hour: %d hours left until the make-up class deadline. Take the class on time.</string>
-    <string name="reminder_content_hw">\"%s\" %d hour(s) left until the assignment deadline. Don\' be late.</string>
-    <string name="week_lesson_format">%d week(s) %d hour</string>
+    <string name="reminder_content_lec">%1$d week(s) %2$d hour: %3$d hours left until the class deadline. Take the class on time.</string>
+    <string name="reminder_content_sup_lec">%1$d week(s) %2$d hour: %3$d hours left until the make-up class deadline. Take the class on time.</string>
+    <string name="reminder_content_hw">\"%1$s\" %2$d hour(s) left until the assignment deadline. Don\' be late.</string>
+    <string name="reminder_content_lec_register">%1$d week(s) %2$d hour: Class has been enrolled. Take the class until %3$s.</string>
+    <string name="reminder_content_sup_lec_register">%1$d week(s) %2$d hour: Make-up class has been enrolled. Take the class until %3$s.</string>
+    <string name="reminder_content_hw_register">\"%1$s\" The assignment has been enrolled. Submit up until %2$s.</string>
+    <string name="reminder_content_lec_update">%1$d week(s) %2$d hour: Class has been updated. Take the class until %3$s.</string>
+    <string name="reminder_content_sup_lec_update">%1$d week(s) %2$d hour: Make-up class has been updated. Take the class until %3$s.</string>
+    <string name="reminder_content_hw_update">\"%1$s\" The assignment has been updated. Submit up until %2$s.</string>
+    <string name="week_lesson_format">%1$d week(s) %2$d hour</string>
     <string name="finished">Complete</string>
     <string name="deadline">Deadline :\u0020</string>
     <string name="no_deadline_today">There are no assignments or lectures until today.</string>
     <string name="dev_ienlab">Designed, Developed By ienlab</string>
+    <string name="other_settings">Other Settings</string>
+    <string name="notify_when_lms">Notify when LMS info is received</string>
+    <string name="notify_when_lms_sum_on">Notify when information is received from LMS.</string>
+    <string name="notify_when_lms_sum_off">Not notify when information is received from LMS.</string>
 
     <!--Onboarding-->
     <string name="intro_page0_title">Welcome.</string>
@@ -121,4 +131,5 @@
     <!--EditActivity-->
     <string name="save_ask">Save?</string>
     <string name="not_save">Not Save</string>
+
 </resources>

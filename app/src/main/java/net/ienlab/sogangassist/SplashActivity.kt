@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import net.ienlab.sogangassist.databinding.ActivitySplashBinding
@@ -26,9 +27,13 @@ class SplashActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
 
         val isFirstVisit = sharedPreferences.getBoolean(SharedGroup.IS_FIRST_VISIT, true)
+        val id = intent.getIntExtra("ID", -1)
+        Log.d(TAG, "id: $id")
 
         Handler(Looper.getMainLooper()).postDelayed({
-            val mainIntent = Intent(this, MainActivity::class.java)
+            val mainIntent = Intent(this, MainActivity::class.java).apply {
+                putExtra("ID", id)
+            }
             val welcomeIntent = Intent(this, OnboardingActivity::class.java)
             if (isFirstVisit) {
                 startActivity(welcomeIntent)

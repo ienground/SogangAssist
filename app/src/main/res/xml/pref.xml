@@ -81,6 +81,16 @@
             android:defaultValue="false" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/other_settings">
+
+        <CheckBoxPreference
+            android:title="@string/notify_when_lms"
+            android:key="setRegisterAlert"
+            android:summaryOn="@string/notify_when_lms_sum_on"
+            android:summaryOff="@string/notify_when_lms_sum_off" />
+
+    </PreferenceCategory>
+
 
     <PreferenceCategory android:title="@string/info_and_ask" >
 

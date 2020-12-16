@@ -25,29 +25,35 @@ class TimeReceiver : BroadcastReceiver() {
             nm.createNotificationChannel(channel)
         }
 
-        val item = dbHelper.getItemById(intent.getIntExtra("ID", -1))
+        val id = intent.getIntExtra("ID", -1)
+        val item = dbHelper.getItemById(id)
         val time = intent.getIntExtra("TIME", -1)
         val triggerTime = intent.getLongExtra("TRIGGER", -1)
+
+        val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id) }
+        val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         when (item.type) {
             LMSType.LESSON -> {
                 NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).let {
                     val markIntent = Intent(context, MarkFinishReceiver::class.java).apply {
-                        putExtra("ID", item.id)
+                        putExtra("ID", id)
                     }
 
-                    val pendingIntent = PendingIntent.getBroadcast(context, 0, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                     it
                         .setContentTitle(item.className)
-                        .setContentText(String.format(context.getString(R.string.reminder_content_lec), item.week, item.lesson, time))
+                        .setContentText(context.getString(R.string.reminder_content_lec, item.week, item.lesson, time))
+                        .setContentIntent(clickPendingIntent)
+                        .setAutoCancel(true)
                         .setStyle(NotificationCompat.BigTextStyle())
                         .setSmallIcon(R.drawable.ic_video)
                         .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                         .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
 
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
-                        nm.notify(693000 + item.id, it.build())
+                        nm.notify(693000 + id, it.build())
                     }
                 }
             }
@@ -55,21 +61,23 @@ class TimeReceiver : BroadcastReceiver() {
             LMSType.SUP_LESSON -> {
                 NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).let {
                     val markIntent = Intent(context, MarkFinishReceiver::class.java).apply {
-                        putExtra("ID", item.id)
+                        putExtra("ID", id)
                     }
 
-                    val pendingIntent = PendingIntent.getBroadcast(context, 0, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                     it
                         .setContentTitle(item.className)
-                        .setContentText(String.format(context.getString(R.string.reminder_content_sup_lec), item.week, item.lesson, time))
+                        .setContentText(context.getString(R.string.reminder_content_sup_lec, item.week, item.lesson, time))
+                        .setContentIntent(clickPendingIntent)
+                        .setAutoCancel(true)
                         .setStyle(NotificationCompat.BigTextStyle())
                         .setSmallIcon(R.drawable.ic_video_sup)
                         .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                         .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
 
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
-                        nm.notify(693000 + item.id, it.build())
+                        nm.notify(693000 + id, it.build())
                     }
                 }
             }
@@ -77,21 +85,23 @@ class TimeReceiver : BroadcastReceiver() {
             LMSType.HOMEWORK -> {
                 NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).let {
                     val markIntent = Intent(context, MarkFinishReceiver::class.java).apply {
-                        putExtra("ID", item.id)
+                        putExtra("ID", id)
                     }
 
-                    val pendingIntent = PendingIntent.getBroadcast(context, 0, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                     it
                         .setContentTitle(item.className)
-                        .setContentText(String.format(context.getString(R.string.reminder_content_hw), item.homework_name, time))
+                        .setContentText(context.getString(R.string.reminder_content_hw, item.homework_name, time))
+                        .setContentIntent(clickPendingIntent)
+                        .setAutoCancel(true)
                         .setStyle(NotificationCompat.BigTextStyle())
                         .setSmallIcon(R.drawable.ic_assignment)
                         .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                         .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
 
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
-                        nm.notify(693000 + item.id, it.build())
+                        nm.notify(693000 + id, it.build())
                     }
                 }
             }

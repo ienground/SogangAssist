@@ -1,1 +1,4 @@
-- Bug Fix
+- Mark as finish in the notification now works properly.<br>
+- Click a notification to go to the detail page.<br>
+- Notified when information is newly registered or updated in LMS. You can turn off notifications in settings.<br>
+- Added a save button to the Edit/Add Information window.
