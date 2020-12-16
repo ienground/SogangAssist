@@ -12,8 +12,8 @@ android {
         applicationId "net.ienlab.sogangassist"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 5
-        versionName "1.1.0"
+        versionCode 6
+        versionName "1.1.0b"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

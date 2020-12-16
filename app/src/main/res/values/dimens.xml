@@ -3,6 +3,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="usual_margin">16dp</dimen>
+    <dimen name="usual_margin_half">8dp</dimen>
     <dimen name="imagebutton_size">40dp</dimen>
     <dimen name="cardview_radius">5dp</dimen>
     <dimen name="cardview_elevation">5dp</dimen>
