@@ -86,6 +86,7 @@
         <CheckBoxPreference
             android:title="@string/notify_when_lms"
             android:key="setRegisterAlert"
+            android:defaultValue="true"
             android:summaryOn="@string/notify_when_lms_sum_on"
             android:summaryOff="@string/notify_when_lms_sum_off" />
 

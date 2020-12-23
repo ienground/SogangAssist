@@ -21,7 +21,7 @@
     <string name="changelog">체인지로그</string>
     <string name="ask">문의</string>
     <string name="info_and_ask"><![CDATA[정보 & 문의]]></string>
-    <string name="email_text">서강 LMS 어시스트 사용자 커멘트</string>
+    <string name="email_text">알바트로스 리마인더 사용자 커멘트</string>
     <string name="pref_changelog_exp">이번 버전에서 변경된 점을 살펴보세요.</string>
     <string name="pref_ask_exp">버그나 궁금한 점을 이쪽으로 보내주세요!</string>
     <string name="ask_to_dev">개발자에게 문의</string>

@@ -34,6 +34,7 @@
     <dimen name="layout_margin">24dp</dimen>
     <dimen name="radio_margin">3.8dp</dimen>
     <dimen name="title_size">16sp</dimen>
+    <dimen name="layout_radius">24dp</dimen>
 
     <!--
 Refer to App Widget Documentation for margin information

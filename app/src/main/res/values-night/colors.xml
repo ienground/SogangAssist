@@ -5,6 +5,8 @@
     <color name="colorRED">#E57373</color>
 
     <color name="color_sogang_sub">#7e0000</color>
+    <color name="dark_blue">#EAEAEA</color>
+    <color name="dark_white_blue">#86749B</color>
 
     <color name="semi_gray">#666666</color>
     <color name="white_opacity">#99121212</color>
@@ -16,5 +18,10 @@
 
     <color name="card_border">#585858</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#A0A0A0</color>
+
+    <!-- Realtime Blur Overlay -->
+    <color name="blur_onboarding_textbox">#EE282828</color>
+    <color name="blur_background">#66282828</color>
+    <color name="blur_groupbox">#BB282828</color>
 
 </resources>

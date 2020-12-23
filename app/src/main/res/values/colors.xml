@@ -11,6 +11,9 @@
     <color name="black">#000000</color>
     <color name="disabled">#777777</color>
 
+    <color name="dark_blue">#363B64</color>
+    <color name="dark_white_blue">#86749B</color>
+
     <color name="semi_gray">#EEEEEE</color>
     <color name="white_opacity">#99FFFFFF</color>
 
@@ -27,10 +30,6 @@
     <color name="color_ienlab_purple_70">#d8caff</color>
     <color name="color_ienlab_skyblue_70">#b4e5fc</color>
     <color name="color_ienlab_blue_70">#c6cbe9</color>
-
-    <color name="color_naver">#03CF5D</color>
-    <color name="color_tistory">#EA5220</color>
-    <color name="color_rss">#f26522</color>
 
     <color name="indicator_unselected">#4D000000</color>
 
@@ -61,5 +60,10 @@
 
     <color name="card_border">#DBDBDB</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#8F9CA3</color>
+
+    <!-- Realtime Blur Overlay -->
+    <color name="blur_onboarding_textbox">#EEFFFFFF</color>
+    <color name="blur_background">#66FFFFFF</color>
+    <color name="blur_groupbox">#bbFFFFFF</color>
 
 </resources>

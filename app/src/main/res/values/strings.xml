@@ -21,7 +21,7 @@
     <string name="changelog">Changelog</string>
     <string name="ask">Ask</string>
     <string name="info_and_ask"><![CDATA[Info & Ask]]></string>
-    <string name="email_text">Sogang LMS Assist User Comment</string>
+    <string name="email_text">Albatross Reminder User Comment</string>
     <string name="pref_changelog_exp">Check new features from this version.</string>
     <string name="pref_ask_exp">Please send us bugs, questions, or your backup data in case of data aggregation errors!</string>
     <string name="ask_to_dev">Ask to Developer</string>
