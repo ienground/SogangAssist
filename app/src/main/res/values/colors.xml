@@ -62,7 +62,7 @@
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#8F9CA3</color>
 
     <!-- Realtime Blur Overlay -->
-    <color name="blur_onboarding_textbox">#EEFFFFFF</color>
+    <color name="blur_onboarding_textbox">#CCFFFFFF</color>
     <color name="blur_background">#66FFFFFF</color>
     <color name="blur_groupbox">#bbFFFFFF</color>
 

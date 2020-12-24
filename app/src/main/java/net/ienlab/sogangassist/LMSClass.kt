@@ -15,5 +15,5 @@ class LMSClass {
     var lesson: Int = 0
 
     // TYPE = HOMEWORK
-    lateinit var homework_name: String
+    var homework_name: String = ""
 }

@@ -73,6 +73,12 @@
     <string name="notify_when_lms">Notify when LMS info is received</string>
     <string name="notify_when_lms_sum_on">Notify when information is received from LMS.</string>
     <string name="notify_when_lms_sum_off">Not notify when information is received from LMS.</string>
+    <string name="backup">Data Backup</string>
+    <string name="backup_desc">Backup application data in json format.</string>
+    <string name="restore">Data Restore</string>
+    <string name="restore_desc">Restore data from json format file.</string>
+    <string name="restore_msg">Existing data will be lost and replaced with backup data. Proceed?</string>
+    <string name="restore_finish">Data restoration complete. Please relaunch the application.</string>
 
     <!--Onboarding-->
     <string name="intro_page0_title">Welcome.</string>
@@ -93,6 +99,8 @@
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="agree">Agree</string>
+    <string name="disagree">Disagree</string>
     <string name="quit">Quit</string>
     <string name="one_hour">1 hour</string>
     <string name="two_hour">2 hours</string>
@@ -131,7 +139,7 @@
     <!--EditActivity-->
     <string name="save_ask">Save?</string>
     <string name="not_save">Not Save</string>
-    <string name="schedule">일정</string>
-    <string name="events_today">오늘까지 해야할 일</string>
+    <string name="schedule">Schedule</string>
+    <string name="events_today">Events Until Today</string>
 
 </resources>

@@ -73,6 +73,12 @@
     <string name="notify_when_lms">LMS 정보 수신 시 알림</string>
     <string name="notify_when_lms_sum_on">LMS로부터 정보를 받았을 때 알림으로 띄웁니다.</string>
     <string name="notify_when_lms_sum_off">LMS로부터 정보를 받아도 알림으로 띄우지 않습니다.</string>
+    <string name="backup">데이터 백업</string>
+    <string name="backup_desc">어플리케이션의 데이터를 json 형식으로 백업합니다.</string>
+    <string name="restore">데이터 복원</string>
+    <string name="restore_desc">json 형식의 파일로부터 데이터를 복원합니다.</string>
+    <string name="restore_msg">기존 데이터는 없어지며 백업 데이터로 대체됩니다. 진행할까요?</string>
+    <string name="restore_finish">데이터 복원이 완료되었습니다. 어플리케이션을 다시 실행해 주세요.</string>
 
     <!--Onboarding-->
     <string name="intro_page0_title">환영합니다.</string>
@@ -93,6 +99,8 @@
     <string name="cancel">취소</string>
     <string name="yes">예</string>
     <string name="no">아니오</string>
+    <string name="agree">동의</string>
+    <string name="disagree">동의하지 않음</string>
     <string name="quit">나가기</string>
     <string name="one_hour">1시간</string>
     <string name="two_hour">2시간</string>

@@ -109,7 +109,6 @@ class MainActivity : AppCompatActivity() {
         for (data in datas) {
             val noti_intent = Intent(this, TimeReceiver::class.java)
             noti_intent.putExtra("ID", data.id)
-            Log.d(TAG, data.id.toString() + " ${data.className} ${data.homework_name}")
             val endCalendar = Calendar.getInstance().apply {
                 timeInMillis = data.endTime
             }
@@ -322,20 +321,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun refreshData() {
+        val work = dbHelper.getItemAtLastDate(currentDate).toMutableList().apply {
+            sortWith( compareBy ({ it.isFinished }, {it.type}))
+        }
+        binding.mainWorkView.adapter = MainWorkAdapter(work)
+        binding.mainWorkView.layoutManager = LinearLayoutManager(this)
+        binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
+
+        setDecorators()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
 
         when (requestCode) {
             REFRESH_MAIN_WORK -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    val work = dbHelper.getItemAtLastDate(currentDate).toMutableList().apply {
-                        sortWith( compareBy ({ it.isFinished }, {it.type}))
-                    }
-                    binding.mainWorkView.adapter = MainWorkAdapter(work)
-                    binding.mainWorkView.layoutManager = LinearLayoutManager(this)
-                    binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
-
-                    setDecorators()
+                    refreshData()
                 }
             }
 

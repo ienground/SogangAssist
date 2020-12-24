@@ -17,7 +17,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/img_onboarding_0"
+            android:src="@drawable/background"
             android:scaleType="centerCrop" />
 
         <com.github.mmin18.widget.RealtimeBlurView
