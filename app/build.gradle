@@ -60,7 +60,7 @@ dependencies {
     implementation 'com.naver.nid:naveridlogin-android-sdk:4.2.5'
     implementation 'com.github.PhilJay:MpAndroidChart:v3.0.2'
     implementation 'com.prolificinteractive:material-calendarview:1.4.3'
-    implementation 'com.applandeo:material-calendar-view:1.5.1'
+    implementation 'de.hdodenhof:circleimageview:3.0.1'
     implementation 'com.scwang.wave:MultiWaveHeader:1.0.0-alpha-1'
     implementation 'com.romandanylyk:pageindicatorview:1.0.3@aar'
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.12.0'

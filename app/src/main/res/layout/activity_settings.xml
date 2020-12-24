@@ -8,29 +8,25 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
-        <com.scwang.wave.MultiWaveHeader
-            android:id="@+id/days_graph"
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/img_onboarding_0"
+            android:scaleType="centerCrop" />
+
+        <com.github.mmin18.widget.RealtimeBlurView
             android:layout_width="0dp"
-            android:layout_height="144dp"
-            android:rotation="180"
-            android:scaleY="-1"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/toolbar"
-            app:mwhCloseColor="?attr/colorPrimary"
-            app:mwhColorAlpha="0.45"
-            app:mwhGradientAngle="45"
-            app:mwhProgress="1"
-            app:mwhStartColor="?attr/colorPrimaryDark"
-            app:mwhVelocity="5"
-            app:mwhWaveHeight="50dp"
-            app:mwhWaves="MultiWave" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:realtimeBlurRadius="20dp"
+            app:realtimeOverlayColor="@color/blur_background"/>
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -51,7 +47,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/settings"
-                    android:textColor="@color/black"
+                    android:textColor="@color/dark_blue"
                     android:textSize="32sp"
                     android:clickable="true"
                     android:focusable="true"
@@ -67,12 +63,29 @@
 
         </androidx.appcompat.widget.Toolbar>
 
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
             android:layout_height="0dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="@dimen/layout_radius"
+            app:cardElevation="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <com.github.mmin18.widget.RealtimeBlurView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:realtimeBlurRadius="30dp"
+                app:realtimeOverlayColor="@color/blur_groupbox"/>
+
+            <FrameLayout
+                android:id="@+id/fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

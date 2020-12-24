@@ -11,309 +11,378 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/img_onboarding_0"
+            android:scaleType="centerCrop" />
+
+        <com.github.mmin18.widget.RealtimeBlurView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:realtimeBlurRadius="20dp"
+            app:realtimeOverlayColor="@color/blur_background"/>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="80dp"
+            android:layout_marginTop="@dimen/statusbar_size"
+            app:maxButtonHeight="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="@dimen/layout_radius"
+            app:cardElevation="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toTopOf="@id/adView">
+
+            <com.github.mmin18.widget.RealtimeBlurView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="match_parent"
+                app:realtimeBlurRadius="30dp"
+                app:realtimeOverlayColor="@color/blur_groupbox"/>
 
-                <RadioGroup
-                    android:id="@+id/radioGroup"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:layout_margin="@dimen/usual_margin"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" >
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
 
-                    <RadioButton
-                        android:id="@+id/radioButton1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/classtime"
-                        android:textAlignment="textStart"
-                        android:layoutDirection="rtl"/>
-
-                    <RadioButton
-                        android:id="@+id/radioButton2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/sup_classtime"
-                        android:textAlignment="textStart"
-                        android:layoutDirection="rtl"/>
-
-                    <RadioButton
-                        android:id="@+id/radioButton3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/assignment"
-                        android:textAlignment="textStart"
-                        android:layoutDirection="rtl"/>
-                </RadioGroup>
-
-                <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/check_auto_edit"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/usual_margin"
-                    android:text="@string/allow_auto_edit_lms"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/radioGroup" />
-
-                <ImageView
-                    android:id="@+id/ic_class"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_class"
-                    android:contentDescription="@string/class_name"
-                    android:layout_marginStart="@dimen/usual_margin"
-                    app:tint="@color/black"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/et_class"
-                    app:layout_constraintTop_toTopOf="@id/et_class"
-                    app:layout_constraintBottom_toBottomOf="@id/et_class" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/et_class"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/usual_margin"
-                    app:boxStrokeColor="@color/colorAccent"
-                    app:hintTextColor="@color/colorAccent"
-                    app:layout_constraintStart_toEndOf="@id/ic_class"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/check_auto_edit" >
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:hint="@string/class_name"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <ImageView
-                    android:id="@+id/ic_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_time"
-                    android:contentDescription="@string/class_name"
-                    android:layout_marginStart="@dimen/usual_margin"
-                    app:tint="@color/black"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/et_time_week"
-                    app:layout_constraintTop_toTopOf="@id/et_time_week"
-                    app:layout_constraintBottom_toBottomOf="@id/et_time_week" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/et_time_week"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/usual_margin"
-                    app:suffixText="@string/week"
-                    app:boxStrokeColor="@color/colorAccent"
-                    app:hintTextColor="@color/colorAccent"
-                    app:layout_constraintStart_toEndOf="@id/ic_time"
-                    app:layout_constraintEnd_toStartOf="@id/et_time_lesson"
-                    app:layout_constraintTop_toBottomOf="@id/et_class"
-                    app:layout_constraintBottom_toTopOf="@id/line_class">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:inputType="number"
-                        android:hint="@string/week"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/et_time_lesson"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/usual_margin"
-                    app:suffixText="@string/lesson"
-                    app:boxStrokeColor="@color/colorAccent"
-                    app:hintTextColor="@color/colorAccent"
-                    app:layout_constraintStart_toEndOf="@id/et_time_week"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/et_class" >
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:inputType="number"
-                        android:hint="@string/lesson"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <View
-                    android:id="@+id/line_class"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/black"
-                    android:alpha="0.12"
-                    android:layout_marginBottom="@dimen/usual_margin"
-                    app:layout_constraintTop_toBottomOf="@id/et_time_week"
-                    app:layout_constraintBottom_toTopOf="@id/tv_class_end_date"/>
+                    android:layout_height="wrap_content" >
 
-                <View
-                    android:id="@+id/line"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/black"
-                    android:alpha="0.12"
-                    android:layout_marginBottom="@dimen/usual_margin"
-                    app:layout_constraintTop_toBottomOf="@id/et_assignment"
-                    app:layout_constraintBottom_toTopOf="@id/tv_start_date"/>
-
-                <ImageView
-                    android:id="@+id/ic_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_today"
-                    android:contentDescription="@string/class_name"
-                    android:layout_marginStart="@dimen/usual_margin"
-                    app:tint="@color/black"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/tv_start_date"
-                    app:layout_constraintTop_toTopOf="@id/tv_start_date"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_start_date" />
-
-                <TextView
-                    android:id="@+id/tv_start_date"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="2020년 10월 3일 (일)"
-                    android:textColor="@color/black"
-                    android:layout_margin="@dimen/usual_margin"
-                    app:layout_constraintStart_toEndOf="@id/ic_date"
-                    app:layout_constraintEnd_toStartOf="@id/tv_start_time"
-                    app:layout_constraintTop_toBottomOf="@id/line" />
-
-                <TextView
-                    android:id="@+id/tv_start_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="오후 8:30"
-                    android:textColor="@color/black"
-                    android:textAlignment="textEnd"
-                    android:layout_marginEnd="@dimen/usual_margin"
-                    app:layout_constraintStart_toEndOf="@id/tv_start_date"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_start_date"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_start_date"/>
-
-                <TextView
-                    android:id="@+id/tv_end_date"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="2020년 10월 4일 (일)"
-                    android:textColor="@color/black"
-                    android:layout_margin="@dimen/usual_margin"
-                    app:layout_constraintStart_toEndOf="@id/ic_date"
-                    app:layout_constraintEnd_toStartOf="@id/tv_end_time"
-                    app:layout_constraintTop_toBottomOf="@id/tv_start_date" />
-
-                <TextView
-                    android:id="@+id/tv_end_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="오후 9:30"
-                    android:textColor="@color/black"
-                    android:textAlignment="textEnd"
-                    android:layout_marginEnd="@dimen/usual_margin"
-                    app:layout_constraintStart_toEndOf="@id/tv_end_date"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_end_date"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_end_date"/>
-
-                <ImageView
-                    android:id="@+id/ic_class_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_today"
-                    android:contentDescription="@string/class_name"
-                    android:layout_marginStart="@dimen/usual_margin"
-                    app:tint="@color/black"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/tv_class_end_date"
-                    app:layout_constraintTop_toTopOf="@id/tv_class_end_date"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_class_end_date" />
-
-                <TextView
-                    android:id="@+id/tv_class_end_date"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="2020년 10월 10일 (일)"
-                    android:textColor="@color/black"
-                    android:layout_margin="@dimen/usual_margin"
-                    app:layout_constraintStart_toEndOf="@id/ic_class_date"
-                    app:layout_constraintEnd_toStartOf="@id/tv_class_end_time"
-                    app:layout_constraintTop_toBottomOf="@id/line_class" />
-
-                <TextView
-                    android:id="@+id/tv_class_end_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="오후 10:30"
-                    android:textColor="@color/black"
-                    android:textAlignment="textEnd"
-                    android:layout_marginEnd="@dimen/usual_margin"
-                    app:layout_constraintStart_toEndOf="@id/tv_class_end_date"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_class_end_date"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_class_end_date"/>
-
-                <ImageView
-                    android:id="@+id/ic_assignment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_assignment"
-                    android:contentDescription="@string/class_name"
-                    android:layout_marginStart="@dimen/usual_margin"
-                    app:tint="@color/black"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/et_assignment"
-                    app:layout_constraintTop_toTopOf="@id/et_assignment"
-                    app:layout_constraintBottom_toBottomOf="@id/et_assignment" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/et_assignment"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/usual_margin"
-                    app:boxStrokeColor="@color/colorAccent"
-                    app:hintTextColor="@color/colorAccent"
-                    app:layout_constraintStart_toEndOf="@id/ic_assignment"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/et_class"
-                    app:layout_constraintBottom_toTopOf="@id/line">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
+                    <RadioGroup
+                        android:id="@+id/radioGroup"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:hint="@string/assignment_name"/>
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:layout_margin="@dimen/usual_margin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" >
 
-                </com.google.android.material.textfield.TextInputLayout>
+                        <RadioButton
+                            android:id="@+id/radioButton1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/classtime"
+                            android:textAlignment="textStart"
+                            android:textColor="@color/dark_blue"
+                            android:layoutDirection="rtl"/>
+
+                        <RadioButton
+                            android:id="@+id/radioButton2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sup_classtime"
+                            android:textAlignment="textStart"
+                            android:textColor="@color/dark_blue"
+                            android:layoutDirection="rtl"/>
+
+                        <RadioButton
+                            android:id="@+id/radioButton3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/assignment"
+                            android:textAlignment="textStart"
+                            android:textColor="@color/dark_blue"
+                            android:layoutDirection="rtl"/>
+                    </RadioGroup>
+
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/check_auto_edit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/usual_margin"
+                        android:text="@string/allow_auto_edit_lms"
+                        android:textColor="@color/dark_blue"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/radioGroup" />
+
+                    <ImageView
+                        android:id="@+id/ic_class"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_class"
+                        android:contentDescription="@string/class_name"
+                        android:layout_marginStart="@dimen/usual_margin"
+                        app:tint="@color/dark_blue"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/et_class"
+                        app:layout_constraintTop_toTopOf="@id/et_class"
+                        app:layout_constraintBottom_toBottomOf="@id/et_class" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/et_class"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/usual_margin"
+                        app:boxStrokeColor="@color/colorAccent"
+                        app:hintTextColor="@color/colorAccent"
+                        app:layout_constraintStart_toEndOf="@id/ic_class"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/check_auto_edit" >
+
+                        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                            android:id="@+id/et_class_auto"
+                            style="@style/Widget.MaterialComponents.AutoCompleteTextView.FilledBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:hint="@string/class_name"
+                            android:completionThreshold="0"
+                            android:textColor="@color/dark_blue"
+                            android:paddingTop="16dp"
+                            android:paddingBottom="16dp"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageView
+                        android:id="@+id/ic_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_time"
+                        android:contentDescription="@string/class_name"
+                        android:layout_marginStart="@dimen/usual_margin"
+                        app:tint="@color/dark_blue"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/et_time_week"
+                        app:layout_constraintTop_toTopOf="@id/et_time_week"
+                        app:layout_constraintBottom_toBottomOf="@id/et_time_week" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/et_time_week"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/usual_margin"
+                        app:suffixText="@string/week"
+                        app:boxStrokeColor="@color/colorAccent"
+                        app:hintTextColor="@color/colorAccent"
+                        app:layout_constraintStart_toEndOf="@id/ic_time"
+                        app:layout_constraintEnd_toStartOf="@id/et_time_lesson"
+                        app:layout_constraintTop_toBottomOf="@id/et_class"
+                        app:layout_constraintBottom_toTopOf="@id/line_class">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:inputType="number"
+                            android:hint="@string/week"
+                            android:textColor="@color/dark_blue"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/et_time_lesson"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/usual_margin"
+                        app:suffixText="@string/lesson"
+                        app:boxStrokeColor="@color/colorAccent"
+                        app:hintTextColor="@color/colorAccent"
+                        app:layout_constraintStart_toEndOf="@id/et_time_week"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/et_class" >
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:inputType="number"
+                            android:hint="@string/lesson"
+                            android:textColor="@color/dark_blue"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <View
+                        android:id="@+id/line_class"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dark_blue"
+                        android:alpha="0.12"
+                        android:layout_marginBottom="@dimen/usual_margin"
+                        app:layout_constraintTop_toBottomOf="@id/et_time_week"
+                        app:layout_constraintBottom_toTopOf="@id/tv_class_end_date"/>
+
+                    <View
+                        android:id="@+id/line"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dark_blue"
+                        android:alpha="0.12"
+                        android:layout_marginBottom="@dimen/usual_margin"
+                        app:layout_constraintTop_toBottomOf="@id/et_assignment"
+                        app:layout_constraintBottom_toTopOf="@id/tv_start_date"/>
+
+                    <ImageView
+                        android:id="@+id/ic_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_today"
+                        android:contentDescription="@string/class_name"
+                        android:layout_marginStart="@dimen/usual_margin"
+                        app:tint="@color/dark_blue"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tv_start_date"
+                        app:layout_constraintTop_toTopOf="@id/tv_start_date"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_start_date" />
+
+                    <TextView
+                        android:id="@+id/tv_start_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="2020년 10월 3일 (일)"
+                        android:textColor="@color/dark_blue"
+                        android:layout_margin="@dimen/usual_margin"
+                        app:layout_constraintStart_toEndOf="@id/ic_date"
+                        app:layout_constraintEnd_toStartOf="@id/tv_start_time"
+                        app:layout_constraintTop_toBottomOf="@id/line" />
+
+                    <TextView
+                        android:id="@+id/tv_start_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="오후 8:30"
+                        android:textColor="@color/dark_blue"
+                        android:textAlignment="textEnd"
+                        android:layout_marginEnd="@dimen/usual_margin"
+                        app:layout_constraintStart_toEndOf="@id/tv_start_date"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tv_start_date"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_start_date"/>
+
+                    <TextView
+                        android:id="@+id/tv_end_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="2020년 10월 4일 (일)"
+                        android:textColor="@color/dark_blue"
+                        android:layout_margin="@dimen/usual_margin"
+                        app:layout_constraintStart_toEndOf="@id/ic_date"
+                        app:layout_constraintEnd_toStartOf="@id/tv_end_time"
+                        app:layout_constraintTop_toBottomOf="@id/tv_start_date" />
+
+                    <TextView
+                        android:id="@+id/tv_end_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="오후 9:30"
+                        android:textColor="@color/dark_blue"
+                        android:textAlignment="textEnd"
+                        android:layout_marginEnd="@dimen/usual_margin"
+                        app:layout_constraintStart_toEndOf="@id/tv_end_date"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tv_end_date"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_end_date"/>
+
+                    <ImageView
+                        android:id="@+id/ic_class_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_today"
+                        android:contentDescription="@string/class_name"
+                        android:layout_marginStart="@dimen/usual_margin"
+                        app:tint="@color/dark_blue"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tv_class_end_date"
+                        app:layout_constraintTop_toTopOf="@id/tv_class_end_date"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_class_end_date" />
+
+                    <TextView
+                        android:id="@+id/tv_class_end_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="2020년 10월 10일 (일)"
+                        android:textColor="@color/dark_blue"
+                        android:layout_margin="@dimen/usual_margin"
+                        app:layout_constraintStart_toEndOf="@id/ic_class_date"
+                        app:layout_constraintEnd_toStartOf="@id/tv_class_end_time"
+                        app:layout_constraintTop_toBottomOf="@id/line_class" />
+
+                    <TextView
+                        android:id="@+id/tv_class_end_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="오후 10:30"
+                        android:textColor="@color/dark_blue"
+                        android:textAlignment="textEnd"
+                        android:layout_marginEnd="@dimen/usual_margin"
+                        app:layout_constraintStart_toEndOf="@id/tv_class_end_date"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tv_class_end_date"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_class_end_date"/>
+
+                    <ImageView
+                        android:id="@+id/ic_assignment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_assignment"
+                        android:contentDescription="@string/class_name"
+                        android:layout_marginStart="@dimen/usual_margin"
+                        app:tint="@color/dark_blue"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/et_assignment"
+                        app:layout_constraintTop_toTopOf="@id/et_assignment"
+                        app:layout_constraintBottom_toBottomOf="@id/et_assignment" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/et_assignment"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/usual_margin"
+                        app:boxStrokeColor="@color/colorAccent"
+                        app:hintTextColor="@color/colorAccent"
+                        app:layout_constraintStart_toEndOf="@id/ic_assignment"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/et_class"
+                        app:layout_constraintBottom_toTopOf="@id/line">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:hint="@string/assignment_name"
+                            android:textColor="@color/dark_blue"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </ScrollView>
+
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/container"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:adSize="BANNER"
+            android:elevation="4dp"
+            app:adUnitId="@string/banner_ad_unit_id">
+
+        </com.google.android.gms.ads.AdView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -33,8 +34,14 @@ class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView
     // View 의 내용을 해당 포지션의 데이터로 바꿉니다.
     override fun onBindViewHolder(holder: PostItemHolder, position: Int) {
         val timeFormat = SimpleDateFormat(context.getString(R.string.timeFormat), Locale.getDefault())
+        val gmsansBold = Typeface.createFromAsset(context.assets, "fonts/gmsans_bold.otf")
+        val gmsansMedium = Typeface.createFromAsset(context.assets, "fonts/gmsans_medium.otf")
 
         setFullAd(context)
+
+        holder.class_name.typeface = gmsansBold
+        holder.sub_name.typeface = gmsansBold
+        holder.end_time.typeface = gmsansMedium
 
         holder.class_name.text = mItems[position].className
         holder.end_time.text = context.getString(R.string.deadline) + timeFormat.format(Date(mItems[position].endTime))

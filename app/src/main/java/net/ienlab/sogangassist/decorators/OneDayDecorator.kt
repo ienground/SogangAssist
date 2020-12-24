@@ -12,13 +12,11 @@ import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import net.ienlab.sogangassist.MyTypefaceSpan
 import net.ienlab.sogangassist.R
 
 import java.util.Date
 
-/**
- * Decorate a day by making the text big and bold
- */
 class OneDayDecorator(mContext: Context) : DayViewDecorator {
 
     private var date: CalendarDay? = null
@@ -33,9 +31,9 @@ class OneDayDecorator(mContext: Context) : DayViewDecorator {
     }
 
     override fun decorate(view: DayViewFacade) {
-        view.addSpan(StyleSpan(Typeface.BOLD_ITALIC))
         view.addSpan(RelativeSizeSpan(1.4f))
-        view.addSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.black)))
+        view.addSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.dark_blue)))
+        view.addSpan(MyTypefaceSpan(context, "gmsans_bold.otf"))
     }
 
     /**

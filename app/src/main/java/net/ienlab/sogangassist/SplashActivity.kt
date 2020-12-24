@@ -22,8 +22,6 @@ class SplashActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash)
         binding.activity = this
 
-        binding.textLogo.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
-
         val sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
 
         val isFirstVisit = sharedPreferences.getBoolean(SharedGroup.IS_FIRST_VISIT, true)

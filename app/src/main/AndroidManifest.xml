@@ -38,14 +38,9 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".EditActivity"
-            android:label="@string/edit_detail"
-            android:theme="@style/AppTheme.ActionBar">
-
-        </activity>
+        <activity android:name=".EditActivity" />
         <activity android:name=".SettingsActivity"
-            android:theme="@style/AppTheme.Settings"/>
+            android:theme="@style/AppTheme"/>
 
         <activity android:name=".MainActivity" />
         <activity android:name=".OnboardingActivity" />

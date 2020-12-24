@@ -9,7 +9,7 @@
       android:translateY="27">
     <path
         android:pathData="M400,400l0,400l100,-100l100,100l0,-400z"
-        android:fillColor="#C1C1C2"/>
+        android:fillColor="#FFFFFF"/>
     <path
         android:pathData="M700,500h837.71c23.27,-15.94 48.07,-29.55 74.2,-40.74c2.4,-14.47 6.46,-28.6 12.15,-42.25c2.43,-5.83 5.13,-11.5 8.09,-17H700V500z"
         android:fillColor="#FFFFFF"/>
@@ -21,7 +21,7 @@
         android:fillColor="#FFFFFF"/>
     <path
         android:pathData="M1750,1800H250c-27.5,0 -50,-22.5 -50,-50l0,0c0,-27.5 22.5,-50 50,-50h1500c27.5,0 50,22.5 50,50l0,0C1800,1777.5 1777.5,1800 1750,1800z"
-        android:fillColor="#C1C1C2"/>
+        android:fillColor="#FFFFFF"/>
     <path
         android:pathData="M1800,400c-0.13,0 -0.25,0 -0.38,0c-50.3,0 -90.3,40.61 -90.3,90.91v41.21c-173.94,41.21 -272.73,196.36 -272.73,383.03v303.03l-78.79,78.18c-38.18,38.18 -11.52,103.64 42.42,103.64H1800V400z"
         android:fillColor="#FFFFFF"/>

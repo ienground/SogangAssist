@@ -80,8 +80,15 @@ class MainActivity : AppCompatActivity() {
             duration = 300
         }
         val monthFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
-        binding.month.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
+        val gmsansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
+        val gmsansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
+
+        binding.month.typeface = gmsansBold
         binding.month.text = monthFormat.format(Date(System.currentTimeMillis()))
+
+        binding.tagSchedule.typeface = gmsansMedium
+        binding.tagEvents.typeface = gmsansMedium
+        binding.tvNoDeadline.typeface = gmsansMedium
 
         if (BuildConfig.DEBUG) binding.adView.visibility = View.GONE
 
@@ -278,13 +285,14 @@ class MainActivity : AppCompatActivity() {
     fun setDecorators() {
         binding.calendarView.removeDecorators()
 
+        val weekdayDecorator = WeekdayDecorator(this)
         val sundayDecorator = SundayDecorator(this)
         val saturdayDecorator = SaturdayDecorator(this)
         val todayDecorator = OneDayDecorator(this).apply {
             setDate(Date(System.currentTimeMillis()))
         }
 
-        binding.calendarView.addDecorators(sundayDecorator, saturdayDecorator, todayDecorator)
+        binding.calendarView.addDecorators(weekdayDecorator, sundayDecorator, saturdayDecorator, todayDecorator)
         if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
             binding.calendarView.addDecorator(NightModeDecorator(this))
         }

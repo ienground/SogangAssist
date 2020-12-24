@@ -7,20 +7,33 @@
     android:orientation="vertical"
     android:theme="@style/ThemeOverlay.AppCompat.Light">
 
-    <ImageView
-        android:id="@+id/logo"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgBackground"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:src="@color/colorPrimary"
+        android:contentDescription="@string/real_app_name"
         android:layout_marginStart="@dimen/usual_margin"
         android:layout_marginEnd="@dimen/usual_margin"
-        android:src="@drawable/img_logo"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/typo"
-        app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/ienlab_logo"/>
+        app:layout_constraintBottom_toTopOf="@id/ienlab_logo" />
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:src="@drawable/ic_icon"
+        android:contentDescription="@string/real_app_name"
+        app:tint="@android:color/white"
+        app:layout_constraintStart_toStartOf="@id/imgBackground"
+        app:layout_constraintEnd_toEndOf="@id/imgBackground"
+        app:layout_constraintTop_toTopOf="@id/imgBackground"
+        app:layout_constraintBottom_toBottomOf="@id/imgBackground" />
 
     <TextView
         android:id="@+id/typo"
@@ -33,10 +46,9 @@
         android:text="@string/real_app_name"
         android:layout_marginEnd="@dimen/usual_margin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/logo"
-        app:layout_constraintTop_toTopOf="@id/logo"
-        app:layout_constraintBottom_toBottomOf="@id/logo"/>
-
+        app:layout_constraintStart_toEndOf="@id/imgBackground"
+        app:layout_constraintTop_toTopOf="@id/imgBackground"
+        app:layout_constraintBottom_toBottomOf="@id/imgBackground"/>
 
     <ImageView
         android:id="@+id/ienlab_logo"
@@ -45,18 +57,16 @@
         android:src="@drawable/img_dev"
         android:layout_marginStart="3dp"
         android:layout_marginTop="10dp"
-
-        app:layout_constraintTop_toBottomOf="@id/logo"
+        app:layout_constraintTop_toBottomOf="@id/imgBackground"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/logo" />
+        app:layout_constraintStart_toStartOf="@id/imgBackground" />
 
     <TextView
         android:id="@+id/version"
         android:layout_width="70dp"
         android:layout_height="35dp"
         android:text="@string/versionName"
-        android:textStyle="bold|italic"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/colorPrimary"
         android:gravity="center_vertical|end"
         app:layout_constraintTop_toTopOf="@id/ienlab_logo"
         app:layout_constraintBottom_toBottomOf="@id/ienlab_logo"

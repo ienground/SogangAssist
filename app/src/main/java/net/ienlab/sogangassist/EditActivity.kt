@@ -8,13 +8,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.ads.*
 import com.google.android.material.snackbar.Snackbar
@@ -48,12 +51,49 @@ class EditActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_edit)
         binding.activity = this
 
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.title = null
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         setFullAd(this)
         displayAd(this)
+
+        if (BuildConfig.DEBUG) binding.adView.visibility = View.GONE
+
+        // AdView
+        val adRequest = AdRequest.Builder()
+        if (BuildConfig.DEBUG) {
+            RequestConfiguration.Builder()
+                .setTestDeviceIds(mutableListOf(testDevice)).let {
+                    MobileAds.setRequestConfiguration(it.build())
+                }
+        }
+
+        val gmsansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
+        val gmsansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
+
+        binding.radioButton1.typeface = gmsansMedium
+        binding.radioButton2.typeface = gmsansMedium
+        binding.radioButton3.typeface = gmsansMedium
+        binding.checkAutoEdit.typeface = gmsansMedium
+        binding.etClass.typeface = gmsansMedium
+        binding.etClass.editText?.typeface = gmsansMedium
+        binding.etTimeLesson.typeface = gmsansMedium
+        binding.etTimeLesson.editText?.typeface = gmsansMedium
+        binding.etTimeWeek.typeface = gmsansMedium
+        binding.etTimeWeek.editText?.typeface = gmsansMedium
+        binding.etAssignment.typeface = gmsansMedium
+        binding.etAssignment.editText?.typeface = gmsansMedium
+        binding.tvStartTime.typeface = gmsansMedium
+        binding.tvEndTime.typeface = gmsansMedium
+        binding.tvStartDate.typeface = gmsansMedium
+        binding.tvEndDate.typeface = gmsansMedium
+        binding.tvClassEndTime.typeface = gmsansMedium
+        binding.tvClassEndDate.typeface = gmsansMedium
+
+        binding.adView.loadAd(adRequest.build())
 
         dbHelper = DBHelper(this, dbName, dbVersion)
         radioButtonGroup = arrayOf(R.id.radioButton1, R.id.radioButton2, R.id.radioButton3)
@@ -62,6 +102,16 @@ class EditActivity : AppCompatActivity() {
         timeFormat = SimpleDateFormat(getString(R.string.timeFormat), Locale.getDefault())
         sharedPreferences = getSharedPreferences("${packageName}_preferences",  Context.MODE_PRIVATE)
         am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val classList: ArrayList<String> = arrayListOf()
+        for (data in dbHelper.getAllData()) {
+            if (data.className !in classList) {
+                classList.add(data.className)
+            }
+        }
+
+//        (binding.etClass.editText as AppCompatAutoCompleteTextView).setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, classList))
+        binding.etClassAuto.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, classList))
 
         id = intent.getIntExtra("ID", -1)
         if (id != -1) {
@@ -149,8 +199,6 @@ class EditActivity : AppCompatActivity() {
             }
             currentItem = LMSClass()
         }
-
-
     }
 
     fun setFullAd(context: Context) {

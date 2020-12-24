@@ -131,5 +131,7 @@
     <!--EditActivity-->
     <string name="save_ask">저장할까요?</string>
     <string name="not_save">저장 안함</string>
+    <string name="schedule">일정</string>
+    <string name="events_today">오늘까지 해야할 일</string>
 
 </resources>
