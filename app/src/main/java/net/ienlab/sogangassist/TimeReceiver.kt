@@ -53,7 +53,9 @@ class TimeReceiver : BroadcastReceiver() {
                         .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
 
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
-                        nm.notify(693000 + id, it.build())
+                        if (item.className != "") {
+                            nm.notify(693000 + id, it.build())
+                        }
                     }
                 }
             }
@@ -77,7 +79,9 @@ class TimeReceiver : BroadcastReceiver() {
                         .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
 
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
-                        nm.notify(693000 + id, it.build())
+                        if (item.className != "") {
+                            nm.notify(693000 + id, it.build())
+                        }
                     }
                 }
             }
@@ -101,7 +105,9 @@ class TimeReceiver : BroadcastReceiver() {
                         .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
 
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
-                        nm.notify(693000 + id, it.build())
+                        if (item.className != "") {
+                            nm.notify(693000 + id, it.build())
+                        }
                     }
                 }
             }

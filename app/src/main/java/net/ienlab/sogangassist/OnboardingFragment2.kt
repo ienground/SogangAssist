@@ -35,9 +35,6 @@ class OnboardingFragment2 : Fragment() {
 
         introBtnNext = requireActivity().findViewById(R.id.intro_btn_next)
 
-        binding.sectionLabel.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
-        binding.sectionContent.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
-
         if (MyUtils.isNotiPermissionAllowed(requireContext())) {
             with (binding.btnNotiAccess) {
                 text = getString(R.string.noti_access_allowed)

@@ -75,6 +75,7 @@
     <string name="notify_when_lms_sum_off">Not notify when information is received from LMS.</string>
     <string name="backup">Data Backup</string>
     <string name="backup_desc">Backup application data in json format.</string>
+    <string name="backup_msg">Backup completed.</string>
     <string name="restore">Data Restore</string>
     <string name="restore_desc">Restore data from json format file.</string>
     <string name="restore_msg">Existing data will be lost and replaced with backup data. Proceed?</string>
@@ -140,6 +141,7 @@
     <string name="save_ask">Save?</string>
     <string name="not_save">Not Save</string>
     <string name="schedule">Schedule</string>
-    <string name="events_today">Events Until Today</string>
+    <string name="events_today">Events Until %1$s</string>
+    <string name="tag_date">MMM dd</string>
 
 </resources>

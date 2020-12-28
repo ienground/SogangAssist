@@ -3,9 +3,11 @@ package net.ienlab.sogangassist
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Typeface
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -29,6 +31,7 @@ class OnboardingActivity : AppCompatActivity(),
     private var backPressedTime: Long = 0
 
     var page = 0
+    var lastPage = 0
     lateinit var binding: ActivityOnboardingBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,8 +56,20 @@ class OnboardingActivity : AppCompatActivity(),
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
                 override fun onPageScrollStateChanged(state: Int) {}
                 override fun onPageSelected(position: Int) {
-                    page = position
                     binding.pageIndicator.selection = position
+                    page = position
+
+                    if (lastPage > position) {
+                        binding.sectionContent.setInAnimation(applicationContext, R.anim.slide_in_left)
+                        binding.sectionContent.setOutAnimation(applicationContext, R.anim.slide_out_right)
+                        binding.sectionLabel.setInAnimation(applicationContext, R.anim.slide_in_left)
+                        binding.sectionLabel.setOutAnimation(applicationContext, R.anim.slide_out_right)
+                    } else {
+                        binding.sectionContent.setInAnimation(applicationContext, R.anim.slide_in_right)
+                        binding.sectionContent.setOutAnimation(applicationContext, R.anim.slide_out_left)
+                        binding.sectionLabel.setInAnimation(applicationContext, R.anim.slide_in_right)
+                        binding.sectionLabel.setOutAnimation(applicationContext, R.anim.slide_out_left)
+                    }
 
                     when (position) {
                         0 -> {
@@ -62,6 +77,8 @@ class OnboardingActivity : AppCompatActivity(),
                                 isEnabled = true
                                 alpha = 1f
                             }
+                            binding.sectionLabel.setText(getString(R.string.intro_page0_title))
+                            binding.sectionContent.setText(getString(R.string.intro_page0_exp))
                         }
 
                         1 -> {
@@ -74,6 +91,8 @@ class OnboardingActivity : AppCompatActivity(),
                                     alpha = 0.2f
                                 }
                             }
+                            binding.sectionLabel.setText(getString(R.string.intro_page1_title))
+                            binding.sectionContent.setText(getString(R.string.intro_page1_exp))
                         }
 
                         2 -> {
@@ -86,6 +105,8 @@ class OnboardingActivity : AppCompatActivity(),
                                     alpha = 0.2f
                                 }
                             }
+                            binding.sectionLabel.setText(getString(R.string.intro_page2_title))
+                            binding.sectionContent.setText(getString(R.string.intro_page2_exp))
                         }
 
                         3 -> {
@@ -98,6 +119,8 @@ class OnboardingActivity : AppCompatActivity(),
                                     alpha = 0.2f
                                 }
                             }
+                            binding.sectionLabel.setText(getString(R.string.intro_page3_title))
+                            binding.sectionContent.setText(getString(R.string.intro_page3_exp))
                         }
 
                         4 -> {
@@ -110,6 +133,8 @@ class OnboardingActivity : AppCompatActivity(),
                                     alpha = 0.2f
                                 }
                             }
+                            binding.sectionLabel.setText(getString(R.string.intro_page4_title))
+                            binding.sectionContent.setText(getString(R.string.intro_page4_exp))
                         }
                     }
 
@@ -123,9 +148,19 @@ class OnboardingActivity : AppCompatActivity(),
 
                     binding.introBtnPrev.visibility = if (position == 0) View.GONE
                     else View.VISIBLE
+                    lastPage = position
                 }
             })
         }
+
+        binding.sectionContent.setInAnimation(applicationContext, R.anim.slide_in_left)
+        binding.sectionContent.setOutAnimation(applicationContext, R.anim.slide_out_right)
+        binding.sectionLabel.setInAnimation(applicationContext, R.anim.slide_in_left)
+        binding.sectionLabel.setOutAnimation(applicationContext, R.anim.slide_out_right)
+        binding.sectionLabel0.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
+        binding.sectionContent0.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
+        binding.sectionLabel1.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
+        binding.sectionContent1.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
 
         binding.pageIndicator.selection = page
         binding.pageIndicator.setAnimationType(AnimationType.WORM)

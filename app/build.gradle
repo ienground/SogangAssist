@@ -12,7 +12,7 @@ android {
         applicationId "net.ienlab.sogangassist"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 7
+        versionCode 8
         versionName "1.5.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -57,13 +57,9 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-    implementation 'com.naver.nid:naveridlogin-android-sdk:4.2.5'
-    implementation 'com.github.PhilJay:MpAndroidChart:v3.0.2'
     implementation 'com.prolificinteractive:material-calendarview:1.4.3'
     implementation 'de.hdodenhof:circleimageview:3.0.1'
-    implementation 'com.scwang.wave:MultiWaveHeader:1.0.0-alpha-1'
     implementation 'com.romandanylyk:pageindicatorview:1.0.3@aar'
-    implementation 'com.getkeepsafe.taptargetview:taptargetview:1.12.0'
     implementation 'com.github.mmin18:realtimeblurview:1.2.1'
 
     testImplementation 'junit:junit:4.13.1'

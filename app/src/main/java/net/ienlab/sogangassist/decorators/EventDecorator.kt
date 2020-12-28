@@ -10,7 +10,7 @@ import java.util.HashSet
 /**
  * Decorate several days with a dot
  */
-class EventDecorator(private val color: Int, private val amount: Int, dates: Collection<CalendarDay>) : DayViewDecorator {
+class EventDecorator(private val color: Int, private val amount: IntArray, dates: Collection<CalendarDay>) : DayViewDecorator {
 
 //    var drawable = ContextCompat.getDrawable(context, R.drawable.ic_add)!!
     var dates = HashSet(dates)

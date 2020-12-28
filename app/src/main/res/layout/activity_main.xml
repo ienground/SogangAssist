@@ -41,16 +41,33 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
+            <TextSwitcher
                 android:id="@+id/month"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="#MONTH"
-                android:textColor="@color/dark_blue"
-                android:textSize="32sp"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_marginTop="20dp" />
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/month_0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="#MONTH"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="32sp"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/month_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="#MONTH"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="32sp"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </TextSwitcher>
 
         </androidx.appcompat.widget.Toolbar>
 

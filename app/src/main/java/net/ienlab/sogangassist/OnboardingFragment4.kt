@@ -29,9 +29,6 @@ class OnboardingFragment4 : Fragment() {
         val sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)
         val introBtnFine: ImageButton = requireActivity().findViewById(R.id.intro_btn_fine)
 
-        binding.sectionLabel.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
-        binding.sectionContent.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
-
         binding.btn1hour.setOnClickListener {
             if (hours[0]) {
                 hours[0] = false

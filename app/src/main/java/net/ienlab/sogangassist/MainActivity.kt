@@ -28,8 +28,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.getkeepsafe.taptargetview.TapTarget
-import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
@@ -55,7 +53,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var dbHelper: DBHelper
     lateinit var sharedPreferences: SharedPreferences
     lateinit var am: AlarmManager
-    var currentDate: Long = 0
+    var thisCurrentDate: Long = 0
     lateinit var fadeOutAnimation: AlphaAnimation
     lateinit var fadeInAnimation: AlphaAnimation
 
@@ -83,8 +81,12 @@ class MainActivity : AppCompatActivity() {
         val gmsansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
         val gmsansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
 
-        binding.month.typeface = gmsansBold
-        binding.month.text = monthFormat.format(Date(System.currentTimeMillis()))
+        val dateFormat = SimpleDateFormat(getString(R.string.tag_date), Locale.getDefault())
+
+        binding.month0.typeface = gmsansBold
+        binding.month1.typeface = gmsansBold
+        binding.month.setText(monthFormat.format(Date(System.currentTimeMillis())))
+        binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(Calendar.getInstance().time))
 
         binding.tagSchedule.typeface = gmsansMedium
         binding.tagEvents.typeface = gmsansMedium
@@ -214,38 +216,53 @@ class MainActivity : AppCompatActivity() {
         binding.mainWorkView.layoutManager = LinearLayoutManager(this)
         binding.tvNoDeadline.visibility = if (todayWork.isEmpty()) View.VISIBLE else View.GONE
 
-        binding.calendarView.topbarVisible = false
-        binding.calendarView.arrowColor = ContextCompat.getColor(this, R.color.black)
-        currentDate = System.currentTimeMillis()
-        binding.calendarView.setOnDateChangedListener { _, date, _ ->
-            val work = dbHelper.getItemAtLastDate(date.date.time).toMutableList().apply {
-                sortWith( compareBy ({ it.isFinished }, {it.type}))
-            }
-            binding.mainWorkView.let {
-                it.startAnimation(fadeOutAnimation)
-                it.visibility = View.INVISIBLE
+        thisCurrentDate = System.currentTimeMillis()
 
-                it.adapter = MainWorkAdapter(work)
-                it.layoutManager = LinearLayoutManager(this)
-                currentDate = date.date.time
-
-                it.visibility = View.VISIBLE
-                it.startAnimation(fadeInAnimation)
-            }
-
-            binding.tvNoDeadline.let {
-                if (work.isEmpty()) {
+        // 달력
+        var beforeDate = binding.calendarView.currentDate.date
+        binding.calendarView.apply {
+            topbarVisible = false
+            arrowColor = ContextCompat.getColor(applicationContext, R.color.black)
+            setOnDateChangedListener { _, date, _ ->
+                binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(date.date))
+                val work = dbHelper.getItemAtLastDate(date.date.time).toMutableList().apply {
+                    sortWith( compareBy ({ it.isFinished }, {it.type}))
+                }
+                binding.mainWorkView.let {
                     it.startAnimation(fadeOutAnimation)
                     it.visibility = View.INVISIBLE
+
+                    it.adapter = MainWorkAdapter(work)
+                    it.layoutManager = LinearLayoutManager(applicationContext)
+                    thisCurrentDate = date.date.time
+
                     it.visibility = View.VISIBLE
                     it.startAnimation(fadeInAnimation)
-                } else {
-                    it.visibility = View.INVISIBLE
+                }
+
+                binding.tvNoDeadline.let {
+                    if (work.isEmpty()) {
+                        it.startAnimation(fadeOutAnimation)
+                        it.visibility = View.INVISIBLE
+                        it.visibility = View.VISIBLE
+                        it.startAnimation(fadeInAnimation)
+                    } else {
+                        it.visibility = View.INVISIBLE
+                    }
                 }
             }
-        }
-        binding.calendarView.setOnMonthChangedListener { _, date ->
-            binding.month.text = monthFormat.format(date.date)
+            setOnMonthChangedListener { _, date ->
+                if (beforeDate > date.date) {
+                    binding.month.setInAnimation(applicationContext, R.anim.slide_in_left)
+                    binding.month.setOutAnimation(applicationContext, R.anim.slide_out_right)
+                } else {
+                    binding.month.setInAnimation(applicationContext, R.anim.slide_in_right)
+                    binding.month.setOutAnimation(applicationContext, R.anim.slide_out_left)
+                }
+
+                binding.month.setText(monthFormat.format(date.date))
+                beforeDate = date.date
+            }
         }
 
         setDecorators()
@@ -297,7 +314,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val datas = dbHelper.getAllData()
-        val timeCount = mutableMapOf<Long, Int>()
+        val timeCount = mutableMapOf<Long, IntArray>()
 
         for (data in datas) {
             Calendar.getInstance().let {
@@ -308,9 +325,16 @@ class MainActivity : AppCompatActivity() {
                 it.set(Calendar.MILLISECOND, 0)
 
                 if (it.timeInMillis in timeCount.keys) {
-                    timeCount.put(it.timeInMillis, timeCount[it.timeInMillis]?.plus(1) ?: 1)
+                    val value = timeCount[it.timeInMillis] ?: intArrayOf(0, 0)
+                    value[if (data.isFinished) 1 else 0] += 1
+                    timeCount[it.timeInMillis] = value
                 } else {
-                    timeCount.put(it.timeInMillis, 1)
+                    if (data.isFinished) {
+                        timeCount[it.timeInMillis] = intArrayOf(0, 1)
+                    } else {
+                        timeCount[it.timeInMillis] = intArrayOf(1, 0)
+                    }
+
                 }
             }
         }
@@ -322,7 +346,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun refreshData() {
-        val work = dbHelper.getItemAtLastDate(currentDate).toMutableList().apply {
+        val work = dbHelper.getItemAtLastDate(thisCurrentDate).toMutableList().apply {
             sortWith( compareBy ({ it.isFinished }, {it.type}))
         }
         binding.mainWorkView.adapter = MainWorkAdapter(work)
@@ -447,7 +471,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.menu_set_today -> {
                 binding.calendarView.setCurrentDate(Date(System.currentTimeMillis()))
-                currentDate = System.currentTimeMillis()
+                thisCurrentDate = System.currentTimeMillis()
             }
 
             R.id.menu_settings -> {

@@ -75,6 +75,7 @@
     <string name="notify_when_lms_sum_off">LMS로부터 정보를 받아도 알림으로 띄우지 않습니다.</string>
     <string name="backup">데이터 백업</string>
     <string name="backup_desc">어플리케이션의 데이터를 json 형식으로 백업합니다.</string>
+    <string name="backup_msg">백업이 완료되었습니다.</string>
     <string name="restore">데이터 복원</string>
     <string name="restore_desc">json 형식의 파일로부터 데이터를 복원합니다.</string>
     <string name="restore_msg">기존 데이터는 없어지며 백업 데이터로 대체됩니다. 진행할까요?</string>
@@ -140,6 +141,7 @@
     <string name="save_ask">저장할까요?</string>
     <string name="not_save">저장 안함</string>
     <string name="schedule">일정</string>
-    <string name="events_today">오늘까지 해야할 일</string>
+    <string name="events_today">%1$s까지 해야할 일</string>
+    <string name="tag_date">M월 d일</string>
 
 </resources>

@@ -35,9 +35,6 @@ class OnboardingFragment1 : Fragment() {
         val pm = requireContext().packageManager
         val lmsPackageName = "kr.co.imaxsoft.hellolms"
 
-        binding.sectionLabel.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
-        binding.sectionContent.typeface = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
-
         if (isPackageInstalled(lmsPackageName, pm)) {
             with (binding.btnCheckLms) {
                 text = getString(R.string.lms_installed)

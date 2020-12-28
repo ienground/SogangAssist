@@ -189,6 +189,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                         val outputStream = requireActivity().contentResolver.openOutputStream(uri)
                         outputStream?.write(output.toString().toByteArray())
                         outputStream?.close()
+
+                        Toast.makeText(requireContext(), getString(R.string.backup_msg), Toast.LENGTH_SHORT).show()
                     }
                 }
 
