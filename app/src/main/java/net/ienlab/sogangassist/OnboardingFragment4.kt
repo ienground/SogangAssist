@@ -1,5 +1,6 @@
 package net.ienlab.sogangassist
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Typeface
 import android.net.Uri
@@ -32,11 +33,23 @@ class OnboardingFragment4 : Fragment() {
         binding.btn1hour.setOnClickListener {
             if (hours[0]) {
                 hours[0] = false
-                binding.btn1hour.alpha = 0.3f
+                ValueAnimator.ofFloat(1f, 0.3f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn1hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false).apply()
             } else {
                 hours[0] = true
-                binding.btn1hour.alpha = 1.0f
+                ValueAnimator.ofFloat(0.3f, 1f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn1hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_1HOUR_LEC, true).apply()
             }
 
@@ -54,11 +67,23 @@ class OnboardingFragment4 : Fragment() {
         binding.btn2hour.setOnClickListener {
             if (hours[1]) {
                 hours[1] = false
-                binding.btn2hour.alpha = 0.3f
+                ValueAnimator.ofFloat(1f, 0.3f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn2hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false).apply()
             } else {
                 hours[1] = true
-                binding.btn2hour.alpha = 1.0f
+                ValueAnimator.ofFloat(0.3f, 1f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn2hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_2HOUR_LEC, true).apply()
             }
 
@@ -76,11 +101,23 @@ class OnboardingFragment4 : Fragment() {
         binding.btn6hour.setOnClickListener {
             if (hours[2]) {
                 hours[2] = false
-                binding.btn6hour.alpha = 0.3f
+                ValueAnimator.ofFloat(1f, 0.3f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn6hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false).apply()
             } else {
                 hours[2] = true
-                binding.btn6hour.alpha = 1.0f
+                ValueAnimator.ofFloat(0.3f, 1f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn6hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_6HOUR_LEC, true).apply()
             }
 
@@ -98,11 +135,23 @@ class OnboardingFragment4 : Fragment() {
         binding.btn12hour.setOnClickListener {
             if (hours[3]) {
                 hours[3] = false
-                binding.btn12hour.alpha = 0.3f
+                ValueAnimator.ofFloat(1f, 0.3f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn12hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false).apply()
             } else {
                 hours[3] = true
-                binding.btn12hour.alpha = 1.0f
+                ValueAnimator.ofFloat(0.3f, 1f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn12hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_12HOUR_LEC, true).apply()
             }
 
@@ -120,11 +169,23 @@ class OnboardingFragment4 : Fragment() {
         binding.btn24hour.setOnClickListener {
             if (hours[4]) {
                 hours[4] = false
-                binding.btn24hour.alpha = 0.3f
+                ValueAnimator.ofFloat(1f, 0.3f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn24hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false).apply()
             } else {
                 hours[4] = true
-                binding.btn24hour.alpha = 1.0f
+                ValueAnimator.ofFloat(0.3f, 1f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn24hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_24HOUR_LEC, true).apply()
             }
 

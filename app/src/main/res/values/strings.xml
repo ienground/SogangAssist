@@ -143,9 +143,9 @@
     <string name="schedule">Schedule</string>
     <string name="events_today">Events Until %1$s</string>
     <string name="tag_date">MMM dd</string>
-    <string name="onboarding0_ex_class">고급응용C프로그래밍(01)</string>
-    <string name="onboarding0_ex_week">1주 3차시</string>
-    <string name="onboarding0_ex_time">마감 : 오후 11:59</string>
-    <string name="onboarding0_ex_hw">과제1: 자기소개서</string>
+    <string name="onboarding0_ex_class">Advanced Applied C Programming(01)</string>
+    <string name="onboarding0_ex_week">Week 1 Hour 3</string>
+    <string name="onboarding0_ex_time">Deadline : PM 11:59</string>
+    <string name="onboarding0_ex_hw">Homework1: Introduce</string>
 
 </resources>

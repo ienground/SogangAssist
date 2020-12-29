@@ -1,5 +1,6 @@
 package net.ienlab.sogangassist
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Typeface
 import android.net.Uri
@@ -29,14 +30,26 @@ class OnboardingFragment3 : Fragment() {
         val sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)
         val introBtnNext: ImageButton = requireActivity().findViewById(R.id.intro_btn_next)
 
-        binding.group1hour.setOnClickListener {
+        binding.btn1hour.setOnClickListener {
             if (hours[0]) {
                 hours[0] = false
-                binding.group1hour.alpha = 0.3f
+                ValueAnimator.ofFloat(1f, 0.3f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn1hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_1HOUR_HW, false).apply()
             } else {
                 hours[0] = true
-                binding.group1hour.alpha = 1.0f
+                ValueAnimator.ofFloat(0.3f, 1f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn1hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_1HOUR_HW, true).apply()
             }
 
@@ -51,14 +64,26 @@ class OnboardingFragment3 : Fragment() {
             }
         }
 
-        binding.group2hour.setOnClickListener {
+        binding.btn2hour.setOnClickListener {
             if (hours[1]) {
                 hours[1] = false
-                binding.group2hour.alpha = 0.3f
+                ValueAnimator.ofFloat(1f, 0.3f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn2hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_2HOUR_HW, false).apply()
             } else {
                 hours[1] = true
-                binding.group2hour.alpha = 1.0f
+                ValueAnimator.ofFloat(0.3f, 1f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn2hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_2HOUR_HW, true).apply()
             }
 
@@ -73,14 +98,26 @@ class OnboardingFragment3 : Fragment() {
             }
         }
 
-        binding.group6hour.setOnClickListener {
+        binding.btn6hour.setOnClickListener {
             if (hours[2]) {
                 hours[2] = false
-                binding.group6hour.alpha = 0.3f
+                ValueAnimator.ofFloat(1f, 0.3f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn6hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_6HOUR_HW, false).apply()
             } else {
                 hours[2] = true
-                binding.group6hour.alpha = 1.0f
+                ValueAnimator.ofFloat(0.3f, 1f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn6hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_6HOUR_HW, true).apply()
             }
 
@@ -95,14 +132,26 @@ class OnboardingFragment3 : Fragment() {
             }
         }
 
-        binding.group12hour.setOnClickListener {
+        binding.btn12hour.setOnClickListener {
             if (hours[3]) {
                 hours[3] = false
-                binding.group12hour.alpha = 0.3f
+                ValueAnimator.ofFloat(1f, 0.3f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn12hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_12HOUR_HW, false).apply()
             } else {
                 hours[3] = true
-                binding.group12hour.alpha = 1.0f
+                ValueAnimator.ofFloat(0.3f, 1f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn12hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_12HOUR_HW, true).apply()
             }
 
@@ -117,14 +166,26 @@ class OnboardingFragment3 : Fragment() {
             }
         }
 
-        binding.group24hour.setOnClickListener {
+        binding.btn24hour.setOnClickListener {
             if (hours[4]) {
                 hours[4] = false
-                binding.group24hour.alpha = 0.3f
+                ValueAnimator.ofFloat(1f, 0.3f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn24hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_24HOUR_HW, false).apply()
             } else {
                 hours[4] = true
-                binding.group24hour.alpha = 1.0f
+                ValueAnimator.ofFloat(0.3f, 1f).apply {
+                    duration = 300
+                    addUpdateListener {
+                        binding.btn24hour.alpha = (it.animatedValue as Float)
+                    }
+                    start()
+                }
                 sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_24HOUR_HW, true).apply()
             }
 

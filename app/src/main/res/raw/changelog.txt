@@ -1,3 +1,2 @@
-- UI Redesign <br>
-- Auto-completion of subject names has been added when adding new data.<br>
-- Added data backup and restoration.
+- In the calendar, completed items and incomplete items are separated.<br>
+- Redesign onboarding screen.
