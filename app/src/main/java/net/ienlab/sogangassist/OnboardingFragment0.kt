@@ -24,6 +24,16 @@ class OnboardingFragment0 : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val gmSansBold = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
+        val gmSansMedium = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
+
+        binding.className.typeface = gmSansBold
+        binding.className2.typeface = gmSansBold
+        binding.subName.typeface = gmSansBold
+        binding.subName2.typeface = gmSansBold
+        binding.endTime.typeface = gmSansMedium
+        binding.endTime2.typeface = gmSansMedium
     }
 
     override fun onAttach(context: Context) {

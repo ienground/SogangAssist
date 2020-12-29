@@ -143,5 +143,9 @@
     <string name="schedule">일정</string>
     <string name="events_today">%1$s까지 해야할 일</string>
     <string name="tag_date">M월 d일</string>
+    <string name="onboarding0_ex_class">고급응용C프로그래밍(01)</string>
+    <string name="onboarding0_ex_week">1주 3차시</string>
+    <string name="onboarding0_ex_time">마감 : 오후 11:59</string>
+    <string name="onboarding0_ex_hw">과제1: 자기소개서</string>
 
 </resources>

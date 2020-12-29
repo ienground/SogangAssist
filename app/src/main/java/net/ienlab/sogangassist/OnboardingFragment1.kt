@@ -23,7 +23,7 @@ class OnboardingFragment1 : Fragment() {
     lateinit var binding: FragmentOnboarding1Binding
     private var mListener: OnFragmentInteractionListener? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_onboarding1, container, false)
         binding.fragment = this
         return binding.root
@@ -32,25 +32,22 @@ class OnboardingFragment1 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val gmSansBold = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
+        val gmSansMedium = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
+
         val pm = requireContext().packageManager
         val lmsPackageName = "kr.co.imaxsoft.hellolms"
 
+        binding.tvInstall.typeface = gmSansMedium
         if (isPackageInstalled(lmsPackageName, pm)) {
-            with (binding.btnCheckLms) {
-                text = getString(R.string.lms_installed)
-                backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorAccent))
-                iconTint = ColorStateList.valueOf(Color.BLACK)
-                setTextColor(Color.BLACK)
-                isEnabled = false
-            }
+            binding.tvInstall.text = getString(R.string.lms_installed)
+            binding.icInstall.setImageResource(R.drawable.ic_check_circle)
         } else {
-            with (binding.btnCheckLms) {
-                setOnClickListener {
-                    try {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$lmsPackageName")))
-                    } catch (e: ActivityNotFoundException) {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$lmsPackageName")))
-                    }
+            binding.groupInstall.setOnClickListener {
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$lmsPackageName")))
+                } catch (e: ActivityNotFoundException) {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$lmsPackageName")))
                 }
             }
         }

@@ -33,22 +33,21 @@ class OnboardingFragment2 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val gmSansBold = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
+        val gmSansMedium = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
+
         introBtnNext = requireActivity().findViewById(R.id.intro_btn_next)
 
+        binding.tvNoti.typeface = gmSansMedium
         if (MyUtils.isNotiPermissionAllowed(requireContext())) {
-            with (binding.btnNotiAccess) {
-                text = getString(R.string.noti_access_allowed)
-                backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorAccent))
-                iconTint = ColorStateList.valueOf(Color.BLACK)
-                setTextColor(Color.BLACK)
-                isEnabled = false
-            }
+            binding.tvNoti.text = getString(R.string.allow_auto_edit_lms)
+            binding.icNoti.setImageResource(R.drawable.ic_check_circle)
 
             introBtnNext.alpha = 1.0f
             introBtnNext.isEnabled = true
         }
 
-        binding.btnNotiAccess.setOnClickListener {
+        binding.groupNoti.setOnClickListener {
                 startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
         }
 
@@ -57,13 +56,10 @@ class OnboardingFragment2 : Fragment() {
     override fun onResume() {
         super.onResume()
         if (MyUtils.isNotiPermissionAllowed(requireContext())) {
-            with (binding.btnNotiAccess) {
-                text = getString(R.string.noti_access_allowed)
-                backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorAccent))
-                iconTint = ColorStateList.valueOf(Color.BLACK)
-                setTextColor(Color.BLACK)
-                isEnabled = false
-            }
+            binding.tvNoti.text = getString(R.string.allow_auto_edit_lms)
+            binding.icNoti.setImageResource(R.drawable.ic_check_circle)
+
+            binding.groupNoti.setOnClickListener(null)
 
             introBtnNext.alpha = 1.0f
             introBtnNext.isEnabled = true
