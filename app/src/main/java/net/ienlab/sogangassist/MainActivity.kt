@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
                     noti_intent.putExtra("TRIGGER", triggerTime)
                     noti_intent.putExtra("TIME", 1)
                     val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
 
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, false)) {
@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
                     noti_intent.putExtra("TRIGGER", triggerTime)
                     noti_intent.putExtra("TIME", 2)
                     val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
 
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, false)) {
@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                     noti_intent.putExtra("TRIGGER", triggerTime)
                     noti_intent.putExtra("TIME", 6)
                     val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
 
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, false)) {
@@ -145,7 +145,7 @@ class MainActivity : AppCompatActivity() {
                     noti_intent.putExtra("TRIGGER", triggerTime)
                     noti_intent.putExtra("TIME", 12)
                     val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
 
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, false)) {
@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                     noti_intent.putExtra("TRIGGER", triggerTime)
                     noti_intent.putExtra("TIME", 24)
                     val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
             } else if (data.type == LMSType.LESSON || data.type == LMSType.SUP_LESSON) {
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
@@ -161,7 +161,7 @@ class MainActivity : AppCompatActivity() {
                     noti_intent.putExtra("TRIGGER", triggerTime)
                     noti_intent.putExtra("TIME", 1)
                     val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 6, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
 
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
@@ -169,7 +169,7 @@ class MainActivity : AppCompatActivity() {
                     noti_intent.putExtra("TRIGGER", triggerTime)
                     noti_intent.putExtra("TIME", 2)
                     val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 7, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
 
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
@@ -177,7 +177,7 @@ class MainActivity : AppCompatActivity() {
                     noti_intent.putExtra("TRIGGER", triggerTime)
                     noti_intent.putExtra("TIME", 6)
                     val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 8, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
 
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
                     noti_intent.putExtra("TRIGGER", triggerTime)
                     noti_intent.putExtra("TIME", 12)
                     val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 9, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
 
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
@@ -193,7 +193,7 @@ class MainActivity : AppCompatActivity() {
                     noti_intent.putExtra("TRIGGER", triggerTime)
                     noti_intent.putExtra("TIME", 24)
                     val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 10, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
             }
         }
@@ -382,7 +382,7 @@ class MainActivity : AppCompatActivity() {
                             noti_intent.putExtra("TRIGGER", triggerTime)
                             noti_intent.putExtra("TIME", 1)
                             val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                         }
 
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, false)) {
@@ -390,7 +390,7 @@ class MainActivity : AppCompatActivity() {
                             noti_intent.putExtra("TRIGGER", triggerTime)
                             noti_intent.putExtra("TIME", 2)
                             val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                         }
 
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, false)) {
@@ -398,7 +398,7 @@ class MainActivity : AppCompatActivity() {
                             noti_intent.putExtra("TRIGGER", triggerTime)
                             noti_intent.putExtra("TIME", 6)
                             val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                         }
 
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, false)) {
@@ -406,7 +406,7 @@ class MainActivity : AppCompatActivity() {
                             noti_intent.putExtra("TRIGGER", triggerTime)
                             noti_intent.putExtra("TIME", 12)
                             val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                         }
 
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, false)) {
@@ -414,7 +414,7 @@ class MainActivity : AppCompatActivity() {
                             noti_intent.putExtra("TRIGGER", triggerTime)
                             noti_intent.putExtra("TIME", 24)
                             val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                         }
                     } else if (data.type == LMSType.LESSON || data.type == LMSType.SUP_LESSON) {
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
@@ -422,7 +422,7 @@ class MainActivity : AppCompatActivity() {
                             noti_intent.putExtra("TRIGGER", triggerTime)
                             noti_intent.putExtra("TIME", 1)
                             val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 6, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                         }
 
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
@@ -430,7 +430,7 @@ class MainActivity : AppCompatActivity() {
                             noti_intent.putExtra("TRIGGER", triggerTime)
                             noti_intent.putExtra("TIME", 2)
                             val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 7, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                         }
 
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
@@ -438,7 +438,7 @@ class MainActivity : AppCompatActivity() {
                             noti_intent.putExtra("TRIGGER", triggerTime)
                             noti_intent.putExtra("TIME", 6)
                             val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 8, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                         }
 
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
@@ -446,7 +446,7 @@ class MainActivity : AppCompatActivity() {
                             noti_intent.putExtra("TRIGGER", triggerTime)
                             noti_intent.putExtra("TIME", 12)
                             val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 9, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                         }
 
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
@@ -454,7 +454,7 @@ class MainActivity : AppCompatActivity() {
                             noti_intent.putExtra("TRIGGER", triggerTime)
                             noti_intent.putExtra("TIME", 24)
                             val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 10, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                            am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                         }
                     }
                 }
