@@ -57,7 +57,7 @@ class OnboardingFragment1 : Fragment() {
         return try {
             pm.getPackageInfo(packageName, 0)
             true
-        } catch (e: Exception) {
+        } catch (e: PackageManager.NameNotFoundException) {
             false
         }
     }

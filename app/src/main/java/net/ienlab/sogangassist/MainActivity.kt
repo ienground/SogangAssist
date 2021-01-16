@@ -115,6 +115,8 @@ class MainActivity : AppCompatActivity() {
                 timeInMillis = data.endTime
             }
 
+            if (data.endTime < System.currentTimeMillis()) continue
+
             if (data.type == LMSType.HOMEWORK) {
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
                     val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
@@ -371,6 +373,8 @@ class MainActivity : AppCompatActivity() {
                 for (data in datas) {
                     val noti_intent = Intent(this, TimeReceiver::class.java)
                     noti_intent.putExtra("ID", data.id)
+
+                    if (data.endTime < System.currentTimeMillis()) continue
 
                     val endCalendar = Calendar.getInstance().apply {
                         timeInMillis = data.endTime

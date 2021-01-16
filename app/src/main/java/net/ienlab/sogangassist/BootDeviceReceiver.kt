@@ -47,6 +47,8 @@ class BootDeviceReceiver : BroadcastReceiver() {
                 timeInMillis = data.endTime
             }
 
+            if (data.endTime < System.currentTimeMillis()) continue
+
             if (data.type == LMSType.HOMEWORK) {
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
                     val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
