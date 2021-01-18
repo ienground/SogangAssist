@@ -1,1 +1,1 @@
-- Fixed duplicated items enrolling.
+- Fixed an error of stuck on the lock screen.
