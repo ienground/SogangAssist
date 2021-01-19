@@ -126,7 +126,7 @@ class LMSListenerService : NotificationListenerService() {
                                             setAutoCancel(true)
                                             setStyle(NotificationCompat.BigTextStyle())
                                             setSmallIcon(R.drawable.ic_icon)
-                                            setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+                                            setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
 
                                             nm.notify(699000 + id, build())
                                         }
@@ -220,7 +220,7 @@ class LMSListenerService : NotificationListenerService() {
                                         setAutoCancel(true)
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+                                        setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
 
                                         nm.notify(699000 + id, build())
                                     }
@@ -302,7 +302,7 @@ class LMSListenerService : NotificationListenerService() {
                                             setAutoCancel(true)
                                             setStyle(NotificationCompat.BigTextStyle())
                                             setSmallIcon(R.drawable.ic_icon)
-                                            setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+                                            setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
 
                                             nm.notify(699000 + id, build())
                                         }
@@ -398,7 +398,7 @@ class LMSListenerService : NotificationListenerService() {
                                         setAutoCancel(true)
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+                                        setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
 
                                         nm.notify(699000 + id, build())
                                     }
@@ -479,7 +479,7 @@ class LMSListenerService : NotificationListenerService() {
                                         setAutoCancel(true)
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+                                        setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
 
                                         nm.notify(699000 + id, build())
                                     }
@@ -572,7 +572,7 @@ class LMSListenerService : NotificationListenerService() {
                                         setAutoCancel(true)
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+                                        setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
 
                                         nm.notify(699000 + id, build())
                                     }

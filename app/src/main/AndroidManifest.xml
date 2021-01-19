@@ -15,6 +15,36 @@
         android:theme="@style/AppTheme"
         tools:replace="android:label">
 
+        <activity android:name=".SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".EditActivity" />
+        <activity android:name=".SettingsActivity"/>
+
+        <activity android:name=".MainActivity" />
+        <activity android:name=".OnboardingActivity" />
+
+        <service
+            android:name=".LMSListenerService"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <receiver
             android:name=".TimeReceiver"
             android:enabled="true"
@@ -37,37 +67,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <activity android:name=".EditActivity" />
-        <activity android:name=".SettingsActivity"
-            android:theme="@style/AppTheme"/>
-
-        <activity android:name=".MainActivity" />
-        <activity android:name=".OnboardingActivity" />
-
-        <service
-            android:name=".LMSListenerService"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
-        <activity android:name=".SplashActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

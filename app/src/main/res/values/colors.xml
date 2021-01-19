@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <color name="colorPrimary">#B60005</color>
-    <color name="colorPrimaryDark">#7E0000</color>
-    <color name="colorAccent">#AD1457</color>
+    <color name="colorPrimary">#FF6266</color>
+    <color name="colorPrimaryDark">#C13336</color>
+    <color name="colorAccent">#B60005</color>
+    <color name="colorAccentAlpha">#66B60005</color>
 
     <color name="color_sogang">#B60005</color>
     <color name="color_sogang_sub">#F04A31</color>

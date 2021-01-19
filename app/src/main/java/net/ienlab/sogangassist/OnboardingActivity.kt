@@ -200,7 +200,7 @@ class OnboardingActivity : AppCompatActivity(),
 
         // Theme
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
+        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.colorAccent)
     }
 
     fun isPackageInstalled(packageName: String, pm: PackageManager): Boolean {

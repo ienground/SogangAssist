@@ -49,7 +49,7 @@ class TimeReceiver : BroadcastReceiver() {
                         .setAutoCancel(true)
                         .setStyle(NotificationCompat.BigTextStyle())
                         .setSmallIcon(R.drawable.ic_video)
-                        .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                        .setColor(ContextCompat.getColor(context, R.color.colorAccent))
                         .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
 
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
@@ -75,7 +75,7 @@ class TimeReceiver : BroadcastReceiver() {
                         .setAutoCancel(true)
                         .setStyle(NotificationCompat.BigTextStyle())
                         .setSmallIcon(R.drawable.ic_video_sup)
-                        .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                        .setColor(ContextCompat.getColor(context, R.color.colorAccent))
                         .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
 
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
@@ -101,7 +101,7 @@ class TimeReceiver : BroadcastReceiver() {
                         .setAutoCancel(true)
                         .setStyle(NotificationCompat.BigTextStyle())
                         .setSmallIcon(R.drawable.ic_assignment)
-                        .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                        .setColor(ContextCompat.getColor(context, R.color.colorAccent))
                         .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
 
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {

@@ -61,6 +61,8 @@ class MainActivity : AppCompatActivity() {
     private val FINISH_INTERVAL_TIME: Long = 2000
     private var backPressedTime: Long = 0
 
+    lateinit var currentDecorator: CurrentDecorator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -77,6 +79,8 @@ class MainActivity : AppCompatActivity() {
         fadeInAnimation = AlphaAnimation(0f, 1f).apply {
             duration = 300
         }
+        currentDecorator = CurrentDecorator(this, Calendar.getInstance())
+
         val monthFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
         val gmsansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
         val gmsansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
@@ -225,7 +229,11 @@ class MainActivity : AppCompatActivity() {
         binding.calendarView.apply {
             topbarVisible = false
             arrowColor = ContextCompat.getColor(applicationContext, R.color.black)
-            setOnDateChangedListener { _, date, _ ->
+            setOnDateChangedListener { widget, date, _ ->
+                widget.removeDecorator(currentDecorator)
+                currentDecorator = CurrentDecorator(this@MainActivity, date.calendar)
+                widget.addDecorator(currentDecorator)
+
                 binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(date.date))
                 val work = dbHelper.getItemAtLastDate(date.date.time).toMutableList().apply {
                     sortWith( compareBy ({ it.isFinished }, {it.type}))

@@ -51,7 +51,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setContentTitle(messageTitle)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
-                .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+                .setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
 
                 .setContentIntent(pendingIntent)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -12,7 +12,7 @@
         android:topRightRadius="@dimen/layout_radius" />
 
     <!-- Optional, fill the rest of your background with a color or gradient, use transparent if you only want the border to be displayed-->
-    <gradient android:startColor="#B60005"
-        android:endColor="#55B60005"
+    <gradient android:startColor="@color/colorAccent"
+        android:endColor="@color/colorAccentAlpha"
         android:angle="135"/>
 </shape>

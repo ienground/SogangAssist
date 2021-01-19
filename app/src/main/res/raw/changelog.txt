@@ -1,1 +1,3 @@
-- Fixed an error of stuck on the lock screen.
+- Some colors have been changed.<br>
+- Improved calendar design.<br>
+- Fixed the main screen cut off and changed to scroll.
