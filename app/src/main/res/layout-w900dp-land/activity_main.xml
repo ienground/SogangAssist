@@ -141,7 +141,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:clickable="false"
-                            app:mcv_selectionColor="@color/blue_grey"
+                            app:mcv_selectionColor="?attr/colorPrimary"
                             app:mcv_showOtherDates="defaults"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"

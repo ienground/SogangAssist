@@ -20,7 +20,5 @@ class CurrentDecorator(mContext: Context, var date: Calendar) : DayViewDecorator
 
     override fun decorate(view: DayViewFacade) {
         view.addSpan(ForegroundColorSpan(Color.WHITE))
-        val drawable = ContextCompat.getDrawable(context, R.drawable.calendar_selected)
-        if (drawable != null) view.setBackgroundDrawable(drawable)
     }
 }

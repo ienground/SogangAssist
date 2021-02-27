@@ -308,7 +308,7 @@ class EditActivity : AppCompatActivity() {
         }
 
         binding.tvStartDate.setOnClickListener {
-            DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            DatePickerDialog(this, { _, year, month, dayOfMonth ->
                 startCalendar.set(Calendar.YEAR, year)
                 startCalendar.set(Calendar.MONTH, month)
                 startCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
@@ -319,7 +319,7 @@ class EditActivity : AppCompatActivity() {
         }
 
         binding.tvEndDate.setOnClickListener {
-            DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            DatePickerDialog(this, { _, year, month, dayOfMonth ->
                 endCalendar.set(Calendar.YEAR, year)
                 endCalendar.set(Calendar.MONTH, month)
                 endCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
@@ -330,7 +330,7 @@ class EditActivity : AppCompatActivity() {
         }
 
         binding.tvStartTime.setOnClickListener {
-            TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+            TimePickerDialog(this, { view, hourOfDay, minute ->
                 startCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 startCalendar.set(Calendar.MINUTE, minute)
 
@@ -340,7 +340,7 @@ class EditActivity : AppCompatActivity() {
         }
 
         binding.tvEndTime.setOnClickListener {
-            TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+            TimePickerDialog(this, { view, hourOfDay, minute ->
                 endCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 endCalendar.set(Calendar.MINUTE, minute)
 

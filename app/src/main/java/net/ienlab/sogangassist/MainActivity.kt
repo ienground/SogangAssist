@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 
         dbHelper = DBHelper(this, dbName, dbVersion)
         sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
-        fadeOutAnimation = AlphaAnimation(1f, 1f).apply {
+        fadeOutAnimation = AlphaAnimation(1f, 0f).apply {
             duration = 300
         }
         fadeInAnimation = AlphaAnimation(0f, 1f).apply {
