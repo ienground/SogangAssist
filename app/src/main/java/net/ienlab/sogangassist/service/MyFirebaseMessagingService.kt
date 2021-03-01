@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -13,6 +13,9 @@ import androidx.core.content.ContextCompat
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.SplashActivity
+import net.ienlab.sogangassist.constant.ChannelId
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

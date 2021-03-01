@@ -20,6 +20,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.snackbar.Snackbar
 import net.ienlab.sogangassist.databinding.ActivitySettingsBinding
+import net.ienlab.sogangassist.utils.MyUtils
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader

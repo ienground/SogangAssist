@@ -1,10 +1,11 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.adapter
 
 import android.content.Context
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import net.ienlab.sogangassist.*
 
 class OnboardingFragmentTabAdapter(fm: FragmentManager, internal var mContext: Context) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 

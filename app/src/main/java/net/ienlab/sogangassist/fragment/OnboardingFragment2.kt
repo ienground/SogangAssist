@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import net.ienlab.sogangassist.databinding.FragmentOnboarding2Binding
+import net.ienlab.sogangassist.utils.MyUtils
 
 
 class OnboardingFragment2 : Fragment() {

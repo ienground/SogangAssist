@@ -7,7 +7,6 @@ import android.graphics.Typeface
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -16,7 +15,9 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import com.rd.animation.type.AnimationType
-import net.ienlab.sogangassist.OnboardingFragmentTabAdapter.Companion.PAGE_NUMBER
+import net.ienlab.sogangassist.adapter.OnboardingFragmentTabAdapter
+import net.ienlab.sogangassist.adapter.OnboardingFragmentTabAdapter.Companion.PAGE_NUMBER
+import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.databinding.ActivityOnboardingBinding
 import kotlin.system.exitProcess
 

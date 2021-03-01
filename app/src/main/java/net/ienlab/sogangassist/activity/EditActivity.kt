@@ -17,11 +17,13 @@ import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.ads.*
 import com.google.android.material.snackbar.Snackbar
+import net.ienlab.sogangassist.constant.LMSType
+import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.databinding.ActivityEditBinding
+import net.ienlab.sogangassist.receiver.TimeReceiver
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -229,7 +231,8 @@ class EditActivity : AppCompatActivity() {
 
     fun displayAd(context: Context) {
         val sharedPreferences = context.getSharedPreferences(context.packageName + "_preferences", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putInt(SharedGroup.FULL_AD_CHARGE,
+        sharedPreferences.edit().putInt(
+            SharedGroup.FULL_AD_CHARGE,
             sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0) + 1).apply()
         Log.d("AdTAG", "ad:" + sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0))
         Log.d("AdTAG", "isLoaded:" + interstitialAd.isLoaded)

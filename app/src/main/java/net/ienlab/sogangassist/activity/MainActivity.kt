@@ -6,15 +6,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.*
-import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.Settings
-import android.text.Html
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -23,7 +19,6 @@ import android.view.animation.AlphaAnimation
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toolbar
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -32,12 +27,13 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.prolificinteractive.materialcalendarview.CalendarDay
+import net.ienlab.sogangassist.adapter.MainWorkAdapter
+import net.ienlab.sogangassist.constant.LMSType
+import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.databinding.ActivityMainBinding
 import net.ienlab.sogangassist.decorators.*
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.Reader
-import java.nio.charset.Charset
+import net.ienlab.sogangassist.receiver.TimeReceiver
+import net.ienlab.sogangassist.utils.MyUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -53,7 +49,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var dbHelper: DBHelper
     lateinit var sharedPreferences: SharedPreferences
     lateinit var am: AlarmManager
-    var thisCurrentDate: Long = 0
     lateinit var fadeOutAnimation: AlphaAnimation
     lateinit var fadeInAnimation: AlphaAnimation
 
@@ -62,6 +57,7 @@ class MainActivity : AppCompatActivity() {
     private var backPressedTime: Long = 0
 
     lateinit var currentDecorator: CurrentDecorator
+    var thisCurrentDate: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -213,11 +209,21 @@ class MainActivity : AppCompatActivity() {
                 }
         }
 
+        val data = "새로운 화상강의 일정이 있습니다. \"3/3\" (시작일:2021.03.03 오후 12:00)"
+        val regex = "^.+\"(.+)\" \\(시작일:(.+)\\)\$".toRegex()
+
+        val matchResult = regex.matchEntire(data as CharSequence)
+
+        for (i in matchResult?.destructured?.toList() ?: listOf()) {
+            Log.d(TAG, i)
+        }
+
         binding.adView.loadAd(adRequest.build())
 
         val todayWork = dbHelper.getItemAtLastDate(System.currentTimeMillis()).toMutableList().apply {
             sortWith( compareBy ({ it.isFinished }, {it.type}))
         }
+
         binding.mainWorkView.adapter = MainWorkAdapter(todayWork)
         binding.mainWorkView.layoutManager = LinearLayoutManager(this)
         binding.tvNoDeadline.visibility = if (todayWork.isEmpty()) View.VISIBLE else View.GONE

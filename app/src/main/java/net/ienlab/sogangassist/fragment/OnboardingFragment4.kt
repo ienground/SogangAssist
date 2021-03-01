@@ -2,7 +2,6 @@ package net.ienlab.sogangassist
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,15 +10,16 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import net.ienlab.sogangassist.databinding.FragmentOnboarding3Binding
+import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.databinding.FragmentOnboarding4Binding
 
-class OnboardingFragment3 : Fragment() {
+class OnboardingFragment4 : Fragment() {
 
-    lateinit var binding: FragmentOnboarding3Binding
+    lateinit var binding: FragmentOnboarding4Binding
     private var mListener: OnFragmentInteractionListener? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_onboarding3, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_onboarding4, container, false)
         binding.fragment = this
         return binding.root
     }
@@ -28,7 +28,7 @@ class OnboardingFragment3 : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)
-        val introBtnNext: ImageButton = requireActivity().findViewById(R.id.intro_btn_next)
+        val introBtnFine: ImageButton = requireActivity().findViewById(R.id.intro_btn_fine)
 
         binding.btn1hour.setOnClickListener {
             if (hours[0]) {
@@ -40,7 +40,7 @@ class OnboardingFragment3 : Fragment() {
                     }
                     start()
                 }
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_1HOUR_HW, false).apply()
+                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false).apply()
             } else {
                 hours[0] = true
                 ValueAnimator.ofFloat(0.3f, 1f).apply {
@@ -50,10 +50,10 @@ class OnboardingFragment3 : Fragment() {
                     }
                     start()
                 }
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_1HOUR_HW, true).apply()
+                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_1HOUR_LEC, true).apply()
             }
 
-            with (introBtnNext) {
+            with (introBtnFine) {
                 if (true in hours) {
                     isEnabled = true
                     alpha = 1f
@@ -74,7 +74,7 @@ class OnboardingFragment3 : Fragment() {
                     }
                     start()
                 }
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_2HOUR_HW, false).apply()
+                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false).apply()
             } else {
                 hours[1] = true
                 ValueAnimator.ofFloat(0.3f, 1f).apply {
@@ -84,10 +84,10 @@ class OnboardingFragment3 : Fragment() {
                     }
                     start()
                 }
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_2HOUR_HW, true).apply()
+                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_2HOUR_LEC, true).apply()
             }
 
-            with (introBtnNext) {
+            with (introBtnFine) {
                 if (true in hours) {
                     isEnabled = true
                     alpha = 1f
@@ -108,7 +108,7 @@ class OnboardingFragment3 : Fragment() {
                     }
                     start()
                 }
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_6HOUR_HW, false).apply()
+                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false).apply()
             } else {
                 hours[2] = true
                 ValueAnimator.ofFloat(0.3f, 1f).apply {
@@ -118,10 +118,10 @@ class OnboardingFragment3 : Fragment() {
                     }
                     start()
                 }
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_6HOUR_HW, true).apply()
+                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_6HOUR_LEC, true).apply()
             }
 
-            with (introBtnNext) {
+            with (introBtnFine) {
                 if (true in hours) {
                     isEnabled = true
                     alpha = 1f
@@ -142,7 +142,7 @@ class OnboardingFragment3 : Fragment() {
                     }
                     start()
                 }
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_12HOUR_HW, false).apply()
+                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false).apply()
             } else {
                 hours[3] = true
                 ValueAnimator.ofFloat(0.3f, 1f).apply {
@@ -152,10 +152,10 @@ class OnboardingFragment3 : Fragment() {
                     }
                     start()
                 }
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_12HOUR_HW, true).apply()
+                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_12HOUR_LEC, true).apply()
             }
 
-            with (introBtnNext) {
+            with (introBtnFine) {
                 if (true in hours) {
                     isEnabled = true
                     alpha = 1f
@@ -176,7 +176,7 @@ class OnboardingFragment3 : Fragment() {
                     }
                     start()
                 }
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_24HOUR_HW, false).apply()
+                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false).apply()
             } else {
                 hours[4] = true
                 ValueAnimator.ofFloat(0.3f, 1f).apply {
@@ -186,10 +186,10 @@ class OnboardingFragment3 : Fragment() {
                     }
                     start()
                 }
-                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_24HOUR_HW, true).apply()
+                sharedPreferences.edit().putBoolean(SharedGroup.NOTIFY_24HOUR_LEC, true).apply()
             }
 
-            with (introBtnNext) {
+            with (introBtnFine) {
                 if (true in hours) {
                     isEnabled = true
                     alpha = 1f
@@ -222,7 +222,7 @@ class OnboardingFragment3 : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = OnboardingFragment3().apply {
+        fun newInstance() = OnboardingFragment4().apply {
             val args = Bundle()
             arguments = args
         }

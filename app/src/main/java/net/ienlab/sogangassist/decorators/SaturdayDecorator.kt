@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
-import net.ienlab.sogangassist.MyTypefaceSpan
+import net.ienlab.sogangassist.utils.MyTypefaceSpan
 import net.ienlab.sogangassist.R
 import java.util.*
 

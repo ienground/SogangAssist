@@ -1,12 +1,12 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.preference
 
 import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
-import android.view.View
 import android.widget.TextView
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
+import net.ienlab.sogangassist.R
 
 
 class AppInfoPreference(context: Context, attrs: AttributeSet): Preference(context, attrs) {

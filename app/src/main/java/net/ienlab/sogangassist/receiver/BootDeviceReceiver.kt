@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.receiver
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -6,6 +6,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import net.ienlab.sogangassist.*
+import net.ienlab.sogangassist.constant.LMSType
+import net.ienlab.sogangassist.constant.SharedGroup
 import java.util.*
 
 class BootDeviceReceiver : BroadcastReceiver() {

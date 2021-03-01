@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <net.ienlab.sogangassist.AppInfoPreference
+    <net.ienlab.sogangassist.preference.AppInfoPreference
         android:key="app_title"
         android:layout="@layout/settings_app_title"/>
 

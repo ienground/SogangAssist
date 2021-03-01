@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.utils
 
 import android.app.ActivityManager
 import android.content.Context

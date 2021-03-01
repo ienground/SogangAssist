@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.constant
 
 class LMSType {
     companion object {

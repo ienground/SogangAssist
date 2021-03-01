@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.utils
 
 import android.content.Context
 import android.graphics.Paint

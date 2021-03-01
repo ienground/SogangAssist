@@ -133,9 +133,12 @@
     <string name="format_change_lecture">온라인 강의가 변경</string>
     <string name="format_new_sup_lecture">온라인 보강을 시작</string>
     <string name="format_change_sup_lecture">온라인 보강이 변경</string>
+    <string name="format_new_zoom">새로운 화상강의 일정</string>
+    <string name="format_change_zoom">변경된 화상강의</string>
     <string name="format_lms_date">yyyy.MM.dd a h:mm</string>
     <string name="format_assignment_regex">^.+\"(.+)\" \\(기간:(.+) ~ (.+)\\)$</string>
     <string name="format_lecture_regex">^(\\d+)주 (\\d+)차시.*\\(학습마감: (.+) 까지\\)$</string>
+    <string name="format_zoom_regex">^.+\"(.+)\" \\(시작일:(.+)\\)$</string>
 
     <!--EditActivity-->
     <string name="save_ask">저장할까요?</string>

@@ -30,7 +30,7 @@
         <activity android:name=".OnboardingActivity" />
 
         <service
-            android:name=".LMSListenerService"
+            android:name=".service.LMSListenerService"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
@@ -38,7 +38,7 @@
         </service>
 
         <service
-            android:name=".MyFirebaseMessagingService"
+            android:name=".service.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -46,21 +46,21 @@
         </service>
 
         <receiver
-            android:name=".TimeReceiver"
+            android:name=".receiver.TimeReceiver"
             android:enabled="true"
             android:exported="true">
 
         </receiver>
 
         <receiver
-            android:name=".MarkFinishReceiver"
+            android:name=".receiver.MarkFinishReceiver"
             android:enabled="true"
             android:exported="true">
 
         </receiver>
 
         <receiver
-            android:name=".BootDeviceReceiver"
+            android:name=".receiver.BootDeviceReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

@@ -133,9 +133,12 @@
     <string name="format_change_lecture">online course is changed</string>
     <string name="format_new_sup_lecture">online make-up course started</string>
     <string name="format_change_sup_lecture">online make-up course is changed</string>
+    <string name="format_new_zoom">New Zoom schedule</string>
+    <string name="format_change_zoom">Edited Zoom schedule</string>
     <string name="format_lms_date">MMM dd, yyyy a h:mm</string>
     <string name="format_assignment_regex">^.+\"(.+)\" \\(Period:(.+) ~ (.+)\\)$</string>
     <string name="format_lecture_regex">^Week(\\d+) Hour (\\d+).*\\(Must complete the course by: (.+) \\)$</string>
+    <string name="format_zoom_regex">^.+\"(.+)\" \\(start at:(.+)\\)$</string>
 
     <!--EditActivity-->
     <string name="save_ask">Save?</string>

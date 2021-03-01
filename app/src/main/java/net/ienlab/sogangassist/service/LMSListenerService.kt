@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.service
 
 import android.app.*
 import android.content.Context
@@ -6,16 +6,17 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
-import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import net.ienlab.sogangassist.*
+import net.ienlab.sogangassist.constant.ChannelId
+import net.ienlab.sogangassist.constant.LMSType
+import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.receiver.TimeReceiver
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.abs
 
 class LMSListenerService : NotificationListenerService() {
 
@@ -46,12 +47,11 @@ class LMSListenerService : NotificationListenerService() {
         }
 
         if (sbn.packageName == "kr.co.imaxsoft.hellolms") {
-//        if (sbn.packageName == "net.ienlab.notificationtest") {
             val className = extras.getString(Notification.EXTRA_TITLE) ?: ""
 
-            with (extras.getString(Notification.EXTRA_TEXT)) {
+            with (extras.getString(Notification.EXTRA_TEXT) ?: "") {
                 when {
-                    this?.contains(getString(R.string.format_new_assignment)) ?: false -> {
+                    contains(getString(R.string.format_new_assignment)) -> {
                         val regex = getString(R.string.format_assignment_regex).toRegex()
                         val matchResult = regex.matchEntire(this as CharSequence)
 
@@ -126,7 +126,9 @@ class LMSListenerService : NotificationListenerService() {
                                             setAutoCancel(true)
                                             setStyle(NotificationCompat.BigTextStyle())
                                             setSmallIcon(R.drawable.ic_icon)
-                                            setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
+                                            setColor(ContextCompat.getColor(applicationContext,
+                                                R.color.colorAccent
+                                            ))
 
                                             nm.notify(699000 + id, build())
                                         }
@@ -135,7 +137,7 @@ class LMSListenerService : NotificationListenerService() {
                             }
                         }
                     }
-                    this?.contains(getString(R.string.format_change_assignment)) ?: false -> {
+                    contains(getString(R.string.format_change_assignment)) -> {
                         val regex = getString(R.string.format_assignment_regex).toRegex()
                         val matchResult = regex.matchEntire(this as CharSequence)
 
@@ -220,7 +222,9 @@ class LMSListenerService : NotificationListenerService() {
                                         setAutoCancel(true)
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
+                                        setColor(ContextCompat.getColor(applicationContext,
+                                            R.color.colorAccent
+                                        ))
 
                                         nm.notify(699000 + id, build())
                                     }
@@ -228,7 +232,7 @@ class LMSListenerService : NotificationListenerService() {
                             }
                         }
                     }
-                    this?.contains(getString(R.string.format_new_lecture)) ?: false -> {
+                    contains(getString(R.string.format_new_lecture)) -> {
                         val regex = getString(R.string.format_lecture_regex).toRegex()
                         val matchResult = regex.matchEntire(this as CharSequence)
 
@@ -302,7 +306,9 @@ class LMSListenerService : NotificationListenerService() {
                                             setAutoCancel(true)
                                             setStyle(NotificationCompat.BigTextStyle())
                                             setSmallIcon(R.drawable.ic_icon)
-                                            setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
+                                            setColor(ContextCompat.getColor(applicationContext,
+                                                R.color.colorAccent
+                                            ))
 
                                             nm.notify(699000 + id, build())
                                         }
@@ -313,7 +319,7 @@ class LMSListenerService : NotificationListenerService() {
 
                         }
                     }
-                    this?.contains(getString(R.string.format_change_lecture)) ?: false -> {
+                    contains(getString(R.string.format_change_lecture)) -> {
                         val regex = getString(R.string.format_lecture_regex).toRegex()
                         val matchResult = regex.matchEntire(this as CharSequence)
 
@@ -398,7 +404,9 @@ class LMSListenerService : NotificationListenerService() {
                                         setAutoCancel(true)
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
+                                        setColor(ContextCompat.getColor(applicationContext,
+                                            R.color.colorAccent
+                                        ))
 
                                         nm.notify(699000 + id, build())
                                     }
@@ -406,7 +414,7 @@ class LMSListenerService : NotificationListenerService() {
                             }
                         }
                     }
-                    this?.contains(getString(R.string.format_new_sup_lecture)) ?: false -> {
+                    contains(getString(R.string.format_new_sup_lecture)) -> {
                         val regex = getString(R.string.format_lecture_regex).toRegex()
                         val matchResult = regex.matchEntire(this as CharSequence)
 
@@ -479,7 +487,9 @@ class LMSListenerService : NotificationListenerService() {
                                         setAutoCancel(true)
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
+                                        setColor(ContextCompat.getColor(applicationContext,
+                                            R.color.colorAccent
+                                        ))
 
                                         nm.notify(699000 + id, build())
                                     }
@@ -487,7 +497,7 @@ class LMSListenerService : NotificationListenerService() {
                             }
                         }
                     }
-                    this?.contains(getString(R.string.format_change_sup_lecture)) ?: false -> {
+                    contains(getString(R.string.format_change_sup_lecture)) -> {
                         val regex = getString(R.string.format_lecture_regex).toRegex()
                         val matchResult = regex.matchEntire(this as CharSequence)
 
@@ -572,13 +582,104 @@ class LMSListenerService : NotificationListenerService() {
                                         setAutoCancel(true)
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
+                                        setColor(ContextCompat.getColor(applicationContext,
+                                            R.color.colorAccent
+                                        ))
 
                                         nm.notify(699000 + id, build())
                                     }
                                 }
                             }
                         }
+                    }
+                    contains(getString(R.string.format_new_zoom)) -> {
+                        val regex = getString(R.string.format_zoom_regex).toRegex()
+                        val matchResult = regex.matchEntire(this as CharSequence)
+
+                        if (matchResult != null) {
+                            val (homework_name, startTime, endTime) = matchResult.destructured
+                            LMSClass().let {
+                                it.className = className
+                                it.timeStamp = sbn.postTime
+                                it.type = LMSType.HOMEWORK
+                                it.startTime = timeFormat.parse(startTime)?.time ?: 0L
+                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
+                                it.homework_name = homework_name
+                                it.week = -1
+                                it.lesson = -1
+                                it.isRenewAllowed = true
+
+                                if (!dbHelper.checkItemByData(it)) {
+                                    dbHelper.addItem(it)
+
+                                    val noti_intent = Intent(applicationContext, TimeReceiver::class.java)
+                                    val id = dbHelper.getAllData().last().id
+                                    noti_intent.putExtra("ID", id)
+
+                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
+                                        val triggerTime = it.endTime - 1 * 60 * 60 * 1000
+                                        noti_intent.putExtra("TRIGGER", triggerTime)
+                                        noti_intent.putExtra("TIME", 1)
+                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                    }
+
+                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, false)) {
+                                        val triggerTime = it.endTime - 2 * 60 * 60 * 1000
+                                        noti_intent.putExtra("TRIGGER", triggerTime)
+                                        noti_intent.putExtra("TIME", 2)
+                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                    }
+
+                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, false)) {
+                                        val triggerTime = it.endTime - 6 * 60 * 60 * 1000
+                                        noti_intent.putExtra("TRIGGER", triggerTime)
+                                        noti_intent.putExtra("TIME", 6)
+                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                    }
+
+                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, false)) {
+                                        val triggerTime = it.endTime - 12 * 60 * 60 * 1000
+                                        noti_intent.putExtra("TRIGGER", triggerTime)
+                                        noti_intent.putExtra("TIME", 12)
+                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                    }
+
+                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, false)) {
+                                        val triggerTime = it.endTime - 24 * 60 * 60 * 1000
+                                        noti_intent.putExtra("TRIGGER", triggerTime)
+                                        noti_intent.putExtra("TIME", 24)
+                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                    }
+
+                                    if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                        val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                                        NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                            setContentTitle(className)
+                                            setContentText(getString(R.string.reminder_content_hw_register, it.homework_name, timeFormat.format(it.endTime)))
+                                            setContentIntent(clickPendingIntent)
+                                            setAutoCancel(true)
+                                            setStyle(NotificationCompat.BigTextStyle())
+                                            setSmallIcon(R.drawable.ic_icon)
+                                            setColor(ContextCompat.getColor(applicationContext,
+                                                R.color.colorAccent
+                                            ))
+
+                                            nm.notify(699000 + id, build())
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    contains(getString(R.string.format_change_zoom)) -> {
+
                     }
                     else -> {
 

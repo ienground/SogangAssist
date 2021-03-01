@@ -1,15 +1,12 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.receiver
 
-import android.app.Notification
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.util.Log
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
+import net.ienlab.sogangassist.DBHelper
+import net.ienlab.sogangassist.dbName
+import net.ienlab.sogangassist.dbVersion
 
 class MarkFinishReceiver : BroadcastReceiver() {
 

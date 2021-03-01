@@ -2,13 +2,13 @@ package net.ienlab.sogangassist
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.adapter
 
 import android.app.Activity
 import android.content.Context
@@ -15,6 +15,10 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.*
+import net.ienlab.sogangassist.*
+import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.constant.LMSType
+import net.ienlab.sogangassist.constant.SharedGroup
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -68,7 +72,9 @@ class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView
             LMSType.SUP_LESSON -> {
                 holder.icon.setImageResource(R.drawable.ic_video_sup)
                 holder.icon.contentDescription = context.getString(R.string.classtime)
-                holder.sub_name.text = context.getString(R.string.week_lesson_format, mItems[position].week, mItems[position].lesson) + context.getString(R.string.enrich_study)
+                holder.sub_name.text = context.getString(R.string.week_lesson_format, mItems[position].week, mItems[position].lesson) + context.getString(
+                    R.string.enrich_study
+                )
             }
         }
 
@@ -116,7 +122,8 @@ class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView
 
     fun displayAd(context: Context) {
         val sharedPreferences = context.getSharedPreferences(context.packageName + "_preferences", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putInt(SharedGroup.FULL_AD_CHARGE,
+        sharedPreferences.edit().putInt(
+            SharedGroup.FULL_AD_CHARGE,
             sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0) + 1).apply()
         Log.d("AdTAG", "ad:" + sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0))
         Log.d("AdTAG", "isLoaded:" + interstitialAd.isLoaded)
