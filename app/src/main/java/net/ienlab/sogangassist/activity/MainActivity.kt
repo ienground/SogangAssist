@@ -28,8 +28,8 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import net.ienlab.sogangassist.adapter.MainWorkAdapter
-import net.ienlab.sogangassist.constant.LMSType
 import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.databinding.ActivityMainBinding
 import net.ienlab.sogangassist.decorators.*
 import net.ienlab.sogangassist.receiver.TimeReceiver
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
 
             if (data.endTime < System.currentTimeMillis()) continue
 
-            if (data.type == LMSType.HOMEWORK) {
+            if (data.type == LMSClass.HOMEWORK) {
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
                     val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
                     noti_intent.putExtra("TRIGGER", triggerTime)
@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity() {
                     val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
                     am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
-            } else if (data.type == LMSType.LESSON || data.type == LMSType.SUP_LESSON) {
+            } else if (data.type == LMSClass.LESSON || data.type == LMSClass.SUP_LESSON) {
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
                     val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
                     noti_intent.putExtra("TRIGGER", triggerTime)
@@ -394,7 +394,7 @@ class MainActivity : AppCompatActivity() {
                         timeInMillis = data.endTime
                     }
 
-                    if (data.type == LMSType.HOMEWORK) {
+                    if (data.type == LMSClass.HOMEWORK) {
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
                             val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
                             noti_intent.putExtra("TRIGGER", triggerTime)
@@ -434,7 +434,7 @@ class MainActivity : AppCompatActivity() {
                             val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
                             am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                         }
-                    } else if (data.type == LMSType.LESSON || data.type == LMSType.SUP_LESSON) {
+                    } else if (data.type == LMSClass.LESSON || data.type == LMSClass.SUP_LESSON) {
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
                             val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
                             noti_intent.putExtra("TRIGGER", triggerTime)

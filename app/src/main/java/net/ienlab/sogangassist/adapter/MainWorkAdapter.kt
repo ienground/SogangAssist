@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.*
 import net.ienlab.sogangassist.*
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.constant.LMSType
 import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.data.LMSClass
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -57,19 +57,19 @@ class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView
         }
 
         when (mItems[position].type) {
-            LMSType.HOMEWORK -> {
+            LMSClass.HOMEWORK -> {
                 holder.icon.setImageResource(R.drawable.ic_assignment)
                 holder.icon.contentDescription = context.getString(R.string.assignment)
                 holder.sub_name.text = mItems[position].homework_name
             }
 
-            LMSType.LESSON -> {
+            LMSClass.LESSON -> {
                 holder.icon.setImageResource(R.drawable.ic_video)
                 holder.icon.contentDescription = context.getString(R.string.classtime)
                 holder.sub_name.text = context.getString(R.string.week_lesson_format, mItems[position].week, mItems[position].lesson)
             }
 
-            LMSType.SUP_LESSON -> {
+            LMSClass.SUP_LESSON -> {
                 holder.icon.setImageResource(R.drawable.ic_video_sup)
                 holder.icon.contentDescription = context.getString(R.string.classtime)
                 holder.sub_name.text = context.getString(R.string.week_lesson_format, mItems[position].week, mItems[position].lesson) + context.getString(

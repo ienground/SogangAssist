@@ -12,8 +12,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import net.ienlab.sogangassist.*
 import net.ienlab.sogangassist.constant.ChannelId
-import net.ienlab.sogangassist.constant.LMSType
 import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.receiver.TimeReceiver
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,81 +57,69 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (homework_name, startTime, endTime) = matchResult.destructured
-                            LMSClass().let {
-                                it.className = className
-                                it.timeStamp = sbn.postTime
-                                it.type = LMSType.HOMEWORK
-                                it.startTime = timeFormat.parse(startTime)?.time ?: 0L
-                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
-                                it.homework_name = homework_name
-                                it.week = -1
-                                it.lesson = -1
-                                it.isRenewAllowed = true
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.HOMEWORK, timeFormat.parse(startTime)?.time ?: 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true,isFinished = false, -1, -1,  homework_name)
 
-                                if (!dbHelper.checkItemByData(it)) {
-                                    dbHelper.addItem(it)
+                            if (!dbHelper.checkItemByData(data)) {
+                                dbHelper.addItem(data)
 
-                                    val noti_intent = Intent(applicationContext, TimeReceiver::class.java)
-                                    val id = dbHelper.getAllData().last().id
-                                    noti_intent.putExtra("ID", id)
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java)
+                                val id = dbHelper.getAllData().last().id
+                                notiIntent.putExtra("ID", id)
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
-                                        val triggerTime = it.endTime - 1 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 1)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
+                                    val triggerTime = data.endTime - 1 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 1)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, false)) {
-                                        val triggerTime = it.endTime - 2 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 2)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, false)) {
+                                    val triggerTime = data.endTime - 2 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 2)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, false)) {
-                                        val triggerTime = it.endTime - 6 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 6)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, false)) {
+                                    val triggerTime = data.endTime - 6 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 6)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, false)) {
-                                        val triggerTime = it.endTime - 12 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 12)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, false)) {
+                                    val triggerTime = data.endTime - 12 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 12)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, false)) {
-                                        val triggerTime = it.endTime - 24 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 24)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, false)) {
+                                    val triggerTime = data.endTime - 24 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 24)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
-                                        val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                                        NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
-                                            setContentTitle(className)
-                                            setContentText(getString(R.string.reminder_content_hw_register, it.homework_name, timeFormat.format(it.endTime)))
-                                            setContentIntent(clickPendingIntent)
-                                            setAutoCancel(true)
-                                            setStyle(NotificationCompat.BigTextStyle())
-                                            setSmallIcon(R.drawable.ic_icon)
-                                            setColor(ContextCompat.getColor(applicationContext,
-                                                R.color.colorAccent
-                                            ))
+                                    NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                        setContentTitle(className)
+                                        setContentText(getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)))
+                                        setContentIntent(clickPendingIntent)
+                                        setAutoCancel(true)
+                                        setStyle(NotificationCompat.BigTextStyle())
+                                        setSmallIcon(R.drawable.ic_icon)
+                                        color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                            nm.notify(699000 + id, build())
-                                        }
+                                        nm.notify(699000 + id, build())
                                     }
                                 }
                             }
@@ -143,91 +131,82 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (homework_name, startTime, endTime) = matchResult.destructured
-                            LMSClass().let {
-                                it.className = className
-                                it.timeStamp = sbn.postTime
-                                it.type = LMSType.HOMEWORK
-                                it.startTime = timeFormat.parse(startTime)?.time ?: 0L
-                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
-                                it.homework_name = homework_name
-                                it.week = -1
-                                it.lesson = -1
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.HOMEWORK, timeFormat.parse(startTime)?.time ?: 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, -1, -1, homework_name)
 
-                                val id: Int
-                                if (dbHelper.checkItemByData(it)) {
-                                    val oldItem = dbHelper.getItemById(dbHelper.getIdByCondition(it))
-                                    it.id = oldItem.id
-                                    it.isFinished = oldItem.isFinished
-                                    it.isRenewAllowed = oldItem.isRenewAllowed
-                                    if (oldItem.isRenewAllowed) {
-                                        dbHelper.updateItem(it) // check
-                                    }
-                                    id = it.id
-                                } else {
-                                    dbHelper.addItem(it)
-                                    id = dbHelper.getAllData().last().id
+                            val id: Int
+                            if (dbHelper.checkItemByData(data)) {
+                                val oldItem = dbHelper.getItemById(dbHelper.getIdByCondition(data))
+                                data.id = oldItem.id
+                                data.isFinished = oldItem.isFinished
+                                data.isRenewAllowed = oldItem.isRenewAllowed
+                                if (oldItem.isRenewAllowed) {
+                                    dbHelper.updateItem(data) // check
                                 }
+                                id = data.id
+                            } else {
+                                dbHelper.addItem(data)
+                                id = dbHelper.getAllData().last().id
+                            }
 
-                                val noti_intent = Intent(applicationContext, TimeReceiver::class.java)
-                                noti_intent.putExtra("ID", id)
+                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java)
+                            notiIntent.putExtra("ID", id)
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
-                                    val triggerTime = it.endTime - 1 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 1)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
+                                val triggerTime = data.endTime - 1 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 1)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, false)) {
-                                    val triggerTime = it.endTime - 2 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 2)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, false)) {
+                                val triggerTime = data.endTime - 2 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 2)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, false)) {
-                                    val triggerTime = it.endTime - 6 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 6)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, false)) {
+                                val triggerTime = data.endTime - 6 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 6)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, false)) {
-                                    val triggerTime = it.endTime - 12 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 12)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, false)) {
+                                val triggerTime = data.endTime - 12 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 12)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, false)) {
-                                    val triggerTime = it.endTime - 24 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 24)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, false)) {
+                                val triggerTime = data.endTime - 24 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 24)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
-                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                                    NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
-                                        setContentTitle(className)
-                                        setContentText(getString(R.string.reminder_content_hw_update, it.homework_name, timeFormat.format(it.endTime)))
-                                        setContentIntent(clickPendingIntent)
-                                        setAutoCancel(true)
-                                        setStyle(NotificationCompat.BigTextStyle())
-                                        setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext,
-                                            R.color.colorAccent
-                                        ))
+                                NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                    setContentTitle(className)
+                                    setContentText(getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)))
+                                    setContentIntent(clickPendingIntent)
+                                    setAutoCancel(true)
+                                    setStyle(NotificationCompat.BigTextStyle())
+                                    setSmallIcon(R.drawable.ic_icon)
+                                    setColor(ContextCompat.getColor(applicationContext,
+                                        R.color.colorAccent
+                                    ))
 
-                                        nm.notify(699000 + id, build())
-                                    }
+                                    nm.notify(699000 + id, build())
                                 }
                             }
                         }
@@ -238,85 +217,74 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (week, lesson, endTime) = matchResult.destructured
-                            LMSClass().let {
-                                it.className = className
-                                it.timeStamp = sbn.postTime
-                                it.type = LMSType.LESSON
-                                it.startTime = -1
-                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
-                                it.homework_name = "#NONE"
-                                it.week = week.toInt()
-                                it.lesson = lesson.toInt()
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = false, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
 
-                                if (!dbHelper.checkItemByData(it)) {
-                                    dbHelper.addItem(it)
+                            if (!dbHelper.checkItemByData(data)) {
+                                dbHelper.addItem(data)
 
-                                    val noti_intent = Intent(applicationContext, TimeReceiver::class.java)
-                                    val id = dbHelper.getAllData().last().id
-                                    noti_intent.putExtra("ID", id)
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java)
+                                val id = dbHelper.getAllData().last().id
+                                notiIntent.putExtra("ID", id)
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
-                                        val triggerTime = it.endTime - 1 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 1)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
+                                    val triggerTime = data.endTime - 1 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 1)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
-                                        val triggerTime = it.endTime - 2 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 2)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
+                                    val triggerTime = data.endTime - 2 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 2)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
-                                        val triggerTime = it.endTime - 6 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 6)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
+                                    val triggerTime = data.endTime - 6 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 6)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
-                                        val triggerTime = it.endTime - 12 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 12)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
+                                    val triggerTime = data.endTime - 12 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 12)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
-                                        val triggerTime = it.endTime - 24 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 24)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
+                                    val triggerTime = data.endTime - 24 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 24)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
-                                        val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                                        NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
-                                            setContentTitle(className)
-                                            setContentText(getString(R.string.reminder_content_lec_register, it.week, it.lesson, timeFormat.format(it.endTime)))
-                                            setContentIntent(clickPendingIntent)
-                                            setAutoCancel(true)
-                                            setStyle(NotificationCompat.BigTextStyle())
-                                            setSmallIcon(R.drawable.ic_icon)
-                                            setColor(ContextCompat.getColor(applicationContext,
-                                                R.color.colorAccent
-                                            ))
+                                    NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                        setContentTitle(className)
+                                        setContentText(getString(R.string.reminder_content_lec_register, data.week, data.lesson, timeFormat.format(data.endTime)))
+                                        setContentIntent(clickPendingIntent)
+                                        setAutoCancel(true)
+                                        setStyle(NotificationCompat.BigTextStyle())
+                                        setSmallIcon(R.drawable.ic_icon)
+                                        setColor(ContextCompat.getColor(applicationContext,
+                                            R.color.colorAccent
+                                        ))
 
-                                            nm.notify(699000 + id, build())
-                                        }
+                                        nm.notify(699000 + id, build())
                                     }
                                 }
                             }
-
-
                         }
                     }
                     contains(getString(R.string.format_change_lecture)) -> {
@@ -325,93 +293,82 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (week, lesson, endTime) = matchResult.destructured
-                            LMSClass().let {
-                                it.className = className
-                                it.timeStamp = sbn.postTime
-                                it.type = LMSType.LESSON
-                                it.startTime = -1
-                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
-                                it.homework_name = "#NONE"
-                                it.week = week.toInt()
-                                it.lesson = lesson.toInt()
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
 
-                                val id: Int
-                                if (dbHelper.checkItemByData(it)) {
-                                    val oldItem = dbHelper.getItemById(dbHelper.getIdByCondition(it))
-                                    it.id = oldItem.id
-                                    it.isFinished = oldItem.isFinished
-                                    it.isRenewAllowed = oldItem.isRenewAllowed
-                                    if (oldItem.isRenewAllowed) {
-                                        dbHelper.updateItem(it) // check
-                                    }
-                                    id = it.id
-                                } else {
-                                    dbHelper.addItem(it)
-                                    id = dbHelper.getAllData().last().id
+                            val id: Int
+                            if (dbHelper.checkItemByData(data)) {
+                                val oldItem = dbHelper.getItemById(dbHelper.getIdByCondition(data))
+                                data.id = oldItem.id
+                                data.isFinished = oldItem.isFinished
+                                data.isRenewAllowed = oldItem.isRenewAllowed
+                                if (oldItem.isRenewAllowed) {
+                                    dbHelper.updateItem(data) // check
                                 }
+                                id = data.id
+                            } else {
+                                dbHelper.addItem(data)
+                                id = dbHelper.getAllData().last().id
+                            }
 
-                                val noti_intent = Intent(applicationContext, TimeReceiver::class.java)
-                                noti_intent.putExtra("ID", id)
+                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 1 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 1)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 1 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 1)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 2 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 2)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 2 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 2)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 6 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 6)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 6 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 6)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 12 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 12)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 12 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 12)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 24 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 24)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 24 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 24)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
-                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                                    NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
-                                        setContentTitle(className)
-                                        setContentText(getString(R.string.reminder_content_lec_update, it.week, it.lesson, timeFormat.format(it.endTime)))
-                                        setContentIntent(clickPendingIntent)
-                                        setAutoCancel(true)
-                                        setStyle(NotificationCompat.BigTextStyle())
-                                        setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext,
-                                            R.color.colorAccent
-                                        ))
+                                NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                    setContentTitle(className)
+                                    setContentText(getString(R.string.reminder_content_lec_update, data.week, data.lesson, timeFormat.format(data.endTime)))
+                                    setContentIntent(clickPendingIntent)
+                                    setAutoCancel(true)
+                                    setStyle(NotificationCompat.BigTextStyle())
+                                    setSmallIcon(R.drawable.ic_icon)
+                                    color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                        nm.notify(699000 + id, build())
-                                    }
+                                    nm.notify(699000 + id, build())
                                 }
                             }
+
                         }
                     }
                     contains(getString(R.string.format_new_sup_lecture)) -> {
@@ -420,79 +377,68 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (week, lesson, endTime) = matchResult.destructured
-                            LMSClass().let {
-                                it.className = className
-                                it.timeStamp = sbn.postTime
-                                it.type = LMSType.SUP_LESSON
-                                it.startTime = -1
-                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
-                                it.homework_name = "#NONE"
-                                it.week = week.toInt()
-                                it.lesson = lesson.toInt()
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.SUP_LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = false, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
 
-                                dbHelper.addItem(it)
+                            dbHelper.addItem(data)
 
-                                val noti_intent = Intent(applicationContext, TimeReceiver::class.java)
-                                val id = dbHelper.getAllData().last().id
-                                noti_intent.putExtra("ID", id)
+                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java)
+                            val id = dbHelper.getAllData().last().id
+                            notiIntent.putExtra("ID", id)
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 1 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 1)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 1 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 1)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 2 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 2)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 2 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 2)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 6 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 6)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 6 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 6)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 12 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 12)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 12 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 12)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 24 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 24)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 24 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 24)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
-                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                                    NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
-                                        setContentTitle(className)
-                                        setContentText(getString(R.string.reminder_content_sup_lec_register, it.week, it.lesson, timeFormat.format(it.endTime)))
-                                        setContentIntent(clickPendingIntent)
-                                        setAutoCancel(true)
-                                        setStyle(NotificationCompat.BigTextStyle())
-                                        setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext,
-                                            R.color.colorAccent
-                                        ))
+                                NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                    setContentTitle(className)
+                                    setContentText(getString(R.string.reminder_content_sup_lec_register, data.week, data.lesson, timeFormat.format(data.endTime)))
+                                    setContentIntent(clickPendingIntent)
+                                    setAutoCancel(true)
+                                    setStyle(NotificationCompat.BigTextStyle())
+                                    setSmallIcon(R.drawable.ic_icon)
+                                    color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                        nm.notify(699000 + id, build())
-                                    }
+                                    nm.notify(699000 + id, build())
                                 }
                             }
                         }
@@ -503,91 +449,80 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (week, lesson, endTime) = matchResult.destructured
-                            LMSClass().let {
-                                it.className = className
-                                it.timeStamp = sbn.postTime
-                                it.type = LMSType.SUP_LESSON
-                                it.startTime = -1
-                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
-                                it.homework_name = "#NONE"
-                                it.week = week.toInt()
-                                it.lesson = lesson.toInt()
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.SUP_LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
 
-                                val id: Int
-                                if (dbHelper.checkItemByData(it)) {
-                                    val oldItem = dbHelper.getItemById(dbHelper.getIdByCondition(it))
-                                    it.id = oldItem.id
-                                    it.isFinished = oldItem.isFinished
-                                    it.isRenewAllowed = oldItem.isRenewAllowed
-                                    if (oldItem.isRenewAllowed) {
-                                        dbHelper.updateItem(it) // check
-                                    }
-                                    id = it.id
-                                } else {
-                                    dbHelper.addItem(it)
-                                    id = dbHelper.getAllData().last().id
+                            val id: Int
+                            if (dbHelper.checkItemByData(data)) {
+                                val oldItem = dbHelper.getItemById(dbHelper.getIdByCondition(data))
+                                data.id = oldItem.id
+                                data.isFinished = oldItem.isFinished
+                                data.isRenewAllowed = oldItem.isRenewAllowed
+                                if (oldItem.isRenewAllowed) {
+                                    dbHelper.updateItem(data) // check
                                 }
+                                id = data.id
+                            } else {
+                                dbHelper.addItem(data)
+                                id = dbHelper.getAllData().last().id
+                            }
 
-                                val noti_intent = Intent(applicationContext, TimeReceiver::class.java)
-                                noti_intent.putExtra("ID", id)
+                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java)
+                            notiIntent.putExtra("ID", id)
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 1 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 1)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 1 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 1)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 2 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 2)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 2 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 2)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 6 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 6)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 6 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 6)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 12 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 12)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 12 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 12)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
-                                    val triggerTime = it.endTime - 24 * 60 * 60 * 1000
-                                    noti_intent.putExtra("TRIGGER", triggerTime)
-                                    noti_intent.putExtra("TIME", 24)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                }
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_LEC, false)) {
+                                val triggerTime = data.endTime - 24 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 24)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
-                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                                    NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
-                                        setContentTitle(className)
-                                        setContentText(getString(R.string.reminder_content_sup_lec_update, it.week, it.lesson, timeFormat.format(it.endTime)))
-                                        setContentIntent(clickPendingIntent)
-                                        setAutoCancel(true)
-                                        setStyle(NotificationCompat.BigTextStyle())
-                                        setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext,
-                                            R.color.colorAccent
-                                        ))
+                                NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                    setContentTitle(className)
+                                    setContentText(getString(R.string.reminder_content_sup_lec_update, data.week, data.lesson, timeFormat.format(data.endTime)))
+                                    setContentIntent(clickPendingIntent)
+                                    setAutoCancel(true)
+                                    setStyle(NotificationCompat.BigTextStyle())
+                                    setSmallIcon(R.drawable.ic_icon)
+                                    color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                        nm.notify(699000 + id, build())
-                                    }
+                                    nm.notify(699000 + id, build())
                                 }
                             }
                         }
@@ -598,81 +533,69 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (homework_name, startTime, endTime) = matchResult.destructured
-                            LMSClass().let {
-                                it.className = className
-                                it.timeStamp = sbn.postTime
-                                it.type = LMSType.HOMEWORK
-                                it.startTime = timeFormat.parse(startTime)?.time ?: 0L
-                                it.endTime = timeFormat.parse(endTime)?.time ?: 0L
-                                it.homework_name = homework_name
-                                it.week = -1
-                                it.lesson = -1
-                                it.isRenewAllowed = true
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.ZOOM, timeFormat.parse(startTime)?.time ?: 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, -1, -1, homework_name)
 
-                                if (!dbHelper.checkItemByData(it)) {
-                                    dbHelper.addItem(it)
+                            if (!dbHelper.checkItemByData(data)) {
+                                dbHelper.addItem(data)
 
-                                    val noti_intent = Intent(applicationContext, TimeReceiver::class.java)
-                                    val id = dbHelper.getAllData().last().id
-                                    noti_intent.putExtra("ID", id)
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java)
+                                val id = dbHelper.getAllData().last().id
+                                notiIntent.putExtra("ID", id)
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
-                                        val triggerTime = it.endTime - 1 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 1)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
+                                    val triggerTime = data.endTime - 1 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 1)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, false)) {
-                                        val triggerTime = it.endTime - 2 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 2)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, false)) {
+                                    val triggerTime = data.endTime - 2 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 2)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, false)) {
-                                        val triggerTime = it.endTime - 6 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 6)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, false)) {
+                                    val triggerTime = data.endTime - 6 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 6)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, false)) {
-                                        val triggerTime = it.endTime - 12 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 12)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, false)) {
+                                    val triggerTime = data.endTime - 12 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 12)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, false)) {
-                                        val triggerTime = it.endTime - 24 * 60 * 60 * 1000
-                                        noti_intent.putExtra("TRIGGER", triggerTime)
-                                        noti_intent.putExtra("TIME", 24)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                        am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                                    }
+                                if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, false)) {
+                                    val triggerTime = data.endTime - 24 * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", 24)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
 
-                                    if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
-                                        val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                                        NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
-                                            setContentTitle(className)
-                                            setContentText(getString(R.string.reminder_content_hw_register, it.homework_name, timeFormat.format(it.endTime)))
-                                            setContentIntent(clickPendingIntent)
-                                            setAutoCancel(true)
-                                            setStyle(NotificationCompat.BigTextStyle())
-                                            setSmallIcon(R.drawable.ic_icon)
-                                            setColor(ContextCompat.getColor(applicationContext,
-                                                R.color.colorAccent
-                                            ))
+                                    NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                        setContentTitle(className)
+                                        setContentText(getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)))
+                                        setContentIntent(clickPendingIntent)
+                                        setAutoCancel(true)
+                                        setStyle(NotificationCompat.BigTextStyle())
+                                        setSmallIcon(R.drawable.ic_icon)
+                                        color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                            nm.notify(699000 + id, build())
-                                        }
+                                        nm.notify(699000 + id, build())
                                     }
                                 }
                             }

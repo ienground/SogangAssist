@@ -1,19 +1,26 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.data
 
-class LMSClass {
-    var id: Int = -1
-    var className: String = ""
-    var timeStamp: Long = 0
-    var type: Int = 0
-    var startTime: Long = 0 // ONLY HOMEWORK
-    var endTime: Long = 0
-    var isRenewAllowed = true
-    var isFinished = false
+class LMSClass (
+    var id: Int,
+    var className: String,
+    var timeStamp: Long,
+    var type: Int,
+    var startTime: Long, // ONLY HOMEWORK
+    var endTime: Long,
+    var isRenewAllowed: Boolean,
+    var isFinished: Boolean,
 
     // TYPE = LESSON, SUP_LESSON
-    var week: Int = 0
-    var lesson: Int = 0
+    var week: Int,
+    var lesson: Int,
 
     // TYPE = HOMEWORK
-    var homework_name: String = ""
+    var homework_name: String
+) {
+    companion object {
+        val LESSON = 0
+        val SUP_LESSON = 1
+        val HOMEWORK = 2
+        val ZOOM = 3
+    }
 }

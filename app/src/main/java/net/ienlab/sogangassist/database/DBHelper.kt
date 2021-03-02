@@ -4,7 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import net.ienlab.sogangassist.constant.LMSType
+import net.ienlab.sogangassist.data.LMSClass
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -93,7 +93,7 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
         value.put(ALLOW_RENEW, item.isRenewAllowed)
         value.put(IS_FINISHED, item.isFinished)
 
-        db.update(_TABLENAME0, value, "(($TYPE=${LMSType.LESSON} OR $TYPE=${LMSType.SUP_LESSON}) AND $LESSON_WEEK=${item.week} AND $LESSON_LESSON=${item.lesson} AND $CLASS_NAME='${item.className}') OR ($CLASS_NAME='${item.className}' AND $TYPE=${LMSType.HOMEWORK} AND $HOMEWORK_NAME='${item.homework_name}')", null)
+        db.update(_TABLENAME0, value, "(($TYPE=${LMSClass.LESSON} OR $TYPE=${LMSClass.SUP_LESSON}) AND $LESSON_WEEK=${item.week} AND $LESSON_LESSON=${item.lesson} AND $CLASS_NAME='${item.className}') OR ($CLASS_NAME='${item.className}' AND $TYPE=${LMSClass.HOMEWORK} AND $HOMEWORK_NAME='${item.homework_name}')", null)
     }
 
     fun updateItemById(item: LMSClass) {
@@ -132,18 +132,22 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
         val arr = ArrayList<LMSClass>()
 
         while (cursor.moveToNext()) {
+            val data = LMSClass(
+                cursor.getInt(0),
+                cursor.getString(1),
+                cursor.getLong(2),
+                cursor.getInt(3),
+                cursor.getLong(4),
+                cursor.getLong(5),
+                cursor.getInt(9) == 1,
+                cursor.getInt(10) == 1,
+                cursor.getInt(6),
+                cursor.getInt(7),
+                cursor.getString(8)
+            )
             LMSClass().let {
-                it.id = cursor.getInt(0)
-                it.className = cursor.getString(1)
-                it.timeStamp = cursor.getLong(2)
-                it.type = cursor.getInt(3)
-                it.startTime = cursor.getLong(4)
-                it.endTime = cursor.getLong(5)
-                it.week = cursor.getInt(6)
-                it.lesson = cursor.getInt(7)
-                it.homework_name = cursor.getString(8)
-                it.isRenewAllowed = cursor.getInt(9) == 1
-                it.isFinished = cursor.getInt(10) == 1
+                it.lesson =
+                it.homework_name =
 
                 arr.add(it)
             }

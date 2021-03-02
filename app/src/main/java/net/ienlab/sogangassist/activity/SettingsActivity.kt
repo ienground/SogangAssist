@@ -18,7 +18,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import com.google.android.material.snackbar.Snackbar
+import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.databinding.ActivitySettingsBinding
 import net.ienlab.sogangassist.utils.MyUtils
 import org.json.JSONArray
@@ -219,20 +219,21 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                                 requireActivity().deleteDatabase(dbName)
                                 for (i in 0 until result.length()) {
                                     val jObject = result.getJSONObject(i)
-                                    LMSClass().apply {
-                                        className = jObject.getString("className")
-                                        timeStamp = jObject.getLong("timeStamp")
-                                        type = jObject.getInt("type")
-                                        startTime = jObject.getLong("startTime")
-                                        endTime = jObject.getLong("endTime")
-                                        isRenewAllowed = jObject.getBoolean("isRenewAllowed")
-                                        isFinished = jObject.getBoolean("isFinished")
-                                        week = jObject.getInt("week")
-                                        lesson = jObject.getInt("lesson")
-                                        homework_name = jObject.getString("homework_name")
+                                    val lms = LMSClass(
+                                        -1,
+                                        jObject.getString("className"),
+                                        jObject.getLong("timeStamp"),
+                                        jObject.getInt("type"),
+                                        jObject.getLong("startTime"),
+                                        jObject.getLong("endTime"),
+                                        jObject.getBoolean("isRenewAllowed"),
+                                        jObject.getBoolean("isFinished"),
+                                        jObject.getInt("week"),
+                                        jObject.getInt("lesson"),
+                                        jObject.getString("homework_name")
+                                    )
 
-                                        dbHelper.addItem(this)
-                                    }
+                                    dbHelper.addItem(lms)
                                 }
 
                                 Toast.makeText(requireContext(), getString(R.string.restore_finish), Toast.LENGTH_SHORT).show()
