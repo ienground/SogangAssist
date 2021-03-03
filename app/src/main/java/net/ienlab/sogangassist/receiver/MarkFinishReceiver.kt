@@ -4,9 +4,7 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import net.ienlab.sogangassist.DBHelper
-import net.ienlab.sogangassist.dbName
-import net.ienlab.sogangassist.dbVersion
+import net.ienlab.sogangassist.database.*
 
 class MarkFinishReceiver : BroadcastReceiver() {
 
@@ -18,9 +16,9 @@ class MarkFinishReceiver : BroadcastReceiver() {
         dbHelper = DBHelper(context, dbName, dbVersion)
 
         val id = intent.getIntExtra("ID", -1)
-        dbHelper.getItemById(id).let {
-            it.isFinished = true
-            dbHelper.updateItemById(it)
+        dbHelper.getItemById(id).apply {
+            isFinished = true
+            dbHelper.updateItemById(this)
         }
 
         nm.cancel(693000 + id)

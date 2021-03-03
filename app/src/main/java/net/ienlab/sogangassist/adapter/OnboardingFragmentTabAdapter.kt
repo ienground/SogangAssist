@@ -5,9 +5,9 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import net.ienlab.sogangassist.*
+import net.ienlab.sogangassist.fragment.*
 
-class OnboardingFragmentTabAdapter(fm: FragmentManager, internal var mContext: Context) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class OnboardingFragmentTabAdapter(fm: FragmentManager, internal var context: Context) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {

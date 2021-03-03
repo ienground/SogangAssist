@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.activity
 
 import android.content.Context
 import android.content.Intent
@@ -15,10 +15,15 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import com.rd.animation.type.AnimationType
+import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.adapter.OnboardingFragmentTabAdapter
 import net.ienlab.sogangassist.adapter.OnboardingFragmentTabAdapter.Companion.PAGE_NUMBER
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.databinding.ActivityOnboardingBinding
+import net.ienlab.sogangassist.database.*
+import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.fragment.*
+import net.ienlab.sogangassist.utils.SwipeDirection
 import kotlin.system.exitProcess
 
 class OnboardingActivity : AppCompatActivity(),

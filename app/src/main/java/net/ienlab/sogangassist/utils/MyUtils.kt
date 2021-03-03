@@ -47,17 +47,7 @@ class MyUtils {
         }
 
         fun isNotiPermissionAllowed(context: Context): Boolean {
-            val notiListenerSet = NotificationManagerCompat.getEnabledListenerPackages(context)
-            val myPackageName = context.packageName
-            for (packageName in notiListenerSet) {
-                if (packageName == null) {
-                    continue
-                }
-                if (packageName == myPackageName) {
-                    return true
-                }
-            }
-            return false
+            return NotificationManagerCompat.getEnabledListenerPackages(context).any { it == context.packageName }
         }
 
         fun isServiceRunning(context: Context, serviceClass: Class<*>): Boolean {

@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.activity
 
 import android.content.Context
 import android.content.Intent
@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {

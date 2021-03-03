@@ -11,7 +11,7 @@ import net.ienlab.sogangassist.R
 
 class AppInfoPreference(context: Context, attrs: AttributeSet): Preference(context, attrs) {
     init {
-        widgetLayoutResource = R.layout.settings_app_title
+        widgetLayoutResource = R.layout.preference_app_info
 
     }
 

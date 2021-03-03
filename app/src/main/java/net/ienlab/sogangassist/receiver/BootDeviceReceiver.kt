@@ -7,8 +7,9 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import net.ienlab.sogangassist.*
-import net.ienlab.sogangassist.constant.LMSType
+import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.data.LMSClass
 import java.util.*
 
 class BootDeviceReceiver : BroadcastReceiver() {
@@ -52,7 +53,7 @@ class BootDeviceReceiver : BroadcastReceiver() {
 
             if (data.endTime < System.currentTimeMillis()) continue
 
-            if (data.type == LMSType.HOMEWORK) {
+            if (data.type == LMSClass.TYPE_HOMEWORK) {
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
                     val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
                     noti_intent.putExtra("TRIGGER", triggerTime)
@@ -92,7 +93,7 @@ class BootDeviceReceiver : BroadcastReceiver() {
                     val pendingIntent = PendingIntent.getBroadcast(context, data.id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
                     am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
-            } else if (data.type == LMSType.LESSON || data.type == LMSType.SUP_LESSON) {
+            } else if (data.type == LMSClass.TYPE_LESSON || data.type == LMSClass.TYPE_SUP_LESSON) {
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
                     val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
                     noti_intent.putExtra("TRIGGER", triggerTime)

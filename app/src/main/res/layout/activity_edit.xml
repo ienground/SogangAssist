@@ -4,7 +4,7 @@
     <data>
         <variable
             name="activity"
-            type="net.ienlab.sogangassist.EditActivity" />
+            type="net.ienlab.sogangassist.activity.EditActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -101,6 +101,16 @@
                             android:textAlignment="textStart"
                             android:textColor="@color/dark_blue"
                             android:layoutDirection="rtl"/>
+
+                        <RadioButton
+                            android:id="@+id/radioButton4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/zoom"
+                            android:textAlignment="textStart"
+                            android:textColor="@color/dark_blue"
+                            android:layoutDirection="rtl"/>
+
                     </RadioGroup>
 
                     <com.google.android.material.checkbox.MaterialCheckBox

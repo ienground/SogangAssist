@@ -4,7 +4,7 @@
     <data>
         <variable
             name="activity"
-            type="net.ienlab.sogangassist.SettingsActivity" />
+            type="net.ienlab.sogangassist.activity.SettingsActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

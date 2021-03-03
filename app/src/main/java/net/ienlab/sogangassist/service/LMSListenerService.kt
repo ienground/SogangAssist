@@ -8,13 +8,16 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import net.ienlab.sogangassist.*
 import net.ienlab.sogangassist.constant.ChannelId
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.data.LMSClass
+import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.receiver.TimeReceiver
+import net.ienlab.sogangassist.activity.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -46,7 +49,8 @@ class LMSListenerService : NotificationListenerService() {
             nm.createNotificationChannel(channel)
         }
 
-        if (sbn.packageName == "kr.co.imaxsoft.hellolms") {
+        if (sbn.packageName == "net.ienlab.notificationtest") {
+//        if (sbn.packageName == "kr.co.imaxsoft.hellolms") {
             val className = extras.getString(Notification.EXTRA_TITLE) ?: ""
 
             with (extras.getString(Notification.EXTRA_TEXT) ?: "") {
@@ -57,14 +61,11 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (homework_name, startTime, endTime) = matchResult.destructured
-                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.HOMEWORK, timeFormat.parse(startTime)?.time ?: 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true,isFinished = false, -1, -1,  homework_name)
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.TYPE_HOMEWORK, timeFormat.parse(startTime)?.time ?: 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true,isFinished = false, -1, -1,  homework_name)
 
                             if (!dbHelper.checkItemByData(data)) {
-                                dbHelper.addItem(data)
-
-                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java)
-                                val id = dbHelper.getAllData().last().id
-                                notiIntent.putExtra("ID", id)
+                                val id = dbHelper.addItem(data)
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
 
                                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
                                     val triggerTime = data.endTime - 1 * 60 * 60 * 1000
@@ -131,7 +132,7 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (homework_name, startTime, endTime) = matchResult.destructured
-                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.HOMEWORK, timeFormat.parse(startTime)?.time ?: 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, -1, -1, homework_name)
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.TYPE_HOMEWORK, timeFormat.parse(startTime)?.time ?: 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, -1, -1, homework_name)
 
                             val id: Int
                             if (dbHelper.checkItemByData(data)) {
@@ -148,8 +149,7 @@ class LMSListenerService : NotificationListenerService() {
                                 id = dbHelper.getAllData().last().id
                             }
 
-                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java)
-                            notiIntent.putExtra("ID", id)
+                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
 
                             if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
                                 val triggerTime = data.endTime - 1 * 60 * 60 * 1000
@@ -202,9 +202,7 @@ class LMSListenerService : NotificationListenerService() {
                                     setAutoCancel(true)
                                     setStyle(NotificationCompat.BigTextStyle())
                                     setSmallIcon(R.drawable.ic_icon)
-                                    setColor(ContextCompat.getColor(applicationContext,
-                                        R.color.colorAccent
-                                    ))
+                                    color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                     nm.notify(699000 + id, build())
                                 }
@@ -217,14 +215,11 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (week, lesson, endTime) = matchResult.destructured
-                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = false, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.TYPE_LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = false, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
 
                             if (!dbHelper.checkItemByData(data)) {
-                                dbHelper.addItem(data)
-
-                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java)
-                                val id = dbHelper.getAllData().last().id
-                                notiIntent.putExtra("ID", id)
+                                val id = dbHelper.addItem(data)
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
 
                                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
                                     val triggerTime = data.endTime - 1 * 60 * 60 * 1000
@@ -277,9 +272,7 @@ class LMSListenerService : NotificationListenerService() {
                                         setAutoCancel(true)
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
-                                        setColor(ContextCompat.getColor(applicationContext,
-                                            R.color.colorAccent
-                                        ))
+                                        color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                         nm.notify(699000 + id, build())
                                     }
@@ -293,7 +286,7 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (week, lesson, endTime) = matchResult.destructured
-                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.TYPE_LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
 
                             val id: Int
                             if (dbHelper.checkItemByData(data)) {
@@ -377,13 +370,10 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (week, lesson, endTime) = matchResult.destructured
-                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.SUP_LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = false, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.TYPE_SUP_LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = false, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
 
-                            dbHelper.addItem(data)
-
-                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java)
-                            val id = dbHelper.getAllData().last().id
-                            notiIntent.putExtra("ID", id)
+                            val id = dbHelper.addItem(data)
+                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
 
                             if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
                                 val triggerTime = data.endTime - 1 * 60 * 60 * 1000
@@ -449,7 +439,7 @@ class LMSListenerService : NotificationListenerService() {
 
                         if (matchResult != null) {
                             val (week, lesson, endTime) = matchResult.destructured
-                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.SUP_LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.TYPE_SUP_LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
 
                             val id: Int
                             if (dbHelper.checkItemByData(data)) {
@@ -466,8 +456,7 @@ class LMSListenerService : NotificationListenerService() {
                                 id = dbHelper.getAllData().last().id
                             }
 
-                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java)
-                            notiIntent.putExtra("ID", id)
+                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
 
                             if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
                                 val triggerTime = data.endTime - 1 * 60 * 60 * 1000
@@ -532,15 +521,12 @@ class LMSListenerService : NotificationListenerService() {
                         val matchResult = regex.matchEntire(this as CharSequence)
 
                         if (matchResult != null) {
-                            val (homework_name, startTime, endTime) = matchResult.destructured
-                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.ZOOM, timeFormat.parse(startTime)?.time ?: 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, -1, -1, homework_name)
+                            val (homework_name, endTime) = matchResult.destructured
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.TYPE_ZOOM, 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, -1, -1, homework_name)
 
                             if (!dbHelper.checkItemByData(data)) {
-                                dbHelper.addItem(data)
-
-                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java)
-                                val id = dbHelper.getAllData().last().id
-                                notiIntent.putExtra("ID", id)
+                                val id = dbHelper.addItem(data)
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
 
                                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
                                     val triggerTime = data.endTime - 1 * 60 * 60 * 1000
@@ -588,7 +574,7 @@ class LMSListenerService : NotificationListenerService() {
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
-                                        setContentText(getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)))
+                                        setContentText(getString(R.string.reminder_content_zoom_register, data.homework_name, timeFormat.format(data.endTime)))
                                         setContentIntent(clickPendingIntent)
                                         setAutoCancel(true)
                                         setStyle(NotificationCompat.BigTextStyle())
@@ -602,7 +588,87 @@ class LMSListenerService : NotificationListenerService() {
                         }
                     }
                     contains(getString(R.string.format_change_zoom)) -> {
+                        val regex = getString(R.string.format_zoom_regex).toRegex()
+                        val matchResult = regex.matchEntire(this as CharSequence)
 
+                        if (matchResult != null) {
+                            val (homework_name, endTime) = matchResult.destructured
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.TYPE_HOMEWORK, 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, -1, -1, homework_name)
+
+                            val id: Int
+                            if (dbHelper.checkItemByData(data)) {
+                                val oldItem = dbHelper.getItemById(dbHelper.getIdByCondition(data))
+                                data.id = oldItem.id
+                                data.isFinished = oldItem.isFinished
+                                data.isRenewAllowed = oldItem.isRenewAllowed
+                                if (oldItem.isRenewAllowed) {
+                                    dbHelper.updateItem(data) // check
+                                }
+                                id = data.id
+                            } else {
+                                dbHelper.addItem(data)
+                                id = dbHelper.getAllData().last().id
+                            }
+
+                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
+                                val triggerTime = data.endTime - 1 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 1)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
+
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_2HOUR_HW, false)) {
+                                val triggerTime = data.endTime - 2 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 2)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 2, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
+
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_6HOUR_HW, false)) {
+                                val triggerTime = data.endTime - 6 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 6)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 3, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
+
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_12HOUR_HW, false)) {
+                                val triggerTime = data.endTime - 12 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 12)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 4, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
+
+                            if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_24HOUR_HW, false)) {
+                                val triggerTime = data.endTime - 24 * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", 24)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + 5, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
+
+                            if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                                NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                    setContentTitle(className)
+                                    setContentText(getString(R.string.reminder_content_zoom_update, data.homework_name, timeFormat.format(data.endTime)))
+                                    setContentIntent(clickPendingIntent)
+                                    setAutoCancel(true)
+                                    setStyle(NotificationCompat.BigTextStyle())
+                                    setSmallIcon(R.drawable.ic_icon)
+                                    color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+
+                                    nm.notify(699000 + id, build())
+                                }
+                            }
+                        }
                     }
                     else -> {
 

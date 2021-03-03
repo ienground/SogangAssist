@@ -15,14 +15,15 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.*
-import net.ienlab.sogangassist.*
+import net.ienlab.sogangassist.BuildConfig
+import net.ienlab.sogangassist.activity.*
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.data.LMSClass
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView.Adapter<PostItemHolder>() {
+class MainWorkAdapter(private var mItems: MutableList<LMSClass>) : RecyclerView.Adapter<PostItemHolder>() {
 
     lateinit var sharedPreferences: SharedPreferences
     lateinit var context: Context
@@ -48,33 +49,38 @@ class MainWorkAdapter(internal var mItems: MutableList<LMSClass>) : RecyclerView
         holder.end_time.typeface = gmsansMedium
 
         holder.class_name.text = mItems[position].className
-        holder.end_time.text = context.getString(R.string.deadline) + timeFormat.format(Date(mItems[position].endTime))
+        holder.end_time.text =
+            context.getString(if (mItems[position].type != LMSClass.TYPE_ZOOM) R.string.deadline else R.string.start, timeFormat.format(Date(mItems[position].endTime)))
         holder.wholeView.setOnClickListener {
-            Intent(context, EditActivity::class.java).let {
-                it.putExtra("ID", mItems[position].id)
-                (context as Activity).startActivityForResult(it, REFRESH_MAIN_WORK)
+            Intent(context, EditActivity::class.java).apply {
+                putExtra("ID", mItems[position].id)
+                (context as Activity).startActivityForResult(this, REFRESH_MAIN_WORK)
             }
         }
 
         when (mItems[position].type) {
-            LMSClass.HOMEWORK -> {
+            LMSClass.TYPE_HOMEWORK -> {
                 holder.icon.setImageResource(R.drawable.ic_assignment)
                 holder.icon.contentDescription = context.getString(R.string.assignment)
                 holder.sub_name.text = mItems[position].homework_name
             }
 
-            LMSClass.LESSON -> {
+            LMSClass.TYPE_LESSON -> {
                 holder.icon.setImageResource(R.drawable.ic_video)
                 holder.icon.contentDescription = context.getString(R.string.classtime)
                 holder.sub_name.text = context.getString(R.string.week_lesson_format, mItems[position].week, mItems[position].lesson)
             }
 
-            LMSClass.SUP_LESSON -> {
+            LMSClass.TYPE_SUP_LESSON -> {
                 holder.icon.setImageResource(R.drawable.ic_video_sup)
                 holder.icon.contentDescription = context.getString(R.string.classtime)
-                holder.sub_name.text = context.getString(R.string.week_lesson_format, mItems[position].week, mItems[position].lesson) + context.getString(
-                    R.string.enrich_study
-                )
+                holder.sub_name.text = context.getString(R.string.week_lesson_format, mItems[position].week, mItems[position].lesson) + context.getString(R.string.enrich_study)
+            }
+
+            LMSClass.TYPE_ZOOM -> {
+                holder.icon.setImageResource(R.drawable.ic_groups)
+                holder.icon.contentDescription = context.getString(R.string.zoom)
+                holder.sub_name.text = mItems[position].homework_name
             }
         }
 

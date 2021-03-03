@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.activity
 
 import android.app.AlarmManager
 import android.app.DatePickerDialog
@@ -20,10 +20,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.ads.*
 import com.google.android.material.snackbar.Snackbar
+import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.data.LMSClass
+import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.databinding.ActivityEditBinding
 import net.ienlab.sogangassist.receiver.TimeReceiver
+import net.ienlab.sogangassist.R
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -43,9 +46,7 @@ class EditActivity : AppCompatActivity() {
     var id = -1
 
     val startCalendar = Calendar.getInstance()
-    val endCalendar = Calendar.getInstance().apply {
-        add(Calendar.DAY_OF_YEAR, 1)
-    }
+    val endCalendar = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
     var isFinished = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,32 +74,33 @@ class EditActivity : AppCompatActivity() {
                 }
         }
 
-        val gmsansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
-        val gmsansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
+        val gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
+        val gmSansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
 
-        binding.radioButton1.typeface = gmsansMedium
-        binding.radioButton2.typeface = gmsansMedium
-        binding.radioButton3.typeface = gmsansMedium
-        binding.checkAutoEdit.typeface = gmsansMedium
-        binding.etClass.typeface = gmsansMedium
-        binding.etClass.editText?.typeface = gmsansMedium
-        binding.etTimeLesson.typeface = gmsansMedium
-        binding.etTimeLesson.editText?.typeface = gmsansMedium
-        binding.etTimeWeek.typeface = gmsansMedium
-        binding.etTimeWeek.editText?.typeface = gmsansMedium
-        binding.etAssignment.typeface = gmsansMedium
-        binding.etAssignment.editText?.typeface = gmsansMedium
-        binding.tvStartTime.typeface = gmsansMedium
-        binding.tvEndTime.typeface = gmsansMedium
-        binding.tvStartDate.typeface = gmsansMedium
-        binding.tvEndDate.typeface = gmsansMedium
-        binding.tvClassEndTime.typeface = gmsansMedium
-        binding.tvClassEndDate.typeface = gmsansMedium
+        binding.radioButton1.typeface = gmSansMedium
+        binding.radioButton2.typeface = gmSansMedium
+        binding.radioButton3.typeface = gmSansMedium
+        binding.radioButton4.typeface = gmSansMedium
+        binding.checkAutoEdit.typeface = gmSansMedium
+        binding.etClass.typeface = gmSansMedium
+        binding.etClass.editText?.typeface = gmSansMedium
+        binding.etTimeLesson.typeface = gmSansMedium
+        binding.etTimeLesson.editText?.typeface = gmSansMedium
+        binding.etTimeWeek.typeface = gmSansMedium
+        binding.etTimeWeek.editText?.typeface = gmSansMedium
+        binding.etAssignment.typeface = gmSansMedium
+        binding.etAssignment.editText?.typeface = gmSansMedium
+        binding.tvStartTime.typeface = gmSansMedium
+        binding.tvEndTime.typeface = gmSansMedium
+        binding.tvStartDate.typeface = gmSansMedium
+        binding.tvEndDate.typeface = gmSansMedium
+        binding.tvClassEndTime.typeface = gmSansMedium
+        binding.tvClassEndDate.typeface = gmSansMedium
 
         binding.adView.loadAd(adRequest.build())
 
         dbHelper = DBHelper(this, dbName, dbVersion)
-        radioButtonGroup = arrayOf(R.id.radioButton1, R.id.radioButton2, R.id.radioButton3)
+        radioButtonGroup = arrayOf(R.id.radioButton1, R.id.radioButton2, R.id.radioButton3, R.id.radioButton4)
 
         dateFormat = SimpleDateFormat(getString(R.string.dateFormat), Locale.getDefault())
         timeFormat = SimpleDateFormat(getString(R.string.timeFormat), Locale.getDefault())
@@ -154,12 +156,16 @@ class EditActivity : AppCompatActivity() {
             }
 
             when (currentItem.type) {
-                LMSClass.LESSON, LMSClass.SUP_LESSON -> {
+                LMSClass.TYPE_LESSON, LMSClass.TYPE_SUP_LESSON -> {
                     lessonType(currentItem)
                 }
 
-                LMSClass.HOMEWORK -> {
+                LMSClass.TYPE_HOMEWORK -> {
                     homeworkType(currentItem)
+                }
+
+                LMSClass.TYPE_ZOOM -> {
+                    zoomType(currentItem)
                 }
             }
 
@@ -196,6 +202,12 @@ class EditActivity : AppCompatActivity() {
                         binding.tvStartTime.text = timeFormat.format(startCalendar.time)
                         binding.tvEndDate.text = dateFormat.format(endCalendar.time)
                         binding.tvEndTime.text = timeFormat.format(endCalendar.time)
+                    }
+
+                    R.id.radioButton4 ->{
+                        zoomUI(startCalendar)
+                        binding.tvStartDate.text = dateFormat.format(startCalendar.time)
+                        binding.tvStartTime.text = timeFormat.format(startCalendar.time)
                     }
                 }
             }
@@ -267,24 +279,22 @@ class EditActivity : AppCompatActivity() {
         }
 
         binding.tvClassEndDate.setOnClickListener {
-            DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            DatePickerDialog(this, { _, year, month, dayOfMonth ->
                 endCalendar.set(Calendar.YEAR, year)
                 endCalendar.set(Calendar.MONTH, month)
                 endCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
                 binding.tvClassEndDate.text = dateFormat.format(endCalendar.time)
-            }, endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH), endCalendar.get(Calendar.DAY_OF_MONTH))
-                .show()
+            }, endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH), endCalendar.get(Calendar.DAY_OF_MONTH)).show()
         }
 
         binding.tvClassEndTime.setOnClickListener {
-            TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+            TimePickerDialog(this, { _, hourOfDay, minute ->
                 endCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 endCalendar.set(Calendar.MINUTE, minute)
 
                 binding.tvClassEndTime.text = timeFormat.format(endCalendar.time)
-            }, endCalendar.get(Calendar.HOUR_OF_DAY), endCalendar.get(Calendar.MINUTE), false)
-                .show()
+            }, endCalendar.get(Calendar.HOUR_OF_DAY), endCalendar.get(Calendar.MINUTE), false).show()
         }
     }
 
@@ -309,6 +319,8 @@ class EditActivity : AppCompatActivity() {
             binding.tvClassEndDate.visibility = it
             binding.tvClassEndTime.visibility = it
         }
+
+        binding.etAssignment.setHint(R.string.assignment_name)
 
         binding.tvStartDate.setOnClickListener {
             DatePickerDialog(this, { _, year, month, dayOfMonth ->
@@ -348,8 +360,51 @@ class EditActivity : AppCompatActivity() {
                 endCalendar.set(Calendar.MINUTE, minute)
 
                 binding.tvEndTime.text = timeFormat.format(endCalendar.time)
-            }, endCalendar.get(Calendar.HOUR_OF_DAY), endCalendar.get(Calendar.MINUTE), false)
-                .show()
+            }, endCalendar.get(Calendar.HOUR_OF_DAY), endCalendar.get(Calendar.MINUTE), false).show()
+        }
+    }
+
+    fun zoomUI(endCalendar: Calendar) {
+        View.VISIBLE.let {
+            binding.line.visibility = it
+            binding.icAssignment.visibility = it
+            binding.etAssignment.visibility = it
+            binding.icDate.visibility = it
+            binding.tvStartDate.visibility = it
+            binding.tvStartTime.visibility = it
+        }
+
+        View.GONE.let {
+            binding.icTime.visibility = it
+            binding.etTimeWeek.visibility = it
+            binding.etTimeLesson.visibility = it
+            binding.lineClass.visibility = it
+            binding.icClassDate.visibility = it
+            binding.tvClassEndDate.visibility = it
+            binding.tvClassEndTime.visibility = it
+            binding.tvEndDate.visibility = it
+            binding.tvEndTime.visibility = it
+        }
+
+        binding.etAssignment.setHint(R.string.zoom_name)
+
+        binding.tvStartDate.setOnClickListener {
+            DatePickerDialog(this, { _, year, month, dayOfMonth ->
+                endCalendar.set(Calendar.YEAR, year)
+                endCalendar.set(Calendar.MONTH, month)
+                endCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                binding.tvEndDate.text = dateFormat.format(endCalendar.time)
+            }, endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH), endCalendar.get(Calendar.DAY_OF_MONTH)).show()
+        }
+
+        binding.tvStartTime.setOnClickListener {
+            TimePickerDialog(this, { view, hourOfDay, minute ->
+                endCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                endCalendar.set(Calendar.MINUTE, minute)
+
+                binding.tvEndTime.text = timeFormat.format(endCalendar.time)
+            }, endCalendar.get(Calendar.HOUR_OF_DAY), endCalendar.get(Calendar.MINUTE), false).show()
         }
     }
 
@@ -383,19 +438,42 @@ class EditActivity : AppCompatActivity() {
         homeworkUI(startCalendar, endCalendar)
     }
 
+    fun zoomType(currentItem: LMSClass) {
+        binding.etAssignment.editText?.setText(if (currentItem.homework_name != "#NONE") currentItem.homework_name else "")
+        if (currentItem.endTime != -1L) {
+            binding.tvStartDate.text = dateFormat.format(Date(currentItem.endTime))
+            binding.tvStartTime.text = timeFormat.format(Date(currentItem.endTime))
+            endCalendar.timeInMillis = currentItem.endTime
+        } else {
+            val endTime = Date(currentItem.endTime - 24 * 60 * 60 * 1000)
+            binding.tvEndDate.text = dateFormat.format(endTime)
+            binding.tvEndTime.text = timeFormat.format(endTime)
+            endCalendar.timeInMillis = endTime.time
+        }
+
+        zoomUI(endCalendar)
+    }
+
     fun onBackAutoSave(isFinished: Boolean) {
         if (id != -1) {
-            if (currentItem.className != binding.etClass.editText?.text?.toString()
+            if ((currentItem.className != binding.etClass.editText?.text?.toString()
                 || currentItem.type != radioButtonGroup.indexOf(binding.radioGroup.checkedRadioButtonId)
-                || currentItem.endTime != endCalendar.timeInMillis
                 || currentItem.isFinished != isFinished
                 || currentItem.isRenewAllowed != binding.checkAutoEdit.isChecked
-                || (currentItem.type == LMSClass.HOMEWORK
+                        || currentItem.endTime != endCalendar.timeInMillis
+                || (currentItem.type == LMSClass.TYPE_HOMEWORK
                         && (currentItem.startTime != startCalendar.timeInMillis
                         || currentItem.homework_name != binding.etAssignment.editText?.text?.toString()))
-                || ((currentItem.type == LMSClass.SUP_LESSON || currentItem.type == LMSClass.LESSON)
+                || ((currentItem.type == LMSClass.TYPE_SUP_LESSON || currentItem.type == LMSClass.TYPE_LESSON)
                         && (currentItem.week != binding.etTimeWeek.editText?.text?.toString()?.toInt()
-                        || currentItem.lesson != binding.etTimeLesson.editText?.text?.toString()?.toInt()))) {
+                        || currentItem.lesson != binding.etTimeLesson.editText?.text?.toString()?.toInt())))
+                || (currentItem.type == LMSClass.TYPE_ZOOM
+                        && (currentItem.homework_name != binding.etAssignment.editText?.text?.toString()
+                        || currentItem.className != binding.etClass.editText?.text?.toString()
+                        || currentItem.type != radioButtonGroup.indexOf(binding.radioGroup.checkedRadioButtonId)
+                        || currentItem.isFinished != isFinished
+                        || currentItem.isRenewAllowed != binding.checkAutoEdit.isChecked))
+            ) {
                 AlertDialog.Builder(this).apply {
                     setMessage(R.string.save_ask)
                     setPositiveButton(R.string.save) { dialog, _ ->
@@ -499,6 +577,20 @@ class EditActivity : AppCompatActivity() {
                     Snackbar.make(view, getString(R.string.err_all), Snackbar.LENGTH_SHORT).show()
                 }
             }
+
+            R.id.radioButton4 -> {
+                if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != "") { // 12
+                    onSave(isFinished)
+                    setResult(RESULT_OK)
+                    finish()
+                } else if (binding.etAssignment.editText?.text?.toString() != "" ) { // 2
+                    Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
+                } else if (binding.etClass.editText?.text?.toString() != "") { // 1
+                    Snackbar.make(view, getString(R.string.err_input_zoom_title), Snackbar.LENGTH_SHORT).show()
+                } else {
+                    Snackbar.make(view, getString(R.string.err_all), Snackbar.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -518,12 +610,12 @@ class EditActivity : AppCompatActivity() {
         data.isFinished = isFinished
         data.isRenewAllowed = binding.checkAutoEdit.isChecked
 
-        if (data.type == LMSClass.HOMEWORK) {
+        if (data.type == LMSClass.TYPE_HOMEWORK || data.type == LMSClass.TYPE_ZOOM) {
             data.startTime = startCalendar.timeInMillis
             data.homework_name = binding.etAssignment.editText?.text?.toString() ?: ""
             data.week = -1
             data.lesson = -1
-        } else if (data.type == LMSClass.LESSON || data.type == LMSClass.SUP_LESSON) {
+        } else if (data.type == LMSClass.TYPE_LESSON || data.type == LMSClass.TYPE_SUP_LESSON) {
             data.startTime = -1
             data.homework_name = "#NONE"
             data.week = binding.etTimeWeek.editText?.text!!.toString().toInt()
@@ -539,7 +631,7 @@ class EditActivity : AppCompatActivity() {
         val notiIntent = Intent(this, TimeReceiver::class.java)
         notiIntent.putExtra("ID", data.id)
 
-        if (data.type == LMSClass.HOMEWORK) {
+        if (data.type == LMSClass.TYPE_HOMEWORK) {
             if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
                 val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
                 notiIntent.putExtra("TRIGGER", triggerTime)
@@ -579,7 +671,7 @@ class EditActivity : AppCompatActivity() {
                 val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 5, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
             }
-        } else if (data.type == LMSClass.LESSON || data.type == LMSClass.SUP_LESSON) {
+        } else if (data.type == LMSClass.TYPE_LESSON || data.type == LMSClass.TYPE_SUP_LESSON) {
             if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
                 val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
                 notiIntent.putExtra("TRIGGER", triggerTime)

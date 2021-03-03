@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.activity
 
 import android.app.Activity
 import android.app.AlarmManager
@@ -27,13 +27,17 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.prolificinteractive.materialcalendarview.CalendarDay
+import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.adapter.MainWorkAdapter
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.data.LMSClass
+import net.ienlab.sogangassist.database.DBHelper
 import net.ienlab.sogangassist.databinding.ActivityMainBinding
 import net.ienlab.sogangassist.decorators.*
 import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.utils.MyUtils
+import net.ienlab.sogangassist.database.*
+import net.ienlab.sogangassist.R
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -78,19 +82,19 @@ class MainActivity : AppCompatActivity() {
         currentDecorator = CurrentDecorator(this, Calendar.getInstance())
 
         val monthFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
-        val gmsansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
-        val gmsansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
+        val gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
+        val gmSansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
 
         val dateFormat = SimpleDateFormat(getString(R.string.tag_date), Locale.getDefault())
 
-        binding.month0.typeface = gmsansBold
-        binding.month1.typeface = gmsansBold
+        binding.month0.typeface = gmSansBold
+        binding.month1.typeface = gmSansBold
         binding.month.setText(monthFormat.format(Date(System.currentTimeMillis())))
         binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(Calendar.getInstance().time))
 
-        binding.tagSchedule.typeface = gmsansMedium
-        binding.tagEvents.typeface = gmsansMedium
-        binding.tvNoDeadline.typeface = gmsansMedium
+        binding.tagSchedule.typeface = gmSansMedium
+        binding.tagEvents.typeface = gmSansMedium
+        binding.tvNoDeadline.typeface = gmSansMedium
 
         if (BuildConfig.DEBUG) binding.adView.visibility = View.GONE
 
@@ -117,7 +121,7 @@ class MainActivity : AppCompatActivity() {
 
             if (data.endTime < System.currentTimeMillis()) continue
 
-            if (data.type == LMSClass.HOMEWORK) {
+            if (data.type == LMSClass.TYPE_HOMEWORK) {
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
                     val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
                     noti_intent.putExtra("TRIGGER", triggerTime)
@@ -157,7 +161,7 @@ class MainActivity : AppCompatActivity() {
                     val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
                     am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
-            } else if (data.type == LMSClass.LESSON || data.type == LMSClass.SUP_LESSON) {
+            } else if (data.type == LMSClass.TYPE_LESSON || data.type == LMSClass.TYPE_SUP_LESSON) {
                 if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
                     val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
                     noti_intent.putExtra("TRIGGER", triggerTime)
@@ -209,19 +213,14 @@ class MainActivity : AppCompatActivity() {
                 }
         }
 
-        val data = "새로운 화상강의 일정이 있습니다. \"3/3\" (시작일:2021.03.03 오후 12:00)"
-        val regex = "^.+\"(.+)\" \\(시작일:(.+)\\)\$".toRegex()
-
-        val matchResult = regex.matchEntire(data as CharSequence)
-
-        for (i in matchResult?.destructured?.toList() ?: listOf()) {
-            Log.d(TAG, i)
-        }
-
         binding.adView.loadAd(adRequest.build())
 
         val todayWork = dbHelper.getItemAtLastDate(System.currentTimeMillis()).toMutableList().apply {
             sortWith( compareBy ({ it.isFinished }, {it.type}))
+        }
+
+        dbHelper.getAllData().toMutableList().apply { sortWith( compareBy { it.id }) }.forEach {
+            Log.d(TAG, "${it.id} / ${it.type} / ${it.homework_name}")
         }
 
         binding.mainWorkView.adapter = MainWorkAdapter(todayWork)
@@ -394,7 +393,7 @@ class MainActivity : AppCompatActivity() {
                         timeInMillis = data.endTime
                     }
 
-                    if (data.type == LMSClass.HOMEWORK) {
+                    if (data.type == LMSClass.TYPE_HOMEWORK) {
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_HW, false)) {
                             val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
                             noti_intent.putExtra("TRIGGER", triggerTime)
@@ -434,7 +433,7 @@ class MainActivity : AppCompatActivity() {
                             val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + 5, noti_intent, PendingIntent.FLAG_UPDATE_CURRENT)
                             am.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                         }
-                    } else if (data.type == LMSClass.LESSON || data.type == LMSClass.SUP_LESSON) {
+                    } else if (data.type == LMSClass.TYPE_LESSON || data.type == LMSClass.TYPE_SUP_LESSON) {
                         if (sharedPreferences.getBoolean(SharedGroup.NOTIFY_1HOUR_LEC, false)) {
                             val triggerTime = endCalendar.timeInMillis - 1 * 60 * 60 * 1000
                             noti_intent.putExtra("TRIGGER", triggerTime)

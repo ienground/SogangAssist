@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.database
 
 import android.content.ContentValues
 import android.content.Context
@@ -53,7 +53,7 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
         onCreate(db)
     }
 
-    fun addItem(item: LMSClass) {
+    fun addItem(item: LMSClass): Int {
         val db = writableDatabase
 
         val sb = StringBuffer()
@@ -75,13 +75,19 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
                     if (item.isFinished) 1 else 0
                 )
         )
+
+        val cursor = db.rawQuery("SELECT LAST_INSERT_ROWID()", null)
+        var lastIndex = -1
+        while (cursor.moveToNext()) { lastIndex = cursor.getInt(0) }
+
+        cursor.close()
+        return lastIndex
     }
 
     fun updateItem(item: LMSClass) {
         val db = writableDatabase
         val value = ContentValues()
 
-//        value.put(ID, item.id)
         value.put(CLASS_NAME, item.className)
         value.put(TIMESTAMP, item.timeStamp)
         value.put(TYPE, item.type)
@@ -93,7 +99,7 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
         value.put(ALLOW_RENEW, item.isRenewAllowed)
         value.put(IS_FINISHED, item.isFinished)
 
-        db.update(_TABLENAME0, value, "(($TYPE=${LMSClass.LESSON} OR $TYPE=${LMSClass.SUP_LESSON}) AND $LESSON_WEEK=${item.week} AND $LESSON_LESSON=${item.lesson} AND $CLASS_NAME='${item.className}') OR ($CLASS_NAME='${item.className}' AND $TYPE=${LMSClass.HOMEWORK} AND $HOMEWORK_NAME='${item.homework_name}')", null)
+        db.update(_TABLENAME0, value, "(($TYPE=${LMSClass.TYPE_LESSON} OR $TYPE=${LMSClass.TYPE_SUP_LESSON}) AND $LESSON_WEEK=${item.week} AND $LESSON_LESSON=${item.lesson} AND $CLASS_NAME='${item.className}') OR ($CLASS_NAME='${item.className}' AND $TYPE=${LMSClass.TYPE_HOMEWORK} AND $HOMEWORK_NAME='${item.homework_name}')", null)
     }
 
     fun updateItemById(item: LMSClass) {
@@ -145,12 +151,8 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
                 cursor.getInt(7),
                 cursor.getString(8)
             )
-            LMSClass().let {
-                it.lesson =
-                it.homework_name =
 
-                arr.add(it)
-            }
+            arr.add(data)
         }
 
         cursor.close()
@@ -165,29 +167,30 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
         val db = readableDatabase
         val cursor = db.rawQuery(sb.toString(), null)
 
-        LMSClass().let {
-            while (cursor.moveToNext()) {
-                it.id = cursor.getInt(0)
-                it.className = cursor.getString(1)
-                it.timeStamp = cursor.getLong(2)
-                it.type = cursor.getInt(3)
-                it.startTime = cursor.getLong(4)
-                it.endTime = cursor.getLong(5)
-                it.week = cursor.getInt(6)
-                it.lesson = cursor.getInt(7)
-                it.homework_name = cursor.getString(8)
-                it.isRenewAllowed = cursor.getInt(9) == 1
-                it.isFinished = cursor.getInt(10) == 1
-            }
-
-            cursor.close()
-            return it
+        var data = LMSClass(-1, "", 0L, 0, 0L, 0L, false, false, -1, -1, "")
+        while (cursor.moveToNext()) {
+            data = LMSClass(
+                cursor.getInt(0),
+                cursor.getString(1),
+                cursor.getLong(2),
+                cursor.getInt(3),
+                cursor.getLong(4),
+                cursor.getLong(5),
+                cursor.getInt(9) == 1,
+                cursor.getInt(10) == 1,
+                cursor.getInt(6),
+                cursor.getInt(7),
+                cursor.getString(8)
+            )
         }
+
+        cursor.close()
+        return data
     }
 
     fun getIdByCondition(item: LMSClass): Int {
         val sb = StringBuffer()
-        sb.append(" SELECT $ID FROM $_TABLENAME0 WHERE (($TYPE=${LMSType.LESSON} OR $TYPE=${LMSType.SUP_LESSON}) AND $LESSON_WEEK=${item.week} AND $LESSON_LESSON=${item.lesson} AND $CLASS_NAME='${item.className}') OR ($CLASS_NAME='${item.className}' AND $TYPE=${LMSType.HOMEWORK} AND $HOMEWORK_NAME='${item.homework_name}') ")
+        sb.append(" SELECT $ID FROM $_TABLENAME0 WHERE (($TYPE=${LMSClass.TYPE_LESSON} OR $TYPE=${LMSClass.TYPE_SUP_LESSON}) AND $LESSON_WEEK=${item.week} AND $LESSON_LESSON=${item.lesson} AND $CLASS_NAME='${item.className}') OR ($CLASS_NAME='${item.className}' AND $TYPE=${LMSClass.TYPE_HOMEWORK} AND $HOMEWORK_NAME='${item.homework_name}') ")
 
         val db = readableDatabase
         val cursor = db.rawQuery(sb.toString(), null)
@@ -204,7 +207,7 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
 
     fun checkItemByData(item: LMSClass): Boolean {
         val db = readableDatabase
-        val query = "SELECT * FROM $_TABLENAME0 $_TABLENAME0 WHERE (($TYPE=${LMSType.LESSON} OR $TYPE=${LMSType.SUP_LESSON}) AND $LESSON_WEEK=${item.week} AND $LESSON_LESSON=${item.lesson} AND $CLASS_NAME='${item.className}') OR ($CLASS_NAME='${item.className}' AND $TYPE=${LMSType.HOMEWORK} AND $HOMEWORK_NAME='${item.homework_name}') "
+        val query = "SELECT * FROM $_TABLENAME0 $_TABLENAME0 WHERE (($TYPE=${LMSClass.TYPE_LESSON} OR $TYPE=${LMSClass.TYPE_SUP_LESSON}) AND $LESSON_WEEK=${item.week} AND $LESSON_LESSON=${item.lesson} AND $CLASS_NAME='${item.className}') OR ($CLASS_NAME='${item.className}' AND $TYPE=${LMSClass.TYPE_HOMEWORK} AND $HOMEWORK_NAME='${item.homework_name}') "
         val cursor = db.rawQuery(query, null)
         if (cursor.count <= 0) {
             cursor.close()
@@ -224,21 +227,21 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
         val arr = ArrayList<LMSClass>()
 
         while (cursor.moveToNext()) {
-            LMSClass().let {
-                it.id = cursor.getInt(0)
-                it.className = cursor.getString(1)
-                it.timeStamp = cursor.getLong(2)
-                it.type = cursor.getInt(3)
-                it.startTime = cursor.getLong(4)
-                it.endTime = cursor.getLong(5)
-                it.week = cursor.getInt(6)
-                it.lesson = cursor.getInt(7)
-                it.homework_name = cursor.getString(8)
-                it.isRenewAllowed = cursor.getInt(9) == 1
-                it.isFinished = cursor.getInt(10) == 1
+            val data = LMSClass(
+                cursor.getInt(0),
+                cursor.getString(1),
+                cursor.getLong(2),
+                cursor.getInt(3),
+                cursor.getLong(4),
+                cursor.getLong(5),
+                cursor.getInt(9) == 1,
+                cursor.getInt(10) == 1,
+                cursor.getInt(6),
+                cursor.getInt(7),
+                cursor.getString(8)
+            )
 
-                arr.add(it)
-            }
+            arr.add(data)
         }
 
         cursor.close()
@@ -250,7 +253,7 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
         db.execSQL(" DELETE FROM $_TABLENAME0 WHERE $ID = $id")
     }
 
-    fun CheckIsDataAlreadyInDBorNot(dbfield: String, fieldValue: String): Boolean {
+    fun checkIsDataAlreadyInDBorNot(dbfield: String, fieldValue: String): Boolean {
         val db = readableDatabase
         val query = "SELECT * FROM $_TABLENAME0 WHERE $dbfield = $fieldValue"
         val cursor = db.rawQuery(query, null)

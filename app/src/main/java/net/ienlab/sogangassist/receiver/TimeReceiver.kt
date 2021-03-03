@@ -11,7 +11,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import net.ienlab.sogangassist.*
 import net.ienlab.sogangassist.constant.ChannelId
-import net.ienlab.sogangassist.constant.LMSType
+import net.ienlab.sogangassist.database.*
+import net.ienlab.sogangassist.activity.*
+import net.ienlab.sogangassist.data.LMSClass
 import kotlin.math.abs
 
 class TimeReceiver : BroadcastReceiver() {
@@ -37,79 +39,89 @@ class TimeReceiver : BroadcastReceiver() {
         val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         when (item.type) {
-            LMSType.LESSON -> {
-                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).let {
-                    val markIntent = Intent(context, MarkFinishReceiver::class.java).apply {
-                        putExtra("ID", id)
-                    }
-
+            LMSClass.TYPE_LESSON -> {
+                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
+                    val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
                     val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                    it
-                        .setContentTitle(item.className)
-                        .setContentText(context.getString(R.string.reminder_content_lec, item.week, item.lesson, time))
-                        .setContentIntent(clickPendingIntent)
-                        .setAutoCancel(true)
-                        .setStyle(NotificationCompat.BigTextStyle())
-                        .setSmallIcon(R.drawable.ic_video)
-                        .setColor(ContextCompat.getColor(context, R.color.colorAccent))
-                        .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                    setContentTitle(item.className)
+                    setContentText(context.getString(R.string.reminder_content_lec, item.week, item.lesson, time))
+                    setContentIntent(clickPendingIntent)
+                    setAutoCancel(true)
+                    setStyle(NotificationCompat.BigTextStyle())
+                    setSmallIcon(R.drawable.ic_video)
+                    addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                    color = ContextCompat.getColor(context, R.color.colorAccent)
 
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
                         if (item.className != "") {
-                            nm.notify(693000 + id, it.build())
+                            nm.notify(693000 + id, build())
                         }
                     }
                 }
             }
 
-            LMSType.SUP_LESSON -> {
-                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).let {
-                    val markIntent = Intent(context, MarkFinishReceiver::class.java).apply {
-                        putExtra("ID", id)
-                    }
-
+            LMSClass.TYPE_SUP_LESSON -> {
+                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
+                    val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
                     val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                    it
-                        .setContentTitle(item.className)
-                        .setContentText(context.getString(R.string.reminder_content_sup_lec, item.week, item.lesson, time))
-                        .setContentIntent(clickPendingIntent)
-                        .setAutoCancel(true)
-                        .setStyle(NotificationCompat.BigTextStyle())
-                        .setSmallIcon(R.drawable.ic_video_sup)
-                        .setColor(ContextCompat.getColor(context, R.color.colorAccent))
-                        .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                    setContentTitle(item.className)
+                    setContentText(context.getString(R.string.reminder_content_sup_lec, item.week, item.lesson, time))
+                    setContentIntent(clickPendingIntent)
+                    setAutoCancel(true)
+                    setStyle(NotificationCompat.BigTextStyle())
+                    setSmallIcon(R.drawable.ic_video_sup)
+                    addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                    color = ContextCompat.getColor(context, R.color.colorAccent)
 
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
                         if (item.className != "") {
-                            nm.notify(693000 + id, it.build())
+                            nm.notify(693000 + id, build())
                         }
                     }
                 }
             }
 
-            LMSType.HOMEWORK -> {
-                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).let {
-                    val markIntent = Intent(context, MarkFinishReceiver::class.java).apply {
-                        putExtra("ID", id)
-                    }
-
+            LMSClass.TYPE_HOMEWORK -> {
+                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
+                    val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
                     val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                    it
-                        .setContentTitle(item.className)
-                        .setContentText(context.getString(R.string.reminder_content_hw, item.homework_name, time))
-                        .setContentIntent(clickPendingIntent)
-                        .setAutoCancel(true)
-                        .setStyle(NotificationCompat.BigTextStyle())
-                        .setSmallIcon(R.drawable.ic_assignment)
-                        .setColor(ContextCompat.getColor(context, R.color.colorAccent))
-                        .addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                    setContentTitle(item.className)
+                    setContentText(context.getString(R.string.reminder_content_hw, item.homework_name, time))
+                    setContentIntent(clickPendingIntent)
+                    setAutoCancel(true)
+                    setStyle(NotificationCompat.BigTextStyle())
+                    setSmallIcon(R.drawable.ic_assignment)
+                    addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                    color = ContextCompat.getColor(context, R.color.colorAccent)
 
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
                         if (item.className != "") {
-                            nm.notify(693000 + id, it.build())
+                            nm.notify(693000 + id, build())
+                        }
+                    }
+                }
+            }
+
+            LMSClass.TYPE_ZOOM -> {
+                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
+                    val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
+                    val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                    setContentTitle(item.className)
+                    setContentText(context.getString(R.string.reminder_content_zoom, item.homework_name, time))
+                    setContentIntent(clickPendingIntent)
+                    setAutoCancel(true)
+                    setStyle(NotificationCompat.BigTextStyle())
+                    setSmallIcon(R.drawable.ic_groups)
+                    addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                    color = ContextCompat.getColor(context, R.color.colorAccent)
+
+                    if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished) {
+                        if (item.className != "") {
+                            nm.notify(693000 + id, build())
                         }
                     }
                 }

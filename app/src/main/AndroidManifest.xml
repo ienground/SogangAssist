@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:label">
 
-        <activity android:name=".SplashActivity">
+        <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,11 +23,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".EditActivity" />
-        <activity android:name=".SettingsActivity"/>
+        <activity android:name=".activity.EditActivity" />
+        <activity android:name=".activity.SettingsActivity"/>
 
-        <activity android:name=".MainActivity" />
-        <activity android:name=".OnboardingActivity" />
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.OnboardingActivity" />
 
         <service
             android:name=".service.LMSListenerService"

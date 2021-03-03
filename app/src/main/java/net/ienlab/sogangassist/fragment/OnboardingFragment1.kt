@@ -1,21 +1,18 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.fragment
 
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.databinding.FragmentOnboarding1Binding
 
 class OnboardingFragment1 : Fragment() {

@@ -4,7 +4,7 @@
     <data>
         <variable
             name="fragment"
-            type="net.ienlab.sogangassist.OnboardingFragment3" />
+            type="net.ienlab.sogangassist.fragment.OnboardingFragment3" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -58,18 +58,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/bg_profile"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/background_border_white_card"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                android:layout_height="match_parent"
+                android:background="@drawable/background_border_white_card">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

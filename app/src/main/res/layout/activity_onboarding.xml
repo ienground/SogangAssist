@@ -5,7 +5,7 @@
     <data>
         <variable
             name="activity"
-            type="net.ienlab.sogangassist.OnboardingActivity" />
+            type="net.ienlab.sogangassist.activity.OnboardingActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -34,7 +34,7 @@
             android:orientation="vertical"
             android:weightSum="5">
 
-            <net.ienlab.sogangassist.NonSwipeableViewPager
+            <net.ienlab.sogangassist.utils.NonSwipeableViewPager
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

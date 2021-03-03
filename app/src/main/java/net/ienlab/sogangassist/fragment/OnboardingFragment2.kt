@@ -1,9 +1,7 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.fragment
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
@@ -11,10 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.databinding.FragmentOnboarding2Binding
 import net.ienlab.sogangassist.utils.MyUtils
 
@@ -48,9 +45,7 @@ class OnboardingFragment2 : Fragment() {
             introBtnNext.isEnabled = true
         }
 
-        binding.groupNoti.setOnClickListener {
-                startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
-        }
+        binding.groupNoti.setOnClickListener { startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")) }
 
     }
 

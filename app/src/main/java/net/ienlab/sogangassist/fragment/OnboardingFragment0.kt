@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.fragment
 
 import android.content.Context
 import android.graphics.Typeface
@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import net.ienlab.sogangassist.databinding.FragmentOnboarding0Binding
+import net.ienlab.sogangassist.R
 
 class OnboardingFragment0 : Fragment() {
 

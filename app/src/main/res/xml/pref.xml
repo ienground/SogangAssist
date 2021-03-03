@@ -5,9 +5,21 @@
 
     <net.ienlab.sogangassist.preference.AppInfoPreference
         android:key="app_title"
-        android:layout="@layout/settings_app_title"/>
+        android:layout="@layout/preference_app_info"/>
 
     <PreferenceCategory android:title="@string/notify_hw" >
+        <Preference
+            android:key="notify_hw_group"
+            android:title="@string/notify_hw" />
+
+        <Preference
+            android:key="notify_lec_group"
+            android:title="@string/notify_lec" />
+
+        <Preference
+            android:key="notify_zoom_group"
+            android:title="@string/notify_zoom" />
+
         <CheckBoxPreference
             android:key="notify_1hour_hw"
             android:title="@string/notify_1hour"

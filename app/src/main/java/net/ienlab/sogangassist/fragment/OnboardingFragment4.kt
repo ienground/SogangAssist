@@ -1,4 +1,4 @@
-package net.ienlab.sogangassist
+package net.ienlab.sogangassist.fragment
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.databinding.FragmentOnboarding4Binding
+import net.ienlab.sogangassist.R
 
 class OnboardingFragment4 : Fragment() {
 
