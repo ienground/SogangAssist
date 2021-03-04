@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#C13336</color>
     <color name="colorAccent">#B60005</color>
     <color name="colorAccentAlpha">#66B60005</color>
+    <color name="navigationBarColor">#834D4F</color>
 
     <color name="color_sogang">#B60005</color>
     <color name="color_sogang_sub">#F04A31</color>

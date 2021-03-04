@@ -14,6 +14,12 @@ class SharedGroup {
         val NOTIFY_12HOUR_LEC = "notify_12hour_lec"
         val NOTIFY_24HOUR_LEC = "notify_24hour_lec"
 
+        val NOTIFY_3MIN_ZOOM = "notify_3min_zoom"
+        val NOTIFY_5MIN_ZOOM = "notify_5min_zoom"
+        val NOTIFY_10MIN_ZOOM = "notify_10min_zoom"
+        val NOTIFY_20MIN_ZOOM = "notify_20min_zoom"
+        val NOTIFY_30MIN_ZOOM = "notify_30min_zoom"
+
         val IS_FIRST_VISIT = "isFirstVisit"
         val LAST_VERSION = "lastVersion"
         val FULL_AD_CHARGE = "fullAdCharge"

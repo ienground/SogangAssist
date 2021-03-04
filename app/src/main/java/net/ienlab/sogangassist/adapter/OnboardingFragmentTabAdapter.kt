@@ -16,6 +16,7 @@ class OnboardingFragmentTabAdapter(fm: FragmentManager, internal var context: Co
             2 -> OnboardingFragment2.newInstance()
             3 -> OnboardingFragment3.newInstance()
             4 -> OnboardingFragment4.newInstance()
+            5 -> OnboardingFragment5.newInstance()
             else -> OnboardingFragment0.newInstance()
         }
     }
@@ -25,7 +26,7 @@ class OnboardingFragmentTabAdapter(fm: FragmentManager, internal var context: Co
     }
 
     companion object {
-        internal const val PAGE_NUMBER = 5
+        internal const val PAGE_NUMBER = 6
     }
 
 }

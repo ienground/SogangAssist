@@ -31,7 +31,8 @@ class OnboardingActivity : AppCompatActivity(),
     OnboardingFragment1.OnFragmentInteractionListener,
     OnboardingFragment2.OnFragmentInteractionListener,
     OnboardingFragment3.OnFragmentInteractionListener,
-    OnboardingFragment4.OnFragmentInteractionListener {
+    OnboardingFragment4.OnFragmentInteractionListener,
+    OnboardingFragment5.OnFragmentInteractionListener {
 
     private val FINISH_INTERVAL_TIME: Long = 2000
     private var backPressedTime: Long = 0
@@ -130,7 +131,7 @@ class OnboardingActivity : AppCompatActivity(),
                         }
 
                         4 -> {
-                            with (binding.introBtnFine) {
+                            with (binding.introBtnNext) {
                                 if (true in OnboardingFragment4.hours) {
                                     isEnabled = true
                                     alpha = 1f
@@ -141,6 +142,20 @@ class OnboardingActivity : AppCompatActivity(),
                             }
                             binding.sectionLabel.setText(getString(R.string.intro_page4_title))
                             binding.sectionContent.setText(getString(R.string.intro_page4_exp))
+                        }
+
+                        5 -> {
+                            with (binding.introBtnFine) {
+                                if (true in OnboardingFragment4.hours) {
+                                    isEnabled = true
+                                    alpha = 1f
+                                } else {
+                                    isEnabled = false
+                                    alpha = 0.2f
+                                }
+                            }
+                            binding.sectionLabel.setText(getString(R.string.intro_page5_title))
+                            binding.sectionContent.setText(getString(R.string.intro_page5_exp))
                         }
                     }
 
@@ -187,7 +202,7 @@ class OnboardingActivity : AppCompatActivity(),
         }
 
         binding.introBtnFine.setOnClickListener {
-            if (true in OnboardingFragment4.hours) {
+            if (true in OnboardingFragment5.hours) {
                 sharedPreferences.edit().putBoolean(SharedGroup.IS_FIRST_VISIT, false).apply()
                 finish()
                 startActivity(Intent(this, MainActivity::class.java))

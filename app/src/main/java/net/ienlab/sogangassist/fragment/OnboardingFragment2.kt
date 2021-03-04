@@ -38,7 +38,7 @@ class OnboardingFragment2 : Fragment() {
 
         binding.tvNoti.typeface = gmSansMedium
         if (MyUtils.isNotiPermissionAllowed(requireContext())) {
-            binding.tvNoti.text = getString(R.string.allow_auto_edit_lms)
+            binding.tvNoti.text = getString(R.string.noti_access_allowed)
             binding.icNoti.setImageResource(R.drawable.ic_check_circle)
 
             introBtnNext.alpha = 1.0f
@@ -52,7 +52,7 @@ class OnboardingFragment2 : Fragment() {
     override fun onResume() {
         super.onResume()
         if (MyUtils.isNotiPermissionAllowed(requireContext())) {
-            binding.tvNoti.text = getString(R.string.allow_auto_edit_lms)
+            binding.tvNoti.text = getString(R.string.noti_access_allowed)
             binding.icNoti.setImageResource(R.drawable.ic_check_circle)
 
             binding.groupNoti.setOnClickListener(null)

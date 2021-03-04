@@ -52,7 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="#MONTH"
-                    android:textColor="@color/dark_blue"
+                    android:textColor="@color/black"
                     android:textSize="32sp"
                     android:clickable="true"
                     android:focusable="true" />
@@ -62,7 +62,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="#MONTH"
-                    android:textColor="@color/dark_blue"
+                    android:textColor="@color/black"
                     android:textSize="32sp"
                     android:clickable="true"
                     android:focusable="true" />

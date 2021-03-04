@@ -24,8 +24,9 @@
         </activity>
 
         <activity android:name=".activity.EditActivity" />
-        <activity android:name=".activity.SettingsActivity"/>
-
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:theme="@style/AppTheme.Setting"/>
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.OnboardingActivity" />
 
@@ -48,16 +49,17 @@
         <receiver
             android:name=".receiver.TimeReceiver"
             android:enabled="true"
-            android:exported="true">
-
-        </receiver>
+            android:exported="true" />
 
         <receiver
             android:name=".receiver.MarkFinishReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true" />
 
-        </receiver>
+        <receiver
+            android:name=".receiver.DeleteMissReceiver"
+            android:enabled="true"
+            android:exported="true" />
 
         <receiver
             android:name=".receiver.BootDeviceReceiver"

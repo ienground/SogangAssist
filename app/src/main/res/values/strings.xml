@@ -34,16 +34,12 @@
     <string name="notify_6hour">Notify before 6 hours</string>
     <string name="notify_12hour">Notify before 12 hours</string>
     <string name="notify_24hour">Notify before 24 hours</string>
-    <string name="notify_1hour_hw_on">You will receive a notification 1 hour before the submission deadline.</string>
-    <string name="notify_1hour_hw_off">You will not receive a notification 1 hour before the submission deadline.</string>
-    <string name="notify_2hour_hw_on">You will receive a notification 2 hours before the submission deadline.</string>
-    <string name="notify_2hour_hw_off">You will not receive a notification 2 hours before the submission deadline.</string>
-    <string name="notify_6hour_hw_on">You will receive a notification 6 hours before the submission deadline.</string>
-    <string name="notify_6hour_hw_off">You will not receive a notification 6 hours before the submission deadline.</string>
-    <string name="notify_12hour_hw_on">You will receive a notification 12 hours before the submission deadline.</string>
-    <string name="notify_12hour_hw_off">You will not receive a notification 12 hours before the submission deadline.</string>
-    <string name="notify_24hour_hw_on">You will receive a notification 24 hours before the submission deadline.</string>
-    <string name="notify_24hour_hw_off">You will not receive a notification 24 hours before the submission deadline.</string>
+    <string name="notify_hw_on">You will receive a notification %1$s hour(s) before the submission deadline.</string>
+    <string name="notify_hw_off">You will not receive a notification $1$s hour(s) before the submission deadline.</string>
+    <string name="notify_lec_on">You will receive a notification %1$s hour(s) before the course deadline.</string>
+    <string name="notify_lec_off">You will not receive a notification %1$s hour(s) before the course deadline.</string>
+    <string name="notify_zoom_on">You will receive a notification %1$s minutes before the zoom class starts.</string>
+    <string name="notify_zoom_off">You will not receive a notification %1$s minutes before the zoom class starts.</string>
     <string name="notify_1hour_lec_on">You will receive a notification 1 hour before the course deadline.</string>
     <string name="notify_1hour_lec_off">You will not receive a notification 1 hour before the course deadline.</string>
     <string name="notify_2hour_lec_on">You will receive a notification 2 hours before the course deadline.</string>
@@ -54,6 +50,8 @@
     <string name="notify_12hour_lec_off">You will not receive a notification 12 hours before the course deadline.</string>
     <string name="notify_24hour_lec_on">You will receive a notification 24 hours before the course deadline.</string>
     <string name="notify_24hour_lec_off">You will not receive a notification 24 hours before the course deadline.</string>
+    <string name="notify_all_off">You will not receive a notification.</string>
+    <string name="notifications">Notifications</string>
     <string name="notify_hw">Assignment Notify</string>
     <string name="notify_lec">Lecture Notify</string>
     <string name="notify_zoom">ZOOM Notify</string>
@@ -61,7 +59,7 @@
     <string name="reminder_content_lec">%1$d week(s) %2$d hour: %3$d hours left until the class deadline. Take the class on time.</string>
     <string name="reminder_content_sup_lec">%1$d week(s) %2$d hour: %3$d hours left until the make-up class deadline. Take the class on time.</string>
     <string name="reminder_content_hw">\"%1$s\" %2$d hour(s) left until the assignment deadline. Don\' be late.</string>
-    <string name="reminder_content_zoom">\"%1$s\" %2$d hour(s) left until the Zoom lecture starts. Don\' be late.</string>
+    <string name="reminder_content_zoom">\"%1$s\" %2$d minutes left until the Zoom lecture starts. Don\' be late.</string>
     <string name="reminder_content_lec_register">%1$d week(s) %2$d hour: Class has been enrolled. Take the class until %3$s.</string>
     <string name="reminder_content_sup_lec_register">%1$d week(s) %2$d hour: Make-up class has been enrolled. Take the class until %3$s.</string>
     <string name="reminder_content_hw_register">\"%1$s\" The assignment has been enrolled. Submit up until %2$s.</string>
@@ -99,8 +97,10 @@
     <string name="intro_page3_exp">Get reminders 1 hour, 2 hours, 6 hours, 12 hours, and 24 hours before the deadline for each assignment. Select the notifications you want to receive.</string>
     <string name="intro_page4_title">Lecture Deadline Reminder</string>
     <string name="intro_page4_exp">Get reminders 1 hour, 2 hours, 6 hours, 12 hours, and 24 hours before the deadline for each lecture. Select the notifications you want to receive.</string>
-
+    <string name="intro_page5_title">Lecture Deadline Reminder</string>
+    <string name="intro_page5_exp">Get reminders 3 minutes, 5 minutes, 10 minutes, 20 minutes and 30 minutes before the start for each Zoom lecture. Select the notifications you want to receive.</string>
     <string name="noti_access_allowed">Access Allowed</string>
+
     <!--Overall Activity-->
     <string name="press_back_to_exit">Press the Back button again to exit.</string>
     <string name="ok">OK</string>
@@ -115,6 +115,7 @@
     <string name="six_hour">6 hours</string>
     <string name="twelve_hour">12 hours</string>
     <string name="twfour_hour">24 hours</string>
+    <string name="deleted_noti">Notification Canceled</string>
 
     <string name="lms_install">HelloLMS Install</string>
     <string name="lms_installed">HelloLMS Installed</string>

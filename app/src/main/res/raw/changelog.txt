@@ -1,3 +1,2 @@
-- Some colors have been changed.<br>
-- Improved calendar design.<br>
-- Fixed the main screen cut off and changed to scroll.
+- Supports Zoom lecture option.<br>
+- In the case of canceled notifications, we have added a button so that you can delete the item.

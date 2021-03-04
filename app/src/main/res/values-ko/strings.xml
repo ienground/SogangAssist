@@ -34,16 +34,12 @@
     <string name="notify_6hour">6시간 전 알림</string>
     <string name="notify_12hour">12시간 전 알림</string>
     <string name="notify_24hour">24시간 전 알림</string>
-    <string name="notify_1hour_hw_on">제출기한 1시간 전 알림을 받습니다.</string>
-    <string name="notify_1hour_hw_off">제출기한 1시간 전 알림을 받지 않습니다.</string>
-    <string name="notify_2hour_hw_on">제출기한 2시간 전 알림을 받습니다.</string>
-    <string name="notify_2hour_hw_off">제출기한 2시간 전 알림을 받지 않습니다.</string>
-    <string name="notify_6hour_hw_on">제출기한 6시간 전 알림을 받습니다.</string>
-    <string name="notify_6hour_hw_off">제출기한 6시간 전 알림을 받지 않습니다.</string>
-    <string name="notify_12hour_hw_on">제출기한 12시간 전 알림을 받습니다.</string>
-    <string name="notify_12hour_hw_off">제출기한 12시간 전 알림을 받지 않습니다.</string>
-    <string name="notify_24hour_hw_on">제출기한 24시간 전 알림을 받습니다.</string>
-    <string name="notify_24hour_hw_off">제출기한 24시간 전 알림을 받지 않습니다.</string>
+    <string name="notify_hw_on">제출기한 %1$s시간 전 알림을 받습니다.</string>
+    <string name="notify_hw_off">제출기한 %1$s시간 전 알림을 받지 않습니다.</string>
+    <string name="notify_lec_on">수강기한 %1$s시간 전 알림을 받습니다.</string>
+    <string name="notify_lec_off">수강기한 %1$s시간 전 알림을 받지 않습니다.</string>
+    <string name="notify_zoom_on">수업 시작 %1$s분 전 알림을 받습니다.</string>
+    <string name="notify_zoom_off">수업 시작 %1$s분 전 알림을 받지 않습니다.</string>
     <string name="notify_1hour_lec_on">수강기한 1시간 전 알림을 받습니다.</string>
     <string name="notify_1hour_lec_off">수강기한 1시간 전 알림을 받지 않습니다.</string>
     <string name="notify_2hour_lec_on">수강기한 2시간 전 알림을 받습니다.</string>
@@ -54,6 +50,8 @@
     <string name="notify_12hour_lec_off">수강기한 12시간 전 알림을 받지 않습니다.</string>
     <string name="notify_6hour_lec_off">수강기한 6시간 전 알림을 받지 않습니다.</string>
     <string name="notify_2hour_lec_off">수강기한 2시간 전 알림을 받지 않습니다.</string>
+    <string name="notify_all_off">알림을 받지 않습니다.</string>
+    <string name="notifications">알림</string>
     <string name="notify_hw">과제 알림 설정</string>
     <string name="notify_lec">강의 및 보강 알림 설정</string>
     <string name="notify_zoom">실시간 강의 알림 설정</string>
@@ -61,7 +59,7 @@
     <string name="reminder_content_lec">%1$d주 %2$d차시 수업이 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
     <string name="reminder_content_sup_lec">%1$d주 %2$d차시 보강이 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
     <string name="reminder_content_hw">\"%1$s\" 과제 마감 기간까지 %2$d시간 남았습니다. 늦지 않게 제출하세요.</string>
-    <string name="reminder_content_zoom">\"%1$s\" 실시간 강의까지 %2$d시간 남았습니다. 늦지 않게 출석하세요.</string>
+    <string name="reminder_content_zoom">\"%1$s\" 실시간 강의까지 %2$d분 남았습니다. 늦지 않게 출석하세요.</string>
     <string name="reminder_content_lec_register">%1$d주 %2$d차시 수업이 등록되었습니다. %3$s까지 수강하세요.</string>
     <string name="reminder_content_sup_lec_register">%1$d주 %2$d차시 보강이 등록되었습니다. %3$s까지 수강하세요.</string>
     <string name="reminder_content_hw_register">\"%1$s\" 과제가 등록되었습니다. %2$s까지 제출하세요.</string>
@@ -99,8 +97,10 @@
     <string name="intro_page3_exp">각각 과제 마감기한 1시간, 2시간, 6시간, 12시간, 24시간 전에 미리 알림을 받아보세요. 받을 알림을 터치하여 선택할 수 있습니다.</string>
     <string name="intro_page4_title">강의, 보강 수강기한 미리 알림</string>
     <string name="intro_page4_exp">각각 강의 수강기한 1시간, 2시간, 6시간, 12시간, 24시간 전에 미리 알림을 받아보세요. 받을 알림을 터치하여 선택할 수 있습니다.</string>
-
+    <string name="intro_page5_title">실시간 강의 미리 알림</string>
+    <string name="intro_page5_exp">각각 강의 시작 3분, 5분, 10분, 20분, 30분 전에 미리 알림을 받아보세요. 받을 알림을 터치하여 선택할 수 있습니다.</string>
     <string name="noti_access_allowed">알림 액세스 허용됨</string>
+
     <!--Overall Activity-->
     <string name="press_back_to_exit">뒤로가기 버튼을 한번 더 누르시면 종료됩니다.</string>
     <string name="ok">확인</string>
@@ -115,6 +115,7 @@
     <string name="six_hour">6시간</string>
     <string name="twelve_hour">12시간</string>
     <string name="twfour_hour">24시간</string>
+    <string name="deleted_noti">취소된 알림입니다</string>
 
     <string name="lms_install">HelloLMS 앱 설치</string>
     <string name="lms_installed">HelloLMS 앱이 설치됨</string>
