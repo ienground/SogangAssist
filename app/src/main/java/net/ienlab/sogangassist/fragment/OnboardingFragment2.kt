@@ -57,7 +57,7 @@ class OnboardingFragment2 : Fragment() {
 
             binding.groupNoti.setOnClickListener(null)
 
-            introBtnNext.alpha = 1.0f
+//            introBtnNext.alpha = 1.0f
             introBtnNext.isEnabled = true
         }
     }
