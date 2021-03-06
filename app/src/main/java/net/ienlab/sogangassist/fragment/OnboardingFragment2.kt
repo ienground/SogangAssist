@@ -37,12 +37,13 @@ class OnboardingFragment2 : Fragment() {
         introBtnNext = requireActivity().findViewById(R.id.intro_btn_next)
 
         binding.tvNoti.typeface = gmSansMedium
+
+        introBtnNext.alpha = 1.0f
+        introBtnNext.isEnabled = true
+
         if (MyUtils.isNotiPermissionAllowed(requireContext())) {
             binding.tvNoti.text = getString(R.string.noti_access_allowed)
             binding.icNoti.setImageResource(R.drawable.ic_check_circle)
-
-            introBtnNext.alpha = 1.0f
-            introBtnNext.isEnabled = true
         }
 
         binding.groupNoti.setOnClickListener { startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")) }
@@ -51,14 +52,15 @@ class OnboardingFragment2 : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        introBtnNext.alpha = 1.0f
+        introBtnNext.isEnabled = true
+
         if (MyUtils.isNotiPermissionAllowed(requireContext())) {
             binding.tvNoti.text = getString(R.string.noti_access_allowed)
             binding.icNoti.setImageResource(R.drawable.ic_check_circle)
 
             binding.groupNoti.setOnClickListener(null)
-
-//            introBtnNext.alpha = 1.0f
-            introBtnNext.isEnabled = true
         }
     }
 

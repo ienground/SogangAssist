@@ -90,13 +90,8 @@ class OnboardingActivity : AppCompatActivity(),
 
                         1 -> {
                             with (binding.introBtnNext) {
-                                if (isPackageInstalled(lmsPackageName, packageManager) || BuildConfig.DEBUG) {
-                                    isEnabled = true
-                                    alpha = 1f
-                                } else {
-                                    isEnabled = false
-                                    alpha = 0.2f
-                                }
+                                isEnabled = true
+                                alpha = 1f
                             }
                             binding.sectionLabel.setText(getString(R.string.intro_page1_title))
                             binding.sectionContent.setText(getString(R.string.intro_page1_exp))

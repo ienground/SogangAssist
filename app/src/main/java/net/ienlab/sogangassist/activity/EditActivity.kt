@@ -394,7 +394,7 @@ class EditActivity : AppCompatActivity() {
                 endCalendar.set(Calendar.MONTH, month)
                 endCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                binding.tvEndDate.text = dateFormat.format(endCalendar.time)
+                binding.tvStartDate.text = dateFormat.format(endCalendar.time)
             }, endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH), endCalendar.get(Calendar.DAY_OF_MONTH)).show()
         }
 
@@ -403,7 +403,7 @@ class EditActivity : AppCompatActivity() {
                 endCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 endCalendar.set(Calendar.MINUTE, minute)
 
-                binding.tvEndTime.text = timeFormat.format(endCalendar.time)
+                binding.tvStartTime.text = timeFormat.format(endCalendar.time)
             }, endCalendar.get(Calendar.HOUR_OF_DAY), endCalendar.get(Calendar.MINUTE), false).show()
         }
     }
@@ -446,8 +446,8 @@ class EditActivity : AppCompatActivity() {
             endCalendar.timeInMillis = currentItem.endTime
         } else {
             val endTime = Date(currentItem.endTime - 24 * 60 * 60 * 1000)
-            binding.tvEndDate.text = dateFormat.format(endTime)
-            binding.tvEndTime.text = timeFormat.format(endTime)
+            binding.tvStartDate.text = dateFormat.format(endTime)
+            binding.tvStartTime.text = timeFormat.format(endTime)
             endCalendar.timeInMillis = endTime.time
         }
 

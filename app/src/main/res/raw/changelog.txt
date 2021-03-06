@@ -1,2 +1,3 @@
 - Supports Zoom lecture option.<br>
-- In the case of canceled notifications, we have added a button so that you can delete the item.
+- In the case of canceled notifications, we have added a button so that you can delete the item.<br>
+[1.6.1]: Changed so that you do not need to install the HelloLMS app, and fix some bugs.

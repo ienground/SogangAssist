@@ -90,7 +90,7 @@
     <string name="intro_page0_title">환영합니다.</string>
     <string name="intro_page0_exp">과제와 강의를 늦지 않도록 알림을 주는 어플리케이션, 알바트로스 리마인더를 설치해주셔서 감사합니다.</string>
     <string name="intro_page1_title">HelloLMS 설치 여부</string>
-    <string name="intro_page1_exp">이 어플리케이션은 HelloLMS와 함께 작동합니다. 설치된 상태로 어플리케이션을 사용해 주세요.</string>
+    <string name="intro_page1_exp">이 어플리케이션은 HelloLMS와 함께 작동합니다. 설치된 상태로 어플리케이션을 사용해 주세요. 설치하지 않고도 사용할 수는 있으나, 최고의 사용자 경험을 보장할 수 없습니다.</string>
     <string name="intro_page2_title">알림 액세스 허용</string>
     <string name="intro_page2_exp">알림을 받아오기 위한 알림 액세스 허용이 필요합니다.</string>
     <string name="intro_page3_title">과제 마감기한 미리 알림</string>
