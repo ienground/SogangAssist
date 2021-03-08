@@ -53,4 +53,68 @@
         app:layout_constraintTop_toBottomOf="@id/imgBackground"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
+    <LinearLayout
+        android:id="@+id/btn_negative"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/usual_margin"
+        android:padding="@dimen/usual_margin"
+        android:background="?attr/selectableItemBackground"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_positive"
+        app:layout_constraintTop_toBottomOf="@id/content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_close"
+            android:contentDescription="@string/no"
+            app:tint="@color/dark_blue"/>
+
+        <TextView
+            android:id="@+id/btn_negative_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/usual_margin"
+            android:layout_gravity="center"
+            android:text="@string/no"
+            android:textColor="@color/dark_blue" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btn_positive"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/usual_margin"
+        android:padding="@dimen/usual_margin"
+        android:background="?attr/selectableItemBackground"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/btn_negative"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_check"
+            android:contentDescription="@string/yes"
+            app:tint="@color/dark_blue"/>
+
+        <TextView
+            android:id="@+id/btn_positive_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/usual_margin"
+            android:layout_gravity="center"
+            android:text="@string/yes"
+            android:textColor="@color/dark_blue" />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

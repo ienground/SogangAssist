@@ -111,6 +111,41 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <LinearLayout
+                        android:id="@+id/btn_add"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:orientation="horizontal"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginEnd="@dimen/usual_margin"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tag_schedule"
+                        app:layout_constraintBottom_toBottomOf="@id/tag_schedule">
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_add"
+                            android:tint="@color/colorAccent"
+                            android:layout_gravity="center_vertical"
+                            android:background="@null"
+                            android:contentDescription="@string/add_reminder"
+                            android:layout_marginStart="@dimen/usual_margin"/>
+
+                        <TextView
+                            android:id="@+id/tv_add"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/add_reminder"
+                            android:textColor="@color/colorAccent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/usual_margin"
+                            android:layout_marginEnd="@dimen/usual_margin"/>
+
+                    </LinearLayout>
+
                     <androidx.cardview.widget.CardView
                         android:id="@+id/calendarViewLayout"
                         android:layout_width="0dp"

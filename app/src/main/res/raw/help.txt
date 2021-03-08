@@ -1,0 +1,4 @@
+<b>Isn't notification registered?</b><br>
+Notification access (notification access) may not have been allowed. Please click the button below to see if the 'Albatross Reminder' is allowed.<br><br>
+<b>How to mark completion on the main screen</b><br>
+Long press each item to mark it complete.

@@ -16,6 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -64,6 +65,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var currentDecorator: CurrentDecorator
     var thisCurrentDate: Long = 0
 
+    lateinit var gmSansBold: Typeface
+    lateinit var gmSansMedium: Typeface
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -73,18 +77,15 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = null
 
         dbHelper = DBHelper(this, dbName, dbVersion)
+        view = window.decorView.rootView
         sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
-        fadeOutAnimation = AlphaAnimation(1f, 0f).apply {
-            duration = 300
-        }
-        fadeInAnimation = AlphaAnimation(0f, 1f).apply {
-            duration = 300
-        }
+        fadeOutAnimation = AlphaAnimation(1f, 0f).apply { duration = 300 }
+        fadeInAnimation = AlphaAnimation(0f, 1f).apply { duration = 300 }
         currentDecorator = CurrentDecorator(this, Calendar.getInstance())
 
         val monthFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
-        val gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
-        val gmSansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
+        gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
+        gmSansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
 
         val dateFormat = SimpleDateFormat(getString(R.string.tag_date), Locale.getDefault())
 
@@ -96,6 +97,7 @@ class MainActivity : AppCompatActivity() {
         binding.tagSchedule.typeface = gmSansMedium
         binding.tagEvents.typeface = gmSansMedium
         binding.tvNoDeadline.typeface = gmSansMedium
+        binding.tvAdd.typeface = gmSansMedium
 
         if (BuildConfig.DEBUG) binding.adView.visibility = View.GONE
 
@@ -160,6 +162,9 @@ class MainActivity : AppCompatActivity() {
         binding.mainWorkView.adapter = MainWorkAdapter(todayWork)
         binding.mainWorkView.layoutManager = LinearLayoutManager(this)
         binding.tvNoDeadline.visibility = if (todayWork.isEmpty()) View.VISIBLE else View.GONE
+        binding.btnAdd.setOnClickListener {
+            startActivityForResult(Intent(this, EditActivity::class.java), REFRESH_MAIN_WORK)
+        }
 
         thisCurrentDate = System.currentTimeMillis()
 
@@ -334,8 +339,25 @@ class MainActivity : AppCompatActivity() {
                 startActivityForResult(Intent(this, SettingsActivity::class.java), SETTINGS_CHANGED)
             }
 
-            R.id.menu_add -> {
-                startActivityForResult(Intent(this, EditActivity::class.java), REFRESH_MAIN_WORK)
+            R.id.menu_help -> {
+                BottomSheetDialog(this).apply {
+                    val view = layoutInflater.inflate(R.layout.dialog_help, LinearLayout(applicationContext), false)
+                    val tvVersion: TextView = view.findViewById(R.id.tv_version)
+                    val tvContent: TextView = view.findViewById(R.id.content)
+                    val btnNoti: Button = view.findViewById(R.id.btn_noti)
+
+                    tvVersion.typeface = gmSansBold
+                    tvContent.typeface = gmSansMedium
+                    btnNoti.typeface = gmSansMedium
+
+                    tvVersion.text = getString(R.string.help)
+                    tvContent.text = MyUtils.fromHtml(MyUtils.readTextFromRaw(resources, R.raw.help))
+                    btnNoti.setOnClickListener {
+                        startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+                    }
+
+                    setContentView(view)
+                }.show()
             }
         }
 
@@ -351,5 +373,9 @@ class MainActivity : AppCompatActivity() {
             backPressedTime = tempTime
             Toast.makeText(applicationContext, getString(R.string.press_back_to_exit), Toast.LENGTH_SHORT).show()
         }
+    }
+
+    companion object {
+        lateinit var view: View
     }
 }

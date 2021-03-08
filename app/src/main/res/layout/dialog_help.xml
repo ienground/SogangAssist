@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgBackground"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@color/colorAccent"
+        android:contentDescription="@string/real_app_name"
+        android:layout_marginStart="@dimen/usual_margin"
+        android:layout_marginTop="@dimen/usual_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_help"
+        android:contentDescription="@string/real_app_name"
+        app:tint="@android:color/white"
+        app:layout_constraintStart_toStartOf="@id/imgBackground"
+        app:layout_constraintEnd_toEndOf="@id/imgBackground"
+        app:layout_constraintTop_toTopOf="@id/imgBackground"
+        app:layout_constraintBottom_toBottomOf="@id/imgBackground" />
+
+    <TextView
+        android:id="@+id/tv_version"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="#VERSION"
+        android:textSize="18sp"
+        android:textColor="@color/dark_blue"
+        android:layout_marginStart="@dimen/usual_margin"
+        android:layout_marginEnd="@dimen/usual_margin"
+        app:layout_constraintStart_toEndOf="@id/imgBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/imgBackground"
+        app:layout_constraintBottom_toBottomOf="@id/imgBackground" />
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="#CHANGELOG"
+        android:textColor="@color/dark_white_blue"
+        android:layout_margin="@dimen/usual_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imgBackground" />
+
+    <Button
+        android:id="@+id/btn_noti"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/usual_margin"
+        android:text="@string/intro_page2_title"
+        android:backgroundTint="@color/colorPrimary"
+        app:icon="@drawable/ic_notification"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

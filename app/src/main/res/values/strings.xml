@@ -85,6 +85,7 @@
     <string name="restore_desc">Restore data from json format file.</string>
     <string name="restore_msg">Existing data will be lost and replaced with backup data. Proceed?</string>
     <string name="restore_finish">Data restoration complete. Please relaunch the application.</string>
+    <string name="help">Help</string>
 
     <!--Onboarding-->
     <string name="intro_page0_title">Welcome.</string>
@@ -159,5 +160,10 @@
     <string name="onboarding0_ex_week">Week 1 Hour 3</string>
     <string name="onboarding0_ex_time">Deadline : PM 11:59</string>
     <string name="onboarding0_ex_hw">Homework1: Introduce</string>
+    <string name="ask_mark_as_not_finish">이 항목을 완료되지 않음으로 표시할까요?</string>
+    <string name="ask_mark_as_finish">이 항목을 완료됨으로 표시할까요?</string>
+    <string name="undo">되돌리기</string>
+    <string name="marked_as_finish">완료 표시됨</string>
+    <string name="marked_as_not_finish">완료되지 않음으로 표시됨</string>
 
 </resources>
