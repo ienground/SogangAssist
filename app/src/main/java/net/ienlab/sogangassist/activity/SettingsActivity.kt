@@ -117,9 +117,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val lecHoursOn = mutableListOf<String>()
             val zoomMinutesOn = mutableListOf<String>()
 
-            hwSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, false)) hwHoursOn.add(hourData[index]) }
-            lecSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, false)) lecHoursOn.add(hourData[index]) }
-            zoomSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, false)) zoomMinutesOn.add(minuteData[index]) }
+            hwSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) hwHoursOn.add(hourData[index]) }
+            lecSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) lecHoursOn.add(hourData[index]) }
+            zoomSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) zoomMinutesOn.add(minuteData[index]) }
 
             notifyHw?.summary = if (hwHoursOn.isNotEmpty()) getString(R.string.notify_hw_on, hwHoursOn.joinToString(", ")) else getString(R.string.notify_all_off)
             notifyLec?.summary = if (lecHoursOn.isNotEmpty()) getString(R.string.notify_lec_on, lecHoursOn.joinToString(", ")) else getString(R.string.notify_all_off)
@@ -164,7 +164,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                         view.findViewById(R.id.btn_24hour)
                     )
 
-                    hwSharedKeys.forEach { hours.add(sharedPreferences.getBoolean(it, false)) }
+                    hwSharedKeys.forEach { hours.add(sharedPreferences.getBoolean(it, true)) }
 
                     buttons.forEachIndexed { index, imageButton ->
                         imageButton.alpha = if (hours[index]) 1f else 0.3f
@@ -220,7 +220,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                         view.findViewById(R.id.btn_24hour)
                     )
 
-                    lecSharedKeys.forEach { hours.add(sharedPreferences.getBoolean(it, false)) }
+                    lecSharedKeys.forEach { hours.add(sharedPreferences.getBoolean(it, true)) }
 
                     buttons.forEachIndexed { index, imageButton ->
                         imageButton.alpha = if (hours[index]) 1f else 0.3f
@@ -278,7 +278,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     )
 
                     buttons.forEachIndexed { index, imageButton ->  imageButton.setImageResource(buttonRes[index])}
-                    zoomSharedKeys.forEach { minutes.add(sharedPreferences.getBoolean(it, false)) }
+                    zoomSharedKeys.forEach { minutes.add(sharedPreferences.getBoolean(it, true)) }
 
                     buttons.forEachIndexed { index, imageButton ->
                         imageButton.alpha = if (minutes[index]) 1f else 0.3f

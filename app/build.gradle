@@ -1,8 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
+    id 'com.google.android.gms.oss-licenses-plugin'
+}
 
 android {
     compileSdkVersion 30
@@ -12,8 +14,8 @@ android {
         applicationId "net.ienlab.sogangassist"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 15
-        versionName "1.6.1"
+        versionCode 16
+        versionName "1.6.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

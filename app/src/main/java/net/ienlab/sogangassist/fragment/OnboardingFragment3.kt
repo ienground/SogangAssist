@@ -34,6 +34,7 @@ class OnboardingFragment3 : Fragment() {
         val sharedKeys = listOf(SharedGroup.NOTIFY_1HOUR_HW, SharedGroup.NOTIFY_2HOUR_HW, SharedGroup.NOTIFY_6HOUR_HW, SharedGroup.NOTIFY_12HOUR_HW, SharedGroup.NOTIFY_24HOUR_HW)
 
         buttons.forEachIndexed { index, imageButton ->
+            sharedPreferences.edit().putBoolean(sharedKeys[index], false).apply()
             imageButton.setOnClickListener {
                 ValueAnimator.ofFloat(if (hours[index]) 1f else 0.3f, if (hours[index]) 0.3f else 1f).apply {
                     duration = 300
