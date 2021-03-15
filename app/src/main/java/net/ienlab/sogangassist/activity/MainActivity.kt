@@ -16,10 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -28,6 +25,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.adapter.MainWorkAdapter
@@ -40,8 +38,10 @@ import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.utils.MyUtils
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.abs
 
 val TAG = "SogangAssistTAG"
 val REFRESH_MAIN_WORK = 2
@@ -100,6 +100,51 @@ class MainActivity : AppCompatActivity() {
         binding.tvAdd.typeface = gmSansMedium
 
         if (BuildConfig.DEBUG) binding.adView.visibility = View.GONE
+
+        val installedDate = packageManager.getPackageInfo(packageName, 0).firstInstallTime
+        if (abs(installedDate - System.currentTimeMillis()) >= 6 * AlarmManager.INTERVAL_DAY) {
+            val reviewManager = ReviewManagerFactory.create(this)
+            val reviewRequest = reviewManager.requestReviewFlow()
+            reviewRequest.addOnCompleteListener {
+                if (reviewRequest.isSuccessful && !sharedPreferences.getBoolean(SharedGroup.REVIEW_WRITE, false)) {
+                    MyBottomSheetDialog(this).apply {
+                        val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(applicationContext), false)
+                        val icon: ImageView = view.findViewById(R.id.imgLogo)
+                        val tvTitle: TextView = view.findViewById(R.id.tv_title)
+                        val tvContent: TextView = view.findViewById(R.id.tv_content)
+                        val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
+                        val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
+                        val imgPositive: ImageView = view.findViewById(R.id.btn_positive_img)
+                        val imgNegative: ImageView = view.findViewById(R.id.btn_negative_img)
+                        val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
+                        val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
+
+                        tvTitle.typeface = gmSansBold
+                        tvContent.typeface = gmSansMedium
+                        tvPositive.typeface = gmSansMedium
+                        tvNegative.typeface = gmSansMedium
+
+                        icon.setImageResource(R.drawable.ic_rate_review)
+                        tvTitle.text = getString(R.string.review_title)
+                        tvContent.text = getString(R.string.review_content)
+
+                        btnPositive.setOnClickListener {
+                            dismiss()
+                            val reviewInfo = reviewRequest.result
+                            val reviewFlow = reviewManager.launchReviewFlow(this@MainActivity, reviewInfo)
+                            reviewFlow.addOnCompleteListener {
+                                sharedPreferences.edit().putBoolean(SharedGroup.REVIEW_WRITE, true).apply()
+                            }
+                        }
+                        btnNegative.setOnClickListener {
+                            dismiss()
+                        }
+
+                        setContentView(view)
+                    }.show()
+                }
+            }
+        }
 
         if (!MyUtils.isNotiPermissionAllowed(this)) {
             AlertDialog.Builder(this).apply {
@@ -227,7 +272,7 @@ class MainActivity : AppCompatActivity() {
 
         if (currentVersion > lastVersion) {
             sharedPreferences.edit().putInt(SharedGroup.LAST_VERSION, currentVersion).apply()
-            BottomSheetDialog(this).apply {
+            MyBottomSheetDialog(this).apply {
                 val view = layoutInflater.inflate(R.layout.dialog_changelog, LinearLayout(applicationContext), false)
                 val tvVersion: TextView = view.findViewById(R.id.tv_version)
                 val tvContent: TextView = view.findViewById(R.id.content)
@@ -340,7 +385,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.menu_help -> {
-                BottomSheetDialog(this).apply {
+                MyBottomSheetDialog(this).apply {
                     val view = layoutInflater.inflate(R.layout.dialog_help, LinearLayout(applicationContext), false)
                     val tvVersion: TextView = view.findViewById(R.id.tv_version)
                     val tvContent: TextView = view.findViewById(R.id.content)

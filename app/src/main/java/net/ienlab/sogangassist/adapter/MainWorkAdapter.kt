@@ -28,6 +28,7 @@ import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.DBHelper
 import net.ienlab.sogangassist.database.dbName
 import net.ienlab.sogangassist.database.dbVersion
+import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -70,7 +71,7 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
             }
         }
         holder.wholeView.setOnLongClickListener {
-            BottomSheetDialog(context).apply {
+            MyBottomSheetDialog(context).apply {
                 dismissWithAnimation = true
                 val view = layoutInflater.inflate(R.layout.dialog_changelog, LinearLayout(context), false)
                 val tvVersion: TextView = view.findViewById(R.id.tv_version)

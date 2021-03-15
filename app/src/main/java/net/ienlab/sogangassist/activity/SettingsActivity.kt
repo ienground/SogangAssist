@@ -28,6 +28,7 @@ import net.ienlab.sogangassist.utils.MyUtils
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -126,7 +127,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             notifyZoom?.summary = if (zoomMinutesOn.isNotEmpty()) getString(R.string.notify_zoom_on, zoomMinutesOn.joinToString(", ")) else getString(R.string.notify_all_off)
 
             appInfo?.setOnPreferenceClickListener {
-                BottomSheetDialog(requireContext()).apply {
+                MyBottomSheetDialog(requireContext()).apply {
                     val view = layoutInflater.inflate(R.layout.dialog_changelog, LinearLayout(requireContext()), false)
                     val tvVersion: TextView = view.findViewById(R.id.tv_version)
                     val tvContent: TextView = view.findViewById(R.id.content)
@@ -143,7 +144,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                 true
             }
             notifyHw?.setOnPreferenceClickListener {
-                BottomSheetDialog(requireContext()).apply {
+                MyBottomSheetDialog(requireContext()).apply {
                     dismissWithAnimation = true
 
                     val view = layoutInflater.inflate(R.layout.dialog_notify_time, LinearLayout(requireContext()), false)
@@ -199,7 +200,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                 true
             }
             notifyLec?.setOnPreferenceClickListener {
-                BottomSheetDialog(requireContext()).apply {
+                MyBottomSheetDialog(requireContext()).apply {
                     dismissWithAnimation = true
 
                     val view = layoutInflater.inflate(R.layout.dialog_notify_time, LinearLayout(requireContext()), false)
@@ -255,7 +256,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                 true
             }
             notifyZoom?.setOnPreferenceClickListener {
-                BottomSheetDialog(requireContext()).apply {
+                MyBottomSheetDialog(requireContext()).apply {
                     dismissWithAnimation = true
 
                     val view = layoutInflater.inflate(R.layout.dialog_notify_time, LinearLayout(requireContext()), false)
@@ -313,7 +314,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                 true
             }
             changelog?.setOnPreferenceClickListener {
-                BottomSheetDialog(requireContext()).apply {
+                MyBottomSheetDialog(requireContext()).apply {
                     val view = layoutInflater.inflate(R.layout.dialog_changelog, LinearLayout(requireContext()), false)
                     val tvVersion: TextView = view.findViewById(R.id.tv_version)
                     val tvContent: TextView = view.findViewById(R.id.content)

@@ -86,6 +86,8 @@
     <string name="restore_msg">기존 데이터는 없어지며 백업 데이터로 대체됩니다. 진행할까요?</string>
     <string name="restore_finish">데이터 복원이 완료되었습니다. 어플리케이션을 다시 실행해 주세요.</string>
     <string name="help">도움말</string>
+    <string name="review_title">유용하게 사용하고 계신가요?</string>
+    <string name="review_content">만족하신다면 리뷰와 평점을 남겨주세요!</string>
 
     <!--Onboarding-->
     <string name="intro_page0_title">환영합니다.</string>

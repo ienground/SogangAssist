@@ -24,5 +24,8 @@ class SharedGroup {
         val LAST_VERSION = "lastVersion"
         val FULL_AD_CHARGE = "fullAdCharge"
         val SET_REGISTER_ALERT = "setRegisterAlert"
+
+        val NOTI_TIME = "notiTime"
+        val REVIEW_WRITE = "reviewWrite"
     }
 }

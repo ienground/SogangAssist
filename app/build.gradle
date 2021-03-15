@@ -14,8 +14,8 @@ android {
         applicationId "net.ienlab.sogangassist"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 16
-        versionName "1.6.2"
+        versionCode 17
+        versionName "1.6.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -44,6 +44,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:21.0.1'
     implementation 'com.google.firebase:firebase-analytics:18.0.2'
     implementation 'com.google.firebase:firebase-ads:19.7.0'
+    implementation 'com.google.android.play:core-ktx:1.8.1'
     implementation 'com.google.android.gms:play-services-ads:19.7.0'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -54,7 +55,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
     implementation 'androidx.legacy:legacy-support-core-ui:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.android.volley:volley:1.1.1'
+    implementation 'com.android.volley:volley:1.2.0'
     implementation 'com.anjlab.android.iab.v3:library:1.1.0'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
