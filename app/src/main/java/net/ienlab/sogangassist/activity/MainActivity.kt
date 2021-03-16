@@ -38,6 +38,8 @@ import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.utils.MyUtils
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.constant.DefaultValue
+import net.ienlab.sogangassist.receiver.ReminderReceiver
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
@@ -146,6 +148,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // 하루 시작, 끝 리마인더 알람 만들기
+        val morningReminderCalendar = Calendar.getInstance().apply {
+            val time = sharedPreferences.getInt(SharedGroup.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
+
+            set(Calendar.HOUR_OF_DAY, time / 60)
+            set(Calendar.MINUTE, time % 60)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val nightReminderCalendar = Calendar.getInstance().apply {
+            val time = sharedPreferences.getInt(SharedGroup.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
+
+            set(Calendar.HOUR_OF_DAY, time / 60)
+            set(Calendar.MINUTE, time % 60)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val morningReminderIntent = Intent(this, ReminderReceiver::class.java).apply { putExtra(
+            ReminderReceiver.TYPE, ReminderReceiver.MORNING) }
+        val nightReminderIntent = Intent(this, ReminderReceiver::class.java).apply { putExtra(
+            ReminderReceiver.TYPE, ReminderReceiver.NIGHT) }
+
         if (!MyUtils.isNotiPermissionAllowed(this)) {
             AlertDialog.Builder(this).apply {
                 setTitle(R.string.intro_page2_title)
@@ -159,6 +185,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        am.setRepeating(AlarmManager.RTC_WAKEUP, morningReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY,
+            PendingIntent.getBroadcast(this, 14402, morningReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+
+        am.setRepeating(AlarmManager.RTC_WAKEUP, nightReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY,
+            PendingIntent.getBroadcast(this, 14502, nightReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+
         val datas = dbHelper.getAllData()
         for (data in datas) {
             val notiIntent = Intent(this, TimeReceiver::class.java).apply { putExtra("ID", data.id) }

@@ -7,7 +7,7 @@
     <string name="classtime">수업</string>
     <string name="sup_classtime">보강</string>
     <string name="assignment">과제</string>
-    <string name="zoom">실시간 강의 (ZOOM)</string>
+    <string name="zoom">실시간 강의 (Zoom)</string>
     <string name="allow_auto_edit_lms">LMS 알림에 의한 자동 수정을 허용</string>
     <string name="class_name">과목명</string>
     <string name="week">주</string>
@@ -56,6 +56,7 @@
     <string name="notify_lec">강의 및 보강 알림 설정</string>
     <string name="notify_zoom">실시간 강의 알림 설정</string>
     <string name="channel_name">LMS 리마인더</string>
+    <string name="channel_daily_reminder">데일리 리마인더</string>
     <string name="reminder_content_lec">%1$d주 %2$d차시 수업이 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
     <string name="reminder_content_sup_lec">%1$d주 %2$d차시 보강이 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
     <string name="reminder_content_hw">\"%1$s\" 과제 마감 기간까지 %2$d시간 남았습니다. 늦지 않게 제출하세요.</string>
@@ -162,5 +163,18 @@
     <string name="onboarding0_ex_week">1주 3차시</string>
     <string name="onboarding0_ex_time">마감 : 오후 11:59</string>
     <string name="onboarding0_ex_hw">과제1: 자기소개서</string>
+
+    <!--MainWorkAdapter-->
+    <string name="ask_mark_as_not_finish">이 항목을 완료되지 않음으로 표시할까요?</string>
+    <string name="ask_mark_as_finish">이 항목을 완료됨으로 표시할까요?</string>
+    <string name="undo">되돌리기</string>
+    <string name="marked_as_finish">완료 표시됨</string>
+    <string name="marked_as_not_finish">완료되지 않음으로 표시됨</string>
+
+    <!--Preferences-->
+    <string name="morning_reminder">하루 시작 리마인더</string>
+    <string name="night_reminder">하루 끝 리마인더</string>
+    <string name="morning_reminder_time">하루 시작 리마인더 시간</string>
+    <string name="night_reminder_time">하루 끝 리마인더 시간</string>
 
 </resources>

@@ -10,15 +10,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.*
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.activity.*
@@ -73,9 +70,10 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
         holder.wholeView.setOnLongClickListener {
             MyBottomSheetDialog(context).apply {
                 dismissWithAnimation = true
-                val view = layoutInflater.inflate(R.layout.dialog_changelog, LinearLayout(context), false)
-                val tvVersion: TextView = view.findViewById(R.id.tv_version)
-                val tvContent: TextView = view.findViewById(R.id.content)
+                val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(context), false)
+                val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
+                val tvTitle: TextView = view.findViewById(R.id.tv_title)
+                val tvContent: TextView = view.findViewById(R.id.tv_content)
                 val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
                 val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
                 val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
@@ -84,18 +82,17 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
                 btnPositive.visibility = View.VISIBLE
                 btnNegative.visibility = View.VISIBLE
 
-//                val bottomSheet: FrameLayout? = findViewById(com.google.android.material.R.id.design_bottom_sheet)
-//                BottomSheetBehavior.from(bottomSheet!!).state = BottomSheetBehavior.STATE_EXPANDED
-                tvVersion.typeface = gmSansBold
+                imgLogo.setImageResource(R.drawable.ic_check)
+                tvTitle.typeface = gmSansBold
                 tvContent.typeface = gmSansMedium
                 tvPositive.typeface = gmSansMedium
                 tvNegative.typeface = gmSansMedium
 
                 if (items[position].isFinished) {
-                    tvVersion.text = context.getString(R.string.mark_as_not_finish)
+                    tvTitle.text = context.getString(R.string.mark_as_not_finish)
                     tvContent.text = context.getString(R.string.ask_mark_as_not_finish)
                 } else {
-                    tvVersion.text = context.getString(R.string.mark_as_finish)
+                    tvTitle.text = context.getString(R.string.mark_as_finish)
                     tvContent.text = context.getString(R.string.ask_mark_as_finish)
                 }
 

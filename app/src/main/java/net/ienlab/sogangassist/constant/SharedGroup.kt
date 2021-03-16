@@ -25,7 +25,11 @@ class SharedGroup {
         val FULL_AD_CHARGE = "fullAdCharge"
         val SET_REGISTER_ALERT = "setRegisterAlert"
 
-        val NOTI_TIME = "notiTime"
+        val ALLOW_MORNING_REMINDER = "allow_morning_reminder"
+        val ALLOW_NIGHT_REMINDER = "allow_night_reminder"
+        val TIME_MORNING_REMINDER = "time_morning_reminder"
+        val TIME_NIGHT_REMINDER = "time_night_reminder"
+
         val REVIEW_WRITE = "reviewWrite"
     }
 }

@@ -20,6 +20,26 @@
             android:key="notify_zoom_group"
             android:title="@string/notify_zoom" />
 
+        <CheckBoxPreference
+            android:key="allow_morning_reminder"
+            android:title="@string/morning_reminder"
+            android:defaultValue="true"/>
+
+        <Preference
+            android:key="time_morning_reminder"
+            android:title="@string/morning_reminder_time"
+            android:dependency="allow_morning_reminder"/>
+
+        <CheckBoxPreference
+            android:key="allow_night_reminder"
+            android:title="@string/night_reminder"
+            android:defaultValue="true"/>
+
+        <Preference
+            android:key="time_night_reminder"
+            android:title="@string/night_reminder_time"
+            android:dependency="allow_night_reminder" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/other_settings">

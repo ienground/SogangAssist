@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import net.ienlab.sogangassist.*
+import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.data.LMSClass
@@ -41,6 +42,34 @@ class BootDeviceReceiver : BroadcastReceiver() {
         val message = "Start service use repeat alarm. in ${context.packageName}"
 
         Log.d(TAG_BOOT_BROADCAST_RECEIVER, message)
+
+        // 하루 시작, 끝 리마인더 알람 만들기
+        val morningReminderCalendar = Calendar.getInstance().apply {
+            val time = sharedPreferences.getInt(SharedGroup.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
+
+            set(Calendar.HOUR_OF_DAY, time / 60)
+            set(Calendar.MINUTE, time % 60)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val nightReminderCalendar = Calendar.getInstance().apply {
+            val time = sharedPreferences.getInt(SharedGroup.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
+
+            set(Calendar.HOUR_OF_DAY, time / 60)
+            set(Calendar.MINUTE, time % 60)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val morningReminderIntent = Intent(context, ReminderReceiver::class.java).apply { putExtra(ReminderReceiver.TYPE, ReminderReceiver.MORNING) }
+        val nightReminderIntent = Intent(context, ReminderReceiver::class.java).apply { putExtra(ReminderReceiver.TYPE, ReminderReceiver.NIGHT) }
+
+        am.setRepeating(AlarmManager.RTC_WAKEUP, morningReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY,
+            PendingIntent.getBroadcast(context, 14402, morningReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+
+        am.setRepeating(AlarmManager.RTC_WAKEUP, nightReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY,
+            PendingIntent.getBroadcast(context, 14502, nightReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT))
 
         val datas = dbHelper.getAllData()
         for (data in datas) {

@@ -52,6 +52,11 @@
             android:exported="true" />
 
         <receiver
+            android:name=".receiver.ReminderReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
             android:name=".receiver.MarkFinishReceiver"
             android:enabled="true"
             android:exported="true" />

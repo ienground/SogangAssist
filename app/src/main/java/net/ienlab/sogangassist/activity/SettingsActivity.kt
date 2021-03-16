@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Resources
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
@@ -20,13 +21,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.radiobutton.MaterialRadioButton
 import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.databinding.ActivitySettingsBinding
 import net.ienlab.sogangassist.utils.MyUtils
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import org.json.JSONArray
@@ -89,12 +91,16 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
         val SAVE_FILE = 4
         val LOAD_FILE = 5
 
+        val timeFormat = SimpleDateFormat("a h:mm", Locale.getDefault())
+
         override fun onCreatePreferences(bundle: Bundle?, str: String?) {
-            addPreferencesFromResource(R.xml.pref)
+            addPreferencesFromResource(R.xml.root_preferences)
             val appInfo = findPreference("app_title")
             val notifyHw = findPreference("notify_hw_group")
             val notifyLec = findPreference("notify_lec_group")
             val notifyZoom = findPreference("notify_zoom_group")
+            val timeMorningReminder = findPreference(SharedGroup.TIME_MORNING_REMINDER)
+            val timeNightReminder = findPreference(SharedGroup.TIME_NIGHT_REMINDER)
             val changelog = findPreference("changelog")
             val email = findPreference("ask_to_dev")
             val openSource = findPreference("open_source")
@@ -125,6 +131,20 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             notifyHw?.summary = if (hwHoursOn.isNotEmpty()) getString(R.string.notify_hw_on, hwHoursOn.joinToString(", ")) else getString(R.string.notify_all_off)
             notifyLec?.summary = if (lecHoursOn.isNotEmpty()) getString(R.string.notify_lec_on, lecHoursOn.joinToString(", ")) else getString(R.string.notify_all_off)
             notifyZoom?.summary = if (zoomMinutesOn.isNotEmpty()) getString(R.string.notify_zoom_on, zoomMinutesOn.joinToString(", ")) else getString(R.string.notify_all_off)
+
+            val morningCalendar = Calendar.getInstance().apply {
+                val time = sharedPreferences.getInt(SharedGroup.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
+                set(Calendar.HOUR_OF_DAY, time / 60)
+                set(Calendar.MINUTE, time % 60)
+            }
+            val nightCalendar = Calendar.getInstance().apply {
+                val time = sharedPreferences.getInt(SharedGroup.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
+                set(Calendar.HOUR_OF_DAY, time / 60)
+                set(Calendar.MINUTE, time % 60)
+            }
+
+            timeMorningReminder?.summary = timeFormat.format(morningCalendar.time)
+            timeNightReminder?.summary = timeFormat.format(nightCalendar.time)
 
             appInfo?.setOnPreferenceClickListener {
                 MyBottomSheetDialog(requireContext()).apply {
@@ -306,6 +326,146 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                         val minutesOn = mutableListOf<String>()
                         minutes.forEachIndexed { index, b ->  if (b) minutesOn.add(minuteData[index]) }
                         notifyZoom.summary = if (minutesOn.isNotEmpty()) getString(R.string.notify_zoom_on, minutesOn.joinToString(", ")) else getString(R.string.notify_all_off)
+                    }
+
+                    setContentView(view)
+                }.show()
+
+                true
+            }
+            timeMorningReminder?.setOnPreferenceClickListener { preference ->
+                MyBottomSheetDialog(requireContext()).apply {
+                    dismissWithAnimation = true
+
+                    val view = layoutInflater.inflate(R.layout.dialog_time_picker, LinearLayout(requireContext()), false)
+
+                    val tvTitle: TextView = view.findViewById(R.id.tv_title)
+                    val timePicker: TimePicker = view.findViewById(R.id.time_picker)
+                    val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
+                    val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
+                    val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
+                    val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
+                    val calendar = morningCalendar.clone() as Calendar
+
+                    tvTitle.typeface = gmSansBold
+                    tvPositive.typeface = gmSansMedium
+                    tvNegative.typeface = gmSansMedium
+
+                    val hoursId = Resources.getSystem().getIdentifier("hours", "id", "android")
+                    val separatorId = Resources.getSystem().getIdentifier("separator", "id", "android")
+                    val minutesId = Resources.getSystem().getIdentifier("minutes", "id", "android")
+                    val amLabelId = Resources.getSystem().getIdentifier("am_label", "id", "android")
+                    val pmLabelId = Resources.getSystem().getIdentifier("pm_label", "id", "android")
+
+                    val textViews: ArrayList<TextView> = arrayListOf(timePicker.findViewById(hoursId), timePicker.findViewById(separatorId), timePicker.findViewById(minutesId))
+                    val apmLabels: ArrayList<MaterialRadioButton> = arrayListOf(timePicker.findViewById(amLabelId), timePicker.findViewById(pmLabelId))
+
+                    textViews.forEach {
+                        it.typeface = gmSansMedium
+                        it.textSize = 42f
+                    }
+                    apmLabels.forEachIndexed { index, button ->
+                        button.typeface = gmSansMedium
+                        button.textSize = 12f
+                        button.gravity = (if (index == 0) Gravity.BOTTOM else Gravity.TOP) or Gravity.END
+                    }
+
+                    tvTitle.text = getString(R.string.morning_reminder)
+
+                    btnNegative.setOnClickListener {
+                        dismiss()
+                    }
+
+                    with (timePicker) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            hour = calendar.get(Calendar.HOUR_OF_DAY)
+                            minute = calendar.get(Calendar.MINUTE)
+                        } else {
+                            currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+                            currentMinute = calendar.get(Calendar.MINUTE)
+                        }
+
+                        setOnTimeChangedListener { v, hourOfDay, minute ->
+                            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                            calendar.set(Calendar.MINUTE, minute)
+                        }
+                    }
+
+                    btnPositive.setOnClickListener {
+                        morningCalendar.time = calendar.time
+                        sharedPreferences.edit().putInt(SharedGroup.TIME_MORNING_REMINDER, morningCalendar.get(Calendar.HOUR_OF_DAY) * 60 + morningCalendar.get(Calendar.MINUTE)).apply()
+                        preference.summary = timeFormat.format(morningCalendar.time)
+                        dismiss()
+                    }
+
+                    setContentView(view)
+                }.show()
+
+                true
+            }
+            timeNightReminder?.setOnPreferenceClickListener { preference ->
+                MyBottomSheetDialog(requireContext()).apply {
+                    dismissWithAnimation = true
+
+                    val view = layoutInflater.inflate(R.layout.dialog_time_picker, LinearLayout(requireContext()), false)
+
+                    val tvTitle: TextView = view.findViewById(R.id.tv_title)
+                    val timePicker: TimePicker = view.findViewById(R.id.time_picker)
+                    val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
+                    val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
+                    val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
+                    val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
+                    val calendar = nightCalendar.clone() as Calendar
+
+                    tvTitle.typeface = gmSansBold
+                    tvPositive.typeface = gmSansMedium
+                    tvNegative.typeface = gmSansMedium
+
+                    val hoursId = Resources.getSystem().getIdentifier("hours", "id", "android")
+                    val separatorId = Resources.getSystem().getIdentifier("separator", "id", "android")
+                    val minutesId = Resources.getSystem().getIdentifier("minutes", "id", "android")
+                    val amLabelId = Resources.getSystem().getIdentifier("am_label", "id", "android")
+                    val pmLabelId = Resources.getSystem().getIdentifier("pm_label", "id", "android")
+
+                    val textViews: ArrayList<TextView> = arrayListOf(timePicker.findViewById(hoursId), timePicker.findViewById(separatorId), timePicker.findViewById(minutesId))
+                    val apmLabels: ArrayList<MaterialRadioButton> = arrayListOf(timePicker.findViewById(amLabelId), timePicker.findViewById(pmLabelId))
+
+                    textViews.forEach {
+                        it.typeface = gmSansMedium
+                        it.textSize = 42f
+                    }
+                    apmLabels.forEachIndexed { index, button ->
+                        button.typeface = gmSansMedium
+                        button.textSize = 12f
+                        button.gravity = (if (index == 0) Gravity.BOTTOM else Gravity.TOP) or Gravity.END
+                    }
+
+                    tvTitle.text = getString(R.string.night_reminder)
+
+                    btnNegative.setOnClickListener {
+                        dismiss()
+                    }
+
+                    with (timePicker) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            hour = calendar.get(Calendar.HOUR_OF_DAY)
+                            minute = calendar.get(Calendar.MINUTE)
+                        } else {
+                            currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+                            currentMinute = calendar.get(Calendar.MINUTE)
+                        }
+
+                        setOnTimeChangedListener { v, hourOfDay, minute ->
+                            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                            calendar.set(Calendar.MINUTE, minute)
+                        }
+                    }
+
+                    btnPositive.setOnClickListener {
+                        nightCalendar.time = calendar.time
+                        sharedPreferences.edit().putInt(SharedGroup.TIME_NIGHT_REMINDER, nightCalendar.get(Calendar.HOUR_OF_DAY) * 60 + nightCalendar.get(Calendar.MINUTE)).apply()
+                        preference.summary = timeFormat.format(nightCalendar.time)
+                        dismiss()
                     }
 
                     setContentView(view)

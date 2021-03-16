@@ -7,13 +7,13 @@
     <string name="classtime">Lesson</string>
     <string name="sup_classtime">Make-up Lesson</string>
     <string name="assignment">Assignment</string>
-    <string name="zoom">Live Lecture (ZOOM)</string>
+    <string name="zoom">Live Lecture (Zoom)</string>
     <string name="allow_auto_edit_lms">Allows automatic edit by LMS notification</string>
     <string name="class_name">Subject Name</string>
     <string name="week">Week</string>
     <string name="lesson">Hour</string>
     <string name="assignment_name">Assignment Name</string>
-    <string name="zoom_name">ZOOM Title</string>
+    <string name="zoom_name">Zoom Title</string>
     <string name="dateFormat">MMM dd, yyyy (EEE)</string>
     <string name="timeFormat">a h:mm</string>
     <string name="mark_as_finish">Mark as complete</string>
@@ -54,8 +54,9 @@
     <string name="notifications">Notifications</string>
     <string name="notify_hw">Assignment Notify</string>
     <string name="notify_lec">Lecture Notify</string>
-    <string name="notify_zoom">ZOOM Notify</string>
+    <string name="notify_zoom">Zoom Notify</string>
     <string name="channel_name">LMS Reminder</string>
+    <string name="channel_daily_reminder">Daily Reminder</string>
     <string name="reminder_content_lec">%1$d week(s) %2$d hour: %3$d hours left until the class deadline. Take the class on time.</string>
     <string name="reminder_content_sup_lec">%1$d week(s) %2$d hour: %3$d hours left until the make-up class deadline. Take the class on time.</string>
     <string name="reminder_content_hw">\"%1$s\" %2$d hour(s) left until the assignment deadline. Don\' be late.</string>
@@ -130,7 +131,7 @@
     <string name="err_input_blank">Please fill out all blanks.</string>
     <string name="err_time_late">The deadline must be later than the start date.</string>
     <string name="err_input_assignment">Please enter the assignment name.</string>
-    <string name="err_input_zoom_title">Please enter the ZOOM title.</string>
+    <string name="err_input_zoom_title">Please enter the Zoom title.</string>
     <string name="err_assignment_time">Please enter the assignment name, and the deadline must be later than the start date.</string>
     <string name="err_class_time">Please enter the subject name, and the deadline must be later than the start date.</string>
     <string name="err_class_assignment">Please enter the class and assignment name.</string>
@@ -162,10 +163,26 @@
     <string name="onboarding0_ex_week">Week 1 Hour 3</string>
     <string name="onboarding0_ex_time">Deadline : PM 11:59</string>
     <string name="onboarding0_ex_hw">Homework1: Introduce</string>
-    <string name="ask_mark_as_not_finish">이 항목을 완료되지 않음으로 표시할까요?</string>
-    <string name="ask_mark_as_finish">이 항목을 완료됨으로 표시할까요?</string>
-    <string name="undo">되돌리기</string>
-    <string name="marked_as_finish">완료 표시됨</string>
-    <string name="marked_as_not_finish">완료되지 않음으로 표시됨</string>
+
+    <!--MainWorkAdapter-->
+    <string name="ask_mark_as_not_finish">Would you like to mark this as not finished?</string>
+    <string name="ask_mark_as_finish">Would you like to mark this as finished?</string>
+    <string name="undo">Undo</string>
+    <string name="marked_as_finish">Marked as finish</string>
+    <string name="marked_as_not_finish">Marked as not finish</string>
+
+    <!--Preferences-->
+    <string name="morning_reminder">Morning Reminder</string>
+    <string name="night_reminder">Night Reminder</string>
+    <string name="morning_reminder_time">Morning Reminder Time</string>
+    <string name="night_reminder_time">Night Reminder Time</string>
+
+    <string name="daily_reminder_title_morning">🌤 좋은 아침입니다</string>
+    <string name="daily_reminder_title_night">🌙 하루가 저물어 가고 있어요</string>
+    <string name="daily_reminder_class">%1$d개의 강의</string>
+    <string name="daily_reminder_sup">%1$d개의 보강</string>
+    <string name="daily_reminder_hw">%1$d개의 과제</string>
+    <string name="daily_reminder_zoom">%1$d개의 실시간 강의</string>
+    <string name="daily_reminder_content_format">오늘까지의 %1$s(이)가 있습니다.\n%2$s</string>
 
 </resources>
