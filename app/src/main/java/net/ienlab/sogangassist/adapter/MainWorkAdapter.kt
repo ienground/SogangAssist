@@ -23,8 +23,6 @@ import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.DBHelper
-import net.ienlab.sogangassist.database.dbName
-import net.ienlab.sogangassist.database.dbVersion
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
@@ -51,7 +49,7 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
 
         setFullAd(context)
 
-        dbHelper = DBHelper(context, dbName, dbVersion)
+        dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
 
         holder.class_name.typeface = gmSansBold
         holder.sub_name.typeface = gmSansBold

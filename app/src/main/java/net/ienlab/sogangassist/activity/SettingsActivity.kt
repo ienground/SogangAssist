@@ -110,7 +110,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val gmSansMedium = Typeface.createFromAsset(requireActivity().assets, "fonts/gmsans_medium.otf")
             val gmSansBold = Typeface.createFromAsset(requireActivity().assets, "fonts/gmsans_bold.otf")
 
-            dbHelper = DBHelper(requireContext(), dbName, dbVersion)
+            dbHelper = DBHelper(requireContext(), DBHelper.dbName, DBHelper.dbVersion)
             sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)
 
             val hourData = listOf("1", "2", "6", "12", "24")
@@ -580,7 +580,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                             setTitle(R.string.restore)
                             setMessage(R.string.restore_msg)
                             setPositiveButton(R.string.agree) { _, _ ->
-                                requireActivity().deleteDatabase(dbName)
+                                requireActivity().deleteDatabase(DBHelper.dbName)
                                 for (i in 0 until result.length()) {
                                     val jObject = result.getJSONObject(i)
                                     val lms = LMSClass(

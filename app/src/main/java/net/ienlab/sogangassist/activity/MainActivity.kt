@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
 
-        dbHelper = DBHelper(this, dbName, dbVersion)
+        dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
         view = window.decorView.rootView
         sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
         fadeOutAnimation = AlphaAnimation(1f, 0f).apply { duration = 300 }
@@ -298,6 +298,11 @@ class MainActivity : AppCompatActivity() {
 
         setDecorators()
 
+        binding.btnMoveToday?.setOnClickListener {
+                binding.calendarView.setCurrentDate(Date(System.currentTimeMillis()))
+                thisCurrentDate = System.currentTimeMillis()
+        }
+
         val info = packageManager.getPackageInfo(packageName, 0)
         val currentVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.longVersionCode.toInt() else info.versionCode
         val lastVersion = sharedPreferences.getInt(SharedGroup.LAST_VERSION, 0)
@@ -407,9 +412,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_set_today -> {
-                binding.calendarView.setCurrentDate(Date(System.currentTimeMillis()))
-                thisCurrentDate = System.currentTimeMillis()
+            R.id.menu_notifications -> {
+                startActivity(Intent(this, NotificationsActivity::class.java))
             }
 
             R.id.menu_settings -> {

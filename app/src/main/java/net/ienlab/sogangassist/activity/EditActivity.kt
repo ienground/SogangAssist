@@ -99,7 +99,7 @@ class EditActivity : AppCompatActivity() {
 
         binding.adView.loadAd(adRequest.build())
 
-        dbHelper = DBHelper(this, dbName, dbVersion)
+        dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
         radioButtonGroup = arrayOf(R.id.radioButton1, R.id.radioButton2, R.id.radioButton3, R.id.radioButton4)
 
         dateFormat = SimpleDateFormat(getString(R.string.dateFormat), Locale.getDefault())

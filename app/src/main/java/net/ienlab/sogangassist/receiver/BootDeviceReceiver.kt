@@ -35,7 +35,7 @@ class BootDeviceReceiver : BroadcastReceiver() {
 
     private fun startServiceByAlarm(context: Context) {
         val sharedPreferences = context.getSharedPreferences(context.packageName + "_preferences", Context.MODE_PRIVATE)
-        val dbHelper = DBHelper(context, dbName, dbVersion)
+        val dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
 
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 

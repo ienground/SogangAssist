@@ -17,17 +17,20 @@ import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.activity.*
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.data.LMSClass
+import net.ienlab.sogangassist.data.NotificationItem
 import kotlin.math.abs
 
 class TimeReceiver : BroadcastReceiver() {
 
     lateinit var nm: NotificationManager
     lateinit var dbHelper: DBHelper
+    lateinit var notiDBHelper: NotiDBHelper
     lateinit var sharedPreferences: SharedPreferences
 
     override fun onReceive(context: Context, intent: Intent) {
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        dbHelper = DBHelper(context, dbName, dbVersion)
+        dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
+        notiDBHelper = NotiDBHelper(context, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
         sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -59,13 +62,6 @@ class TimeReceiver : BroadcastReceiver() {
         lecSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) lecHoursOn.add(hourData[index]) }
         zoomSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) zoomMinutesOn.add(minuteData[index]) }
 
-        Log.d(TAG, hwHoursOn.toString())
-        Log.d(TAG, lecHoursOn.toString())
-        Log.d(TAG, zoomMinutesOn.toString())
-
-        Log.d(TAG, "id: $id")
-        Log.d(TAG, "type: ${item.type}")
-
         when (item.type) {
             LMSClass.TYPE_LESSON -> {
                 NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
@@ -84,6 +80,7 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in lecHoursOn)) {
                         if (item.className != "") {
                             nm.notify(693000 + id, build())
+                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_lec, item.week, item.lesson, time), System.currentTimeMillis(), NotificationItem.TYPE_LESSON))
                         }
                     }
                 }
@@ -106,6 +103,7 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in lecHoursOn)) {
                         if (item.className != "") {
                             nm.notify(693000 + id, build())
+                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_lec, item.week, item.lesson, time), System.currentTimeMillis(), NotificationItem.TYPE_SUP_LESSON))
                         }
                     }
                 }
@@ -128,6 +126,7 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in hwHoursOn)) {
                         if (item.className != "") {
                             nm.notify(693000 + id, build())
+                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_hw, item.homework_name, time), System.currentTimeMillis(), NotificationItem.TYPE_HOMEWORK))
                         }
                     }
                 }
@@ -150,6 +149,7 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (minute in zoomMinutesOn)) {
                         if (item.className != "") {
                             nm.notify(693000 + id, build())
+                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_zoom, item.homework_name, minute), System.currentTimeMillis(), NotificationItem.TYPE_ZOOM))
                         }
                     }
                 }

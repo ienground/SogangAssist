@@ -13,7 +13,7 @@ class MarkFinishReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        dbHelper = DBHelper(context, dbName, dbVersion)
+        dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
 
         val id = intent.getIntExtra("ID", -1)
         dbHelper.getItemById(id).apply {

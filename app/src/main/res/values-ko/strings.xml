@@ -177,4 +177,12 @@
     <string name="morning_reminder_time">하루 시작 리마인더 시간</string>
     <string name="night_reminder_time">하루 끝 리마인더 시간</string>
 
+    <string name="daily_reminder_title_morning">🌤 좋은 아침입니다</string>
+    <string name="daily_reminder_title_night">🌙 하루가 저물어 가고 있어요</string>
+    <string name="daily_reminder_class">%1$d개의 강의</string>
+    <string name="daily_reminder_sup">%1$d개의 보강</string>
+    <string name="daily_reminder_hw">%1$d개의 과제</string>
+    <string name="daily_reminder_zoom">%1$d개의 실시간 강의</string>
+    <string name="daily_reminder_content_format">오늘까지의 %1$s(이)가 있습니다.\n%2$s</string>
+
 </resources>

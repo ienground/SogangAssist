@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:label">
-
+        <activity android:name=".activity.NotificationsActivity"></activity>
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,11 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".activity.EditActivity" />
         <activity
             android:name=".activity.SettingsActivity"
-            android:theme="@style/AppTheme.Setting"/>
+            android:theme="@style/AppTheme.Setting" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.OnboardingActivity" />
 
@@ -37,7 +36,6 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
-
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:exported="false">
@@ -50,22 +48,18 @@
             android:name=".receiver.TimeReceiver"
             android:enabled="true"
             android:exported="true" />
-
         <receiver
             android:name=".receiver.ReminderReceiver"
             android:enabled="true"
             android:exported="true" />
-
         <receiver
             android:name=".receiver.MarkFinishReceiver"
             android:enabled="true"
             android:exported="true" />
-
         <receiver
             android:name=".receiver.DeleteMissReceiver"
             android:enabled="true"
             android:exported="true" />
-
         <receiver
             android:name=".receiver.BootDeviceReceiver"
             android:enabled="true"

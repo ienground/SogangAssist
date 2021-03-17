@@ -27,7 +27,7 @@ class ReminderReceiver: BroadcastReceiver() {
         Log.d(TAG, "onReceive")
         val sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val dbHelper = DBHelper(context, dbName, dbVersion)
+        val dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
 
         val type = intent.getIntExtra(TYPE, -1)
 
@@ -35,8 +35,7 @@ class ReminderReceiver: BroadcastReceiver() {
             nm.createNotificationChannel(NotificationChannel(ChannelId.DAILY_REMINDER_ID, context.getString(R.string.channel_daily_reminder), NotificationManager.IMPORTANCE_HIGH))
         }
 
-        val data = dbHelper.getItemAtLastDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY) // 오늘까지의 데이터
-//        val data = dbHelper.getItemAtLastDate(System.currentTimeMillis()) // 오늘까지의 데이터
+        val data = dbHelper.getItemAtLastDate(System.currentTimeMillis()) // 오늘까지의 데이터
         val classes: ArrayList<String> = arrayListOf()
         val supClasses: ArrayList<String> = arrayListOf()
         val homeworks: ArrayList<String> = arrayListOf()
@@ -52,13 +51,6 @@ class ReminderReceiver: BroadcastReceiver() {
                 }
             }
         }
-
-        Log.d(TAG, classes.toString())
-        Log.d(TAG, supClasses.toString())
-        Log.d(TAG, homeworks.toString())
-        Log.d(TAG, zooms.toString())
-
-//        "오늘까지 해야 할 %d개의 수업, %d개의 보강, %d개의 과제, %d개의 실시간 강의가 있습니다."
 
         val content: ArrayList<String> = arrayListOf()
         val bigTextContent: ArrayList<String> = arrayListOf()
@@ -93,7 +85,6 @@ class ReminderReceiver: BroadcastReceiver() {
                         setStyle(NotificationCompat.BigTextStyle()
                             .bigText(context.getString(R.string.daily_reminder_content_format, content.joinToString(", "), bigTextContent.joinToString("\n\n")))
                         )
-
                         setContentIntent(PendingIntent.getActivity(context, 1, Intent(context, SplashActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT))
                         setSmallIcon(R.drawable.ic_reminder_icon)
                         setAutoCancel(true)
@@ -113,7 +104,6 @@ class ReminderReceiver: BroadcastReceiver() {
                         setStyle(NotificationCompat.BigTextStyle()
                             .bigText(context.getString(R.string.daily_reminder_content_format, content.joinToString(", "), bigTextContent.joinToString("\n\n")))
                         )
-
                         setContentIntent(PendingIntent.getActivity(context, 1, Intent(context, SplashActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT))
                         setSmallIcon(R.drawable.ic_reminder_icon)
                         setAutoCancel(true)

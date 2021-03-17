@@ -17,7 +17,7 @@ class DeleteMissReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        dbHelper = DBHelper(context, dbName, dbVersion)
+        dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
 
         val id = intent.getIntExtra("ID", -1)
         dbHelper.deleteData(id)

@@ -177,12 +177,12 @@
     <string name="morning_reminder_time">Morning Reminder Time</string>
     <string name="night_reminder_time">Night Reminder Time</string>
 
-    <string name="daily_reminder_title_morning">🌤 좋은 아침입니다</string>
-    <string name="daily_reminder_title_night">🌙 하루가 저물어 가고 있어요</string>
-    <string name="daily_reminder_class">%1$d개의 강의</string>
-    <string name="daily_reminder_sup">%1$d개의 보강</string>
-    <string name="daily_reminder_hw">%1$d개의 과제</string>
-    <string name="daily_reminder_zoom">%1$d개의 실시간 강의</string>
-    <string name="daily_reminder_content_format">오늘까지의 %1$s(이)가 있습니다.\n%2$s</string>
+    <string name="daily_reminder_title_morning">🌤 Good Morning</string>
+    <string name="daily_reminder_title_night">🌙 Sun\'s Getting Real Low</string>
+    <string name="daily_reminder_class">%1$d lessons</string>
+    <string name="daily_reminder_sup">%1$d make-up lessons</string>
+    <string name="daily_reminder_hw">%1$d assignments</string>
+    <string name="daily_reminder_zoom">%1$d Zoom lessons</string>
+    <string name="daily_reminder_content_format">There\'re %1$s until today.\n%2$s</string>
 
 </resources>

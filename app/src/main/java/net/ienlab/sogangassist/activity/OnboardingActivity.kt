@@ -51,7 +51,7 @@ class OnboardingActivity : AppCompatActivity(),
 
         // 데이터 초기화
         sharedPreferences.edit().clear().apply()
-        deleteDatabase(dbName)
+        deleteDatabase(DBHelper.dbName)
 
         // Fragment Tab 설정
         val adapter = OnboardingFragmentTabAdapter(supportFragmentManager, applicationContext)

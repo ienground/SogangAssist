@@ -8,9 +8,6 @@ import net.ienlab.sogangassist.data.LMSClass
 import java.util.*
 import kotlin.collections.ArrayList
 
-val dbName = "SogangLMSAssistData.db"
-val dbVersion = 2
-
 class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(context, name, null, version) {
 
     val _TABLENAME0 = "LMS_ASSIST"
@@ -263,6 +260,11 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
         }
         cursor.close()
         return true
+    }
+
+    companion object {
+        val dbName = "SogangLMSAssistData.db"
+        val dbVersion = 2
     }
 
 }
