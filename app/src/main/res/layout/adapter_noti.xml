@@ -18,7 +18,7 @@
         android:padding="8dp"
         android:background="@drawable/bg_transparent"
         android:contentDescription="@string/classtime"
-        app:tint="@color/white"
+        app:tint="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_title"
         app:layout_constraintBottom_toBottomOf="@id/tv_time"

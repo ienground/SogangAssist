@@ -5,9 +5,8 @@ import android.app.AlarmManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Paint
+import android.graphics.Color
 import android.graphics.Typeface
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,24 +14,20 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.ads.*
 import com.google.android.material.snackbar.Snackbar
-import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.activity.*
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.constant.SharedGroup
-import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.data.NotificationItem
-import net.ienlab.sogangassist.database.DBHelper
 import net.ienlab.sogangassist.database.NotiDBHelper
+import net.ienlab.sogangassist.utils.ItemActionListener
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
-import java.lang.Math.abs
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class NotificationsAdapter(private var items: List<NotificationItem>) : RecyclerView.Adapter<NotificationsAdapter.ItemViewHolder>() {
+class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : RecyclerView.Adapter<NotificationsAdapter.ItemViewHolder>(), ItemActionListener {
 
     lateinit var sharedPreferences: SharedPreferences
     lateinit var context: Context
@@ -42,6 +37,7 @@ class NotificationsAdapter(private var items: List<NotificationItem>) : Recycler
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationsAdapter.ItemViewHolder {
         context = parent.context
         sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
+
         return ItemViewHolder(LayoutInflater.from(context).inflate(R.layout.adapter_noti, parent, false))
     }
 
@@ -61,35 +57,18 @@ class NotificationsAdapter(private var items: List<NotificationItem>) : Recycler
         holder.tvContentTitle.text = items[position].contentTitle
         holder.tvContentText.text = items[position].contentText
 
-        // 1시간 전까지는 %d분 전
-        // 15시간 전까지는 %d시간 전
-        // 어제 날짜까지는 어제 몇시 몇분
-        // 4일 전까지는 요일 몇시 몇분
-        // 그 이상은 날짜
-
         holder.tvTimeStamp.text = items[position].timeStamp.let {
             val diff = kotlin.math.abs(it - System.currentTimeMillis())
-//            val now = Calendar.getInstance()
-//            val timeStampCalendar = Calendar.getInstance().apply { timeInMillis = it }
             val daysDiff = TimeUnit.MILLISECONDS.toDays(diff)
             when {
-                diff <= AlarmManager.INTERVAL_HOUR -> {
-                    "${TimeUnit.MILLISECONDS.toMinutes(diff)}분 전"
-                }
-                daysDiff <= 1 -> {
-                    "${TimeUnit.MILLISECONDS.toHours(diff)}시간 전"
-                }
-                daysDiff <= 4 -> {
-                    withDayTimeFormat.format(Date(items[position].timeStamp))
-                }
-                else -> {
-                    dateTimeFormat.format(Date(items[position].timeStamp))
-                }
+                diff <= AlarmManager.INTERVAL_HOUR -> context.getString(R.string.minutes_format, TimeUnit.MILLISECONDS.toMinutes(diff))
+                daysDiff <= 1 -> context.getString(R.string.hours_format, TimeUnit.MILLISECONDS.toHours(diff))
+                daysDiff <= 4 -> withDayTimeFormat.format(Date(items[position].timeStamp))
+                else -> dateTimeFormat.format(Date(items[position].timeStamp))
             }
         }
 
-//        holder.wholeView.setBackgroundColor()
-
+        holder.wholeView.setBackgroundColor(if (items[position].isRead) Color.TRANSPARENT else ContextCompat.getColor(context, R.color.colorAccentAlpha))
 
         when (items[position].type) {
             NotificationItem.TYPE_REGISTER -> {
@@ -120,12 +99,85 @@ class NotificationsAdapter(private var items: List<NotificationItem>) : Recycler
                 holder.icon.contentDescription = context.getString(R.string.zoom)
             }
         }
+
+        holder.wholeView.setOnClickListener {
+            items[position].isRead = true
+            notifyItemChanged(position)
+            notiDBHelper.updateItemById(items[position])
+            Intent(context, EditActivity::class.java).apply {
+                putExtra("ID", items[position].destination)
+                (context as Activity).startActivityForResult(this, REFRESH_MAIN_WORK)
+            }
+        }
+
+        holder.wholeView.setOnLongClickListener {
+            MyBottomSheetDialog(context).apply {
+                dismissWithAnimation = true
+                val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(context), false)
+                val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
+                val tvTitle: TextView = view.findViewById(R.id.tv_title)
+                val tvContent: TextView = view.findViewById(R.id.tv_content)
+                val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
+                val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
+                val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
+                val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
+
+                btnPositive.visibility = View.VISIBLE
+                btnNegative.visibility = View.VISIBLE
+
+
+                tvTitle.typeface = gmSansBold
+                tvContent.typeface = gmSansMedium
+                tvPositive.typeface = gmSansMedium
+                tvNegative.typeface = gmSansMedium
+
+                if (items[position].isRead) {
+                    imgLogo.setImageResource(R.drawable.ic_mark_as_not_read)
+                    tvTitle.text = context.getString(R.string.mark_as_not_read)
+                    tvContent.text = context.getString(R.string.ask_mark_as_not_read)
+                } else {
+                    imgLogo.setImageResource(R.drawable.ic_mark_as_read)
+                    tvTitle.text = context.getString(R.string.mark_as_read)
+                    tvContent.text = context.getString(R.string.ask_mark_as_read)
+                }
+
+                btnPositive.setOnClickListener {
+                    items[position].isRead = !items[position].isRead
+                    notiDBHelper.updateItemById(items[position])
+                    notifyItemChanged(position)
+                    Snackbar.make(view, if (items[position].isRead) context.getString(R.string.marked_as_read) else context.getString(R.string.marked_as_not_read),
+                        Snackbar.LENGTH_SHORT).setAction(R.string.undo) {
+                        items[position].isRead = !items[position].isRead
+                        notiDBHelper.updateItemById(items[position])
+                        notifyItemChanged(position)
+                    }.show()
+                    dismiss()
+                }
+
+                btnNegative.setOnClickListener {
+                    dismiss()
+                }
+
+                setContentView(view)
+            }.show()
+
+            true
+        }
     }
 
+    fun setItemRead(position: Int) {
+        items[position].isRead = true
+        notiDBHelper.updateItemById(items[position])
+        notifyItemChanged(position)
+    }
 
     // 데이터 셋의 크기를 리턴해줍니다.
-    override fun getItemCount(): Int {
-        return items.size
+    override fun getItemCount(): Int = items.size
+
+    override fun onItemSwiped(position: Int) {
+        notiDBHelper.deleteData(items[position].id)
+        items.removeAt(position)
+        notifyItemRemoved(position)
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -23,7 +23,9 @@
         <CheckBoxPreference
             android:key="allow_morning_reminder"
             android:title="@string/morning_reminder"
-            android:defaultValue="true"/>
+            android:defaultValue="true"
+            android:summaryOn="@string/morning_reminder_desc_on"
+            />
 
         <Preference
             android:key="time_morning_reminder"

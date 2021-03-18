@@ -80,7 +80,7 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in lecHoursOn)) {
                         if (item.className != "") {
                             nm.notify(693000 + id, build())
-                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_lec, item.week, item.lesson, time), System.currentTimeMillis(), NotificationItem.TYPE_LESSON))
+                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_lec, item.week, item.lesson, time), System.currentTimeMillis(), NotificationItem.TYPE_LESSON, id, false))
                         }
                     }
                 }
@@ -103,7 +103,7 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in lecHoursOn)) {
                         if (item.className != "") {
                             nm.notify(693000 + id, build())
-                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_lec, item.week, item.lesson, time), System.currentTimeMillis(), NotificationItem.TYPE_SUP_LESSON))
+                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_lec, item.week, item.lesson, time), System.currentTimeMillis(), NotificationItem.TYPE_SUP_LESSON, id, false))
                         }
                     }
                 }
@@ -126,7 +126,7 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in hwHoursOn)) {
                         if (item.className != "") {
                             nm.notify(693000 + id, build())
-                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_hw, item.homework_name, time), System.currentTimeMillis(), NotificationItem.TYPE_HOMEWORK))
+                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_hw, item.homework_name, time), System.currentTimeMillis(), NotificationItem.TYPE_HOMEWORK, id, false))
                         }
                     }
                 }
@@ -149,13 +149,11 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (minute in zoomMinutesOn)) {
                         if (item.className != "") {
                             nm.notify(693000 + id, build())
-                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_zoom, item.homework_name, minute), System.currentTimeMillis(), NotificationItem.TYPE_ZOOM))
+                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_zoom, item.homework_name, minute), System.currentTimeMillis(), NotificationItem.TYPE_ZOOM, id, false))
                         }
                     }
                 }
             }
-
         }
-
     }
 }

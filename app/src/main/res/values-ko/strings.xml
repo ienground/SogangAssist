@@ -89,6 +89,8 @@
     <string name="help">도움말</string>
     <string name="review_title">유용하게 사용하고 계신가요?</string>
     <string name="review_content">만족하신다면 리뷰와 평점을 남겨주세요!</string>
+    <string name="mark_all_read">모두 읽음으로 표시</string>
+    <string name="delete_all">모두 지우기</string>
 
     <!--Onboarding-->
     <string name="intro_page0_title">환영합니다.</string>
@@ -171,11 +173,30 @@
     <string name="marked_as_finish">완료 표시됨</string>
     <string name="marked_as_not_finish">완료되지 않음으로 표시됨</string>
 
+    <!--NotificationsAdapter, Activity-->
+    <string name="ask_mark_as_not_read">이 항목을 읽지 않음으로 표시할까요?</string>
+    <string name="ask_mark_as_read">이 항목을 읽음으로 표시할까요?</string>
+    <string name="mark_as_read">읽음으로 표시</string>
+    <string name="mark_as_not_read">읽지 않음으로 표시</string>
+    <string name="marked_as_read">읽음으로 표시됨</string>
+    <string name="marked_as_not_read">읽지 않음으로 표시됨</string>
+    <string name="no_notifications">알림이 없어요.</string>
+    <string name="ask_delete_all">정말 모두 삭제할까요?</string>
+    <string name="ask_delete_all_msg">지운 알림은 다시 복구할 수 없어요.</string>
+    <string name="a_minute_format">1분 전</string>
+    <string name="a_hour_format">1시간 전</string>
+    <string name="minutes_format">%1$d분 전</string>
+    <string name="hours_format">%1$d시간 전</string>
+
     <!--Preferences-->
     <string name="morning_reminder">하루 시작 리마인더</string>
     <string name="night_reminder">하루 끝 리마인더</string>
     <string name="morning_reminder_time">하루 시작 리마인더 시간</string>
     <string name="night_reminder_time">하루 끝 리마인더 시간</string>
+    <string name="morning_reminder_desc_on">하루의 시작에 마감기한이 임박한 과제나 강의를 알려드려요.</string>
+    <string name="morning_reminder_desc_off">하루의 시작에 마감기한이 임박한 과제나 강의를 알려드리지 않아요.</string>
+    <string name="night_reminder_desc_on">하루의 끝에 마감기한이 임박한 과제나 강의를 알려드려요.</string>
+    <string name="night_reminder_desc_off">하루의 끝에 마감기한이 임박한 과제나 강의를 알려드리지 않아요.</string>
 
     <string name="daily_reminder_title_morning">🌤 좋은 아침입니다</string>
     <string name="daily_reminder_title_night">🌙 하루가 저물어 가고 있어요</string>

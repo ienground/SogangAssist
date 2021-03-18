@@ -1,5 +1,6 @@
 package net.ienlab.sogangassist.database
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -21,6 +22,7 @@ class NotiDBHelper(context: Context, name: String, version: Int): SQLiteOpenHelp
     val CONTENT_TEXT = "CONTENT_TEXT"
     val TIMESTAMP = "TIMESTAMP"
     val TYPE = "TYPE"
+    val DEST = "DEST"
     val IS_READ = "IS_READ"
 
     //DB 처음 만들때 호출. - 테이블 생성 등의 초기 처리.
@@ -32,6 +34,7 @@ class NotiDBHelper(context: Context, name: String, version: Int): SQLiteOpenHelp
         sb.append(" $CONTENT_TEXT TEXT, ")
         sb.append(" $TIMESTAMP INTEGER, ")
         sb.append(" $TYPE INTEGER, ")
+        sb.append(" $DEST INTEGER, ")
         sb.append(" $IS_READ INTEGER ) ")
 
         db.execSQL(sb.toString())
@@ -48,8 +51,8 @@ class NotiDBHelper(context: Context, name: String, version: Int): SQLiteOpenHelp
 
         val sb = StringBuffer()
         sb.append(" INSERT INTO $_TABLENAME0 ( ")
-        sb.append(" $CONTENT_TITLE, $CONTENT_TEXT, $TIMESTAMP, $TYPE, $IS_READ ) ")
-        sb.append(" VALUES ( ?, ?, ?, ?, ? )")
+        sb.append(" $CONTENT_TITLE, $CONTENT_TEXT, $TIMESTAMP, $TYPE, $DEST, $IS_READ ) ")
+        sb.append(" VALUES ( ?, ?, ?, ?, ?, ? )")
 
         db.execSQL(sb.toString(),
                 arrayOf(
@@ -57,6 +60,7 @@ class NotiDBHelper(context: Context, name: String, version: Int): SQLiteOpenHelp
                     item.contentText,
                     item.timeStamp,
                     item.type,
+                    item.destination,
                     item.isRead.toInt()
                 )
         )
@@ -69,9 +73,24 @@ class NotiDBHelper(context: Context, name: String, version: Int): SQLiteOpenHelp
         return lastIndex
     }
 
-    fun getAllItem(): List<NotificationItem> {
+    fun updateItemById(item: NotificationItem) {
+        val db = writableDatabase
+        val value = ContentValues()
+
+        value.put(ID, item.id)
+        value.put(CONTENT_TITLE, item.contentTitle)
+        value.put(CONTENT_TEXT, item.contentText)
+        value.put(TIMESTAMP, item.timeStamp)
+        value.put(TYPE, item.type)
+        value.put(DEST, item.destination)
+        value.put(IS_READ, item.isRead.toInt())
+
+        db.update(_TABLENAME0, value, "$ID=${item.id}", null)
+    }
+
+    fun getAllItem(): ArrayList<NotificationItem> {
         val sb = StringBuffer()
-        sb.append(" SELECT $ID, $CONTENT_TITLE, $CONTENT_TEXT, $TIMESTAMP, $TYPE, $IS_READ FROM $_TABLENAME0 ")
+        sb.append(" SELECT $ID, $CONTENT_TITLE, $CONTENT_TEXT, $TIMESTAMP, $TYPE, $DEST, $IS_READ FROM $_TABLENAME0 ")
 
         val db = readableDatabase
         val cursor = db.rawQuery(sb.toString(), null)
@@ -85,7 +104,8 @@ class NotiDBHelper(context: Context, name: String, version: Int): SQLiteOpenHelp
                 cursor.getString(2),
                 cursor.getLong(3),
                 cursor.getInt(4),
-                cursor.getInt(5).toBoolean()
+                cursor.getInt(5),
+                cursor.getInt(6).toBoolean()
             )
 
             arr.add(data)
@@ -98,12 +118,12 @@ class NotiDBHelper(context: Context, name: String, version: Int): SQLiteOpenHelp
     fun getItemById(id: Int): NotificationItem {
 
         val sb = StringBuffer()
-        sb.append(" SELECT $ID, $CONTENT_TITLE, $CONTENT_TEXT, $TIMESTAMP, $TYPE, $IS_READ FROM $_TABLENAME0 WHERE $ID=$id ")
+        sb.append(" SELECT $ID, $CONTENT_TITLE, $CONTENT_TEXT, $TIMESTAMP, $TYPE, $DEST, $IS_READ FROM $_TABLENAME0 WHERE $ID=$id ")
 
         val db = readableDatabase
         val cursor = db.rawQuery(sb.toString(), null)
 
-        var data = NotificationItem(-1, "", "", 0L, 0, false)
+        var data = NotificationItem(-1, "", "", 0L, 0, -1, false)
         while (cursor.moveToNext()) {
             data = NotificationItem(
                 cursor.getInt(0),
@@ -111,7 +131,8 @@ class NotiDBHelper(context: Context, name: String, version: Int): SQLiteOpenHelp
                 cursor.getString(2),
                 cursor.getLong(3),
                 cursor.getInt(4),
-                cursor.getInt(5).toBoolean()
+                cursor.getInt(5),
+                cursor.getInt(6).toBoolean()
             )
         }
 
@@ -141,7 +162,7 @@ class NotiDBHelper(context: Context, name: String, version: Int): SQLiteOpenHelp
 
     companion object {
         val dbName = "SogangLMSAssistNotification.db"
-        val dbVersion = 2
+        val dbVersion = 3
     }
 }
 

@@ -89,6 +89,9 @@
     <string name="help">Help</string>
     <string name="review_title">Is this app useful?</string>
     <string name="review_content">If you are satisfied, please leave a review and rating!</string>
+    <string name="mark_all_read">Mark all read</string>
+    <string name="delete_all">Delete all</string>
+
 
     <!--Onboarding-->
     <string name="intro_page0_title">Welcome.</string>
@@ -171,11 +174,30 @@
     <string name="marked_as_finish">Marked as finish</string>
     <string name="marked_as_not_finish">Marked as not finish</string>
 
+    <!--NotificationsAdapter, Activity-->
+    <string name="ask_mark_as_not_read">Would you like to mark this as not read?</string>
+    <string name="ask_mark_as_read">Would you like to mark this as read?</string>
+    <string name="mark_as_read">Mark as read</string>
+    <string name="mark_as_not_read">Mark as not read</string>
+    <string name="marked_as_read">Marked as read</string>
+    <string name="marked_as_not_read">Marked as not read</string>
+    <string name="no_notifications">No notifications here.</string>
+    <string name="ask_delete_all">Are you sure to delete all?</string>
+    <string name="ask_delete_all_msg">Deleted notifications cannot be restored.</string>
+    <string name="a_minute_format">a minute ago</string>
+    <string name="a_hour_format">an hour ago</string>
+    <string name="minutes_format">%1$d minutes ago</string>
+    <string name="hours_format">%1$d hours ago</string>
+
     <!--Preferences-->
     <string name="morning_reminder">Morning Reminder</string>
     <string name="night_reminder">Night Reminder</string>
     <string name="morning_reminder_time">Morning Reminder Time</string>
     <string name="night_reminder_time">Night Reminder Time</string>
+    <string name="morning_reminder_desc_on">At morning, we will inform you of assignments or lectures with an impending deadline.</string>
+    <string name="morning_reminder_desc_off">At morning, we won\'t inform you of assignments or lectures with an impending deadline.</string>
+    <string name="night_reminder_desc_on">At night, we will inform you of assignments or lectures with an impending deadline.</string>
+    <string name="night_reminder_desc_off">At night, we won\'t inform you of assignments or lectures with an impending deadline.</string>
 
     <string name="daily_reminder_title_morning">🌤 Good Morning</string>
     <string name="daily_reminder_title_night">🌙 Sun\'s Getting Real Low</string>

@@ -151,8 +151,6 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
         } else {
             holder.check.visibility = View.GONE
         }
-
-
     }
 
 

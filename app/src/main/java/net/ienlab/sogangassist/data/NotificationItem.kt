@@ -6,6 +6,7 @@ class NotificationItem(
     var contentText: String,
     var timeStamp: Long,
     var type: Int,
+    var destination: Int,
     var isRead: Boolean = false
 ) {
     companion object {

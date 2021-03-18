@@ -99,7 +99,7 @@ class LMSListenerService : NotificationListenerService() {
                                         color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                         nm.notify(699000 + id, build())
-                                        notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER))
+                                        notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                     }
                                 }
                             }
@@ -155,7 +155,7 @@ class LMSListenerService : NotificationListenerService() {
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                     nm.notify(699000 + id, build())
-                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER))
+                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 }
                             }
                         }
@@ -197,7 +197,7 @@ class LMSListenerService : NotificationListenerService() {
                                         color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                         nm.notify(699000 + id, build())
-                                        notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_lec_register, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER))
+                                        notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_lec_register, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                     }
                                 }
                             }
@@ -253,7 +253,7 @@ class LMSListenerService : NotificationListenerService() {
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                     nm.notify(699000 + id, build())
-                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_lec_update, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER))
+                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_lec_update, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 }
                             }
 
@@ -295,7 +295,7 @@ class LMSListenerService : NotificationListenerService() {
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                     nm.notify(699000 + id, build())
-                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_sup_lec_register, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER))
+                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_sup_lec_register, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 }
                             }
                         }
@@ -350,7 +350,7 @@ class LMSListenerService : NotificationListenerService() {
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                     nm.notify(699000 + id, build())
-                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_sup_lec_update, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER))
+                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_sup_lec_update, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 }
                             }
                         }
@@ -391,7 +391,7 @@ class LMSListenerService : NotificationListenerService() {
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                     nm.notify(699000 + id, build())
-                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_zoom_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER))
+                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_zoom_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 }
                             }
                         }
@@ -446,7 +446,7 @@ class LMSListenerService : NotificationListenerService() {
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                     nm.notify(699000 + id, build())
-                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_zoom_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER))
+                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_zoom_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 }
                             }
                         }
