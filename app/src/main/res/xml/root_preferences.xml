@@ -25,7 +25,7 @@
             android:title="@string/morning_reminder"
             android:defaultValue="true"
             android:summaryOn="@string/morning_reminder_desc_on"
-            />
+            android:summaryOff="@string/morning_reminder_desc_off"/>
 
         <Preference
             android:key="time_morning_reminder"
@@ -35,7 +35,9 @@
         <CheckBoxPreference
             android:key="allow_night_reminder"
             android:title="@string/night_reminder"
-            android:defaultValue="true"/>
+            android:defaultValue="true"
+            android:summaryOn="@string/night_reminder_desc_on"
+            android:summaryOff="@string/night_reminder_desc_off"/>
 
         <Preference
             android:key="time_night_reminder"

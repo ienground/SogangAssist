@@ -68,6 +68,7 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
         holder.wholeView.setOnLongClickListener {
             MyBottomSheetDialog(context).apply {
                 dismissWithAnimation = true
+
                 val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(context), false)
                 val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
                 val tvTitle: TextView = view.findViewById(R.id.tv_title)

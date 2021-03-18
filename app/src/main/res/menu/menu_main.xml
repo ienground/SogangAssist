@@ -12,6 +12,7 @@
         android:id="@+id/menu_notifications"
         android:title="@string/notifications"
         android:icon="@drawable/ic_notification"
+        app:actionLayout="@layout/badge_notification"
         app:showAsAction="ifRoom" />
 
     <item

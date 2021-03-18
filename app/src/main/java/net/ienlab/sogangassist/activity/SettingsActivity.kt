@@ -15,7 +15,6 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.preference.Preference
@@ -54,7 +53,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
         supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, SettingsFragment(), null).commit()
-
     }
 
     // ActionBar 메뉴 각각 클릭 시
@@ -93,6 +91,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
         val timeFormat = SimpleDateFormat("a h:mm", Locale.getDefault())
 
+        lateinit var gmSansBold: Typeface
+        lateinit var gmSansMedium: Typeface
+
         override fun onCreatePreferences(bundle: Bundle?, str: String?) {
             addPreferencesFromResource(R.xml.root_preferences)
             val appInfo = findPreference("app_title")
@@ -107,8 +108,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val backup = findPreference("backup")
             val restore = findPreference("restore")
 
-            val gmSansMedium = Typeface.createFromAsset(requireActivity().assets, "fonts/gmsans_medium.otf")
-            val gmSansBold = Typeface.createFromAsset(requireActivity().assets, "fonts/gmsans_bold.otf")
+            gmSansMedium = Typeface.createFromAsset(requireActivity().assets, "fonts/gmsans_medium.otf")
+            gmSansBold = Typeface.createFromAsset(requireActivity().assets, "fonts/gmsans_bold.otf")
 
             dbHelper = DBHelper(requireContext(), DBHelper.dbName, DBHelper.dbVersion)
             sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)
@@ -576,10 +577,30 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                         }
                         val result = JSONArray(builder.toString())
 
-                        AlertDialog.Builder(requireContext()).apply {
-                            setTitle(R.string.restore)
-                            setMessage(R.string.restore_msg)
-                            setPositiveButton(R.string.agree) { _, _ ->
+                        MyBottomSheetDialog(requireContext()).apply {
+                            dismissWithAnimation = true
+
+                            val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(context), false)
+                            val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
+                            val tvTitle: TextView = view.findViewById(R.id.tv_title)
+                            val tvContent: TextView = view.findViewById(R.id.tv_content)
+                            val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
+                            val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
+                            val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
+                            val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
+
+                            imgLogo.setImageResource(R.drawable.ic_notification)
+                            tvTitle.typeface = gmSansBold
+                            tvContent.typeface = gmSansMedium
+                            tvPositive.typeface = gmSansMedium
+                            tvNegative.typeface = gmSansMedium
+
+                            tvTitle.text = getString(R.string.restore)
+                            tvContent.text = getString(R.string.restore_msg)
+                            tvPositive.text = getString(R.string.agree)
+                            tvNegative.text = getString(R.string.disagree)
+
+                            btnPositive.setOnClickListener {
                                 requireActivity().deleteDatabase(DBHelper.dbName)
                                 for (i in 0 until result.length()) {
                                     val jObject = result.getJSONObject(i)
@@ -602,10 +623,14 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
                                 Toast.makeText(requireContext(), getString(R.string.restore_finish), Toast.LENGTH_SHORT).show()
                                 requireActivity().finishAffinity()
+                                dismiss()
                             }
-                            setNegativeButton(R.string.disagree) { dialog, _ ->
-                                dialog.cancel()
+
+                            btnNegative.setOnClickListener {
+                                dismiss()
                             }
+
+                            setContentView(view)
                         }.show()
                     }
                 }

@@ -44,9 +44,6 @@ class TimeReceiver : BroadcastReceiver() {
         val minute = intent.getIntExtra("MINUTE", -1)
         val triggerTime = intent.getLongExtra("TRIGGER", -1)
 
-        val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id) }
-        val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
         val hourData = listOf(1, 2, 6, 12, 24)
         val minuteData = listOf(3, 5, 10, 20, 30)
 
@@ -64,92 +61,100 @@ class TimeReceiver : BroadcastReceiver() {
 
         when (item.type) {
             LMSClass.TYPE_LESSON -> {
-                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
-                    val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
-                    val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in lecHoursOn)) {
+                    if (item.className != "") {
+                        NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
+                            val notiId = notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_lec, item.week, item.lesson, time), System.currentTimeMillis(), NotificationItem.TYPE_LESSON, id, false))
+                            val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
+                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
+                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                    setContentTitle(item.className)
-                    setContentText(context.getString(R.string.reminder_content_lec, item.week, item.lesson, time))
-                    setContentIntent(clickPendingIntent)
-                    setAutoCancel(true)
-                    setStyle(NotificationCompat.BigTextStyle())
-                    setSmallIcon(R.drawable.ic_video)
-                    addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
-                    color = ContextCompat.getColor(context, R.color.colorAccent)
+                            setContentTitle(item.className)
+                            setContentText(context.getString(R.string.reminder_content_lec, item.week, item.lesson, time))
+                            setContentIntent(clickPendingIntent)
+                            setAutoCancel(true)
+                            setStyle(NotificationCompat.BigTextStyle())
+                            setSmallIcon(R.drawable.ic_video)
+                            addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                            color = ContextCompat.getColor(context, R.color.colorAccent)
 
-                    if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in lecHoursOn)) {
-                        if (item.className != "") {
                             nm.notify(693000 + id, build())
-                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_lec, item.week, item.lesson, time), System.currentTimeMillis(), NotificationItem.TYPE_LESSON, id, false))
                         }
                     }
                 }
             }
 
             LMSClass.TYPE_SUP_LESSON -> {
-                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
-                    val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
-                    val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in lecHoursOn)) {
+                    if (item.className != "") {
+                        NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
+                            val notiId = notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_lec, item.week, item.lesson, time), System.currentTimeMillis(), NotificationItem.TYPE_SUP_LESSON, id, false))
+                            val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
+                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
+                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                    setContentTitle(item.className)
-                    setContentText(context.getString(R.string.reminder_content_sup_lec, item.week, item.lesson, time))
-                    setContentIntent(clickPendingIntent)
-                    setAutoCancel(true)
-                    setStyle(NotificationCompat.BigTextStyle())
-                    setSmallIcon(R.drawable.ic_video_sup)
-                    addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
-                    color = ContextCompat.getColor(context, R.color.colorAccent)
+                            setContentTitle(item.className)
+                            setContentText(context.getString(R.string.reminder_content_sup_lec, item.week, item.lesson, time))
+                            setContentIntent(clickPendingIntent)
+                            setAutoCancel(true)
+                            setStyle(NotificationCompat.BigTextStyle())
+                            setSmallIcon(R.drawable.ic_video_sup)
+                            addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                            color = ContextCompat.getColor(context, R.color.colorAccent)
 
-                    if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in lecHoursOn)) {
-                        if (item.className != "") {
                             nm.notify(693000 + id, build())
-                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_lec, item.week, item.lesson, time), System.currentTimeMillis(), NotificationItem.TYPE_SUP_LESSON, id, false))
                         }
                     }
                 }
             }
 
             LMSClass.TYPE_HOMEWORK -> {
-                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
-                    val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
-                    val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in hwHoursOn)) {
+                    if (item.className != "") {
+                        NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
+                            val notiId = notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_hw, item.homework_name, time), System.currentTimeMillis(), NotificationItem.TYPE_HOMEWORK, id, false))
+                            val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
+                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
+                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                    setContentTitle(item.className)
-                    setContentText(context.getString(R.string.reminder_content_hw, item.homework_name, time))
-                    setContentIntent(clickPendingIntent)
-                    setAutoCancel(true)
-                    setStyle(NotificationCompat.BigTextStyle())
-                    setSmallIcon(R.drawable.ic_assignment)
-                    addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
-                    color = ContextCompat.getColor(context, R.color.colorAccent)
+                            setContentTitle(item.className)
+                            setContentText(context.getString(R.string.reminder_content_hw, item.homework_name, time))
+                            setContentIntent(clickPendingIntent)
+                            setAutoCancel(true)
+                            setStyle(NotificationCompat.BigTextStyle())
+                            setSmallIcon(R.drawable.ic_assignment)
+                            addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                            color = ContextCompat.getColor(context, R.color.colorAccent)
 
-                    if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in hwHoursOn)) {
-                        if (item.className != "") {
                             nm.notify(693000 + id, build())
-                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_hw, item.homework_name, time), System.currentTimeMillis(), NotificationItem.TYPE_HOMEWORK, id, false))
                         }
                     }
                 }
             }
 
             LMSClass.TYPE_ZOOM -> {
-                NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
-                    val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
-                    val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (minute in zoomMinutesOn)) {
+                    if (item.className != "") {
+                        NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
+                            val notiId = notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_zoom, item.homework_name, minute), System.currentTimeMillis(), NotificationItem.TYPE_ZOOM, id, false))
+                            val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
+                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
+                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                    setContentTitle(item.className)
-                    setContentText(context.getString(R.string.reminder_content_zoom, item.homework_name, minute))
-                    setContentIntent(clickPendingIntent)
-                    setAutoCancel(true)
-                    setStyle(NotificationCompat.BigTextStyle())
-                    setSmallIcon(R.drawable.ic_groups)
-                    addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
-                    color = ContextCompat.getColor(context, R.color.colorAccent)
+                            setContentTitle(item.className)
+                            setContentText(context.getString(R.string.reminder_content_zoom, item.homework_name, minute))
+                            setContentIntent(clickPendingIntent)
+                            setAutoCancel(true)
+                            setStyle(NotificationCompat.BigTextStyle())
+                            setSmallIcon(R.drawable.ic_groups)
+                            addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                            color = ContextCompat.getColor(context, R.color.colorAccent)
 
-                    if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (minute in zoomMinutesOn)) {
-                        if (item.className != "") {
                             nm.notify(693000 + id, build())
-                            notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_zoom, item.homework_name, minute), System.currentTimeMillis(), NotificationItem.TYPE_ZOOM, id, false))
                         }
                     }
                 }

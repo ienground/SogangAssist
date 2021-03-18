@@ -17,7 +17,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,6 +47,7 @@ import kotlin.math.abs
 val TAG = "SogangAssistTAG"
 val REFRESH_MAIN_WORK = 2
 val SETTINGS_CHANGED = 3
+val NOTI_REFRESH = 4
 val testDevice = "C539956A287753EFC92BF75B93D6D291"
 
 class MainActivity : AppCompatActivity() {
@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
 
     lateinit var dbHelper: DBHelper
+    lateinit var notiDBHelper: NotiDBHelper
     lateinit var sharedPreferences: SharedPreferences
     lateinit var am: AlarmManager
     lateinit var fadeOutAnimation: AlphaAnimation
@@ -70,6 +71,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var gmSansBold: Typeface
     lateinit var gmSansMedium: Typeface
 
+    lateinit var notiBadgeText: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -79,6 +82,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = null
 
         dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
+        notiDBHelper = NotiDBHelper(this, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
         view = window.decorView.rootView
         sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
         fadeOutAnimation = AlphaAnimation(1f, 0f).apply { duration = 300 }
@@ -173,14 +177,39 @@ class MainActivity : AppCompatActivity() {
             ReminderReceiver.TYPE, ReminderReceiver.NIGHT) }
 
         if (!MyUtils.isNotiPermissionAllowed(this)) {
-            AlertDialog.Builder(this).apply {
-                setTitle(R.string.intro_page2_title)
-                setMessage(R.string.intro_page2_exp)
-                setPositiveButton(R.string.ok) { dialog, _ ->
+            MyBottomSheetDialog(this).apply {
+                dismissWithAnimation = true
+
+                val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(context), false)
+                val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
+                val tvTitle: TextView = view.findViewById(R.id.tv_title)
+                val tvContent: TextView = view.findViewById(R.id.tv_content)
+                val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
+                val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
+                val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
+                val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
+
+                imgLogo.setImageResource(R.drawable.ic_notification)
+                tvTitle.typeface = gmSansBold
+                tvContent.typeface = gmSansMedium
+                tvPositive.typeface = gmSansMedium
+                tvNegative.typeface = gmSansMedium
+
+                tvTitle.text = getString(R.string.intro_page2_title)
+                tvContent.text = getString(R.string.intro_page2_exp)
+                tvPositive.text = getString(R.string.ok)
+                tvNegative.text = getString(R.string.cancel)
+
+                btnPositive.setOnClickListener {
                     startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
-                    dialog.dismiss()
+                    dismiss()
                 }
-                setNegativeButton(R.string.cancel) { _, _ ->}
+
+                btnNegative.setOnClickListener {
+                    dismiss()
+                }
+
+                setContentView(view)
             }.show()
         }
 
@@ -298,7 +327,7 @@ class MainActivity : AppCompatActivity() {
 
         setDecorators()
 
-        binding.btnMoveToday?.setOnClickListener {
+        binding.btnMoveToday.setOnClickListener {
                 binding.calendarView.setCurrentDate(Date(System.currentTimeMillis()))
                 thisCurrentDate = System.currentTimeMillis()
         }
@@ -325,12 +354,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         val id = intent.getIntExtra("ID", -1)
+        val notiId = intent.getIntExtra("NOTI_ID", -1)
         if (id != -1) {
-            Log.d(TAG, "id: $id")
             Intent(this, EditActivity::class.java).let {
                 it.putExtra("ID", id)
                 startActivityForResult(it, REFRESH_MAIN_WORK)
             }
+        }
+        if (notiId != -1) {
+            val data = notiDBHelper.getItemById(notiId).apply { isRead = true }
+            notiDBHelper.updateItemById(data)
         }
 
     }
@@ -402,18 +435,48 @@ class MainActivity : AppCompatActivity() {
                     refreshData()
                 }
             }
+
+            NOTI_REFRESH -> {
+                setupBadge()
+            }
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    fun setupBadge() {
+        val notificationData = notiDBHelper.getAllItem()
+        var count = 0
+        notificationData.forEach { if (!it.isRead) count++ }
+
+        if (::notiBadgeText.isInitialized) {
+            if (count == 0) notiBadgeText.visibility = View.GONE
+            else {
+                notiBadgeText.text = count.toString()
+                notiBadgeText.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+
+        val menuNoti = menu.findItem(R.id.menu_notifications)
+        val actionView = menuNoti.actionView
+        notiBadgeText = actionView.findViewById(R.id.tv_badge)
+        notiBadgeText.typeface = gmSansMedium
+
+        setupBadge()
+
+        actionView.setOnClickListener {
+            onOptionsItemSelected(menuNoti)
+        }
+
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_notifications -> {
-                startActivity(Intent(this, NotificationsActivity::class.java))
+                startActivityForResult(Intent(this, NotificationsActivity::class.java), NOTI_REFRESH)
             }
 
             R.id.menu_settings -> {

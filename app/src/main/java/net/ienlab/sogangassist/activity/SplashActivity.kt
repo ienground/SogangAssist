@@ -28,6 +28,8 @@ class SplashActivity : AppCompatActivity() {
 
         val isFirstVisit = sharedPreferences.getBoolean(SharedGroup.IS_FIRST_VISIT, true)
         val id = intent.getIntExtra("ID", -1)
+        val notiId = intent.getIntExtra("NOTI_ID", -1)
+
         Log.d(TAG, "id: $id")
 
         val gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
@@ -37,6 +39,7 @@ class SplashActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             val mainIntent = Intent(this, MainActivity::class.java).apply {
                 putExtra("ID", id)
+                putExtra("NOTI_ID", notiId)
             }
             val welcomeIntent = Intent(this, OnboardingActivity::class.java)
             if (isFirstVisit) {

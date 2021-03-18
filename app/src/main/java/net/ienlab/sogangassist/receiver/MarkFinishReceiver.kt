@@ -10,15 +10,24 @@ class MarkFinishReceiver : BroadcastReceiver() {
 
     lateinit var nm: NotificationManager
     lateinit var dbHelper: DBHelper
+    lateinit var notiDBHelper: NotiDBHelper
 
     override fun onReceive(context: Context, intent: Intent) {
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
+        notiDBHelper = NotiDBHelper(context, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
 
         val id = intent.getIntExtra("ID", -1)
+        val notiId = intent.getIntExtra("NOTI_ID", -1)
+
         dbHelper.getItemById(id).apply {
             isFinished = true
             dbHelper.updateItemById(this)
+        }
+
+        notiDBHelper.getItemById(notiId).apply {
+            isRead = true
+            notiDBHelper.updateItemById(this)
         }
 
         nm.cancel(693000 + id)

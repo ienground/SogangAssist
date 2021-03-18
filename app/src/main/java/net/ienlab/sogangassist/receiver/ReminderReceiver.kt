@@ -44,10 +44,10 @@ class ReminderReceiver: BroadcastReceiver() {
         for (d in data) {
             if (!d.isFinished) {
                 when (d.type) {
-                    LMSClass.TYPE_LESSON -> classes.add(context.getString(R.string.week_lesson_format, d.week, d.lesson))
-                    LMSClass.TYPE_SUP_LESSON -> supClasses.add(context.getString(R.string.week_lesson_format, d.week, d.lesson))
-                    LMSClass.TYPE_HOMEWORK -> homeworks.add(d.homework_name)
-                    LMSClass.TYPE_ZOOM ->zooms.add(d.homework_name)
+                    LMSClass.TYPE_LESSON -> classes.add(context.getString(R.string.reminder_class_format, d.className, d.week, d.lesson))
+                    LMSClass.TYPE_SUP_LESSON -> supClasses.add(context.getString(R.string.reminder_class_format, d.className, d.week, d.lesson))
+                    LMSClass.TYPE_HOMEWORK -> homeworks.add(context.getString(R.string.reminder_zoom_format, d.className, d.homework_name))
+                    LMSClass.TYPE_ZOOM -> zooms.add(context.getString(R.string.reminder_zoom_format, d.className, d.homework_name))
                 }
             }
         }

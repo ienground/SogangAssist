@@ -14,8 +14,8 @@ android {
         applicationId "net.ienlab.sogangassist"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 17
-        versionName "1.6.3"
+        versionCode 19
+        versionName "1.6.4b"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,6 +38,8 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     implementation 'com.google.android.material:material:1.4.0-alpha01'
     implementation 'com.google.firebase:firebase-core:18.0.2'
@@ -58,8 +60,6 @@ dependencies {
     implementation 'com.android.volley:volley:1.2.0'
     implementation 'com.anjlab.android.iab.v3:library:1.1.0'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     implementation 'com.prolificinteractive:material-calendarview:1.4.3'
     implementation 'de.hdodenhof:circleimageview:3.0.1'
     implementation 'com.romandanylyk:pageindicatorview:1.0.3@aar'

@@ -15,7 +15,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
-import androidx.appcompat.app.AlertDialog
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.ads.*
@@ -27,6 +29,7 @@ import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.databinding.ActivityEditBinding
 import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,6 +47,9 @@ class EditActivity : AppCompatActivity() {
 
     lateinit var currentItem: LMSClass
     var id = -1
+
+    lateinit var gmSansBold: Typeface
+    lateinit var gmSansMedium: Typeface
 
     val startCalendar = Calendar.getInstance()
     val endCalendar = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
@@ -74,8 +80,8 @@ class EditActivity : AppCompatActivity() {
                 }
         }
 
-        val gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
-        val gmSansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
+        gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
+        gmSansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
 
         binding.radioButton1.typeface = gmSansMedium
         binding.radioButton2.typeface = gmSansMedium
@@ -474,65 +480,95 @@ class EditActivity : AppCompatActivity() {
                         || currentItem.isFinished != isFinished
                         || currentItem.isRenewAllowed != binding.checkAutoEdit.isChecked))
             ) {
-                AlertDialog.Builder(this).apply {
-                    setMessage(R.string.save_ask)
-                    setPositiveButton(R.string.save) { dialog, _ ->
-                        onAutoSave(isFinished)
-                        dialog.dismiss()
-                    }
-                    setNegativeButton(R.string.not_save) { _, _ ->
-                        finish()
-                    }
-                    setNeutralButton(R.string.delete) { _, _ ->
-                        AlertDialog.Builder(this@EditActivity)
-                            .setTitle(R.string.delete)
-                            .setMessage(R.string.delete_msg)
-                            .setPositiveButton(R.string.yes) { dialog, _ ->
-                                val id = intent.getIntExtra("ID", -1)
-                                if (id != -1) {
-                                    dbHelper.deleteData(id)
-                                }
-                                setResult(RESULT_OK)
-                                finish()
-                            }
-                            .setNegativeButton(R.string.no) { dialog, _ ->
-                                dialog.cancel()
-                            }
-                            .show()
-                    }
-                }.show()
+                showSaveDialog()
             } else {
                 finish()
             }
         } else {
-            AlertDialog.Builder(this).apply {
-                setMessage(R.string.save_ask)
-                setPositiveButton(R.string.save) { dialog, _ ->
-                    onAutoSave(isFinished)
-                    dialog.dismiss()
-                }
-                setNegativeButton(R.string.not_save) { _, _ ->
-                    finish()
-                }
-                setNeutralButton(R.string.delete) { _, _ ->
-                    AlertDialog.Builder(this@EditActivity)
-                        .setTitle(R.string.delete)
-                        .setMessage(R.string.delete_msg)
-                        .setPositiveButton(R.string.yes) { dialog, _ ->
-                            val id = intent.getIntExtra("ID", -1)
-                            if (id != -1) {
-                                dbHelper.deleteData(id)
-                            }
-                            setResult(RESULT_OK)
-                            finish()
-                        }
-                        .setNegativeButton(R.string.no) { dialog, _ ->
-                            dialog.cancel()
-                        }
-                        .show()
-                }
-            }.show()
+            showSaveDialog()
         }
+    }
+
+    fun showDeleteDialog() {
+        MyBottomSheetDialog(this@EditActivity).apply {
+            dismissWithAnimation = true
+
+            val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(context), false)
+            val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
+            val tvTitle: TextView = view.findViewById(R.id.tv_title)
+            val tvContent: TextView = view.findViewById(R.id.tv_content)
+            val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
+            val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
+            val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
+            val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
+
+            imgLogo.setImageResource(R.drawable.ic_clear_all)
+            tvTitle.typeface = gmSansBold
+            tvContent.typeface = gmSansMedium
+            tvPositive.typeface = gmSansMedium
+            tvNegative.typeface = gmSansMedium
+
+            tvTitle.text = context.getString(R.string.delete)
+            tvContent.text = context.getString(R.string.delete_msg)
+
+            btnPositive.setOnClickListener {
+                val id = intent.getIntExtra("ID", -1)
+                if (id != -1) {
+                    dbHelper.deleteData(id)
+
+                    for (i in 0 until 5) {
+                        val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + i + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        am.cancel(pendingIntent)
+                    }
+                }
+                setResult(RESULT_OK)
+                finish()
+                dismiss()
+            }
+
+            btnNegative.setOnClickListener {
+                dismiss()
+            }
+
+            setContentView(view)
+        }.show()
+    }
+
+    fun showSaveDialog() {
+        MyBottomSheetDialog(this).apply {
+            dismissWithAnimation = true
+
+            val view = layoutInflater.inflate(R.layout.dialog_save, LinearLayout(context), false)
+            val tvTitle: TextView = view.findViewById(R.id.tv_title)
+            val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
+            val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
+            val btnNeutral: LinearLayout = view.findViewById(R.id.btn_neutral)
+            val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
+            val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
+            val tvNeutral: TextView = view.findViewById(R.id.btn_neutral_text)
+
+            tvTitle.typeface = gmSansBold
+            tvPositive.typeface = gmSansMedium
+            tvNegative.typeface = gmSansMedium
+            tvNeutral.typeface = gmSansMedium
+
+            btnPositive.setOnClickListener {
+                onAutoSave(isFinished)
+                dismiss()
+            }
+
+            btnNegative.setOnClickListener {
+                finish()
+                dismiss()
+            }
+
+            btnNeutral.setOnClickListener {
+                showDeleteDialog()
+            }
+
+            setContentView(view)
+        }.show()
     }
 
     fun onAutoSave(isFinished: Boolean) {
@@ -676,27 +712,7 @@ class EditActivity : AppCompatActivity() {
             }
 
             R.id.menu_delete -> {
-                AlertDialog.Builder(this)
-                    .setTitle(R.string.delete)
-                    .setMessage(R.string.delete_msg)
-                    .setPositiveButton(R.string.yes) { dialog, _ ->
-                        val id = intent.getIntExtra("ID", -1)
-                        if (id != -1) {
-                            dbHelper.deleteData(id)
-
-                            for (i in 0 until 5) {
-                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
-                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + i + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                am.cancel(pendingIntent)
-                            }
-                        }
-                        setResult(RESULT_OK)
-                        finish()
-                    }
-                    .setNegativeButton(R.string.no) { dialog, _ ->
-                        dialog.cancel()
-                    }
-                    .show()
+                showDeleteDialog()
             }
 
             R.id.menu_mark_as_finish -> {

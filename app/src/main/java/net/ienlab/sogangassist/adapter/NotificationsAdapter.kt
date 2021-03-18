@@ -61,6 +61,7 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
             val diff = kotlin.math.abs(it - System.currentTimeMillis())
             val daysDiff = TimeUnit.MILLISECONDS.toDays(diff)
             when {
+                diff < 60 * 1000 -> context.getString(R.string.just_now)
                 diff <= AlarmManager.INTERVAL_HOUR -> context.getString(R.string.minutes_format, TimeUnit.MILLISECONDS.toMinutes(diff))
                 daysDiff <= 1 -> context.getString(R.string.hours_format, TimeUnit.MILLISECONDS.toHours(diff))
                 daysDiff <= 4 -> withDayTimeFormat.format(Date(items[position].timeStamp))
@@ -108,11 +109,13 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
                 putExtra("ID", items[position].destination)
                 (context as Activity).startActivityForResult(this, REFRESH_MAIN_WORK)
             }
+            NotificationsActivity.setTitleCount()
         }
 
         holder.wholeView.setOnLongClickListener {
             MyBottomSheetDialog(context).apply {
                 dismissWithAnimation = true
+
                 val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(context), false)
                 val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
                 val tvTitle: TextView = view.findViewById(R.id.tv_title)
@@ -124,7 +127,6 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
 
                 btnPositive.visibility = View.VISIBLE
                 btnNegative.visibility = View.VISIBLE
-
 
                 tvTitle.typeface = gmSansBold
                 tvContent.typeface = gmSansMedium
@@ -151,6 +153,7 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
                         notiDBHelper.updateItemById(items[position])
                         notifyItemChanged(position)
                     }.show()
+                    NotificationsActivity.setTitleCount()
                     dismiss()
                 }
 

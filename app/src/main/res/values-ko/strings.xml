@@ -4,7 +4,7 @@
     <string name="settings">설정</string>
     <string name="save">저장</string>
     <string name="edit_detail">세부사항 수정</string>
-    <string name="classtime">수업</string>
+    <string name="classtime">강의</string>
     <string name="sup_classtime">보강</string>
     <string name="assignment">과제</string>
     <string name="zoom">실시간 강의 (Zoom)</string>
@@ -57,15 +57,15 @@
     <string name="notify_zoom">실시간 강의 알림 설정</string>
     <string name="channel_name">LMS 리마인더</string>
     <string name="channel_daily_reminder">데일리 리마인더</string>
-    <string name="reminder_content_lec">%1$d주 %2$d차시 수업이 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
+    <string name="reminder_content_lec">%1$d주 %2$d차시 강의가 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
     <string name="reminder_content_sup_lec">%1$d주 %2$d차시 보강이 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
     <string name="reminder_content_hw">\"%1$s\" 과제 마감 기간까지 %2$d시간 남았습니다. 늦지 않게 제출하세요.</string>
     <string name="reminder_content_zoom">\"%1$s\" 실시간 강의까지 %2$d분 남았습니다. 늦지 않게 출석하세요.</string>
-    <string name="reminder_content_lec_register">%1$d주 %2$d차시 수업이 등록되었습니다. %3$s까지 수강하세요.</string>
+    <string name="reminder_content_lec_register">%1$d주 %2$d차시 강의가 등록되었습니다. %3$s까지 수강하세요.</string>
     <string name="reminder_content_sup_lec_register">%1$d주 %2$d차시 보강이 등록되었습니다. %3$s까지 수강하세요.</string>
     <string name="reminder_content_hw_register">\"%1$s\" 과제가 등록되었습니다. %2$s까지 제출하세요.</string>
     <string name="reminder_content_zoom_register">\"%1$s\" 실시간 강의가 등록되었습니다. %2$s까지 출석하세요.</string>
-    <string name="reminder_content_lec_update">%1$d주 %2$d차시 수업이 업데이트되었습니다. %3$s까지 수강하세요.</string>
+    <string name="reminder_content_lec_update">%1$d주 %2$d차시 강의가 업데이트되었습니다. %3$s까지 수강하세요.</string>
     <string name="reminder_content_sup_lec_update">%1$d주 %2$d차시 보강이 업데이트되었습니다. %3$s까지 수강하세요.</string>
     <string name="reminder_content_hw_update">\"%1$s\" 과제가 업데이트되었습니다. %2$s까지 제출하세요.</string>
     <string name="reminder_content_zoom_update">\"%1$s\" 실시간 강의가 업데이트되었습니다. %2$s까지 출석하세요.</string>
@@ -174,6 +174,9 @@
     <string name="marked_as_not_finish">완료되지 않음으로 표시됨</string>
 
     <!--NotificationsAdapter, Activity-->
+    <string name="no_new_noti">새 알림 없음</string>
+    <string name="new_a_noti">새 알림 1개</string>
+    <string name="new_noti">새 알림 %1$d개</string>
     <string name="ask_mark_as_not_read">이 항목을 읽지 않음으로 표시할까요?</string>
     <string name="ask_mark_as_read">이 항목을 읽음으로 표시할까요?</string>
     <string name="mark_as_read">읽음으로 표시</string>
@@ -183,10 +186,15 @@
     <string name="no_notifications">알림이 없어요.</string>
     <string name="ask_delete_all">정말 모두 삭제할까요?</string>
     <string name="ask_delete_all_msg">지운 알림은 다시 복구할 수 없어요.</string>
+    <string name="just_now">방금</string>
     <string name="a_minute_format">1분 전</string>
     <string name="a_hour_format">1시간 전</string>
     <string name="minutes_format">%1$d분 전</string>
     <string name="hours_format">%1$d시간 전</string>
+
+    <!--DayNight Reminder-->
+    <string name="reminder_class_format">[%1$s] %2$d주 %3$d차시</string>
+    <string name="reminder_zoom_format">[%1$s] %2$s</string>
 
     <!--Preferences-->
     <string name="morning_reminder">하루 시작 리마인더</string>
