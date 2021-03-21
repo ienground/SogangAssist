@@ -19,6 +19,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.alphelios.iap.DataWrappers
+import com.alphelios.iap.IapConnector
+import com.alphelios.iap.InAppEventsListener
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.radiobutton.MaterialRadioButton
 import net.ienlab.sogangassist.BuildConfig
@@ -29,6 +32,7 @@ import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.utils.AppStorage
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import org.json.JSONArray
 import org.json.JSONObject
@@ -38,9 +42,12 @@ import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListener {
+class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListener, InAppEventsListener {
 
     lateinit var binding: ActivitySettingsBinding
+
+    lateinit var iapConnector: IapConnector
+    lateinit var storage: AppStorage
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +60,12 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
         supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, SettingsFragment(), null).commit()
+
+        storage = AppStorage(this)
+        iapConnector = IapConnector(this, "...")
+            .setInAppProductIds(listOf(AppStorage.ADS_FREE))
+            .autoAcknowledge()
+            .connect()
     }
 
     // ActionBar 메뉴 각각 클릭 시
@@ -61,8 +74,15 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
         return true
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        if (storage.purchasedAds()) {
+            menu.findItem(R.id.menu_ads_free).isVisible = false
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        menuInflater.inflate(R.menu.menu_settings, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -72,6 +92,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                 setResult(Activity.RESULT_OK)
                 super.onBackPressed()
             }
+            R.id.menu_ads_free -> {
+                iapConnector.makePurchase(this, AppStorage.ADS_FREE)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -79,6 +102,36 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
     override fun onBackPressed() {
         setResult(Activity.RESULT_OK)
         super.onBackPressed()
+    }
+
+    override fun onInAppProductsFetched(skuDetailsList: List<DataWrappers.SkuInfo>) {
+        Log.d(TAG, "onInAppProductsFetched")
+    }
+
+    override fun onPurchaseAcknowledged(purchase: DataWrappers.PurchaseInfo) {
+        Log.d(TAG, "onPurchaseAcknowledged")
+    }
+
+    override fun onSubscriptionsFetched(skuDetailsList: List<DataWrappers.SkuInfo>) {
+        Log.d(TAG, "onSubscriptionsFetched")
+    }
+
+    override fun onProductsPurchased(purchases: List<DataWrappers.PurchaseInfo>) {
+        var isSuccessful = false
+        for (info in purchases) {
+            if (info.sku == AppStorage.ADS_FREE) {
+                isSuccessful = true
+                break
+            }
+        }
+
+        if (isSuccessful) {
+            storage.setPurchasedAds(true)
+        }
+    }
+
+    override fun onError(inAppConnector: IapConnector, result: DataWrappers.BillingResponse?) {
+        Log.d(TAG, "onError")
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {

@@ -213,5 +213,6 @@
     <string name="daily_reminder_hw">%1$d개의 과제</string>
     <string name="daily_reminder_zoom">%1$d개의 실시간 강의</string>
     <string name="daily_reminder_content_format">오늘까지의 %1$s(이)가 있습니다.\n%2$s</string>
+    <string name="ads_free">광고 제거</string>
 
 </resources>

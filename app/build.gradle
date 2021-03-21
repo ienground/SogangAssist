@@ -14,8 +14,8 @@ android {
         applicationId "net.ienlab.sogangassist"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 19
-        versionName "1.6.4b"
+        versionCode 20
+        versionName "1.6.4999"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -58,7 +58,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-core-ui:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.android.volley:volley:1.2.0'
-    implementation 'com.anjlab.android.iab.v3:library:1.1.0'
+    implementation 'com.github.akshaaatt:Google-IAP:1.0.5'
 
     implementation 'com.prolificinteractive:material-calendarview:1.4.3'
     implementation 'de.hdodenhof:circleimageview:3.0.1'

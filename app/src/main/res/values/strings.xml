@@ -214,5 +214,6 @@
     <string name="daily_reminder_hw">%1$d assignments</string>
     <string name="daily_reminder_zoom">%1$d Zoom lessons</string>
     <string name="daily_reminder_content_format">There\'re %1$s until today.\n%2$s</string>
+    <string name="ads_free">Remove Ads</string>
 
 </resources>

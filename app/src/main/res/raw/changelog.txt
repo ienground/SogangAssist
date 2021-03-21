@@ -1,3 +1,1 @@
-- A notification window has been added. You can also check deleted notifications in the notification window.<br>
-- The main screen has been reorganized, and the positions of the Add New Reminder button and Move To Today button have been changed.<br>
-<b>- Meet morning and night reminders in settings. We will inform you of works with an impending deadline.</b>
+iabTest

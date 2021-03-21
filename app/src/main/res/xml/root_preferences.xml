@@ -67,7 +67,6 @@
 
     </PreferenceCategory>
 
-
     <PreferenceCategory android:title="@string/info_and_ask" >
 
         <Preference
