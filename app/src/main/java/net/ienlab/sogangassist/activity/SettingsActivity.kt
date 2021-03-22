@@ -19,9 +19,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.alphelios.iap.DataWrappers
-import com.alphelios.iap.IapConnector
-import com.alphelios.iap.InAppEventsListener
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.radiobutton.MaterialRadioButton
 import net.ienlab.sogangassist.BuildConfig
@@ -42,11 +39,10 @@ import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListener, InAppEventsListener {
+class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListener {
 
     lateinit var binding: ActivitySettingsBinding
 
-    lateinit var iapConnector: IapConnector
     lateinit var storage: AppStorage
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,10 +58,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                 .replace(R.id.fragment_container, SettingsFragment(), null).commit()
 
         storage = AppStorage(this)
-        iapConnector = IapConnector(this, "...")
-            .setInAppProductIds(listOf(AppStorage.ADS_FREE))
-            .autoAcknowledge()
-            .connect()
     }
 
     // ActionBar 메뉴 각각 클릭 시
@@ -93,7 +85,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                 super.onBackPressed()
             }
             R.id.menu_ads_free -> {
-                iapConnector.makePurchase(this, AppStorage.ADS_FREE)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -102,36 +93,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
     override fun onBackPressed() {
         setResult(Activity.RESULT_OK)
         super.onBackPressed()
-    }
-
-    override fun onInAppProductsFetched(skuDetailsList: List<DataWrappers.SkuInfo>) {
-        Log.d(TAG, "onInAppProductsFetched")
-    }
-
-    override fun onPurchaseAcknowledged(purchase: DataWrappers.PurchaseInfo) {
-        Log.d(TAG, "onPurchaseAcknowledged")
-    }
-
-    override fun onSubscriptionsFetched(skuDetailsList: List<DataWrappers.SkuInfo>) {
-        Log.d(TAG, "onSubscriptionsFetched")
-    }
-
-    override fun onProductsPurchased(purchases: List<DataWrappers.PurchaseInfo>) {
-        var isSuccessful = false
-        for (info in purchases) {
-            if (info.sku == AppStorage.ADS_FREE) {
-                isSuccessful = true
-                break
-            }
-        }
-
-        if (isSuccessful) {
-            storage.setPurchasedAds(true)
-        }
-    }
-
-    override fun onError(inAppConnector: IapConnector, result: DataWrappers.BillingResponse?) {
-        Log.d(TAG, "onError")
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
