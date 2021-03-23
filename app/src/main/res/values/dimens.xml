@@ -36,6 +36,9 @@
     <dimen name="title_size">16sp</dimen>
     <dimen name="layout_radius">24dp</dimen>
 
+    <dimen name="calendar_icon_size">12dp</dimen>
+    <dimen name="calendar_text_size">12sp</dimen>
+
     <!--
 Refer to App Widget Documentation for margin information
 http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout

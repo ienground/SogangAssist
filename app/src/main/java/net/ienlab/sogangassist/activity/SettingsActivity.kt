@@ -19,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.anjlab.android.iab.v3.BillingProcessor
+import com.anjlab.android.iab.v3.TransactionDetails
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.radiobutton.MaterialRadioButton
 import net.ienlab.sogangassist.BuildConfig
@@ -39,11 +41,12 @@ import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListener {
+class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListener, BillingProcessor.IBillingHandler {
 
     lateinit var binding: ActivitySettingsBinding
 
     lateinit var storage: AppStorage
+    lateinit var bp: BillingProcessor
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +61,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                 .replace(R.id.fragment_container, SettingsFragment(), null).commit()
 
         storage = AppStorage(this)
+        bp = BillingProcessor(this, getString(R.string.iab_license), this)
+        bp.initialize()
+        bp.loadOwnedPurchasesFromGoogle()
     }
 
     // ActionBar 메뉴 각각 클릭 시
@@ -67,7 +73,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if (storage.purchasedAds()) {
+        bp.loadOwnedPurchasesFromGoogle()
+
+        if (bp.isPurchased(AppStorage.ADS_FREE)) {
             menu.findItem(R.id.menu_ads_free).isVisible = false
         }
         return super.onPrepareOptionsMenu(menu)
@@ -85,10 +93,26 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                 super.onBackPressed()
             }
             R.id.menu_ads_free -> {
+                bp.purchase(this, AppStorage.ADS_FREE)
             }
         }
         return super.onOptionsItemSelected(item)
     }
+
+    override fun onBillingInitialized() {
+        bp.loadOwnedPurchasesFromGoogle()
+    }
+
+    override fun onPurchaseHistoryRestored() {
+        storage.setPurchasedAds(bp.isPurchased(AppStorage.ADS_FREE))
+    }
+
+    override fun onProductPurchased(productId: String, details: TransactionDetails?) {
+        bp.loadOwnedPurchasesFromGoogle()
+        storage.setPurchasedAds(bp.isPurchased(AppStorage.ADS_FREE))
+    }
+
+    override fun onBillingError(errorCode: Int, error: Throwable?) {}
 
     override fun onBackPressed() {
         setResult(Activity.RESULT_OK)

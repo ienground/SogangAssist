@@ -58,7 +58,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-core-ui:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.android.volley:volley:1.2.0'
-//    implementation "com.android.billingclient:billing-ktx:3.0.3"
+    implementation 'com.anjlab.android.iab.v3:library:1.1.0'
 
     implementation 'com.prolificinteractive:material-calendarview:1.4.3'
     implementation 'de.hdodenhof:circleimageview:3.0.1'

@@ -18,7 +18,7 @@ class AppStorage(context: Context) {
     }
 
     companion object {
-        val ADS_FREE = "adsfree"
+        val ADS_FREE = "ads_free"
     }
 }
 
