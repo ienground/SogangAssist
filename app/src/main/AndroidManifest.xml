@@ -73,7 +73,7 @@
             android:label="달력위젯">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="net.ienlab.blogplanner.VisitorWidget01.CLICK" />
+                <action android:name="net.ienlab.sogangassist.CalendarWidget.MONTH_CLICK" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

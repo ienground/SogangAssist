@@ -64,6 +64,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
         bp = BillingProcessor(this, getString(R.string.iab_license), this)
         bp.initialize()
         bp.loadOwnedPurchasesFromGoogle()
+
+        val l = LinearLayout(applicationContext)
     }
 
     // ActionBar 메뉴 각각 클릭 시

@@ -18,7 +18,7 @@ import net.ienlab.sogangassist.activity.TAG
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CalendarWidget : AppWidgetProvider() {
+class DeadlineWidget : AppWidgetProvider() {
 
     val goalDataIdFormat = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
 
@@ -32,7 +32,7 @@ class CalendarWidget : AppWidgetProvider() {
 
         am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        intent = Intent(context, CalendarWidget::class.java).apply {
+        intent = Intent(context, DeadlineWidget::class.java).apply {
             action = MONTH_BACK
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         }
