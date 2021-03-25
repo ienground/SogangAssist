@@ -28,12 +28,12 @@ class DeadlineWidget : AppWidgetProvider() {
 
     lateinit var views: RemoteViews
     private fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
-        views = RemoteViews(context.packageName, R.layout.widget_calendar)
+        views = RemoteViews(context.packageName, R.layout.widget_deadline)
 
         am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         intent = Intent(context, DeadlineWidget::class.java).apply {
-            action = MONTH_BACK
+            action = ACTION_CLICK
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         }
 
@@ -82,11 +82,6 @@ class DeadlineWidget : AppWidgetProvider() {
                     updateAppWidget(context, AppWidgetManager.getInstance(context), id)
 
                     return
-                }
-                MONTH_BACK -> {
-                    Log.d(TAG, "monthBack")
-                    val id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-                    updateAppWidget(context, AppWidgetManager.getInstance(context), id)
                 }
             }
         }
@@ -164,10 +159,6 @@ class DeadlineWidget : AppWidgetProvider() {
 
     companion object {
         internal val ACTION_CLICK = "CLICK"
-        internal val MONTH_BACK = "MONTH_BACK"
-        internal val MONTH_FWD = "MONTH_FWD"
-        internal val SET_TODAY = "SET_TODAY"
-        internal val ADD_EVENT = "ADD_EVENT"
 
         val widgetUpdateTime = 5 * 60 * 1000L
 //        val widgetUpdateTime = AlarmManager.INTERVAL_HALF_HOUR
