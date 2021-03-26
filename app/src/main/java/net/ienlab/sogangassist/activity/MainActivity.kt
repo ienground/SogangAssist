@@ -39,6 +39,7 @@ import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.receiver.ReminderReceiver
+import net.ienlab.sogangassist.utils.AppStorage
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
@@ -48,11 +49,9 @@ val TAG = "SogangAssistTAG"
 val REFRESH_MAIN_WORK = 2
 val SETTINGS_CHANGED = 3
 val NOTI_REFRESH = 4
-val testDevice = "C539956A287753EFC92BF75B93D6D291"
+val testDevice = "48BC2075D1B2D4652C27A690C6EF0D6F"
 
 class MainActivity : AppCompatActivity() {
-
-    lateinit var binding: ActivityMainBinding
 
     lateinit var dbHelper: DBHelper
     lateinit var notiDBHelper: NotiDBHelper
@@ -72,6 +71,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var gmSansMedium: Typeface
 
     lateinit var notiBadgeText: TextView
+    lateinit var storage: AppStorage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +92,7 @@ class MainActivity : AppCompatActivity() {
         val monthFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
         gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
         gmSansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
+        storage = AppStorage(this)
 
         val dateFormat = SimpleDateFormat(getString(R.string.tag_date), Locale.getDefault())
 
@@ -105,7 +106,8 @@ class MainActivity : AppCompatActivity() {
         binding.tvNoDeadline.typeface = gmSansMedium
         binding.tvAdd.typeface = gmSansMedium
 
-        if (BuildConfig.DEBUG) binding.adView.visibility = View.GONE
+//        if (BuildConfig.DEBUG) binding.adView.visibility = View.GONE
+        if (storage.purchasedAds()) binding.adView.visibility = View.GONE
 
         val installedDate = packageManager.getPackageInfo(packageName, 0).firstInstallTime
         if (abs(installedDate - System.currentTimeMillis()) >= 6 * AlarmManager.INTERVAL_DAY) {
@@ -325,7 +327,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        setDecorators()
+        setDecorators(this)
 
         binding.btnMoveToday.setOnClickListener {
                 binding.calendarView.setCurrentDate(Date(System.currentTimeMillis()))
@@ -368,53 +370,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun setDecorators() {
-        binding.calendarView.removeDecorators()
-
-        val weekdayDecorator = WeekdayDecorator(this)
-        val sundayDecorator = SundayDecorator(this)
-        val saturdayDecorator = SaturdayDecorator(this)
-        val todayDecorator = OneDayDecorator(this).apply {
-            setDate(Date(System.currentTimeMillis()))
-        }
-
-        binding.calendarView.addDecorators(weekdayDecorator, sundayDecorator, saturdayDecorator, todayDecorator)
-        if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
-            binding.calendarView.addDecorator(NightModeDecorator(this))
-        }
-
-        val datas = dbHelper.getAllData()
-        val timeCount = mutableMapOf<Long, IntArray>()
-
-        for (data in datas) {
-            Calendar.getInstance().let {
-                it.timeInMillis = data.endTime
-                it.set(Calendar.HOUR_OF_DAY, 0)
-                it.set(Calendar.MINUTE, 0)
-                it.set(Calendar.SECOND, 0)
-                it.set(Calendar.MILLISECOND, 0)
-
-                if (it.timeInMillis in timeCount.keys) {
-                    val value = timeCount[it.timeInMillis] ?: intArrayOf(0, 0)
-                    value[if (data.isFinished) 1 else 0] += 1
-                    timeCount[it.timeInMillis] = value
-                } else {
-                    if (data.isFinished) {
-                        timeCount[it.timeInMillis] = intArrayOf(0, 1)
-                    } else {
-                        timeCount[it.timeInMillis] = intArrayOf(1, 0)
-                    }
-
-                }
-            }
-        }
-
-        for (time in timeCount) {
-            val decorator = EventDecorator(ContextCompat.getColor(this, R.color.colorAccent), time.value, arrayListOf(CalendarDay.from(Date(time.key))))
-            binding.calendarView.addDecorator(decorator)
-        }
-    }
-
     fun refreshData() {
         val work = dbHelper.getItemAtLastDate(thisCurrentDate).toMutableList().apply {
             sortWith( compareBy ({ it.isFinished }, {it.type}))
@@ -423,7 +378,7 @@ class MainActivity : AppCompatActivity() {
         binding.mainWorkView.layoutManager = LinearLayoutManager(this)
         binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
 
-        setDecorators()
+        setDecorators(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -434,6 +389,8 @@ class MainActivity : AppCompatActivity() {
                 if (resultCode == Activity.RESULT_OK) {
                     refreshData()
                 }
+
+                binding.adView.visibility = if (storage.purchasedAds()) View.GONE else View.VISIBLE
             }
 
             NOTI_REFRESH -> {
@@ -521,5 +478,54 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         lateinit var view: View
+        lateinit var binding: ActivityMainBinding
+
+        fun setDecorators(context: Context) {
+            binding.calendarView.removeDecorators()
+
+            val dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
+
+            val weekdayDecorator = WeekdayDecorator(context)
+            val sundayDecorator = SundayDecorator(context)
+            val saturdayDecorator = SaturdayDecorator(context)
+            val todayDecorator = OneDayDecorator(context).apply {
+                setDate(Date(System.currentTimeMillis()))
+            }
+
+            binding.calendarView.addDecorators(weekdayDecorator, sundayDecorator, saturdayDecorator, todayDecorator)
+            if (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+                binding.calendarView.addDecorator(NightModeDecorator(context))
+            }
+
+            val datas = dbHelper.getAllData()
+            val timeCount = mutableMapOf<Long, IntArray>()
+
+            for (data in datas) {
+                Calendar.getInstance().let {
+                    it.timeInMillis = data.endTime
+                    it.set(Calendar.HOUR_OF_DAY, 0)
+                    it.set(Calendar.MINUTE, 0)
+                    it.set(Calendar.SECOND, 0)
+                    it.set(Calendar.MILLISECOND, 0)
+
+                    if (it.timeInMillis in timeCount.keys) {
+                        val value = timeCount[it.timeInMillis] ?: intArrayOf(0, 0)
+                        value[if (data.isFinished) 1 else 0] += 1
+                        timeCount[it.timeInMillis] = value
+                    } else {
+                        if (data.isFinished) {
+                            timeCount[it.timeInMillis] = intArrayOf(0, 1)
+                        } else {
+                            timeCount[it.timeInMillis] = intArrayOf(1, 0)
+                        }
+                    }
+                }
+            }
+
+            for (time in timeCount) {
+                val decorator = EventDecorator(ContextCompat.getColor(context, R.color.colorAccent), time.value, arrayListOf(CalendarDay.from(Date(time.key))))
+                binding.calendarView.addDecorator(decorator)
+            }
+        }
     }
 }

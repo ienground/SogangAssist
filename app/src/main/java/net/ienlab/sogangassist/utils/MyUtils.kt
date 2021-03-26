@@ -46,6 +46,14 @@ class MyUtils {
             return builder.toString()
         }
 
+        fun isDNDTime(startTime: Int, endTime: Int, currentTime: Int): Boolean {
+            return if (endTime <= startTime) {
+                currentTime in startTime..(24 * 60) || currentTime in 0..endTime
+            } else {
+                currentTime in startTime..endTime
+            }
+        }
+
         fun isNotiPermissionAllowed(context: Context): Boolean {
             return NotificationManagerCompat.getEnabledListenerPackages(context).any { it == context.packageName }
         }

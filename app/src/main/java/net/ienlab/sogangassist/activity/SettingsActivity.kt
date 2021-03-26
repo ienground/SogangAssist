@@ -65,6 +65,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
         bp.initialize()
         bp.loadOwnedPurchasesFromGoogle()
 
+        binding.appTitle.setOnLongClickListener {
+            bp.consumePurchase(AppStorage.ADS_FREE)
+            true
+        }
+
         val l = LinearLayout(applicationContext)
     }
 
@@ -79,6 +84,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
         if (bp.isPurchased(AppStorage.ADS_FREE)) {
             menu.findItem(R.id.menu_ads_free).isVisible = false
+            storage.setPurchasedAds(bp.isPurchased(AppStorage.ADS_FREE))
         }
         return super.onPrepareOptionsMenu(menu)
     }
@@ -137,6 +143,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
         override fun onCreatePreferences(bundle: Bundle?, str: String?) {
             addPreferencesFromResource(R.xml.root_preferences)
             val appInfo = findPreference("app_title")
+            val dndTime = findPreference("dnd_time")
             val notifyHw = findPreference("notify_hw_group")
             val notifyLec = findPreference("notify_lec_group")
             val notifyZoom = findPreference("notify_zoom_group")
@@ -183,9 +190,20 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                 set(Calendar.HOUR_OF_DAY, time / 60)
                 set(Calendar.MINUTE, time % 60)
             }
+            val dndStartCalendar = Calendar.getInstance().apply {
+                val time = sharedPreferences.getInt(SharedGroup.DND_START_TIME, DefaultValue.DND_START_TIME)
+                set(Calendar.HOUR_OF_DAY, time / 60)
+                set(Calendar.MINUTE, time % 60)
+            }
+            val dndEndCalendar = Calendar.getInstance().apply {
+                val time = sharedPreferences.getInt(SharedGroup.DND_END_TIME, DefaultValue.DND_END_TIME)
+                set(Calendar.HOUR_OF_DAY, time / 60)
+                set(Calendar.MINUTE, time % 60)
+            }
 
             timeMorningReminder?.summary = timeFormat.format(morningCalendar.time)
             timeNightReminder?.summary = timeFormat.format(nightCalendar.time)
+            dndTime?.summary = "${timeFormat.format(dndStartCalendar.time)} ~ ${timeFormat.format(dndEndCalendar.time)}"
 
             appInfo?.setOnPreferenceClickListener {
                 MyBottomSheetDialog(requireContext()).apply {
@@ -198,6 +216,189 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
                     tvVersion.text = getString(R.string.real_app_name)
                     tvContent.text = getString(R.string.dev_ienlab)
+
+                    setContentView(view)
+                }.show()
+
+                true
+            }
+            dndTime?.setOnPreferenceClickListener { preference ->
+                MyBottomSheetDialog(requireContext()).apply {
+                    dismissWithAnimation = true
+
+                    val view = layoutInflater.inflate(R.layout.dialog_dnd, LinearLayout(requireContext()), false)
+                    val tvTitle: TextView = view.findViewById(R.id.tv_title)
+                    val tvDndStartTag: TextView = view.findViewById(R.id.tv_dnd_start_tag)
+                    val tvDndEndTag: TextView = view.findViewById(R.id.tv_dnd_end_tag)
+                    val tvDndStart: TextView = view.findViewById(R.id.tv_dnd_start)
+                    val tvDndEnd: TextView = view.findViewById(R.id.tv_dnd_end)
+                    val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
+                    val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
+                    val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
+                    val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
+
+                    tvTitle.typeface = gmSansBold
+                    tvDndStartTag.typeface = gmSansMedium
+                    tvDndEndTag.typeface = gmSansMedium
+                    tvDndStart.typeface = gmSansBold
+                    tvDndEnd.typeface = gmSansBold
+                    tvPositive.typeface = gmSansMedium
+                    tvNegative.typeface = gmSansMedium
+
+                    tvDndStart.text = timeFormat.format(dndStartCalendar.time)
+                    tvDndEnd.text = timeFormat.format(dndEndCalendar.time)
+
+                    val startCalendar = dndStartCalendar.clone() as Calendar
+                    val endCalendar = dndEndCalendar.clone() as Calendar
+
+                    tvDndStart.setOnClickListener {
+                        MyBottomSheetDialog(requireContext()).apply {
+                            dismissWithAnimation = true
+
+                            val dialogView = layoutInflater.inflate(R.layout.dialog_time_picker, LinearLayout(requireContext()), false)
+
+                            val innerTvTitle: TextView = dialogView.findViewById(R.id.tv_title)
+                            val timePicker: TimePicker = dialogView.findViewById(R.id.time_picker)
+                            val innerBtnPositive: LinearLayout = dialogView.findViewById(R.id.btn_positive)
+                            val innerBtnNegative: LinearLayout = dialogView.findViewById(R.id.btn_negative)
+                            val innerTvPositive: TextView = dialogView.findViewById(R.id.btn_positive_text)
+                            val innerTvNegative: TextView = dialogView.findViewById(R.id.btn_negative_text)
+                            val calendar = startCalendar.clone() as Calendar
+
+                            innerTvTitle.typeface = gmSansBold
+                            innerTvPositive.typeface = gmSansMedium
+                            innerTvNegative.typeface = gmSansMedium
+
+                            val hoursId = Resources.getSystem().getIdentifier("hours", "id", "android")
+                            val separatorId = Resources.getSystem().getIdentifier("separator", "id", "android")
+                            val minutesId = Resources.getSystem().getIdentifier("minutes", "id", "android")
+                            val amLabelId = Resources.getSystem().getIdentifier("am_label", "id", "android")
+                            val pmLabelId = Resources.getSystem().getIdentifier("pm_label", "id", "android")
+
+                            val textViews: ArrayList<TextView> = arrayListOf(timePicker.findViewById(hoursId), timePicker.findViewById(separatorId), timePicker.findViewById(minutesId))
+                            val apmLabels: ArrayList<MaterialRadioButton> = arrayListOf(timePicker.findViewById(amLabelId), timePicker.findViewById(pmLabelId))
+
+                            textViews.forEach {
+                                it.typeface = gmSansMedium
+                                it.textSize = 42f
+                            }
+                            apmLabels.forEachIndexed { index, button ->
+                                button.typeface = gmSansMedium
+                                button.textSize = 12f
+                                button.gravity = (if (index == 0) Gravity.BOTTOM else Gravity.TOP) or Gravity.END
+                            }
+
+                            innerTvTitle.text = getString(R.string.start_at)
+
+                            innerBtnNegative.setOnClickListener {
+                                dismiss()
+                            }
+
+                            with (timePicker) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    hour = calendar.get(Calendar.HOUR_OF_DAY)
+                                    minute = calendar.get(Calendar.MINUTE)
+                                } else {
+                                    currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+                                    currentMinute = calendar.get(Calendar.MINUTE)
+                                }
+
+                                setOnTimeChangedListener { v, hourOfDay, minute ->
+                                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                                    calendar.set(Calendar.MINUTE, minute)
+                                }
+                            }
+
+                            innerBtnPositive.setOnClickListener {
+                                startCalendar.time = calendar.time
+                                tvDndStart.text = timeFormat.format(startCalendar.time)
+                                dismiss()
+                            }
+
+                            setContentView(dialogView)
+                        }.show()
+                    }
+
+                    tvDndEnd.setOnClickListener {
+                        MyBottomSheetDialog(requireContext()).apply {
+                            dismissWithAnimation = true
+
+                            val dialogView = layoutInflater.inflate(R.layout.dialog_time_picker, LinearLayout(requireContext()), false)
+
+                            val innerTvTitle: TextView = dialogView.findViewById(R.id.tv_title)
+                            val timePicker: TimePicker = dialogView.findViewById(R.id.time_picker)
+                            val innerBtnPositive: LinearLayout = dialogView.findViewById(R.id.btn_positive)
+                            val innerBtnNegative: LinearLayout = dialogView.findViewById(R.id.btn_negative)
+                            val innerTvPositive: TextView = dialogView.findViewById(R.id.btn_positive_text)
+                            val innerTvNegative: TextView = dialogView.findViewById(R.id.btn_negative_text)
+                            val calendar = endCalendar.clone() as Calendar
+
+                            innerTvTitle.typeface = gmSansBold
+                            innerTvPositive.typeface = gmSansMedium
+                            innerTvNegative.typeface = gmSansMedium
+
+                            val hoursId = Resources.getSystem().getIdentifier("hours", "id", "android")
+                            val separatorId = Resources.getSystem().getIdentifier("separator", "id", "android")
+                            val minutesId = Resources.getSystem().getIdentifier("minutes", "id", "android")
+                            val amLabelId = Resources.getSystem().getIdentifier("am_label", "id", "android")
+                            val pmLabelId = Resources.getSystem().getIdentifier("pm_label", "id", "android")
+
+                            val textViews: ArrayList<TextView> = arrayListOf(timePicker.findViewById(hoursId), timePicker.findViewById(separatorId), timePicker.findViewById(minutesId))
+                            val apmLabels: ArrayList<MaterialRadioButton> = arrayListOf(timePicker.findViewById(amLabelId), timePicker.findViewById(pmLabelId))
+
+                            textViews.forEach {
+                                it.typeface = gmSansMedium
+                                it.textSize = 42f
+                            }
+                            apmLabels.forEachIndexed { index, button ->
+                                button.typeface = gmSansMedium
+                                button.textSize = 12f
+                                button.gravity = (if (index == 0) Gravity.BOTTOM else Gravity.TOP) or Gravity.END
+                            }
+
+                            innerTvTitle.text = getString(R.string.end_at)
+
+                            innerBtnNegative.setOnClickListener {
+                                dismiss()
+                            }
+
+                            with (timePicker) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    hour = calendar.get(Calendar.HOUR_OF_DAY)
+                                    minute = calendar.get(Calendar.MINUTE)
+                                } else {
+                                    currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+                                    currentMinute = calendar.get(Calendar.MINUTE)
+                                }
+
+                                setOnTimeChangedListener { v, hourOfDay, minute ->
+                                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                                    calendar.set(Calendar.MINUTE, minute)
+                                }
+                            }
+
+                            innerBtnPositive.setOnClickListener {
+                                endCalendar.time = calendar.time
+                                tvDndEnd.text = timeFormat.format(endCalendar.time)
+                                dismiss()
+                            }
+
+                            setContentView(dialogView)
+                        }.show()
+                    }
+
+                    btnPositive.setOnClickListener {
+                        dndStartCalendar.time = startCalendar.time
+                        dndEndCalendar.time = endCalendar.time
+                        sharedPreferences.edit().putInt(SharedGroup.DND_START_TIME, dndStartCalendar.get(Calendar.HOUR_OF_DAY) * 60 + dndStartCalendar.get(Calendar.MINUTE)).apply()
+                        sharedPreferences.edit().putInt(SharedGroup.DND_END_TIME, dndEndCalendar.get(Calendar.HOUR_OF_DAY) * 60 + dndEndCalendar.get(Calendar.MINUTE)).apply()
+                        preference.summary = "${timeFormat.format(dndStartCalendar.time)} ~ ${timeFormat.format(dndEndCalendar.time)}"
+                        dismiss()
+                    }
+
+                    btnNegative.setOnClickListener {
+                        dismiss()
+                    }
 
                     setContentView(view)
                 }.show()

@@ -18,8 +18,11 @@ import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.activity.*
+import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.data.NotificationItem
 import net.ienlab.sogangassist.receiver.DeleteMissReceiver
+import net.ienlab.sogangassist.receiver.SetReadReceiver
+import net.ienlab.sogangassist.utils.MyUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -56,6 +59,11 @@ class LMSListenerService : NotificationListenerService() {
             nm.createNotificationChannel(channel)
         }
 
+        val dndStartData = sharedPreferences.getInt(SharedGroup.DND_START_TIME, DefaultValue.DND_START_TIME)
+        val dndEndData = sharedPreferences.getInt(SharedGroup.DND_END_TIME, DefaultValue.DND_END_TIME)
+        val now = Calendar.getInstance()
+        val nowInt = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
+
 //        if (sbn.packageName == "net.ienlab.notificationtest") {
         if (sbn.packageName == "kr.co.imaxsoft.hellolms") {
             val className = extras.getString(Notification.EXTRA_TITLE) ?: ""
@@ -83,10 +91,13 @@ class LMSListenerService : NotificationListenerService() {
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                    val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                     val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                     val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                     val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
                                     val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    val setReadIntent = Intent(applicationContext, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 699000 + id) }
+                                    val setReadPendingIntent = PendingIntent.getBroadcast(applicationContext, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -96,10 +107,12 @@ class LMSListenerService : NotificationListenerService() {
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
                                         addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
+                                        addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                         color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                        nm.notify(699000 + id, build())
-                                        notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                        if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                            nm.notify(699000 + id, build())
+                                        }
                                     }
                                 }
                             }
@@ -139,10 +152,13 @@ class LMSListenerService : NotificationListenerService() {
                             }
 
                             if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                 val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
                                 val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                val setReadIntent = Intent(applicationContext, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 699000 + id) }
+                                val setReadPendingIntent = PendingIntent.getBroadcast(applicationContext, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                                 NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                     setContentTitle(className)
@@ -152,10 +168,12 @@ class LMSListenerService : NotificationListenerService() {
                                     setStyle(NotificationCompat.BigTextStyle())
                                     setSmallIcon(R.drawable.ic_icon)
                                     addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
+                                    addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                    nm.notify(699000 + id, build())
-                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                    if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                        nm.notify(699000 + id, build())
+                                    }
                                 }
                             }
                         }
@@ -181,10 +199,13 @@ class LMSListenerService : NotificationListenerService() {
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                    val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_lec_register, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                     val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                     val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                     val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
                                     val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    val setReadIntent = Intent(applicationContext, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 699000 + id) }
+                                    val setReadPendingIntent = PendingIntent.getBroadcast(applicationContext, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -194,10 +215,12 @@ class LMSListenerService : NotificationListenerService() {
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
                                         addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
+                                        addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                         color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                        nm.notify(699000 + id, build())
-                                        notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_lec_register, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                        if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                            nm.notify(699000 + id, build())
+                                        }
                                     }
                                 }
                             }
@@ -237,10 +260,13 @@ class LMSListenerService : NotificationListenerService() {
                             }
 
                             if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_lec_update, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                 val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
                                 val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                val setReadIntent = Intent(applicationContext, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 699000 + id) }
+                                val setReadPendingIntent = PendingIntent.getBroadcast(applicationContext, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                                 NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                     setContentTitle(className)
@@ -250,10 +276,12 @@ class LMSListenerService : NotificationListenerService() {
                                     setStyle(NotificationCompat.BigTextStyle())
                                     setSmallIcon(R.drawable.ic_icon)
                                     addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
+                                    addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                    nm.notify(699000 + id, build())
-                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_lec_update, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                    if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                        nm.notify(699000 + id, build())
+                                    }
                                 }
                             }
 
@@ -279,10 +307,13 @@ class LMSListenerService : NotificationListenerService() {
                             }
 
                             if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_sup_lec_register, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                 val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
                                 val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                val setReadIntent = Intent(applicationContext, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 699000 + id) }
+                                val setReadPendingIntent = PendingIntent.getBroadcast(applicationContext, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                                 NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                     setContentTitle(className)
@@ -292,10 +323,12 @@ class LMSListenerService : NotificationListenerService() {
                                     setStyle(NotificationCompat.BigTextStyle())
                                     setSmallIcon(R.drawable.ic_icon)
                                     addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
+                                    addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                    nm.notify(699000 + id, build())
-                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_sup_lec_register, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                    if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                        nm.notify(699000 + id, build())
+                                    }
                                 }
                             }
                         }
@@ -334,10 +367,13 @@ class LMSListenerService : NotificationListenerService() {
                             }
 
                             if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_sup_lec_update, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                 val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
                                 val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                val setReadIntent = Intent(applicationContext, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 699000 + id) }
+                                val setReadPendingIntent = PendingIntent.getBroadcast(applicationContext, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                                 NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                     setContentTitle(className)
@@ -347,10 +383,12 @@ class LMSListenerService : NotificationListenerService() {
                                     setStyle(NotificationCompat.BigTextStyle())
                                     setSmallIcon(R.drawable.ic_icon)
                                     addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
+                                    addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                    nm.notify(699000 + id, build())
-                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_sup_lec_update, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                    if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                        nm.notify(699000 + id, build())
+                                    }
                                 }
                             }
                         }
@@ -375,10 +413,13 @@ class LMSListenerService : NotificationListenerService() {
                             }
 
                             if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_zoom_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                 val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
                                 val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                val setReadIntent = Intent(applicationContext, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 699000 + id) }
+                                val setReadPendingIntent = PendingIntent.getBroadcast(applicationContext, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                                 NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                     setContentTitle(className)
@@ -388,10 +429,12 @@ class LMSListenerService : NotificationListenerService() {
                                     setStyle(NotificationCompat.BigTextStyle())
                                     setSmallIcon(R.drawable.ic_icon)
                                     addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
+                                    addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                    nm.notify(699000 + id, build())
-                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_zoom_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                    if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                        nm.notify(699000 + id, build())
+                                    }
                                 }
                             }
                         }
@@ -430,10 +473,13 @@ class LMSListenerService : NotificationListenerService() {
                             }
 
                             if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_zoom_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                 val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
                                 val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                val setReadIntent = Intent(applicationContext, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 699000 + id) }
+                                val setReadPendingIntent = PendingIntent.getBroadcast(applicationContext, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                                 NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                     setContentTitle(className)
@@ -443,10 +489,12 @@ class LMSListenerService : NotificationListenerService() {
                                     setStyle(NotificationCompat.BigTextStyle())
                                     setSmallIcon(R.drawable.ic_icon)
                                     addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
+                                    addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                    nm.notify(699000 + id, build())
-                                    notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_zoom_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                    if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                        nm.notify(699000 + id, build())
+                                    }
                                 }
                             }
                         }

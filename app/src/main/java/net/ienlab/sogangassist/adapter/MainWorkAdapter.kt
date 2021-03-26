@@ -23,6 +23,7 @@ import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.DBHelper
+import net.ienlab.sogangassist.utils.AppStorage
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,6 +34,7 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
     lateinit var context: Context
     lateinit var interstitialAd: InterstitialAd
     lateinit var dbHelper: DBHelper
+    lateinit var storage: AppStorage
 
     // 새로운 뷰 홀더 생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainWorkAdapter.ItemViewHolder {
@@ -49,6 +51,7 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
 
         setFullAd(context)
 
+        storage = AppStorage(context)
         dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
 
         holder.class_name.typeface = gmSansBold
@@ -61,7 +64,7 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
         holder.wholeView.setOnClickListener {
             Intent(context, EditActivity::class.java).apply {
                 putExtra("ID", items[position].id)
-                displayAd(context)
+                if (!storage.purchasedAds()) displayAd(context)
                 (context as Activity).startActivityForResult(this, REFRESH_MAIN_WORK)
             }
         }
@@ -69,7 +72,7 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
             MyBottomSheetDialog(context).apply {
                 dismissWithAnimation = true
 
-                val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(context), false)
+                val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(this@MainWorkAdapter.context), false)
                 val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
                 val tvTitle: TextView = view.findViewById(R.id.tv_title)
                 val tvContent: TextView = view.findViewById(R.id.tv_content)
@@ -88,23 +91,24 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
                 tvNegative.typeface = gmSansMedium
 
                 if (items[position].isFinished) {
-                    tvTitle.text = context.getString(R.string.mark_as_not_finish)
-                    tvContent.text = context.getString(R.string.ask_mark_as_not_finish)
+                    tvTitle.text = this@MainWorkAdapter.context.getString(R.string.mark_as_not_finish)
+                    tvContent.text = this@MainWorkAdapter.context.getString(R.string.ask_mark_as_not_finish)
                 } else {
-                    tvTitle.text = context.getString(R.string.mark_as_finish)
-                    tvContent.text = context.getString(R.string.ask_mark_as_finish)
+                    tvTitle.text = this@MainWorkAdapter.context.getString(R.string.mark_as_finish)
+                    tvContent.text = this@MainWorkAdapter.context.getString(R.string.ask_mark_as_finish)
                 }
-
 
                 btnPositive.setOnClickListener {
                     items[position].isFinished = !items[position].isFinished
                     dbHelper.updateItemById(items[position])
-                     notifyItemChanged(position)
-                    Snackbar.make(MainActivity.view, if (items[position].isFinished) context.getString(R.string.marked_as_finish) else context.getString(R.string.marked_as_not_finish),
+                    notifyItemChanged(position)
+                    MainActivity.setDecorators(this@MainWorkAdapter.context)
+                    Snackbar.make(MainActivity.view, if (items[position].isFinished) this@MainWorkAdapter.context.getString(R.string.marked_as_finish) else this@MainWorkAdapter.context.getString(R.string.marked_as_not_finish),
                         Snackbar.LENGTH_SHORT).setAction(R.string.undo) {
                         items[position].isFinished = !items[position].isFinished
                         dbHelper.updateItemById(items[position])
                         notifyItemChanged(position)
+                        MainActivity.setDecorators(this@MainWorkAdapter.context)
                     }.show()
                     dismiss()
                 }

@@ -19,6 +19,7 @@ import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.*
+import net.ienlab.sogangassist.utils.MyUtils
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -73,6 +74,8 @@ class ReminderReceiver: BroadcastReceiver() {
 
         val morningData = sharedPreferences.getInt(SharedGroup.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
         val nightData = sharedPreferences.getInt(SharedGroup.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
+        val dndStartData = sharedPreferences.getInt(SharedGroup.DND_START_TIME, DefaultValue.DND_START_TIME)
+        val dndEndData = sharedPreferences.getInt(SharedGroup.DND_END_TIME, DefaultValue.DND_END_TIME)
         val now = Calendar.getInstance()
         val nowInt = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
 
@@ -90,7 +93,7 @@ class ReminderReceiver: BroadcastReceiver() {
                         setAutoCancel(true)
                         color = ContextCompat.getColor(context, R.color.colorAccent)
 
-                        if (content.isNotEmpty()) {
+                        if (content.isNotEmpty() && !sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
                             nm.notify(680000, build())
                         }
                     }
@@ -109,7 +112,7 @@ class ReminderReceiver: BroadcastReceiver() {
                         setAutoCancel(true)
                         color = ContextCompat.getColor(context, R.color.colorAccent)
 
-                        if (content.isNotEmpty()) {
+                        if (content.isNotEmpty() && (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt)))) {
                             nm.notify(680000, build())
                         }
                     }

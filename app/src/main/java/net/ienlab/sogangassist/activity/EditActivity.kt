@@ -29,6 +29,7 @@ import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.databinding.ActivityEditBinding
 import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.utils.AppStorage
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,6 +45,7 @@ class EditActivity : AppCompatActivity() {
     lateinit var sharedPreferences: SharedPreferences
     lateinit var am: AlarmManager
     lateinit var interstitialAd: InterstitialAd
+    lateinit var storage: AppStorage
 
     lateinit var currentItem: LMSClass
     var id = -1
@@ -60,6 +62,8 @@ class EditActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_edit)
         binding.activity = this
 
+        storage = AppStorage(this)
+
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -67,9 +71,12 @@ class EditActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         setFullAd(this)
-        displayAd(this)
 
-        if (BuildConfig.DEBUG) binding.adView.visibility = View.GONE
+        if (storage.purchasedAds()) {
+            binding.adView.visibility = View.GONE
+        } else {
+            displayAd(this)
+        }
 
         // AdView
         val adRequest = AdRequest.Builder()

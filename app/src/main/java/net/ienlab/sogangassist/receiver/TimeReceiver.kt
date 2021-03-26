@@ -15,9 +15,12 @@ import net.ienlab.sogangassist.*
 import net.ienlab.sogangassist.constant.ChannelId
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.activity.*
+import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.data.NotificationItem
+import net.ienlab.sogangassist.utils.MyUtils
+import java.util.*
 import kotlin.math.abs
 
 class TimeReceiver : BroadcastReceiver() {
@@ -59,6 +62,11 @@ class TimeReceiver : BroadcastReceiver() {
         lecSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) lecHoursOn.add(hourData[index]) }
         zoomSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) zoomMinutesOn.add(minuteData[index]) }
 
+        val dndStartData = sharedPreferences.getInt(SharedGroup.DND_START_TIME, DefaultValue.DND_START_TIME)
+        val dndEndData = sharedPreferences.getInt(SharedGroup.DND_END_TIME, DefaultValue.DND_END_TIME)
+        val now = Calendar.getInstance()
+        val nowInt = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
+
         when (item.type) {
             LMSClass.TYPE_LESSON -> {
                 if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in lecHoursOn)) {
@@ -69,6 +77,8 @@ class TimeReceiver : BroadcastReceiver() {
                             val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                             val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
                             val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val setReadIntent = Intent(context, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 693000 + id) }
+                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                             setContentTitle(item.className)
                             setContentText(context.getString(R.string.reminder_content_lec, item.week, item.lesson, time))
@@ -77,9 +87,12 @@ class TimeReceiver : BroadcastReceiver() {
                             setStyle(NotificationCompat.BigTextStyle())
                             setSmallIcon(R.drawable.ic_video)
                             addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                            addAction(R.drawable.ic_mark_as_read, context.getString(R.string.mark_as_read), setReadPendingIntent)
                             color = ContextCompat.getColor(context, R.color.colorAccent)
 
-                            nm.notify(693000 + id, build())
+                            if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                nm.notify(693000 + id, build())
+                            }
                         }
                     }
                 }
@@ -94,6 +107,8 @@ class TimeReceiver : BroadcastReceiver() {
                             val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                             val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
                             val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val setReadIntent = Intent(context, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 693000 + id) }
+                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                             setContentTitle(item.className)
                             setContentText(context.getString(R.string.reminder_content_sup_lec, item.week, item.lesson, time))
@@ -102,9 +117,12 @@ class TimeReceiver : BroadcastReceiver() {
                             setStyle(NotificationCompat.BigTextStyle())
                             setSmallIcon(R.drawable.ic_video_sup)
                             addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                            addAction(R.drawable.ic_mark_as_read, context.getString(R.string.mark_as_read), setReadPendingIntent)
                             color = ContextCompat.getColor(context, R.color.colorAccent)
 
-                            nm.notify(693000 + id, build())
+                            if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                nm.notify(693000 + id, build())
+                            }
                         }
                     }
                 }
@@ -119,6 +137,8 @@ class TimeReceiver : BroadcastReceiver() {
                             val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                             val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
                             val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val setReadIntent = Intent(context, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 693000 + id) }
+                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                             setContentTitle(item.className)
                             setContentText(context.getString(R.string.reminder_content_hw, item.homework_name, time))
@@ -127,9 +147,12 @@ class TimeReceiver : BroadcastReceiver() {
                             setStyle(NotificationCompat.BigTextStyle())
                             setSmallIcon(R.drawable.ic_assignment)
                             addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                            addAction(R.drawable.ic_mark_as_read, context.getString(R.string.mark_as_read), setReadPendingIntent)
                             color = ContextCompat.getColor(context, R.color.colorAccent)
 
-                            nm.notify(693000 + id, build())
+                            if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                nm.notify(693000 + id, build())
+                            }
                         }
                     }
                 }
@@ -144,6 +167,8 @@ class TimeReceiver : BroadcastReceiver() {
                             val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                             val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
                             val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val setReadIntent = Intent(context, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 693000 + id) }
+                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                             setContentTitle(item.className)
                             setContentText(context.getString(R.string.reminder_content_zoom, item.homework_name, minute))
@@ -152,9 +177,12 @@ class TimeReceiver : BroadcastReceiver() {
                             setStyle(NotificationCompat.BigTextStyle())
                             setSmallIcon(R.drawable.ic_groups)
                             addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                            addAction(R.drawable.ic_mark_as_read, context.getString(R.string.mark_as_read), setReadPendingIntent)
                             color = ContextCompat.getColor(context, R.color.colorAccent)
 
-                            nm.notify(693000 + id, build())
+                            if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                nm.notify(693000 + id, build())
+                            }
                         }
                     }
                 }

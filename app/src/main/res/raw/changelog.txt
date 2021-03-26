@@ -1,1 +1,3 @@
-iabTest
+- You can remove ads in the settings.<br>
+- A widget has been added. You can check today's unfinished assignments or lectures.<br>
+- Do not disturb mode added. Notifications that come at that time will be kept in the notification window.

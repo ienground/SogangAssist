@@ -63,7 +63,7 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
             when {
                 diff < 60 * 1000 -> context.getString(R.string.just_now)
                 diff <= AlarmManager.INTERVAL_HOUR -> context.getString(R.string.minutes_format, TimeUnit.MILLISECONDS.toMinutes(diff))
-                daysDiff <= 1 -> context.getString(R.string.hours_format, TimeUnit.MILLISECONDS.toHours(diff))
+                daysDiff < 1 -> context.getString(R.string.hours_format, TimeUnit.MILLISECONDS.toHours(diff))
                 daysDiff <= 4 -> withDayTimeFormat.format(Date(items[position].timeStamp))
                 else -> dateTimeFormat.format(Date(items[position].timeStamp))
             }

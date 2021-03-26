@@ -36,6 +36,9 @@ class SplashActivity : AppCompatActivity() {
         binding.appTitle?.typeface = gmSansBold
         binding.appTitle?.text = getString(R.string.real_app_name).split(" ").joinToString("\n") + "."
 
+        val widgetPreferences = getSharedPreferences("WidgetPreferences", Context.MODE_PRIVATE)
+        widgetPreferences.edit().clear().apply()
+
         Handler(Looper.getMainLooper()).postDelayed({
             val mainIntent = Intent(this, MainActivity::class.java).apply {
                 putExtra("ID", id)

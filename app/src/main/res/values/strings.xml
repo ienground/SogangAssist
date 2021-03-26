@@ -91,7 +91,12 @@
     <string name="review_content">If you are satisfied, please leave a review and rating!</string>
     <string name="mark_all_read">Mark all read</string>
     <string name="delete_all">Delete all</string>
-
+    <string name="dnd_time">Set Do Not Disturb time</string>
+    <string name="dnd_time_check">Enable Do Not Disturb time</string>
+    <string name="dnd_time_check_on">Won\'t be notified at the set time. Instead, it is kept in a notification window of the app.</string>
+    <string name="dnd_time_check_off">Won\'t use Do Not Disturb mode.</string>
+    <string name="start_at">Start at..</string>
+    <string name="end_at">End at..</string>
 
     <!--Onboarding-->
     <string name="intro_page0_title">Welcome.</string>
@@ -216,5 +221,13 @@
     <string name="daily_reminder_content_format">There\'re %1$s until today.\n%2$s</string>
     <string name="ads_free">Remove Ads</string>
     <string name="iab_license">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAil9jvrEW2lDjT3COykUCvyIK97hEZrWKvgd8158Dc+270RLeC8HJNbsqIRyOe2WX51F624kOUl01wX72WUqlJGt0AjdkPeFs0v2Unoj+AqWq2obxIzbKsPv4zIOxh2NJoDy2s22ImccwL0eI8ew4kWwt5qVMI7lmPyBU9uxSYhMAa370y1Qzh9cvrW4w6lXw8JRNg/fUjTS3YSqnGVN34nbx7CXO0amZE6DT8GzGLi8TUeRgmWA5PH95gV5gI4+SK0h7PtldmbIEMQ2oh2HO5PBD4LOCIRWAfLO3o5ltQ6rCDFC6D2s/Smn+SMjZlUmPOWXOOCHvrhTbl7W3VzjgfwIDAQAB</string>
+
+    <!--Deadline Widget-->
+    <string name="deadline_zoom_format">%1$d hours %2$d minutes left to start</string>
+    <string name="deadline_format">%1$d hours %2$d minutes left until deadline</string>
+    <string name="deadline_zoom_format_past">%1$d hours %2$d minutes from start</string>
+    <string name="deadline_format_past">%1$d hours %2$d minutes from deadline</string>
+    <string name="no_unfinished">No incomplete assignments or lectures</string>
+    <string name="deadline_widget_title">Deadline Widget</string>
 
 </resources>

@@ -20,16 +20,20 @@ class MarkFinishReceiver : BroadcastReceiver() {
         val id = intent.getIntExtra("ID", -1)
         val notiId = intent.getIntExtra("NOTI_ID", -1)
 
-        dbHelper.getItemById(id).apply {
-            isFinished = true
-            dbHelper.updateItemById(this)
+        if (id != -1) {
+            dbHelper.getItemById(id).apply {
+                isFinished = true
+                dbHelper.updateItemById(this)
+            }
+
+            nm.cancel(693000 + id)
         }
 
-        notiDBHelper.getItemById(notiId).apply {
-            isRead = true
-            notiDBHelper.updateItemById(this)
+        if (notiId != -1) {
+            notiDBHelper.getItemById(notiId).apply {
+                isRead = true
+                notiDBHelper.updateItemById(this)
+            }
         }
-
-        nm.cancel(693000 + id)
     }
 }

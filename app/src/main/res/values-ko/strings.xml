@@ -91,6 +91,12 @@
     <string name="review_content">만족하신다면 리뷰와 평점을 남겨주세요!</string>
     <string name="mark_all_read">모두 읽음으로 표시</string>
     <string name="delete_all">모두 지우기</string>
+    <string name="dnd_time">방해 금지 시간 설정</string>
+    <string name="dnd_time_check">방해 금지 모드</string>
+    <string name="dnd_time_check_on">설정된 시간에는 알림을 받지 않습니다. 대신, 앱 내의 알림 창에 보관됩니다.</string>
+    <string name="dnd_time_check_off">방해 금지 모드를 사용하지 않습니다.</string>
+    <string name="start_at">시작 시간</string>
+    <string name="end_at">종료 시간</string>
 
     <!--Onboarding-->
     <string name="intro_page0_title">환영합니다.</string>
@@ -215,5 +221,13 @@
     <string name="daily_reminder_content_format">오늘까지의 %1$s(이)가 있습니다.\n%2$s</string>
     <string name="ads_free">광고 제거</string>
     <string name="iab_license">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAil9jvrEW2lDjT3COykUCvyIK97hEZrWKvgd8158Dc+270RLeC8HJNbsqIRyOe2WX51F624kOUl01wX72WUqlJGt0AjdkPeFs0v2Unoj+AqWq2obxIzbKsPv4zIOxh2NJoDy2s22ImccwL0eI8ew4kWwt5qVMI7lmPyBU9uxSYhMAa370y1Qzh9cvrW4w6lXw8JRNg/fUjTS3YSqnGVN34nbx7CXO0amZE6DT8GzGLi8TUeRgmWA5PH95gV5gI4+SK0h7PtldmbIEMQ2oh2HO5PBD4LOCIRWAfLO3o5ltQ6rCDFC6D2s/Smn+SMjZlUmPOWXOOCHvrhTbl7W3VzjgfwIDAQAB</string>
+
+    <!--Deadline Widget-->
+    <string name="deadline_zoom_format">시작까지 %1$d시간 %2$d분 남음</string>
+    <string name="deadline_format">마감까지 %1$d시간 %2$d분 남음</string>
+    <string name="deadline_zoom_format_past">시작 %1$d시간 %2$d분 지남</string>
+    <string name="deadline_format_past">마감 %1$d시간 %2$d분 지남</string>
+    <string name="no_unfinished">미완료된 과제나 강의 없음</string>
+    <string name="deadline_widget_title">데드라인 위젯</string>
 
 </resources>

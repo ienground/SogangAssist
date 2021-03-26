@@ -8,6 +8,18 @@
         android:layout="@layout/preference_app_info"/>
 
     <PreferenceCategory android:title="@string/notifications" >
+        <CheckBoxPreference
+            android:key="dnd_time_check"
+            android:title="@string/dnd_time_check"
+            android:defaultValue="false"
+            android:summaryOn="@string/dnd_time_check_on"
+            android:summaryOff="@string/dnd_time_check_off"/>
+
+        <Preference
+            android:key="dnd_time"
+            android:title="@string/dnd_time"
+            android:dependency="dnd_time_check" />
+
         <Preference
             android:key="notify_hw_group"
             android:title="@string/notify_hw" />
