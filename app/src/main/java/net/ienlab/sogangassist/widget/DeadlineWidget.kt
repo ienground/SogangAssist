@@ -14,6 +14,7 @@ import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.*
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.activity.SplashActivity
 import net.ienlab.sogangassist.activity.TAG
 import net.ienlab.sogangassist.constant.WidgetPrefGroup
 import net.ienlab.sogangassist.data.LMSClass
@@ -68,7 +69,7 @@ class DeadlineWidget : AppWidgetProvider() {
 
         setWidgetData(context, views, unfinishedEvents, widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0))
 
-        views.setOnClickPendingIntent(R.id.btn_month_back, pendingIntent)
+        views.setOnClickPendingIntent(R.id.entire_widget, pendingIntent)
         views.setOnClickPendingIntent(R.id.btn_prev, PendingIntent.getBroadcast(context, 1, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT))
         views.setOnClickPendingIntent(R.id.btn_next, PendingIntent.getBroadcast(context, 2, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT))
 
@@ -114,6 +115,10 @@ class DeadlineWidget : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         for (appWidgetId in appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId)
+            intent = Intent(context, DeadlineWidget::class.java).apply {
+                action = ACTION_CLICK
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            }
         }
 
         receiver = object: BroadcastReceiver() {
@@ -144,12 +149,32 @@ class DeadlineWidget : AppWidgetProvider() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
+        dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
+        widgetPreferences = context.getSharedPreferences("WidgetPreferences", Context.MODE_PRIVATE)
+
+        val data = dbHelper.getItemAtLastDate(System.currentTimeMillis()).sortedBy { it.endTime }
+        unfinishedEvents.clear()
+
+        data.forEach {
+            if (!it.isFinished) {
+                unfinishedEvents.add(it)
+            }
+        }
+
         val action = intent.action
         if (action != null) {
             when (action) {
                 ACTION_CLICK -> {
                     val id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
                     updateAppWidget(context, AppWidgetManager.getInstance(context), id)
+//                    val index = widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0)
+//                    Log.d(TAG, "index: $index, size: ${unfinishedEvents.size}")
+//                    if (index < unfinishedEvents.size) {
+//                        Log.d(TAG, "launch activity")
+//                        context.startActivity(Intent(context, SplashActivity::class.java).apply { putExtra("ID", unfinishedEvents[index].id); flags = Intent.FLAG_ACTIVITY_NEW_TASK })
+//                    } else {
+//                        Log.d(TAG, "not launch activity")
+//                    }
                 }
                 PREV_ITEM -> {
                     val id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)

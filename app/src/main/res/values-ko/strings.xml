@@ -73,8 +73,8 @@
     <string name="finished">완료</string>
     <string name="deadline">마감 : %1$s</string>
     <string name="start">시작 : %1$s</string>
-    <string name="no_deadline_today">오늘이 마감기한인 과제나 강의가 없어요.</string>
-    <string name="dev_ienlab">Designed, Developed By ienlab</string>
+    <string name="no_deadline_today">이 날이 마감기한인 과제나 강의가 없어요.</string>
+    <string name="dev_ienlab">Designed, Developed By ienlab\n(서강대학교 아트&amp;테크놀로지 20 이현우)</string>
     <string name="other_settings">기타 설정</string>
     <string name="notify_when_lms">LMS 정보 수신 시 알림</string>
     <string name="notify_when_lms_sum_on">LMS로부터 정보를 받았을 때 알림으로 띄웁니다.</string>

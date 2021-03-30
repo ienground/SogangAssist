@@ -180,7 +180,7 @@
                                 android:layout_height="wrap_content"
                                 android:clickable="false"
                                 android:layout_marginTop="@dimen/usual_margin"
-                                app:mcv_selectionColor="?attr/colorPrimary"
+                                app:mcv_selectionColor="@color/colorAccentDark"
                                 app:mcv_showOtherDates="defaults"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"

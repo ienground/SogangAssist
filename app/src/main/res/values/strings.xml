@@ -73,8 +73,8 @@
     <string name="finished">Complete</string>
     <string name="deadline">Deadline : %1$s</string>
     <string name="start">Start : %1$s</string>
-    <string name="no_deadline_today">There are no assignments or lectures until today.</string>
-    <string name="dev_ienlab">Designed, Developed By ienlab</string>
+    <string name="no_deadline_today">There are no assignments or lectures until chosen day.</string>
+    <string name="dev_ienlab">Designed, Developed By ienlab\n(Sogang Univ. Art&amp;Technology 20 Ericano Rhee)</string>
     <string name="other_settings">Other Settings</string>
     <string name="notify_when_lms">Notify when LMS info is received</string>
     <string name="notify_when_lms_sum_on">Notify when information is received from LMS.</string>

@@ -245,6 +245,23 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
         return arr
     }
 
+    fun getAllEndTime(): List<Long> {
+        val sb = StringBuffer()
+        sb.append(" SELECT $END_TIME FROM $_TABLENAME0 ")
+
+        val db = readableDatabase
+        val cursor = db.rawQuery(sb.toString(), null)
+
+        val result = ArrayList<Long>()
+
+        while (cursor.moveToNext()) {
+            result.add(cursor.getLong(5))
+        }
+
+        cursor.close()
+        return result
+    }
+
     fun deleteData(id: Int) {
         val db = writableDatabase
         db.execSQL(" DELETE FROM $_TABLENAME0 WHERE $ID = $id")

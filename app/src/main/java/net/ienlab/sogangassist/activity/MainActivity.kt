@@ -264,7 +264,7 @@ class MainActivity : AppCompatActivity() {
         binding.adView.loadAd(adRequest.build())
 
         val todayWork = dbHelper.getItemAtLastDate(System.currentTimeMillis()).toMutableList().apply {
-            sortWith( compareBy ({ it.isFinished }, {it.type}))
+            sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
         }
 
         binding.mainWorkView.adapter = MainWorkAdapter(todayWork)
@@ -288,8 +288,9 @@ class MainActivity : AppCompatActivity() {
 
                 binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(date.date))
                 val work = dbHelper.getItemAtLastDate(date.date.time).toMutableList().apply {
-                    sortWith( compareBy ({ it.isFinished }, {it.type}))
+                    sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
                 }
+
                 binding.mainWorkView.let {
                     it.startAnimation(fadeOutAnimation)
                     it.visibility = View.INVISIBLE
@@ -372,7 +373,7 @@ class MainActivity : AppCompatActivity() {
 
     fun refreshData() {
         val work = dbHelper.getItemAtLastDate(thisCurrentDate).toMutableList().apply {
-            sortWith( compareBy ({ it.isFinished }, {it.type}))
+            sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
         }
         binding.mainWorkView.adapter = MainWorkAdapter(work)
         binding.mainWorkView.layoutManager = LinearLayoutManager(this)
@@ -498,6 +499,22 @@ class MainActivity : AppCompatActivity() {
             }
 
             val datas = dbHelper.getAllData()
+//            val endTimes = ArrayList<Long>()
+//
+//            for (data in datas) {
+//                Calendar.getInstance().let {
+//                    it.timeInMillis = data.endTime
+//                    it.set(Calendar.HOUR_OF_DAY, 0)
+//                    it.set(Calendar.MINUTE, 0)
+//                    it.set(Calendar.SECOND, 0)
+//                    it.set(Calendar.MILLISECOND, 0)
+//
+//                    if (it.timeInMillis !in endTimes) {
+//                        endTimes.add(it.timeInMillis)
+//                    }
+//                }
+//            }
+//            /*
             val timeCount = mutableMapOf<Long, IntArray>()
 
             for (data in datas) {
@@ -522,7 +539,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+//             */
+
             for (time in timeCount) {
+//            for (time in endTimes) {
+//                val decorator = EventDecorator2(context, time)
                 val decorator = EventDecorator(ContextCompat.getColor(context, R.color.colorAccent), time.value, arrayListOf(CalendarDay.from(Date(time.key))))
                 binding.calendarView.addDecorator(decorator)
             }
