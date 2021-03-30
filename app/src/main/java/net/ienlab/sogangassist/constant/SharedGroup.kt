@@ -34,5 +34,6 @@ class SharedGroup {
         const val DND_START_TIME = "dndStartTime"
         const val DND_END_TIME = "dndEndTime"
         const val DND_CHECK = "dnd_time_check"
+        const val CALENDAR_ICON_SHOW = "calendar_icon_show"
     }
 }

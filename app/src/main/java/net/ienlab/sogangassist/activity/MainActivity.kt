@@ -390,12 +390,15 @@ class MainActivity : AppCompatActivity() {
                 if (resultCode == Activity.RESULT_OK) {
                     refreshData()
                 }
-
                 binding.adView.visibility = if (storage.purchasedAds()) View.GONE else View.VISIBLE
             }
 
             NOTI_REFRESH -> {
                 setupBadge()
+            }
+
+            SETTINGS_CHANGED -> {
+                binding.adView.visibility = if (storage.purchasedAds()) View.GONE else View.VISIBLE
             }
         }
     }
@@ -484,6 +487,7 @@ class MainActivity : AppCompatActivity() {
         fun setDecorators(context: Context) {
             binding.calendarView.removeDecorators()
 
+            val sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
             val dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
 
             val weekdayDecorator = WeekdayDecorator(context)
@@ -499,22 +503,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             val datas = dbHelper.getAllData()
-//            val endTimes = ArrayList<Long>()
-//
-//            for (data in datas) {
-//                Calendar.getInstance().let {
-//                    it.timeInMillis = data.endTime
-//                    it.set(Calendar.HOUR_OF_DAY, 0)
-//                    it.set(Calendar.MINUTE, 0)
-//                    it.set(Calendar.SECOND, 0)
-//                    it.set(Calendar.MILLISECOND, 0)
-//
-//                    if (it.timeInMillis !in endTimes) {
-//                        endTimes.add(it.timeInMillis)
-//                    }
-//                }
-//            }
-//            /*
+            val endTimes = ArrayList<Long>()
             val timeCount = mutableMapOf<Long, IntArray>()
 
             for (data in datas) {
@@ -524,6 +513,10 @@ class MainActivity : AppCompatActivity() {
                     it.set(Calendar.MINUTE, 0)
                     it.set(Calendar.SECOND, 0)
                     it.set(Calendar.MILLISECOND, 0)
+
+                    if (it.timeInMillis !in endTimes) {
+                        endTimes.add(it.timeInMillis)
+                    }
 
                     if (it.timeInMillis in timeCount.keys) {
                         val value = timeCount[it.timeInMillis] ?: intArrayOf(0, 0)
@@ -539,13 +532,17 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-//             */
-
-            for (time in timeCount) {
-//            for (time in endTimes) {
-//                val decorator = EventDecorator2(context, time)
-                val decorator = EventDecorator(ContextCompat.getColor(context, R.color.colorAccent), time.value, arrayListOf(CalendarDay.from(Date(time.key))))
-                binding.calendarView.addDecorator(decorator)
+            Log.d(TAG, sharedPreferences.getBoolean(SharedGroup.CALENDAR_ICON_SHOW, true).toString())
+            if (sharedPreferences.getBoolean(SharedGroup.CALENDAR_ICON_SHOW, true)) {
+                for (time in endTimes) {
+                    val decorator = EventDecorator2(context, time)
+                    binding.calendarView.addDecorator(decorator)
+                }
+            } else {
+                for (time in timeCount) {
+                    val decorator = EventDecorator(ContextCompat.getColor(context, R.color.colorAccent), time.value, arrayListOf(CalendarDay.from(Date(time.key))))
+                    binding.calendarView.addDecorator(decorator)
+                }
             }
         }
     }

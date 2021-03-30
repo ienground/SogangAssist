@@ -86,6 +86,7 @@
     <string name="restore_desc">json 형식의 파일로부터 데이터를 복원합니다.</string>
     <string name="restore_msg">기존 데이터는 없어지며 백업 데이터로 대체됩니다. 진행할까요?</string>
     <string name="restore_finish">데이터 복원이 완료되었습니다. 어플리케이션을 다시 실행해 주세요.</string>
+    <string name="restart_to_apply">어플리케이션 재실행 후 적용됩니다.</string>
     <string name="help">도움말</string>
     <string name="review_title">유용하게 사용하고 계신가요?</string>
     <string name="review_content">만족하신다면 리뷰와 평점을 남겨주세요!</string>
@@ -219,6 +220,9 @@
     <string name="daily_reminder_hw">%1$d개의 과제</string>
     <string name="daily_reminder_zoom">%1$d개의 실시간 강의</string>
     <string name="daily_reminder_content_format">오늘까지의 %1$s(이)가 있습니다.\n%2$s</string>
+    <string name="calendar_icon_view">메인 화면 캘린더에 상세한 아이콘 표시</string>
+    <string name="calendar_icon_view_desc_on">항목별로 상세히 아이콘이 표시되고, 완료/미완료는 색상으로 구분됩니다.</string>
+    <string name="calendar_icon_view_desc_off">항목과 상관없이, 완료/미완료가 원의 모양으로 구분됩니다.</string>
     <string name="ads_free">광고 제거</string>
     <string name="iab_license">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAil9jvrEW2lDjT3COykUCvyIK97hEZrWKvgd8158Dc+270RLeC8HJNbsqIRyOe2WX51F624kOUl01wX72WUqlJGt0AjdkPeFs0v2Unoj+AqWq2obxIzbKsPv4zIOxh2NJoDy2s22ImccwL0eI8ew4kWwt5qVMI7lmPyBU9uxSYhMAa370y1Qzh9cvrW4w6lXw8JRNg/fUjTS3YSqnGVN34nbx7CXO0amZE6DT8GzGLi8TUeRgmWA5PH95gV5gI4+SK0h7PtldmbIEMQ2oh2HO5PBD4LOCIRWAfLO3o5ltQ6rCDFC6D2s/Smn+SMjZlUmPOWXOOCHvrhTbl7W3VzjgfwIDAQAB</string>
 

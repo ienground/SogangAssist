@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import net.ienlab.sogangassist.*
@@ -175,7 +174,7 @@ class TimeReceiver : BroadcastReceiver() {
                             setContentIntent(clickPendingIntent)
                             setAutoCancel(true)
                             setStyle(NotificationCompat.BigTextStyle())
-                            setSmallIcon(R.drawable.ic_groups)
+                            setSmallIcon(R.drawable.ic_live_class)
                             addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
                             addAction(R.drawable.ic_mark_as_read, context.getString(R.string.mark_as_read), setReadPendingIntent)
                             color = ContextCompat.getColor(context, R.color.colorAccent)

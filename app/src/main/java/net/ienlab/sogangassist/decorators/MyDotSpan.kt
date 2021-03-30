@@ -2,15 +2,10 @@ package net.ienlab.sogangassist.decorators
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
 import android.text.style.LineBackgroundSpan
-import android.util.Log
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.scale
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.activity.TAG
 import net.ienlab.sogangassist.data.LMSClass
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -105,77 +100,94 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
 
         paint.color = ContextCompat.getColor(context, R.color.colorAccent)
 
-        if (data.size <= 3) {
-//            paint.strokeWidth = 5f
-//            paint.style = Paint.Style.STROKE
-
+        if (data.size <= 3) { // 0 1 2
             unfinishedItem.forEachIndexed { i, it ->
                 val image = when (it.type) {
                     LMSClass.TYPE_LESSON -> R.drawable.ic_video
                     LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
                     LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
-                    LMSClass.TYPE_ZOOM -> R.drawable.ic_groups
+                    LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
                     else -> R.drawable.ic_icon
                 }
 
                 for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorPrimary),
-                    (left + right) * 0.5f - size * 0.5f * (1 + 1.5f * (data.size - 1)) + size * 1.5f * i, bottom + size / 2f, paint)
+                    (left + right) * 0.5f - size * 0.5f * (1 + 1.25f * (data.size - 1)) + size * 1.25f * i, bottom + size / 2f, paint)
             }
 
             paint.strokeWidth = oldStrokeWidth
             paint.style = oldStyle
-
-//            for (i in 0 until finishedItem.size) {
-//                canvas.drawCircle(((left + right) / 2).toFloat() - radius * 1.5f * (data.size - 1) + 3 * radius * (i + unfinishedItem.size), bottom + 2 * radius, radius, paint)
-//            }
 
             finishedItem.forEachIndexed { i, it ->
                 val image = when (it.type) {
                     LMSClass.TYPE_LESSON -> R.drawable.ic_video
                     LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
                     LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
-                    LMSClass.TYPE_ZOOM -> R.drawable.ic_groups
+                    LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
                     else -> R.drawable.ic_icon
                 }
 
                 for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorAccent),
-                    (left + right) * 0.5f - size * 0.5f * (1 + 1.5f * (data.size - 1)) + size * 1.5f * (i + unfinishedItem.size), bottom + size / 2f, paint)
+                    (left + right) * 0.5f - size * 0.5f * (1 + 1.25f * (data.size - 1)) + size * 1.25f * (i + unfinishedItem.size), bottom + size / 2f, paint)
             }
-        } else {
-            paint.strokeWidth = 5f
-            paint.style = Paint.Style.STROKE
+        } else { // 0 1 +
+            if (unfinishedItem.size >= 3) { // unfinish가 2 이상이 아니라면 섞여 있다.
+                for (i in 0 until 2) {
+                    val it = unfinishedItem[i]
+                    val image = when (it.type) {
+                        LMSClass.TYPE_LESSON -> R.drawable.ic_video
+                        LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
+                        LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
+                        LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
+                        else -> R.drawable.ic_icon
+                    }
 
-            if (unfinishedItem.size >= 3) { // unfinish가 3 이상이 아니라면 섞여 있다.
-                paint.strokeWidth = 5f
-                paint.style = Paint.Style.STROKE
+//                    for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorPrimary),
+//                        (left + right) * 0.5f - size * 0.5f * (1 + 1.5f * (data.size - 2)) + size * 1.5f * i, bottom + size / 2f, paint)
 
-                for (i in 0 until 3) {
-//                    canvas.drawCircle(((left + right) / 2).toFloat() - radius * 1.5f * 3 + 3 * radius * i, bottom + 2 * radius, radius, paint)
+                    for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorPrimary),
+                        (left + right) * 0.5f - size * 0.5f * (1 + 1.25f * 2) + size * 1.25f * i, bottom + size / 2f, paint)
+                }
+            } else { // 1 4 라면 표시는 1 2 (uf, f)
+                unfinishedItem.forEachIndexed { i, it ->
+                    val image = when (it.type) {
+                        LMSClass.TYPE_LESSON -> R.drawable.ic_video
+                        LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
+                        LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
+                        LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
+                        else -> R.drawable.ic_icon
+                    }
+
+                    for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorPrimary),
+                        (left + right) * 0.5f - size * 0.5f * (1 + 1.25f * 2) + size * 1.25f * i, bottom + size / 2f, paint)
                 }
 
-                paint.strokeWidth = oldStrokeWidth
-                paint.style = oldStyle
-            } else { // 1 4 라면 표시는 1 2
-                paint.strokeWidth = 5f
-                paint.style = Paint.Style.STROKE
+                for (i in 0 until 2 - unfinishedItem.size) {
+                    val it = finishedItem[i]
+                    val image = when (it.type) {
+                        LMSClass.TYPE_LESSON -> R.drawable.ic_video
+                        LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
+                        LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
+                        LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
+                        else -> R.drawable.ic_icon
+                    }
 
-                for (i in 0 until unfinishedItem.size) {
-//                    canvas.drawCircle(((left + right) / 2).toFloat() - radius * 1.5f * 3 + 3 * radius * i, bottom + 2 * radius, radius, paint)
-                }
-
-                paint.strokeWidth = oldStrokeWidth
-                paint.style = oldStyle
-
-                for (i in 0 until 3 - unfinishedItem.size) {
-//                    canvas.drawCircle(((left + right) / 2).toFloat() - radius * 1.5f * 3 + 3 * radius * (i + unfinishedItem.size), bottom + 2 * radius, radius, paint)
+                    for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorAccent),
+                        (left + right) * 0.5f - size * 0.5f * (1 + 1.25f * 2) + size * 1.25f * (i + unfinishedItem.size), bottom + size / 2f, paint)
                 }
             }
 
-//            canvas.drawRect(((left + right) / 2).toFloat() - radius * 1.5f * 3 + 3 * radius * 3 - radius, bottom + 2 * radius - radius / 4,
-//                ((left + right) / 2).toFloat() - radius * 1.5f * 3 + 3 * radius * 3 + radius, bottom + 2 * radius + radius / 4, paint)
-//
-//            canvas.drawRect(((left + right) / 2).toFloat() - radius * 1.5f * 3 + 3 * radius * 3 - radius / 4, bottom + radius,
-//                ((left + right) / 2).toFloat() - radius * 1.5f * 3 + 3 * radius * 3 + radius / 4, bottom + 3 * radius, paint)
+            val image = when (data.size - 2) {
+                1 -> R.drawable.ic_one
+                2 -> R.drawable.ic_two
+                3 -> R.drawable.ic_three
+                4 -> R.drawable.ic_four
+                5 -> R.drawable.ic_five
+                6 -> R.drawable.ic_six
+                else -> R.drawable.ic_plus_box
+            }
+
+            for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorAccent),
+                (left + right) * 0.5f - size * 0.5f * (1 + 1.25f * 2) + size * 1.25f * 2, bottom + size / 2f, paint)
 
         }
 

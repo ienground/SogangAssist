@@ -142,7 +142,7 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
             }
 
             LMSClass.TYPE_ZOOM -> {
-                holder.icon.setImageResource(R.drawable.ic_groups)
+                holder.icon.setImageResource(R.drawable.ic_live_class)
                 holder.icon.contentDescription = context.getString(R.string.zoom)
                 holder.sub_name.text = items[position].homework_name
             }
@@ -152,6 +152,9 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
             holder.class_name.paintFlags = holder.class_name.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             holder.sub_name.paintFlags = holder.sub_name.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             holder.end_time.paintFlags = holder.end_time.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            holder.class_name.alpha = 0.5f
+            holder.sub_name.alpha = 0.5f
+            holder.end_time.alpha = 0.5f
             holder.check.visibility = View.VISIBLE
         } else {
             holder.check.visibility = View.GONE

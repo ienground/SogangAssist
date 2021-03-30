@@ -17,6 +17,7 @@ import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.anjlab.android.iab.v3.BillingProcessor
@@ -149,6 +150,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val notifyZoom = findPreference("notify_zoom_group")
             val timeMorningReminder = findPreference(SharedGroup.TIME_MORNING_REMINDER)
             val timeNightReminder = findPreference(SharedGroup.TIME_NIGHT_REMINDER)
+            val calendarIconCheck = findPreference(SharedGroup.CALENDAR_ICON_SHOW) as CheckBoxPreference
             val changelog = findPreference("changelog")
             val email = findPreference("ask_to_dev")
             val openSource = findPreference("open_source")
@@ -204,6 +206,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             timeMorningReminder?.summary = timeFormat.format(morningCalendar.time)
             timeNightReminder?.summary = timeFormat.format(nightCalendar.time)
             dndTime?.summary = "${timeFormat.format(dndStartCalendar.time)} ~ ${timeFormat.format(dndEndCalendar.time)}"
+
+            calendarIconCheck.setOnPreferenceChangeListener { _, _ ->
+                Toast.makeText(context, requireContext().getString(R.string.restart_to_apply), Toast.LENGTH_SHORT).show()
+                true
+            }
 
             appInfo?.setOnPreferenceClickListener {
                 MyBottomSheetDialog(requireContext()).apply {
@@ -529,7 +536,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
                     tvTitle.typeface = gmSansBold
                     tvTitle.text = getString(R.string.notify_zoom)
-                    imgLogo.setImageResource(R.drawable.ic_groups)
+                    imgLogo.setImageResource(R.drawable.ic_live_class)
 
                     val buttonRes = listOf(R.drawable.ic_3minute, R.drawable.ic_5minute, R.drawable.ic_10minute, R.drawable.ic_20minute, R.drawable.ic_30minute)
                     val buttons = listOf<ImageButton>(

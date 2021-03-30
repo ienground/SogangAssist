@@ -14,12 +14,10 @@ import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.*
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.activity.SplashActivity
 import net.ienlab.sogangassist.activity.TAG
 import net.ienlab.sogangassist.constant.WidgetPrefGroup
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.DBHelper
-import java.text.SimpleDateFormat
 import java.util.*
 
 class DeadlineWidget : AppWidgetProvider() {
@@ -96,7 +94,7 @@ class DeadlineWidget : AppWidgetProvider() {
                 LMSClass.TYPE_LESSON -> R.drawable.ic_video
                 LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
                 LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
-                LMSClass.TYPE_ZOOM -> R.drawable.ic_groups
+                LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
                 else -> R.drawable.ic_icon
             })
 

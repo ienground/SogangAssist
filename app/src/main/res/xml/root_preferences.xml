@@ -67,6 +67,13 @@
             android:summaryOn="@string/notify_when_lms_sum_on"
             android:summaryOff="@string/notify_when_lms_sum_off" />
 
+        <CheckBoxPreference
+            android:title="@string/calendar_icon_view"
+            android:key="calendar_icon_show"
+            android:defaultValue="true"
+            android:summaryOn="@string/calendar_icon_view_desc_on"
+            android:summaryOff="@string/calendar_icon_view_desc_off" />
+
         <Preference
             android:title="@string/backup"
             android:key="backup"

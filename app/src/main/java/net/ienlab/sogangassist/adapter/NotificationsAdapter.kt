@@ -96,7 +96,7 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
             }
 
             NotificationItem.TYPE_ZOOM -> {
-                holder.icon.setImageResource(R.drawable.ic_groups)
+                holder.icon.setImageResource(R.drawable.ic_live_class)
                 holder.icon.contentDescription = context.getString(R.string.zoom)
             }
         }

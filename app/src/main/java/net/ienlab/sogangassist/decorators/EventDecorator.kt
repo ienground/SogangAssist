@@ -42,6 +42,6 @@ class EventDecorator2(private val context: Context, private val endTime: Long) :
             sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
         }
 
-        view.addSpan(MyDotSpan2(context, 30f, data)) // 날자밑에 점
+        view.addSpan(MyDotSpan2(context, 32f, data)) // 날자밑에 점
     }
 }
