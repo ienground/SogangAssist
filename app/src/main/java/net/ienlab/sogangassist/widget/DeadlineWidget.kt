@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.*
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.activity.TAG
+import net.ienlab.sogangassist.constant.SharedGroup
 import net.ienlab.sogangassist.constant.WidgetPrefGroup
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.DBHelper
@@ -23,6 +24,7 @@ import java.util.*
 class DeadlineWidget : AppWidgetProvider() {
 
     lateinit var widgetPreferences: SharedPreferences
+    lateinit var sharedPreferences: SharedPreferences
     lateinit var dbHelper: DBHelper
     lateinit var am: AlarmManager
 
@@ -40,6 +42,7 @@ class DeadlineWidget : AppWidgetProvider() {
         am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
         widgetPreferences = context.getSharedPreferences("WidgetPreferences", Context.MODE_PRIVATE)
+        sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
 
         intent = Intent(context, DeadlineWidget::class.java).apply {
             action = ACTION_CLICK
@@ -67,6 +70,13 @@ class DeadlineWidget : AppWidgetProvider() {
 
         setWidgetData(context, views, unfinishedEvents, widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0))
 
+        views.setInt(R.id.entire_widget, "setBackgroundResource",
+            if (context.resources.getBoolean(R.bool.is_dark_mode) && sharedPreferences.getBoolean(SharedGroup.WIDGET_DARK_MODE, true)) {
+                R.drawable.background_border_widget_black
+            } else {
+                R.drawable.background_border_widget
+            }
+        )
         views.setOnClickPendingIntent(R.id.entire_widget, pendingIntent)
         views.setOnClickPendingIntent(R.id.btn_prev, PendingIntent.getBroadcast(context, 1, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT))
         views.setOnClickPendingIntent(R.id.btn_next, PendingIntent.getBroadcast(context, 2, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT))

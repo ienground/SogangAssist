@@ -98,6 +98,9 @@
     <string name="dnd_time_check_off">Won\'t use Do Not Disturb mode.</string>
     <string name="start_at">Start at..</string>
     <string name="end_at">End at..</string>
+    <string name="widget_dark_mode_title">Apply system dark mode on widget</string>
+    <string name="widget_dark_mode_desc_on">Dark mode is applied to the widget.</string>
+    <string name="widget_dark_mode_desc_off">Widgets always have day mode (bright).</string>
 
     <!--Onboarding-->
     <string name="intro_page0_title">Welcome.</string>

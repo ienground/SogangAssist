@@ -98,6 +98,9 @@
     <string name="dnd_time_check_off">방해 금지 모드를 사용하지 않습니다.</string>
     <string name="start_at">시작 시간</string>
     <string name="end_at">종료 시간</string>
+    <string name="widget_dark_mode_title">위젯에 시스템 다크 모드 적용</string>
+    <string name="widget_dark_mode_desc_on">시스템에 맞추어 위젯에 다크 모드가 적용됩니다.</string>
+    <string name="widget_dark_mode_desc_off">위젯에 항상 주간 모드가 적용됩니다.</string>
 
     <!--Onboarding-->
     <string name="intro_page0_title">환영합니다.</string>

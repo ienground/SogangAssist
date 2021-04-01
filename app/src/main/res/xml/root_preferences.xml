@@ -74,6 +74,13 @@
             android:summaryOn="@string/calendar_icon_view_desc_on"
             android:summaryOff="@string/calendar_icon_view_desc_off" />
 
+        <CheckBoxPreference
+            android:title="@string/widget_dark_mode_title"
+            android:key="widget_dark_mode"
+            android:defaultValue="true"
+            android:summaryOn="@string/widget_dark_mode_desc_on"
+            android:summaryOff="@string/widget_dark_mode_desc_off" />
+
         <Preference
             android:title="@string/backup"
             android:key="backup"

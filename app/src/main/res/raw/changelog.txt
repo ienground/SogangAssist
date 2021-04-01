@@ -1,2 +1,1 @@
-- Live lecture icon has changed.<br>
-- You can now check the icons of the to-dos in more detail on the calendar. If you want, you can make it circled as before in the settings.
+- Dark mode has now been added to the widget. You can also set it to always be in day mode in the settings.
