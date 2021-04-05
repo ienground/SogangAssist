@@ -145,6 +145,9 @@
                         android:layout_margin="@dimen/usual_margin"
                         app:boxStrokeColor="@color/colorAccent"
                         app:hintTextColor="@color/colorAccent"
+                        app:endIconMode="dropdown_menu"
+                        app:endIconDrawable="@drawable/ic_arrow_drop_down"
+                        app:endIconTint="@color/colorAccent"
                         app:layout_constraintStart_toEndOf="@id/ic_class"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/check_auto_edit" >
@@ -196,6 +199,7 @@
                             android:singleLine="true"
                             android:inputType="number"
                             android:hint="@string/week"
+                            android:text="2450"
                             android:textColor="@color/dark_blue"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -360,6 +364,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/usual_margin"
+                        android:visibility="invisible"
                         app:boxStrokeColor="@color/colorAccent"
                         app:hintTextColor="@color/colorAccent"
                         app:layout_constraintStart_toEndOf="@id/ic_assignment"

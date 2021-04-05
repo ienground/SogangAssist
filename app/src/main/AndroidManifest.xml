@@ -12,9 +12,9 @@
         android:label="@string/real_app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppTheme2"
         tools:replace="android:label">
-        <activity android:name=".activity.NotificationsActivity"></activity>
+        <activity android:name=".activity.NotificationsActivity" />
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

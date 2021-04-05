@@ -282,35 +282,31 @@ class MainActivity : AppCompatActivity() {
             topbarVisible = false
             arrowColor = ContextCompat.getColor(applicationContext, R.color.black)
             setOnDateChangedListener { widget, date, _ ->
-                widget.removeDecorator(currentDecorator)
-                currentDecorator = CurrentDecorator(this@MainActivity, date.calendar)
-                widget.addDecorator(currentDecorator)
-
                 binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(date.date))
                 val work = dbHelper.getItemAtLastDate(date.date.time).toMutableList().apply {
                     sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
                 }
 
-                binding.mainWorkView.let {
-                    it.startAnimation(fadeOutAnimation)
-                    it.visibility = View.INVISIBLE
+                binding.mainWorkView.apply {
+                    startAnimation(fadeOutAnimation)
+                    visibility = View.INVISIBLE
 
-                    it.adapter = MainWorkAdapter(work)
-                    it.layoutManager = LinearLayoutManager(applicationContext)
+                    adapter = MainWorkAdapter(work)
+                    layoutManager = LinearLayoutManager(applicationContext)
                     thisCurrentDate = date.date.time
 
-                    it.visibility = View.VISIBLE
-                    it.startAnimation(fadeInAnimation)
+                    visibility = View.VISIBLE
+                    startAnimation(fadeInAnimation)
                 }
 
-                binding.tvNoDeadline.let {
+                binding.tvNoDeadline.apply {
                     if (work.isEmpty()) {
-                        it.startAnimation(fadeOutAnimation)
-                        it.visibility = View.INVISIBLE
-                        it.visibility = View.VISIBLE
-                        it.startAnimation(fadeInAnimation)
+                        startAnimation(fadeOutAnimation)
+                        visibility = View.INVISIBLE
+                        visibility = View.VISIBLE
+                        startAnimation(fadeInAnimation)
                     } else {
-                        it.visibility = View.INVISIBLE
+                        visibility = View.INVISIBLE
                     }
                 }
             }
@@ -331,8 +327,8 @@ class MainActivity : AppCompatActivity() {
         setDecorators(this)
 
         binding.btnMoveToday.setOnClickListener {
-                binding.calendarView.setCurrentDate(Date(System.currentTimeMillis()))
-                thisCurrentDate = System.currentTimeMillis()
+            binding.calendarView.setCurrentDate(Date(System.currentTimeMillis()))
+            thisCurrentDate = System.currentTimeMillis()
         }
 
         val info = packageManager.getPackageInfo(packageName, 0)

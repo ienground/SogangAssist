@@ -102,13 +102,13 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
                     items[position].isFinished = !items[position].isFinished
                     dbHelper.updateItemById(items[position])
                     notifyItemChanged(position)
-                    MainActivity.setDecorators(this@MainWorkAdapter.context)
+//                    MainActivity.setDecorators(this@MainWorkAdapter.context)
                     Snackbar.make(MainActivity.view, if (items[position].isFinished) this@MainWorkAdapter.context.getString(R.string.marked_as_finish) else this@MainWorkAdapter.context.getString(R.string.marked_as_not_finish),
                         Snackbar.LENGTH_SHORT).setAction(R.string.undo) {
                         items[position].isFinished = !items[position].isFinished
                         dbHelper.updateItemById(items[position])
                         notifyItemChanged(position)
-                        MainActivity.setDecorators(this@MainWorkAdapter.context)
+//                        MainActivity.setDecorators(this@MainWorkAdapter.context)
                     }.show()
                     dismiss()
                 }
