@@ -26,6 +26,7 @@ import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.adapter.MainWorkAdapter
 import net.ienlab.sogangassist.constant.SharedGroup
@@ -43,6 +44,7 @@ import net.ienlab.sogangassist.utils.AppStorage
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 val TAG = "SogangAssistTAG"
@@ -88,6 +90,8 @@ class MainActivity : AppCompatActivity() {
         fadeOutAnimation = AlphaAnimation(1f, 0f).apply { duration = 300 }
         fadeInAnimation = AlphaAnimation(0f, 1f).apply { duration = 300 }
         currentDecorator = CurrentDecorator(this, Calendar.getInstance())
+
+        sharedPreferences.edit().putBoolean(SharedGroup.CURRENT_CALENDAR_ICON_SHOW, sharedPreferences.getBoolean(SharedGroup.CALENDAR_ICON_SHOW, true)).apply()
 
         val monthFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
         gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
@@ -256,7 +260,7 @@ class MainActivity : AppCompatActivity() {
         val adRequest = AdRequest.Builder()
         if (BuildConfig.DEBUG) {
             RequestConfiguration.Builder()
-                .setTestDeviceIds(mutableListOf(testDevice)).let {
+                .setTestDeviceIds(arrayListOf(testDevice)).let {
                     MobileAds.setRequestConfiguration(it.build())
                 }
         }
@@ -265,7 +269,7 @@ class MainActivity : AppCompatActivity() {
 
         val todayWork = dbHelper.getItemAtLastDate(System.currentTimeMillis()).toMutableList().apply {
             sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
-        }
+        } as ArrayList
 
         binding.mainWorkView.adapter = MainWorkAdapter(todayWork)
         binding.mainWorkView.layoutManager = LinearLayoutManager(this)
@@ -285,7 +289,7 @@ class MainActivity : AppCompatActivity() {
                 binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(date.date))
                 val work = dbHelper.getItemAtLastDate(date.date.time).toMutableList().apply {
                     sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
-                }
+                } as ArrayList
 
                 binding.mainWorkView.apply {
                     startAnimation(fadeOutAnimation)
@@ -370,7 +374,7 @@ class MainActivity : AppCompatActivity() {
     fun refreshData() {
         val work = dbHelper.getItemAtLastDate(thisCurrentDate).toMutableList().apply {
             sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
-        }
+        } as ArrayList
         binding.mainWorkView.adapter = MainWorkAdapter(work)
         binding.mainWorkView.layoutManager = LinearLayoutManager(this)
         binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
@@ -409,6 +413,69 @@ class MainActivity : AppCompatActivity() {
             else {
                 notiBadgeText.text = count.toString()
                 notiBadgeText.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    fun setDecorators(context: Context) {
+        binding.calendarView.removeDecorators()
+
+        val sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
+        val dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
+
+        val weekdayDecorator = WeekdayDecorator(context)
+        val sundayDecorator = SundayDecorator(context)
+        val saturdayDecorator = SaturdayDecorator(context)
+        val todayDecorator = OneDayDecorator(context).apply {
+            setDate(Date(System.currentTimeMillis()))
+        }
+
+        binding.calendarView.addDecorators(weekdayDecorator, sundayDecorator, saturdayDecorator, todayDecorator)
+        if (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+            binding.calendarView.addDecorator(NightModeDecorator(context))
+        }
+
+        val datas = dbHelper.getAllData()
+        val endTimes = ArrayList<Long>()
+        val timeCount = mutableMapOf<Long, IntArray>()
+
+        for (data in datas) {
+            Calendar.getInstance().let {
+                it.timeInMillis = data.endTime
+                it.set(Calendar.HOUR_OF_DAY, 0)
+                it.set(Calendar.MINUTE, 0)
+                it.set(Calendar.SECOND, 0)
+                it.set(Calendar.MILLISECOND, 0)
+
+                if (it.timeInMillis !in endTimes) {
+                    endTimes.add(it.timeInMillis)
+                }
+
+                if (it.timeInMillis in timeCount.keys) {
+                    val value = timeCount[it.timeInMillis] ?: intArrayOf(0, 0)
+                    value[if (data.isFinished) 1 else 0] += 1
+                    timeCount[it.timeInMillis] = value
+                } else {
+                    if (data.isFinished) {
+                        timeCount[it.timeInMillis] = intArrayOf(0, 1)
+                    } else {
+                        timeCount[it.timeInMillis] = intArrayOf(1, 0)
+                    }
+                }
+            }
+        }
+
+        if (sharedPreferences.getBoolean(SharedGroup.CURRENT_CALENDAR_ICON_SHOW, true)) {
+            for (time in endTimes) {
+                val decorator = EventDecorator2(context, time)
+                binding.calendarView.addDecorator(decorator)
+                decorators[time] = decorator
+            }
+        } else {
+            for (time in timeCount) {
+                val decorator = EventDecorator(ContextCompat.getColor(context, R.color.colorAccent), time.value, arrayListOf(CalendarDay.from(Date(time.key))))
+                binding.calendarView.addDecorator(decorator)
+                decorators[time.key] = decorator
             }
         }
     }
@@ -480,65 +547,34 @@ class MainActivity : AppCompatActivity() {
         lateinit var view: View
         lateinit var binding: ActivityMainBinding
 
-        fun setDecorators(context: Context) {
-            binding.calendarView.removeDecorators()
+        val decorators: MutableMap<Long, DayViewDecorator> = mutableMapOf()
 
+        fun setEachDecorator(context: Context, time: Long) {
             val sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
             val dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
+            val data = dbHelper.getItemAtLastDate(time)
+            val timeCount = intArrayOf(0, 0)
+            val decoratorTime = Calendar.getInstance().apply {
+                timeInMillis = time
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.timeInMillis
 
-            val weekdayDecorator = WeekdayDecorator(context)
-            val sundayDecorator = SundayDecorator(context)
-            val saturdayDecorator = SaturdayDecorator(context)
-            val todayDecorator = OneDayDecorator(context).apply {
-                setDate(Date(System.currentTimeMillis()))
+            data.forEach {
+                timeCount[if (it.isFinished) 1 else 0] += 1
             }
 
-            binding.calendarView.addDecorators(weekdayDecorator, sundayDecorator, saturdayDecorator, todayDecorator)
-            if (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
-                binding.calendarView.addDecorator(NightModeDecorator(context))
-            }
-
-            val datas = dbHelper.getAllData()
-            val endTimes = ArrayList<Long>()
-            val timeCount = mutableMapOf<Long, IntArray>()
-
-            for (data in datas) {
-                Calendar.getInstance().let {
-                    it.timeInMillis = data.endTime
-                    it.set(Calendar.HOUR_OF_DAY, 0)
-                    it.set(Calendar.MINUTE, 0)
-                    it.set(Calendar.SECOND, 0)
-                    it.set(Calendar.MILLISECOND, 0)
-
-                    if (it.timeInMillis !in endTimes) {
-                        endTimes.add(it.timeInMillis)
-                    }
-
-                    if (it.timeInMillis in timeCount.keys) {
-                        val value = timeCount[it.timeInMillis] ?: intArrayOf(0, 0)
-                        value[if (data.isFinished) 1 else 0] += 1
-                        timeCount[it.timeInMillis] = value
-                    } else {
-                        if (data.isFinished) {
-                            timeCount[it.timeInMillis] = intArrayOf(0, 1)
-                        } else {
-                            timeCount[it.timeInMillis] = intArrayOf(1, 0)
-                        }
-                    }
-                }
-            }
-
-            Log.d(TAG, sharedPreferences.getBoolean(SharedGroup.CALENDAR_ICON_SHOW, true).toString())
-            if (sharedPreferences.getBoolean(SharedGroup.CALENDAR_ICON_SHOW, true)) {
-                for (time in endTimes) {
-                    val decorator = EventDecorator2(context, time)
-                    binding.calendarView.addDecorator(decorator)
-                }
+            binding.calendarView.removeDecorator(decorators[decoratorTime])
+            if (sharedPreferences.getBoolean(SharedGroup.CURRENT_CALENDAR_ICON_SHOW, true)) {
+                val decorator = EventDecorator2(context, decoratorTime)
+                binding.calendarView.addDecorator(decorator)
+                decorators[decoratorTime] = decorator
             } else {
-                for (time in timeCount) {
-                    val decorator = EventDecorator(ContextCompat.getColor(context, R.color.colorAccent), time.value, arrayListOf(CalendarDay.from(Date(time.key))))
-                    binding.calendarView.addDecorator(decorator)
-                }
+                val decorator = EventDecorator(ContextCompat.getColor(context, R.color.colorAccent), timeCount, arrayListOf(CalendarDay.from(Date(time))))
+                binding.calendarView.addDecorator(decorator)
+                decorators[decoratorTime] = decorator
             }
         }
     }

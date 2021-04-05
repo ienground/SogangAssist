@@ -28,7 +28,7 @@ import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.Adapter<MainWorkAdapter.ItemViewHolder>() {
+class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Adapter<MainWorkAdapter.ItemViewHolder>() {
 
     lateinit var sharedPreferences: SharedPreferences
     lateinit var context: Context
@@ -102,13 +102,13 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
                     items[position].isFinished = !items[position].isFinished
                     dbHelper.updateItemById(items[position])
                     notifyItemChanged(position)
-//                    MainActivity.setDecorators(this@MainWorkAdapter.context)
+                    MainActivity.setEachDecorator(this@MainWorkAdapter.context, items[position].endTime)
                     Snackbar.make(MainActivity.view, if (items[position].isFinished) this@MainWorkAdapter.context.getString(R.string.marked_as_finish) else this@MainWorkAdapter.context.getString(R.string.marked_as_not_finish),
                         Snackbar.LENGTH_SHORT).setAction(R.string.undo) {
                         items[position].isFinished = !items[position].isFinished
                         dbHelper.updateItemById(items[position])
                         notifyItemChanged(position)
-//                        MainActivity.setDecorators(this@MainWorkAdapter.context)
+                        MainActivity.setEachDecorator(this@MainWorkAdapter.context, items[position].endTime)
                     }.show()
                     dismiss()
                 }
@@ -173,7 +173,7 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
         val adRequest2 = AdRequest.Builder()
         if (BuildConfig.DEBUG) {
             RequestConfiguration.Builder()
-                .setTestDeviceIds(mutableListOf(testDevice)).let {
+                .setTestDeviceIds(arrayListOf(testDevice)).let {
                     MobileAds.setRequestConfiguration(it.build())
                 }
         }
@@ -184,7 +184,7 @@ class MainWorkAdapter(private var items: MutableList<LMSClass>) : RecyclerView.A
                 val adRequest3 = AdRequest.Builder()
                 if (BuildConfig.DEBUG) {
                     RequestConfiguration.Builder()
-                        .setTestDeviceIds(mutableListOf(testDevice)).let {
+                        .setTestDeviceIds(arrayListOf(testDevice)).let {
                             MobileAds.setRequestConfiguration(it.build())
                         }
                 }

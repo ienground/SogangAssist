@@ -84,7 +84,7 @@ class OnboardingFragment4 : Fragment() {
             arguments = args
         }
 
-        val hours = mutableListOf(false, false, false, false, false)
+        val hours = arrayListOf(false, false, false, false, false)
     }
 
 }

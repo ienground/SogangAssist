@@ -53,9 +53,9 @@ class TimeReceiver : BroadcastReceiver() {
         val lecSharedKeys = listOf(SharedGroup.NOTIFY_1HOUR_LEC, SharedGroup.NOTIFY_2HOUR_LEC, SharedGroup.NOTIFY_6HOUR_LEC, SharedGroup.NOTIFY_12HOUR_LEC, SharedGroup.NOTIFY_24HOUR_LEC)
         val zoomSharedKeys = listOf(SharedGroup.NOTIFY_3MIN_ZOOM, SharedGroup.NOTIFY_5MIN_ZOOM, SharedGroup.NOTIFY_10MIN_ZOOM, SharedGroup.NOTIFY_20MIN_ZOOM, SharedGroup.NOTIFY_30MIN_ZOOM)
 
-        val hwHoursOn = mutableListOf<Int>()
-        val lecHoursOn = mutableListOf<Int>()
-        val zoomMinutesOn = mutableListOf<Int>()
+        val hwHoursOn = arrayListOf<Int>()
+        val lecHoursOn = arrayListOf<Int>()
+        val zoomMinutesOn = arrayListOf<Int>()
 
         hwSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) hwHoursOn.add(hourData[index]) }
         lecSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) lecHoursOn.add(hourData[index]) }

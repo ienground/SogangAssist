@@ -170,9 +170,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val lecSharedKeys = listOf(SharedGroup.NOTIFY_1HOUR_LEC, SharedGroup.NOTIFY_2HOUR_LEC, SharedGroup.NOTIFY_6HOUR_LEC, SharedGroup.NOTIFY_12HOUR_LEC, SharedGroup.NOTIFY_24HOUR_LEC)
             val zoomSharedKeys = listOf(SharedGroup.NOTIFY_3MIN_ZOOM, SharedGroup.NOTIFY_5MIN_ZOOM, SharedGroup.NOTIFY_10MIN_ZOOM, SharedGroup.NOTIFY_20MIN_ZOOM, SharedGroup.NOTIFY_30MIN_ZOOM)
 
-            val hwHoursOn = mutableListOf<String>()
-            val lecHoursOn = mutableListOf<String>()
-            val zoomMinutesOn = mutableListOf<String>()
+            val hwHoursOn = arrayListOf<String>()
+            val lecHoursOn = arrayListOf<String>()
+            val zoomMinutesOn = arrayListOf<String>()
 
             hwSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) hwHoursOn.add(hourData[index]) }
             lecSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) lecHoursOn.add(hourData[index]) }
@@ -420,7 +420,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
                     val tvTitle: TextView = view.findViewById(R.id.tv_title)
                     val btnClose: ImageButton = view.findViewById(R.id.btn_close)
-                    val hours = mutableListOf<Boolean>()
+                    val hours = arrayListOf<Boolean>()
 
                     tvTitle.typeface = gmSansBold
                     tvTitle.text = getString(R.string.notify_hw)
@@ -458,7 +458,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     }
 
                     setOnDismissListener {
-                        val hoursOn = mutableListOf<String>()
+                        val hoursOn = arrayListOf<String>()
                         hours.forEachIndexed { index, b ->  if (b) hoursOn.add(hourData[index]) }
                         notifyHw.summary = if (hoursOn.isNotEmpty()) getString(R.string.notify_hw_on, hoursOn.joinToString(", ")) else getString(R.string.notify_all_off)
                     }
@@ -476,7 +476,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
                     val tvTitle: TextView = view.findViewById(R.id.tv_title)
                     val btnClose: ImageButton = view.findViewById(R.id.btn_close)
-                    val hours = mutableListOf<Boolean>()
+                    val hours = arrayListOf<Boolean>()
 
                     tvTitle.typeface = gmSansBold
                     tvTitle.text = getString(R.string.notify_lec)
@@ -514,7 +514,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     }
 
                     setOnDismissListener {
-                        val hoursOn = mutableListOf<String>()
+                        val hoursOn = arrayListOf<String>()
                         hours.forEachIndexed { index, b ->  if (b) hoursOn.add(hourData[index]) }
                         notifyLec.summary = if (hoursOn.isNotEmpty()) getString(R.string.notify_lec_on, hoursOn.joinToString(", ")) else getString(R.string.notify_all_off)
                     }
@@ -532,7 +532,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
                     val tvTitle: TextView = view.findViewById(R.id.tv_title)
                     val btnClose: ImageButton = view.findViewById(R.id.btn_close)
-                    val minutes = mutableListOf<Boolean>()
+                    val minutes = arrayListOf<Boolean>()
 
                     tvTitle.typeface = gmSansBold
                     tvTitle.text = getString(R.string.notify_zoom)
@@ -572,7 +572,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     }
 
                     setOnDismissListener {
-                        val minutesOn = mutableListOf<String>()
+                        val minutesOn = arrayListOf<String>()
                         minutes.forEachIndexed { index, b ->  if (b) minutesOn.add(minuteData[index]) }
                         notifyZoom.summary = if (minutesOn.isNotEmpty()) getString(R.string.notify_zoom_on, minutesOn.joinToString(", ")) else getString(R.string.notify_all_off)
                     }

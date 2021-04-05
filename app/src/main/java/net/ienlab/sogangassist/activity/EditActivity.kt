@@ -82,7 +82,7 @@ class EditActivity : AppCompatActivity() {
         val adRequest = AdRequest.Builder()
         if (BuildConfig.DEBUG) {
             RequestConfiguration.Builder()
-                .setTestDeviceIds(mutableListOf(testDevice)).let {
+                .setTestDeviceIds(arrayListOf(testDevice)).let {
                     MobileAds.setRequestConfiguration(it.build())
                 }
         }
@@ -234,7 +234,7 @@ class EditActivity : AppCompatActivity() {
         val adRequest2 = AdRequest.Builder()
         if (BuildConfig.DEBUG) {
             RequestConfiguration.Builder()
-                .setTestDeviceIds(mutableListOf(testDevice)).let {
+                .setTestDeviceIds(arrayListOf(testDevice)).let {
                     MobileAds.setRequestConfiguration(it.build())
                 }
         }
@@ -245,7 +245,7 @@ class EditActivity : AppCompatActivity() {
                 val adRequest3 = AdRequest.Builder()
                 if (BuildConfig.DEBUG) {
                     RequestConfiguration.Builder()
-                        .setTestDeviceIds(mutableListOf(testDevice)).let {
+                        .setTestDeviceIds(arrayListOf(testDevice)).let {
                             MobileAds.setRequestConfiguration(it.build())
                         }
                 }

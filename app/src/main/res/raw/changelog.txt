@@ -1,1 +1,1 @@
-- Dark mode has now been added to the widget. You can also set it to always be in day mode in the settings.
+- Optimized main calendar.

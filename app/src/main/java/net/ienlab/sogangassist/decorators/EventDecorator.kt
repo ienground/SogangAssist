@@ -40,7 +40,7 @@ class EventDecorator2(private val context: Context, private val endTime: Long) :
         dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
         val data = dbHelper.getItemAtLastDate(endTime).toMutableList().apply {
             sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
-        }
+        } as ArrayList
 
         view.addSpan(MyDotSpan2(context, 32f, data)) // 날자밑에 점
     }
