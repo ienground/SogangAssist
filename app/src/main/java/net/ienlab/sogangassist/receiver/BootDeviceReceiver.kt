@@ -6,10 +6,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import net.ienlab.sogangassist.*
 import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.database.*
-import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.data.LMSClass
 import java.util.*
 
@@ -45,7 +44,7 @@ class BootDeviceReceiver : BroadcastReceiver() {
 
         // 하루 시작, 끝 리마인더 알람 만들기
         val morningReminderCalendar = Calendar.getInstance().apply {
-            val time = sharedPreferences.getInt(SharedGroup.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
+            val time = sharedPreferences.getInt(SharedKey.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
 
             set(Calendar.HOUR_OF_DAY, time / 60)
             set(Calendar.MINUTE, time % 60)
@@ -54,7 +53,7 @@ class BootDeviceReceiver : BroadcastReceiver() {
         }
 
         val nightReminderCalendar = Calendar.getInstance().apply {
-            val time = sharedPreferences.getInt(SharedGroup.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
+            val time = sharedPreferences.getInt(SharedKey.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
 
             set(Calendar.HOUR_OF_DAY, time / 60)
             set(Calendar.MINUTE, time % 60)

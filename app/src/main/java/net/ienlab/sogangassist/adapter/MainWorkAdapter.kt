@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Paint
 import android.graphics.Typeface
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,11 +15,13 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.snackbar.Snackbar
 import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.activity.*
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.DBHelper
 import net.ienlab.sogangassist.utils.AppStorage
@@ -32,9 +33,9 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
 
     lateinit var sharedPreferences: SharedPreferences
     lateinit var context: Context
-    lateinit var interstitialAd: InterstitialAd
     lateinit var dbHelper: DBHelper
     lateinit var storage: AppStorage
+    var interstitialAd: InterstitialAd? = null
 
     // 새로운 뷰 홀더 생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainWorkAdapter.ItemViewHolder {
@@ -64,7 +65,7 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
         holder.wholeView.setOnClickListener {
             Intent(context, EditActivity::class.java).apply {
                 putExtra("ID", items[position].id)
-                if (!storage.purchasedAds()) displayAd(context)
+                if (!storage.purchasedAds()) displayAd(context as Activity)
                 (context as Activity).startActivityForResult(this, REFRESH_MAIN_WORK)
             }
         }
@@ -168,42 +169,32 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
     }
 
     fun setFullAd(context: Context) {
-        interstitialAd = InterstitialAd(context)
-        interstitialAd.adUnitId = context.getString(R.string.full_ad_unit_id)
-        val adRequest2 = AdRequest.Builder()
         if (BuildConfig.DEBUG) {
             RequestConfiguration.Builder()
-                .setTestDeviceIds(arrayListOf(testDevice)).let {
-                    MobileAds.setRequestConfiguration(it.build())
+                .setTestDeviceIds(arrayListOf(testDevice)).apply {
+                    MobileAds.setRequestConfiguration(build())
                 }
         }
 
-        interstitialAd.loadAd(adRequest2.build())
-        interstitialAd.adListener = object : AdListener() { //전면 광고의 상태를 확인하는 리스너 등록
-            override fun onAdClosed() { //전면 광고가 열린 뒤에 닫혔을 때
-                val adRequest3 = AdRequest.Builder()
-                if (BuildConfig.DEBUG) {
-                    RequestConfiguration.Builder()
-                        .setTestDeviceIds(arrayListOf(testDevice)).let {
-                            MobileAds.setRequestConfiguration(it.build())
-                        }
-                }
-                interstitialAd.loadAd(adRequest3.build())
+        val adRequest = AdRequest.Builder().build()
+        InterstitialAd.load(context, context.getString(R.string.full_ad_unit_id), adRequest, object: InterstitialAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                interstitialAd = null
             }
-        }
+
+            override fun onAdLoaded(ad: InterstitialAd) {
+                interstitialAd = ad
+            }
+        })
     }
 
-    fun displayAd(context: Context) {
-        val sharedPreferences = context.getSharedPreferences(context.packageName + "_preferences", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putInt(
-            SharedGroup.FULL_AD_CHARGE,
-            sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0) + 1).apply()
-        Log.d("AdTAG", "ad:" + sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0))
-        Log.d("AdTAG", "isLoaded:" + interstitialAd.isLoaded)
+    fun displayAd(activity: Activity) {
+        val sharedPreferences = activity.getSharedPreferences(activity.packageName + "_preferences", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putInt(SharedKey.FULL_AD_CHARGE, sharedPreferences.getInt(SharedKey.FULL_AD_CHARGE, 0) + 1).apply()
 
-        if (interstitialAd.isLoaded && sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0) >= 3) {
-            interstitialAd.show()
-            sharedPreferences.edit().putInt(SharedGroup.FULL_AD_CHARGE, 0).apply()
+        if (sharedPreferences.getInt(SharedKey.FULL_AD_CHARGE, 0) >= 3) {
+            interstitialAd?.show(activity)
+            sharedPreferences.edit().putInt(SharedKey.FULL_AD_CHARGE, 0).apply()
         }
     }
 

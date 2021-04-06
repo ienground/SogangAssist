@@ -31,7 +31,7 @@ import net.ienlab.sogangassist.utils.MyUtils
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.constant.DefaultValue
-import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.utils.AppStorage
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import org.json.JSONArray
@@ -148,9 +148,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val notifyHw = findPreference("notify_hw_group")
             val notifyLec = findPreference("notify_lec_group")
             val notifyZoom = findPreference("notify_zoom_group")
-            val timeMorningReminder = findPreference(SharedGroup.TIME_MORNING_REMINDER)
-            val timeNightReminder = findPreference(SharedGroup.TIME_NIGHT_REMINDER)
-            val calendarIconCheck = findPreference(SharedGroup.CALENDAR_ICON_SHOW) as CheckBoxPreference
+            val timeMorningReminder = findPreference(SharedKey.TIME_MORNING_REMINDER)
+            val timeNightReminder = findPreference(SharedKey.TIME_NIGHT_REMINDER)
+            val calendarIconCheck = findPreference(SharedKey.CALENDAR_ICON_SHOW) as CheckBoxPreference
             val changelog = findPreference("changelog")
             val email = findPreference("ask_to_dev")
             val openSource = findPreference("open_source")
@@ -166,9 +166,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val hourData = listOf("1", "2", "6", "12", "24")
             val minuteData = listOf("3", "5", "10", "20", "30")
 
-            val hwSharedKeys = listOf(SharedGroup.NOTIFY_1HOUR_HW, SharedGroup.NOTIFY_2HOUR_HW, SharedGroup.NOTIFY_6HOUR_HW, SharedGroup.NOTIFY_12HOUR_HW, SharedGroup.NOTIFY_24HOUR_HW)
-            val lecSharedKeys = listOf(SharedGroup.NOTIFY_1HOUR_LEC, SharedGroup.NOTIFY_2HOUR_LEC, SharedGroup.NOTIFY_6HOUR_LEC, SharedGroup.NOTIFY_12HOUR_LEC, SharedGroup.NOTIFY_24HOUR_LEC)
-            val zoomSharedKeys = listOf(SharedGroup.NOTIFY_3MIN_ZOOM, SharedGroup.NOTIFY_5MIN_ZOOM, SharedGroup.NOTIFY_10MIN_ZOOM, SharedGroup.NOTIFY_20MIN_ZOOM, SharedGroup.NOTIFY_30MIN_ZOOM)
+            val hwSharedKeys = listOf(SharedKey.NOTIFY_1HOUR_HW, SharedKey.NOTIFY_2HOUR_HW, SharedKey.NOTIFY_6HOUR_HW, SharedKey.NOTIFY_12HOUR_HW, SharedKey.NOTIFY_24HOUR_HW)
+            val lecSharedKeys = listOf(SharedKey.NOTIFY_1HOUR_LEC, SharedKey.NOTIFY_2HOUR_LEC, SharedKey.NOTIFY_6HOUR_LEC, SharedKey.NOTIFY_12HOUR_LEC, SharedKey.NOTIFY_24HOUR_LEC)
+            val zoomSharedKeys = listOf(SharedKey.NOTIFY_3MIN_ZOOM, SharedKey.NOTIFY_5MIN_ZOOM, SharedKey.NOTIFY_10MIN_ZOOM, SharedKey.NOTIFY_20MIN_ZOOM, SharedKey.NOTIFY_30MIN_ZOOM)
 
             val hwHoursOn = arrayListOf<String>()
             val lecHoursOn = arrayListOf<String>()
@@ -183,22 +183,22 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             notifyZoom?.summary = if (zoomMinutesOn.isNotEmpty()) getString(R.string.notify_zoom_on, zoomMinutesOn.joinToString(", ")) else getString(R.string.notify_all_off)
 
             val morningCalendar = Calendar.getInstance().apply {
-                val time = sharedPreferences.getInt(SharedGroup.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
+                val time = sharedPreferences.getInt(SharedKey.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
                 set(Calendar.HOUR_OF_DAY, time / 60)
                 set(Calendar.MINUTE, time % 60)
             }
             val nightCalendar = Calendar.getInstance().apply {
-                val time = sharedPreferences.getInt(SharedGroup.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
+                val time = sharedPreferences.getInt(SharedKey.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
                 set(Calendar.HOUR_OF_DAY, time / 60)
                 set(Calendar.MINUTE, time % 60)
             }
             val dndStartCalendar = Calendar.getInstance().apply {
-                val time = sharedPreferences.getInt(SharedGroup.DND_START_TIME, DefaultValue.DND_START_TIME)
+                val time = sharedPreferences.getInt(SharedKey.DND_START_TIME, DefaultValue.DND_START_TIME)
                 set(Calendar.HOUR_OF_DAY, time / 60)
                 set(Calendar.MINUTE, time % 60)
             }
             val dndEndCalendar = Calendar.getInstance().apply {
-                val time = sharedPreferences.getInt(SharedGroup.DND_END_TIME, DefaultValue.DND_END_TIME)
+                val time = sharedPreferences.getInt(SharedKey.DND_END_TIME, DefaultValue.DND_END_TIME)
                 set(Calendar.HOUR_OF_DAY, time / 60)
                 set(Calendar.MINUTE, time % 60)
             }
@@ -397,8 +397,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     btnPositive.setOnClickListener {
                         dndStartCalendar.time = startCalendar.time
                         dndEndCalendar.time = endCalendar.time
-                        sharedPreferences.edit().putInt(SharedGroup.DND_START_TIME, dndStartCalendar.get(Calendar.HOUR_OF_DAY) * 60 + dndStartCalendar.get(Calendar.MINUTE)).apply()
-                        sharedPreferences.edit().putInt(SharedGroup.DND_END_TIME, dndEndCalendar.get(Calendar.HOUR_OF_DAY) * 60 + dndEndCalendar.get(Calendar.MINUTE)).apply()
+                        sharedPreferences.edit().putInt(SharedKey.DND_START_TIME, dndStartCalendar.get(Calendar.HOUR_OF_DAY) * 60 + dndStartCalendar.get(Calendar.MINUTE)).apply()
+                        sharedPreferences.edit().putInt(SharedKey.DND_END_TIME, dndEndCalendar.get(Calendar.HOUR_OF_DAY) * 60 + dndEndCalendar.get(Calendar.MINUTE)).apply()
                         preference.summary = "${timeFormat.format(dndStartCalendar.time)} ~ ${timeFormat.format(dndEndCalendar.time)}"
                         dismiss()
                     }
@@ -642,7 +642,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
                     btnPositive.setOnClickListener {
                         morningCalendar.time = calendar.time
-                        sharedPreferences.edit().putInt(SharedGroup.TIME_MORNING_REMINDER, morningCalendar.get(Calendar.HOUR_OF_DAY) * 60 + morningCalendar.get(Calendar.MINUTE)).apply()
+                        sharedPreferences.edit().putInt(SharedKey.TIME_MORNING_REMINDER, morningCalendar.get(Calendar.HOUR_OF_DAY) * 60 + morningCalendar.get(Calendar.MINUTE)).apply()
                         preference.summary = timeFormat.format(morningCalendar.time)
                         dismiss()
                     }
@@ -712,7 +712,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
                     btnPositive.setOnClickListener {
                         nightCalendar.time = calendar.time
-                        sharedPreferences.edit().putInt(SharedGroup.TIME_NIGHT_REMINDER, nightCalendar.get(Calendar.HOUR_OF_DAY) * 60 + nightCalendar.get(Calendar.MINUTE)).apply()
+                        sharedPreferences.edit().putInt(SharedKey.TIME_NIGHT_REMINDER, nightCalendar.get(Calendar.HOUR_OF_DAY) * 60 + nightCalendar.get(Calendar.MINUTE)).apply()
                         preference.summary = timeFormat.format(nightCalendar.time)
                         dismiss()
                     }

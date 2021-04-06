@@ -8,12 +8,11 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import net.ienlab.sogangassist.*
 import net.ienlab.sogangassist.constant.ChannelId
-import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.receiver.TimeReceiver
@@ -59,8 +58,8 @@ class LMSListenerService : NotificationListenerService() {
             nm.createNotificationChannel(channel)
         }
 
-        val dndStartData = sharedPreferences.getInt(SharedGroup.DND_START_TIME, DefaultValue.DND_START_TIME)
-        val dndEndData = sharedPreferences.getInt(SharedGroup.DND_END_TIME, DefaultValue.DND_END_TIME)
+        val dndStartData = sharedPreferences.getInt(SharedKey.DND_START_TIME, DefaultValue.DND_START_TIME)
+        val dndEndData = sharedPreferences.getInt(SharedKey.DND_END_TIME, DefaultValue.DND_END_TIME)
         val now = Calendar.getInstance()
         val nowInt = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
 
@@ -90,7 +89,7 @@ class LMSListenerService : NotificationListenerService() {
                                     am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                     val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                     val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                     val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -110,7 +109,7 @@ class LMSListenerService : NotificationListenerService() {
                                         addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                         color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                        if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                        if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
                                             nm.notify(699000 + id, build())
                                         }
                                     }
@@ -151,7 +150,7 @@ class LMSListenerService : NotificationListenerService() {
                                 am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                             }
 
-                            if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                            if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                 val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -171,7 +170,7 @@ class LMSListenerService : NotificationListenerService() {
                                     addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                    if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                    if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
                                         nm.notify(699000 + id, build())
                                     }
                                 }
@@ -198,7 +197,7 @@ class LMSListenerService : NotificationListenerService() {
                                     am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
-                                if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                                if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                     val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_lec_register, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                     val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                     val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -218,7 +217,7 @@ class LMSListenerService : NotificationListenerService() {
                                         addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                         color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                        if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                        if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
                                             nm.notify(699000 + id, build())
                                         }
                                     }
@@ -259,7 +258,7 @@ class LMSListenerService : NotificationListenerService() {
                                 am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                             }
 
-                            if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                            if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                 val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_lec_update, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -279,7 +278,7 @@ class LMSListenerService : NotificationListenerService() {
                                     addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                    if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                    if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
                                         nm.notify(699000 + id, build())
                                     }
                                 }
@@ -306,7 +305,7 @@ class LMSListenerService : NotificationListenerService() {
                                 am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                             }
 
-                            if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                            if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                 val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_sup_lec_register, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -326,7 +325,7 @@ class LMSListenerService : NotificationListenerService() {
                                     addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                    if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                    if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
                                         nm.notify(699000 + id, build())
                                     }
                                 }
@@ -366,7 +365,7 @@ class LMSListenerService : NotificationListenerService() {
                                 am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                             }
 
-                            if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                            if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                 val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_sup_lec_update, data.week, data.lesson, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -386,7 +385,7 @@ class LMSListenerService : NotificationListenerService() {
                                     addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                    if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                    if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
                                         nm.notify(699000 + id, build())
                                     }
                                 }
@@ -412,7 +411,7 @@ class LMSListenerService : NotificationListenerService() {
                                 am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                             }
 
-                            if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                            if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                 val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_zoom_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -432,7 +431,7 @@ class LMSListenerService : NotificationListenerService() {
                                     addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                    if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                    if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
                                         nm.notify(699000 + id, build())
                                     }
                                 }
@@ -472,7 +471,7 @@ class LMSListenerService : NotificationListenerService() {
                                 am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                             }
 
-                            if (sharedPreferences.getBoolean(SharedGroup.SET_REGISTER_ALERT, true)) {
+                            if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                 val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_zoom_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -492,7 +491,7 @@ class LMSListenerService : NotificationListenerService() {
                                     addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
                                     color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
-                                    if (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                    if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
                                         nm.notify(699000 + id, build())
                                     }
                                 }

@@ -1,6 +1,5 @@
 package net.ienlab.sogangassist.receiver
 
-import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -16,7 +15,7 @@ import net.ienlab.sogangassist.activity.SplashActivity
 import net.ienlab.sogangassist.activity.TAG
 import net.ienlab.sogangassist.constant.ChannelId
 import net.ienlab.sogangassist.constant.DefaultValue
-import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.utils.MyUtils
@@ -72,16 +71,16 @@ class ReminderReceiver: BroadcastReceiver() {
             bigTextContent.add("<${context.getString(R.string.zoom)}>\n${zooms.joinToString("\n")}")
         }
 
-        val morningData = sharedPreferences.getInt(SharedGroup.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
-        val nightData = sharedPreferences.getInt(SharedGroup.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
-        val dndStartData = sharedPreferences.getInt(SharedGroup.DND_START_TIME, DefaultValue.DND_START_TIME)
-        val dndEndData = sharedPreferences.getInt(SharedGroup.DND_END_TIME, DefaultValue.DND_END_TIME)
+        val morningData = sharedPreferences.getInt(SharedKey.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
+        val nightData = sharedPreferences.getInt(SharedKey.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
+        val dndStartData = sharedPreferences.getInt(SharedKey.DND_START_TIME, DefaultValue.DND_START_TIME)
+        val dndEndData = sharedPreferences.getInt(SharedKey.DND_END_TIME, DefaultValue.DND_END_TIME)
         val now = Calendar.getInstance()
         val nowInt = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
 
         when (type) {
             MORNING -> {
-                if (sharedPreferences.getBoolean(SharedGroup.ALLOW_MORNING_REMINDER, true) && nowInt >= morningData - 2 && nowInt <= morningData + 2) {
+                if (sharedPreferences.getBoolean(SharedKey.ALLOW_MORNING_REMINDER, true) && nowInt >= morningData - 2 && nowInt <= morningData + 2) {
                     NotificationCompat.Builder(context, ChannelId.DAILY_REMINDER_ID).apply {
                         setContentTitle(context.getString(R.string.daily_reminder_title_morning))
                         setContentText(content.joinToString(", "))
@@ -93,14 +92,14 @@ class ReminderReceiver: BroadcastReceiver() {
                         setAutoCancel(true)
                         color = ContextCompat.getColor(context, R.color.colorAccent)
 
-                        if (content.isNotEmpty() && !sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                        if (content.isNotEmpty() && !sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) && (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
                             nm.notify(680000, build())
                         }
                     }
                 }
             }
             NIGHT -> {
-                if (sharedPreferences.getBoolean(SharedGroup.ALLOW_NIGHT_REMINDER, true) && nowInt >= nightData - 2 && nowInt <= nightData + 2) {
+                if (sharedPreferences.getBoolean(SharedKey.ALLOW_NIGHT_REMINDER, true) && nowInt >= nightData - 2 && nowInt <= nightData + 2) {
                     NotificationCompat.Builder(context, ChannelId.DAILY_REMINDER_ID).apply {
                         setContentTitle(context.getString(R.string.daily_reminder_title_night))
                         setContentText(content.joinToString(", "))
@@ -112,7 +111,7 @@ class ReminderReceiver: BroadcastReceiver() {
                         setAutoCancel(true)
                         color = ContextCompat.getColor(context, R.color.colorAccent)
 
-                        if (content.isNotEmpty() && (!sharedPreferences.getBoolean(SharedGroup.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt)))) {
+                        if (content.isNotEmpty() && (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) && (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt)))) {
                             nm.notify(680000, build())
                         }
                     }

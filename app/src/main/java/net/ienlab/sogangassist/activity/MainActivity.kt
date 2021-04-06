@@ -11,7 +11,6 @@ import android.graphics.*
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -23,13 +22,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.adapter.MainWorkAdapter
-import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.DBHelper
 import net.ienlab.sogangassist.databinding.ActivityMainBinding
@@ -91,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         fadeInAnimation = AlphaAnimation(0f, 1f).apply { duration = 300 }
         currentDecorator = CurrentDecorator(this, Calendar.getInstance())
 
-        sharedPreferences.edit().putBoolean(SharedGroup.CURRENT_CALENDAR_ICON_SHOW, sharedPreferences.getBoolean(SharedGroup.CALENDAR_ICON_SHOW, true)).apply()
+        sharedPreferences.edit().putBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, sharedPreferences.getBoolean(SharedKey.CALENDAR_ICON_SHOW, true)).apply()
 
         val monthFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
         gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
@@ -118,7 +116,7 @@ class MainActivity : AppCompatActivity() {
             val reviewManager = ReviewManagerFactory.create(this)
             val reviewRequest = reviewManager.requestReviewFlow()
             reviewRequest.addOnCompleteListener {
-                if (reviewRequest.isSuccessful && !sharedPreferences.getBoolean(SharedGroup.REVIEW_WRITE, false)) {
+                if (reviewRequest.isSuccessful && !sharedPreferences.getBoolean(SharedKey.REVIEW_WRITE, false)) {
                     MyBottomSheetDialog(this).apply {
                         val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(applicationContext), false)
                         val icon: ImageView = view.findViewById(R.id.imgLogo)
@@ -145,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                             val reviewInfo = reviewRequest.result
                             val reviewFlow = reviewManager.launchReviewFlow(this@MainActivity, reviewInfo)
                             reviewFlow.addOnCompleteListener {
-                                sharedPreferences.edit().putBoolean(SharedGroup.REVIEW_WRITE, true).apply()
+                                sharedPreferences.edit().putBoolean(SharedKey.REVIEW_WRITE, true).apply()
                             }
                         }
                         btnNegative.setOnClickListener {
@@ -160,7 +158,7 @@ class MainActivity : AppCompatActivity() {
 
         // 하루 시작, 끝 리마인더 알람 만들기
         val morningReminderCalendar = Calendar.getInstance().apply {
-            val time = sharedPreferences.getInt(SharedGroup.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
+            val time = sharedPreferences.getInt(SharedKey.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
 
             set(Calendar.HOUR_OF_DAY, time / 60)
             set(Calendar.MINUTE, time % 60)
@@ -169,7 +167,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val nightReminderCalendar = Calendar.getInstance().apply {
-            val time = sharedPreferences.getInt(SharedGroup.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
+            val time = sharedPreferences.getInt(SharedKey.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
 
             set(Calendar.HOUR_OF_DAY, time / 60)
             set(Calendar.MINUTE, time % 60)
@@ -286,6 +284,10 @@ class MainActivity : AppCompatActivity() {
             topbarVisible = false
             arrowColor = ContextCompat.getColor(applicationContext, R.color.black)
             setOnDateChangedListener { widget, date, _ ->
+//                widget.removeDecorator(currentDecorator)
+//                currentDecorator = CurrentDecorator(this@MainActivity, date.calendar)
+//                widget.addDecorator(currentDecorator)
+
                 binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(date.date))
                 val work = dbHelper.getItemAtLastDate(date.date.time).toMutableList().apply {
                     sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
@@ -337,10 +339,10 @@ class MainActivity : AppCompatActivity() {
 
         val info = packageManager.getPackageInfo(packageName, 0)
         val currentVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.longVersionCode.toInt() else info.versionCode
-        val lastVersion = sharedPreferences.getInt(SharedGroup.LAST_VERSION, 0)
+        val lastVersion = sharedPreferences.getInt(SharedKey.LAST_VERSION, 0)
 
         if (currentVersion > lastVersion) {
-            sharedPreferences.edit().putInt(SharedGroup.LAST_VERSION, currentVersion).apply()
+            sharedPreferences.edit().putInt(SharedKey.LAST_VERSION, currentVersion).apply()
             MyBottomSheetDialog(this).apply {
                 val view = layoutInflater.inflate(R.layout.dialog_changelog, LinearLayout(applicationContext), false)
                 val tvVersion: TextView = view.findViewById(R.id.tv_version)
@@ -465,7 +467,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if (sharedPreferences.getBoolean(SharedGroup.CURRENT_CALENDAR_ICON_SHOW, true)) {
+        if (sharedPreferences.getBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, true)) {
             for (time in endTimes) {
                 val decorator = EventDecorator2(context, time)
                 binding.calendarView.addDecorator(decorator)
@@ -567,7 +569,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             binding.calendarView.removeDecorator(decorators[decoratorTime])
-            if (sharedPreferences.getBoolean(SharedGroup.CURRENT_CALENDAR_ICON_SHOW, true)) {
+            if (sharedPreferences.getBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, true)) {
                 val decorator = EventDecorator2(context, decoratorTime)
                 binding.calendarView.addDecorator(decorator)
                 decorators[decoratorTime] = decorator

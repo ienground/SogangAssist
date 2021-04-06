@@ -1,9 +1,6 @@
 package net.ienlab.sogangassist.activity
 
-import android.app.AlarmManager
-import android.app.DatePickerDialog
-import android.app.PendingIntent
-import android.app.TimePickerDialog
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -21,9 +18,11 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.ads.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.snackbar.Snackbar
 import net.ienlab.sogangassist.BuildConfig
-import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.databinding.ActivityEditBinding
@@ -44,8 +43,8 @@ class EditActivity : AppCompatActivity() {
     lateinit var timeFormat: SimpleDateFormat
     lateinit var sharedPreferences: SharedPreferences
     lateinit var am: AlarmManager
-    lateinit var interstitialAd: InterstitialAd
     lateinit var storage: AppStorage
+    var interstitialAd: InterstitialAd? = null
 
     lateinit var currentItem: LMSClass
     var id = -1
@@ -229,43 +228,32 @@ class EditActivity : AppCompatActivity() {
     }
 
     fun setFullAd(context: Context) {
-        interstitialAd = InterstitialAd(context)
-        interstitialAd.adUnitId = context.getString(R.string.full_ad_unit_id)
-        val adRequest2 = AdRequest.Builder()
         if (BuildConfig.DEBUG) {
             RequestConfiguration.Builder()
-                .setTestDeviceIds(arrayListOf(testDevice)).let {
-                    MobileAds.setRequestConfiguration(it.build())
+                .setTestDeviceIds(arrayListOf(testDevice)).apply {
+                    MobileAds.setRequestConfiguration(build())
                 }
         }
 
-        interstitialAd.loadAd(adRequest2.build())
-        interstitialAd.adListener = object : AdListener() { //전면 광고의 상태를 확인하는 리스너 등록
-            override fun onAdClosed() { //전면 광고가 열린 뒤에 닫혔을 때
-                val adRequest3 = AdRequest.Builder()
-                if (BuildConfig.DEBUG) {
-                    RequestConfiguration.Builder()
-                        .setTestDeviceIds(arrayListOf(testDevice)).let {
-                            MobileAds.setRequestConfiguration(it.build())
-                        }
-                }
-                interstitialAd.loadAd(adRequest3.build())
+        val adRequest = AdRequest.Builder().build()
+        InterstitialAd.load(context, context.getString(R.string.full_ad_unit_id), adRequest, object: InterstitialAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                interstitialAd = null
             }
-        }
+
+            override fun onAdLoaded(ad: InterstitialAd) {
+                interstitialAd = ad
+            }
+        })
     }
 
-    fun displayAd(context: Context) {
-        val sharedPreferences = context.getSharedPreferences(context.packageName + "_preferences", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putInt(
-            SharedGroup.FULL_AD_CHARGE,
-            sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0) + 1).apply()
-        Log.d("AdTAG", "ad:" + sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0))
-        Log.d("AdTAG", "isLoaded:" + interstitialAd.isLoaded)
 
-        if (interstitialAd.isLoaded && sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0) >= 3
-            && sharedPreferences.getInt(SharedGroup.FULL_AD_CHARGE, 0) != 0) {
-            interstitialAd.show()
-            sharedPreferences.edit().putInt(SharedGroup.FULL_AD_CHARGE, 0).apply()
+    fun displayAd(activity: Activity) {
+        sharedPreferences.edit().putInt(SharedKey.FULL_AD_CHARGE, sharedPreferences.getInt(SharedKey.FULL_AD_CHARGE, 0) + 1).apply()
+
+        if (sharedPreferences.getInt(SharedKey.FULL_AD_CHARGE, 0) >= 3) {
+            interstitialAd?.show(activity)
+            sharedPreferences.edit().putInt(SharedKey.FULL_AD_CHARGE, 0).apply()
         }
     }
 

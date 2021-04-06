@@ -9,13 +9,14 @@ import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {
 
     lateinit var binding: ActivitySplashBinding
+
     // 로딩 화면이 떠있는 시간(밀리초단위)
     private val SPLASH_DISPLAY_LENGTH = 1000
 
@@ -26,7 +27,7 @@ class SplashActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
 
-        val isFirstVisit = sharedPreferences.getBoolean(SharedGroup.IS_FIRST_VISIT, true)
+        val isFirstVisit = sharedPreferences.getBoolean(SharedKey.IS_FIRST_VISIT, true)
         val id = intent.getIntExtra("ID", -1)
         val notiId = intent.getIntExtra("NOTI_ID", -1)
 

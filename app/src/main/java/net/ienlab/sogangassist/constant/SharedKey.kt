@@ -1,6 +1,6 @@
 package net.ienlab.sogangassist.constant
 
-class SharedGroup {
+class SharedKey {
     companion object {
         const val NOTIFY_1HOUR_HW = "notify_1hour_hw"
         const val NOTIFY_2HOUR_HW = "notify_2hour_hw"

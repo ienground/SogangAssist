@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.databinding.FragmentOnboarding3Binding
 import net.ienlab.sogangassist.R
 
@@ -31,7 +31,7 @@ class OnboardingFragment3 : Fragment() {
         val sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)
         val introBtnNext: ImageButton = requireActivity().findViewById(R.id.intro_btn_next)
         val buttons = listOf(binding.btn1hour, binding.btn2hour, binding.btn6hour, binding.btn12hour, binding.btn24hour)
-        val sharedKeys = listOf(SharedGroup.NOTIFY_1HOUR_HW, SharedGroup.NOTIFY_2HOUR_HW, SharedGroup.NOTIFY_6HOUR_HW, SharedGroup.NOTIFY_12HOUR_HW, SharedGroup.NOTIFY_24HOUR_HW)
+        val sharedKeys = listOf(SharedKey.NOTIFY_1HOUR_HW, SharedKey.NOTIFY_2HOUR_HW, SharedKey.NOTIFY_6HOUR_HW, SharedKey.NOTIFY_12HOUR_HW, SharedKey.NOTIFY_24HOUR_HW)
 
         buttons.forEachIndexed { index, imageButton ->
             sharedPreferences.edit().putBoolean(sharedKeys[index], false).apply()

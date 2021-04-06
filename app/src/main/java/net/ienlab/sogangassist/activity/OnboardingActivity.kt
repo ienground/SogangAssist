@@ -15,10 +15,9 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import com.rd.animation.type.AnimationType
-import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.adapter.OnboardingFragmentTabAdapter
 import net.ienlab.sogangassist.adapter.OnboardingFragmentTabAdapter.Companion.PAGE_NUMBER
-import net.ienlab.sogangassist.constant.SharedGroup
+import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.databinding.ActivityOnboardingBinding
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
@@ -198,7 +197,7 @@ class OnboardingActivity : AppCompatActivity(),
 
         binding.introBtnFine.setOnClickListener {
             if (true in OnboardingFragment5.hours) {
-                sharedPreferences.edit().putBoolean(SharedGroup.IS_FIRST_VISIT, false).apply()
+                sharedPreferences.edit().putBoolean(SharedKey.IS_FIRST_VISIT, false).apply()
                 finish()
                 startActivity(Intent(this, MainActivity::class.java))
             }
