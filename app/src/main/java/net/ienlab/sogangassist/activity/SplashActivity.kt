@@ -31,8 +31,6 @@ class SplashActivity : AppCompatActivity() {
         val id = intent.getIntExtra("ID", -1)
         val notiId = intent.getIntExtra("NOTI_ID", -1)
 
-        Log.d(TAG, "id: $id")
-
         val gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
         binding.appTitle?.typeface = gmSansBold
         binding.appTitle?.text = getString(R.string.real_app_name).split(" ").joinToString("\n") + "."
