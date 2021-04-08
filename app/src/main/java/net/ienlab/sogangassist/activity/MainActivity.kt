@@ -373,24 +373,20 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun refreshData() {
-        val work = dbHelper.getItemAtLastDate(thisCurrentDate).toMutableList().apply {
-            sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
-        } as ArrayList
-        binding.mainWorkView.adapter = MainWorkAdapter(work)
-        binding.mainWorkView.layoutManager = LinearLayoutManager(this)
-        binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
-
-        setDecorators(this)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
 
         when (requestCode) {
             REFRESH_MAIN_WORK -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    refreshData()
+                    val endTime = intent?.getLongExtra("ENDTIME", System.currentTimeMillis()) ?: System.currentTimeMillis()
+                    val work = dbHelper.getItemAtLastDate(thisCurrentDate).toMutableList().apply {
+                        sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) } as ArrayList
+                    binding.mainWorkView.adapter = MainWorkAdapter(work)
+                    binding.mainWorkView.layoutManager = LinearLayoutManager(this)
+                    binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
+
+                    setEachDecorator(this, endTime)
                 }
                 binding.adView.visibility = if (storage.purchasedAds()) View.GONE else View.VISIBLE
             }

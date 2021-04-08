@@ -507,17 +507,18 @@ class EditActivity : AppCompatActivity() {
             tvContent.text = context.getString(R.string.delete_msg)
 
             btnPositive.setOnClickListener {
+                val result = Intent()
                 val id = intent.getIntExtra("ID", -1)
                 if (id != -1) {
+                    result.putExtra("ENDTIME", dbHelper.getItemById(id).endTime)
                     dbHelper.deleteData(id)
-
                     for (i in 0 until 5) {
                         val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
                         val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + i + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                         am.cancel(pendingIntent)
                     }
                 }
-                setResult(RESULT_OK)
+                setResult(RESULT_OK, result)
                 finish()
                 dismiss()
             }
@@ -570,10 +571,10 @@ class EditActivity : AppCompatActivity() {
         val view = window.decorView.rootView
         when (binding.radioGroup.checkedRadioButtonId) {
             R.id.radioButton1, R.id.radioButton2 -> {
-                if (binding.etClass.editText?.text?.toString() != "" && binding.etTimeWeek.editText?.text?.toString() != ""
-                    && binding.etTimeLesson.editText?.text?.toString() != "") {
-                    onSave(isFinished)
-                    setResult(RESULT_OK)
+                if (binding.etClass.editText?.text?.toString() != "" && binding.etTimeWeek.editText?.text?.toString() != "" && binding.etTimeLesson.editText?.text?.toString() != "") {
+                    val result = Intent()
+                    result.putExtra("ENDTIME", onSave(isFinished))
+                    setResult(RESULT_OK, result)
                     finish()
                 } else if (binding.etTimeWeek.editText?.text?.toString() != "" && binding.etTimeLesson.editText?.text?.toString() != "") {
                     Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
@@ -587,10 +588,10 @@ class EditActivity : AppCompatActivity() {
             }
 
             R.id.radioButton3 -> {
-                if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != ""
-                    && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 123
-                    onSave(isFinished)
-                    setResult(RESULT_OK)
+                if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 123
+                    val result = Intent()
+                    result.putExtra("ENDTIME", onSave(isFinished))
+                    setResult(RESULT_OK, result)
                     finish()
                 } else if (binding.etAssignment.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 23
                     Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
@@ -611,8 +612,9 @@ class EditActivity : AppCompatActivity() {
 
             R.id.radioButton4 -> {
                 if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != "") { // 12
-                    onSave(isFinished)
-                    setResult(RESULT_OK)
+                    val result = Intent()
+                    result.putExtra("ENDTIME", onSave(isFinished))
+                    setResult(RESULT_OK, result)
                     finish()
                 } else if (binding.etAssignment.editText?.text?.toString() != "" ) { // 2
                     Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
@@ -625,7 +627,7 @@ class EditActivity : AppCompatActivity() {
         }
     }
 
-    fun onSave(isFinished: Boolean) {
+    fun onSave(isFinished: Boolean): Long {
         val id = intent.getIntExtra("ID", -1)
         val data = LMSClass(-1, "", 0L, 0, 0L, 0L, false, false, -1, -1, "")
         if (id != -1) {
@@ -683,6 +685,8 @@ class EditActivity : AppCompatActivity() {
                 }
             }
         }
+
+        return data.endTime
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
