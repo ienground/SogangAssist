@@ -1,1 +1,1 @@
-- Optimized main calendar.
+- Optimzed overall, and changed some UI.

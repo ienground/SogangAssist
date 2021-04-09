@@ -23,6 +23,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import net.ienlab.sogangassist.BuildConfig
@@ -108,8 +109,9 @@ class MainActivity : AppCompatActivity() {
         binding.tvNoDeadline.typeface = gmSansMedium
         binding.tvAdd.typeface = gmSansMedium
 
-//        if (BuildConfig.DEBUG) binding.adView.visibility = View.GONE
         if (storage.purchasedAds()) binding.adView.visibility = View.GONE
+
+        FirebaseInAppMessaging.getInstance().isAutomaticDataCollectionEnabled = true
 
         val installedDate = packageManager.getPackageInfo(packageName, 0).firstInstallTime
         if (abs(installedDate - System.currentTimeMillis()) >= 6 * AlarmManager.INTERVAL_DAY) {
@@ -405,12 +407,18 @@ class MainActivity : AppCompatActivity() {
         val notificationData = notiDBHelper.getAllItem()
         var count = 0
         notificationData.forEach { if (!it.isRead) count++ }
-
+        count = 10;
         if (::notiBadgeText.isInitialized) {
-            if (count == 0) notiBadgeText.visibility = View.GONE
-            else {
-                notiBadgeText.text = count.toString()
-                notiBadgeText.visibility = View.VISIBLE
+            when {
+                count == 0 -> notiBadgeText.visibility = View.GONE
+                count <= 9 -> {
+                    notiBadgeText.text = count.toString()
+                    notiBadgeText.visibility = View.VISIBLE
+                }
+                else -> {
+                    notiBadgeText.text = "9+"
+                    notiBadgeText.visibility = View.VISIBLE
+                }
             }
         }
     }
