@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'com.google.gms.google-services'
     id 'com.google.android.gms.oss-licenses-plugin'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -14,8 +15,8 @@ android {
         applicationId "net.ienlab.sogangassist"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 24
-        versionName "1.6.9"
+        versionCode 26
+        versionName "1.6.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -48,6 +49,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-messaging-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-inappmessaging-ktx'
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'
 

@@ -11,6 +11,7 @@ import android.graphics.*
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -22,8 +23,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.messaging.FirebaseMessaging
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import net.ienlab.sogangassist.BuildConfig
@@ -41,6 +45,7 @@ import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.receiver.ReminderReceiver
 import net.ienlab.sogangassist.utils.AppStorage
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
+import java.lang.NullPointerException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -110,6 +115,32 @@ class MainActivity : AppCompatActivity() {
         binding.tvAdd.typeface = gmSansMedium
 
         if (storage.purchasedAds()) binding.adView.visibility = View.GONE
+
+        FirebaseInAppMessaging.getInstance().isAutomaticDataCollectionEnabled = true
+
+        if (BuildConfig.DEBUG) {
+            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                // Get new FCM registration token
+                val token = task.result
+
+                // Log and toast
+                Log.d(TAG, token)
+            })
+
+            // Firebase In App Messaging
+            FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "Installation ID: " + task.result)
+                } else {
+                    Log.e(TAG, "Unable to get Installation ID")
+                }
+            }
+        }
 
         FirebaseInAppMessaging.getInstance().isAutomaticDataCollectionEnabled = true
 
@@ -407,7 +438,6 @@ class MainActivity : AppCompatActivity() {
         val notificationData = notiDBHelper.getAllItem()
         var count = 0
         notificationData.forEach { if (!it.isRead) count++ }
-        count = 10;
         if (::notiBadgeText.isInitialized) {
             when {
                 count == 0 -> notiBadgeText.visibility = View.GONE
@@ -417,6 +447,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> {
                     notiBadgeText.text = "9+"
+                    notiBadgeText.textSize = 8f
                     notiBadgeText.visibility = View.VISIBLE
                 }
             }

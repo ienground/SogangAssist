@@ -69,14 +69,6 @@ class EditActivity : AppCompatActivity() {
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        setFullAd(this)
-
-        if (storage.purchasedAds()) {
-            binding.adView.visibility = View.GONE
-        } else {
-            displayAd(this)
-        }
-
         // AdView
         val adRequest = AdRequest.Builder()
         if (BuildConfig.DEBUG) {
@@ -118,6 +110,14 @@ class EditActivity : AppCompatActivity() {
         timeFormat = SimpleDateFormat(getString(R.string.timeFormat), Locale.getDefault())
         sharedPreferences = getSharedPreferences("${packageName}_preferences",  Context.MODE_PRIVATE)
         am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        setFullAd(this)
+
+        if (storage.purchasedAds()) {
+            binding.adView.visibility = View.GONE
+        } else {
+            displayAd(this)
+        }
 
         val classList: ArrayList<String> = arrayListOf()
         for (data in dbHelper.getAllData()) {

@@ -1,1 +1,2 @@
-- Optimzed overall, and changed some UI.
+<b>* Emergency Update *</b><br>
+We apologize for the inconvenience. We updated urgent fixes.

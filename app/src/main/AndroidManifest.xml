@@ -108,6 +108,10 @@
         <meta-data
             android:name="firebase_inapp_messaging_auto_data_collection_enabled"
             android:value="false" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false"/>
     </application>
 
 </manifest>
