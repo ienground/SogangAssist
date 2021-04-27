@@ -236,5 +236,6 @@
     <string name="deadline_format_past">마감 %1$d시간 %2$d분 지남</string>
     <string name="no_unfinished">미완료된 과제나 강의 없음</string>
     <string name="deadline_widget_title">데드라인 위젯</string>
+    <string name="mobon_media_code">albatross</string>
 
 </resources>

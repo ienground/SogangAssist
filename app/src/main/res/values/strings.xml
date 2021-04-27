@@ -236,5 +236,6 @@
     <string name="deadline_format_past">%1$d hours %2$d minutes from deadline</string>
     <string name="no_unfinished">No incomplete assignments or lectures</string>
     <string name="deadline_widget_title">Deadline Widget</string>
+    <string name="mobon_media_code">albatross</string>
 
 </resources>

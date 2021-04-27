@@ -28,6 +28,10 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
+import com.mobon.sdk.EndingDialog
+import com.mobon.sdk.Key
+import com.mobon.sdk.MobonSDK
+import com.mobon.sdk.callback.iMobonEndingPopupCallback
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import net.ienlab.sogangassist.BuildConfig
@@ -79,13 +83,17 @@ class MainActivity : AppCompatActivity() {
     lateinit var notiBadgeText: TextView
     lateinit var storage: AppStorage
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    lateinit var endingDialog: EndingDialog
+
+        override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.activity = this
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
+
+        MobonSDK(this, getString(R.string.mobon_media_code))
 
         dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
         notiDBHelper = NotiDBHelper(this, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
@@ -404,6 +412,31 @@ class MainActivity : AppCompatActivity() {
             notiDBHelper.updateItemById(data)
         }
 
+        // 엔딩 Advertisement
+
+        endingDialog = EndingDialog(this).setType(Key.ENDING_TYPE.NORMAL).setUnitId("531325").build()
+        endingDialog.setAdListener(object: iMobonEndingPopupCallback {
+            override fun onLoadedAdInfo(result: Boolean, errorStr: String?) {
+                Log.d(TAG, "isLoad: $result")
+                Log.d(TAG, "error: $errorStr")
+            }
+
+            override fun onClickEvent(eventCode: Key.ENDING_KEYCODE?) {
+                when (eventCode) {
+                    Key.ENDING_KEYCODE.CLOSE -> finish()
+                    Key.ENDING_KEYCODE.CANCEL -> endingDialog.loadAd()
+                }
+            }
+
+            override fun onOpened() {
+            }
+
+            override fun onClosed() {
+            }
+        })
+
+        endingDialog.loadAd()
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -570,14 +603,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        val tempTime = System.currentTimeMillis()
-        val intervalTime = tempTime - backPressedTime
-        if (intervalTime in 0..FINISH_INTERVAL_TIME) {
-            super.onBackPressed()
-        } else {
-            backPressedTime = tempTime
-            Toast.makeText(applicationContext, getString(R.string.press_back_to_exit), Toast.LENGTH_SHORT).show()
+        if (::endingDialog.isInitialized && !endingDialog.isShowing && endingDialog.isLoaded) {
+            endingDialog.show()
+            return
         }
+        super.onBackPressed()
+//        val tempTime = System.currentTimeMillis()
+//        val intervalTime = tempTime - backPressedTime
+//        if (intervalTime in 0..FINISH_INTERVAL_TIME) {
+//            super.onBackPressed()
+//        } else {
+//            backPressedTime = tempTime
+//            Toast.makeText(applicationContext, getString(R.string.press_back_to_exit), Toast.LENGTH_SHORT).show()
+//        }
     }
 
     companion object {

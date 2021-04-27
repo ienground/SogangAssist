@@ -54,9 +54,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'
 
     implementation 'com.google.android.material:material:1.4.0-alpha02'
-    implementation 'com.google.firebase:firebase-core:18.0.2'
-    implementation 'com.google.firebase:firebase-messaging:21.0.1'
-    implementation 'com.google.firebase:firebase-analytics:18.0.2'
+    implementation 'com.google.firebase:firebase-core:18.0.3'
+    implementation 'com.google.firebase:firebase-messaging:21.1.0'
+    implementation 'com.google.firebase:firebase-analytics:18.0.3'
 
     implementation 'com.google.android.play:core-ktx:1.8.1'
     implementation 'com.google.android.gms:play-services-ads:20.0.0'
@@ -78,9 +78,13 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     implementation 'com.prolificinteractive:material-calendarview:1.4.3'
-    implementation 'de.hdodenhof:circleimageview:3.0.1'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.romandanylyk:pageindicatorview:1.0.3@aar'
     implementation 'com.github.mmin18:realtimeblurview:1.2.1'
+
+    implementation('io.github.mobon:mobonSDK:1.0.0.5') {
+        transitive = true
+    }
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

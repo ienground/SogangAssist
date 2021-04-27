@@ -133,9 +133,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
         lateinit var dbHelper: DBHelper
         lateinit var sharedPreferences: SharedPreferences
 
-        val SAVE_FILE = 4
-        val LOAD_FILE = 5
-
         val timeFormat = SimpleDateFormat("a h:mm", Locale.getDefault())
 
         lateinit var gmSansBold: Typeface
@@ -883,6 +880,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     }
                 }
             }
+        }
+
+        companion object {
+            const val SAVE_FILE = 4
+            const val LOAD_FILE = 5
         }
     }
 }
