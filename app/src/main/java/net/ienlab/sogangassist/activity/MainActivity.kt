@@ -31,6 +31,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.mobon.sdk.EndingDialog
 import com.mobon.sdk.Key
 import com.mobon.sdk.MobonSDK
+import com.mobon.sdk.callback.iMobonAdCallback
 import com.mobon.sdk.callback.iMobonEndingPopupCallback
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
@@ -49,6 +50,7 @@ import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.receiver.ReminderReceiver
 import net.ienlab.sogangassist.utils.AppStorage
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
+import org.json.JSONObject
 import java.lang.NullPointerException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -83,9 +85,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var notiBadgeText: TextView
     lateinit var storage: AppStorage
 
+    lateinit var mobonSDK: MobonSDK
     lateinit var endingDialog: EndingDialog
 
-        override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.activity = this
@@ -93,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
 
-        MobonSDK(this, getString(R.string.mobon_media_code))
+        mobonSDK = MobonSDK(this, getString(R.string.mobon_media_code))
 
         dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
         notiDBHelper = NotiDBHelper(this, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
@@ -371,6 +374,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
         setDecorators(this)
 
         binding.btnMoveToday.setOnClickListener {
@@ -414,34 +418,38 @@ class MainActivity : AppCompatActivity() {
 
         // 엔딩 Advertisement
 
-        endingDialog = EndingDialog(this).setType(Key.ENDING_TYPE.NORMAL).setUnitId("531325").build()
-        endingDialog.setAdListener(object: iMobonEndingPopupCallback {
-            override fun onLoadedAdInfo(result: Boolean, errorStr: String?) {
-                Log.d(TAG, "isLoad: $result")
-                Log.d(TAG, "error: $errorStr")
-            }
+//        endingDialog = EndingDialog(this).setType(Key.ENDING_TYPE.NORMAL).setUnitId("531329").build()
+//        endingDialog.setAdListener(object: iMobonEndingPopupCallback {
+//            override fun onLoadedAdInfo(result: Boolean, errorStr: String?) {
+//                Log.d(TAG, "isLoad: $result")
+//                Log.d(TAG, "error: $errorStr")
+//            }
+//
+//            override fun onClickEvent(eventCode: Key.ENDING_KEYCODE?) {
+//                when (eventCode) {
+//                    Key.ENDING_KEYCODE.CLOSE -> finish()
+//                    Key.ENDING_KEYCODE.CANCEL -> endingDialog.loadAd()
+//                }
+//            }
+//
+//            override fun onOpened() {
+//            }
+//
+//            override fun onClosed() {
+//            }
+//        })
 
-            override fun onClickEvent(eventCode: Key.ENDING_KEYCODE?) {
-                when (eventCode) {
-                    Key.ENDING_KEYCODE.CLOSE -> finish()
-                    Key.ENDING_KEYCODE.CANCEL -> endingDialog.loadAd()
-                }
-            }
+//        endingDialog.loadAd()
 
-            override fun onOpened() {
-            }
+        mobonSDK.getMobonAdData(this, 1, "531329") { result, data, errorStr ->
+            Log.d(TAG, "result: $result, data: $data, errorStr: $errorStr")
+        }
 
-            override fun onClosed() {
-            }
-        })
-
-        endingDialog.loadAd()
 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
-
         when (requestCode) {
             REFRESH_MAIN_WORK -> {
                 if (resultCode == Activity.RESULT_OK) {
