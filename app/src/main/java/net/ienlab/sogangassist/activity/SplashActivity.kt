@@ -1,11 +1,13 @@
 package net.ienlab.sogangassist.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Message
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -47,9 +49,22 @@ class SplashActivity : AppCompatActivity() {
             if (isFirstVisit) {
                 startActivity(welcomeIntent)
             } else {
-                startActivity(mainIntent)
+                val handler = MainActivityOpenHandler(this, mainIntent)
+                Thread {
+                    handler.sendEmptyMessage(0)
+                }.start()
             }
             finish()
         }, SPLASH_DISPLAY_LENGTH.toLong())
+    }
+
+
+}
+
+class MainActivityOpenHandler(val activity: Activity, val intent: Intent): Handler(Looper.getMainLooper()) {
+    override fun handleMessage(msg: Message) {
+        super.handleMessage(msg)
+        activity.startActivity(intent)
+        Log.d(TAG, "open activity in handler")
     }
 }

@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.text.Html
 import android.text.Spanned
+import android.util.TypedValue
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getSystemService
 import kotlinx.coroutines.CoroutineScope
@@ -52,6 +53,11 @@ class MyUtils {
             } else {
                 currentTime in startTime..endTime
             }
+        }
+
+        fun dpToPx(context: Context, dpValue: Float): Float {
+            val metrics = context.resources.displayMetrics
+            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, metrics)
         }
 
         fun isNotiPermissionAllowed(context: Context): Boolean {

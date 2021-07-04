@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
@@ -103,14 +106,14 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
                     items[position].isFinished = !items[position].isFinished
                     dbHelper.updateItemById(items[position])
                     notifyItemChanged(position)
-                    MainActivity.setEachDecorator(this@MainWorkAdapter.context, items[position].endTime)
-                    Snackbar.make(MainActivity.view, if (items[position].isFinished) this@MainWorkAdapter.context.getString(R.string.marked_as_finish) else this@MainWorkAdapter.context.getString(R.string.marked_as_not_finish),
-                        Snackbar.LENGTH_SHORT).setAction(R.string.undo) {
-                        items[position].isFinished = !items[position].isFinished
-                        dbHelper.updateItemById(items[position])
-                        notifyItemChanged(position)
-                        MainActivity.setEachDecorator(this@MainWorkAdapter.context, items[position].endTime)
-                    }.show()
+//                    MainActivity.setEachDecorator(this@MainWorkAdapter.context, items[position].endTime)
+//                    Snackbar.make(MainActivity.view, if (items[position].isFinished) this@MainWorkAdapter.context.getString(R.string.marked_as_finish) else this@MainWorkAdapter.context.getString(R.string.marked_as_not_finish),
+//                        Snackbar.LENGTH_SHORT).setAction(R.string.undo) {
+//                        items[position].isFinished = !items[position].isFinished
+//                        dbHelper.updateItemById(items[position])
+//                        notifyItemChanged(position)
+//                        MainActivity.setEachDecorator(this@MainWorkAdapter.context, items[position].endTime)
+//                    }.show()
                     dismiss()
                 }
 
@@ -147,6 +150,13 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
                 holder.icon.contentDescription = context.getString(R.string.zoom)
                 holder.sub_name.text = items[position].homework_name
             }
+
+            LMSClass.TYPE_AD -> {
+                Glide.with(context).load(items[position].homework_name).into(holder.icon)
+                Log.d(TAG, items[position].homework_name)
+                holder.icon.background = null
+                holder.icon.setPadding(0)
+            }
         }
 
         if (items[position].isFinished) {
@@ -162,11 +172,8 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
         }
     }
 
-
     // 데이터 셋의 크기를 리턴해줍니다.
-    override fun getItemCount(): Int {
-        return items.size
-    }
+    override fun getItemCount(): Int = items.size
 
     fun setFullAd(context: Context) {
         if (BuildConfig.DEBUG) {

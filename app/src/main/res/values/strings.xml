@@ -101,6 +101,7 @@
     <string name="widget_dark_mode_title">Apply system dark mode on widget</string>
     <string name="widget_dark_mode_desc_on">Dark mode is applied to the widget.</string>
     <string name="widget_dark_mode_desc_off">Widgets always have day mode (bright).</string>
+    <string name="load_data">Loading data..</string>
 
     <!--Onboarding-->
     <string name="intro_page0_title">Welcome.</string>

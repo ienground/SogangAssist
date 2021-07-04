@@ -22,5 +22,6 @@ class LMSClass (
         val TYPE_SUP_LESSON = 1
         val TYPE_HOMEWORK = 2
         val TYPE_ZOOM = 3
+        val TYPE_AD = 4
     }
 }

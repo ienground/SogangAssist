@@ -42,6 +42,8 @@ class LMSListenerService : NotificationListenerService() {
         dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
         notiDBHelper = NotiDBHelper(this, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
         sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
+
+
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {

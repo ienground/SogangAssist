@@ -81,6 +81,13 @@
             android:summaryOn="@string/widget_dark_mode_desc_on"
             android:summaryOff="@string/widget_dark_mode_desc_off" />
 
+<!--        <Preference-->
+<!--            android:title="마감일이 오래된 일정을 자동으로 삭제"-->
+<!--            android:key="old_date_delete"-->
+<!--            android:defaultValue="true"-->
+<!--            android:summaryOn="설정된 날짜보다 오래된 일정을 자동으로 삭제해 어플리케이션 로딩 속도를 "-->
+<!--            />-->
+
         <Preference
             android:title="@string/backup"
             android:key="backup"

@@ -156,8 +156,76 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
         return arr
     }
 
-    fun getItemById(id: Int): LMSClass {
+    fun getItemMonth(month: Long): List<LMSClass> {
+        val startCalendar = Calendar.getInstance().apply {
+            timeInMillis = month
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
 
+        val endCalendar = Calendar.getInstance().apply {
+            timeInMillis = month
+            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }
+
+        return getItemDateRange(startCalendar.timeInMillis, endCalendar.timeInMillis)
+    }
+
+    fun getItemDateRange(startDate: Long, endDate: Long): List<LMSClass> {
+        val startCalendar = Calendar.getInstance().apply {
+            timeInMillis = startDate
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val endCalendar = Calendar.getInstance().apply {
+            timeInMillis = endDate
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }
+
+        val sb = StringBuffer()
+        sb.append(" SELECT $ID, $CLASS_NAME, $TIMESTAMP, $TYPE, $START_TIME, $END_TIME, $LESSON_WEEK, $LESSON_LESSON, $HOMEWORK_NAME, $ALLOW_RENEW, $IS_FINISHED FROM $_TABLENAME0 WHERE $END_TIME >= ${startCalendar.timeInMillis} AND $END_TIME < ${endCalendar.timeInMillis + 24 * 60 * 60 * 1000} ")
+
+        val db = readableDatabase
+        val cursor = db.rawQuery(sb.toString(), null)
+
+        val arr = ArrayList<LMSClass>()
+
+        while (cursor.moveToNext()) {
+            val data = LMSClass(
+                cursor.getInt(0),
+                cursor.getString(1),
+                cursor.getLong(2),
+                cursor.getInt(3),
+                cursor.getLong(4),
+                cursor.getLong(5),
+                cursor.getInt(9) == 1,
+                cursor.getInt(10) == 1,
+                cursor.getInt(6),
+                cursor.getInt(7),
+                cursor.getString(8)
+            )
+
+            arr.add(data)
+        }
+
+        cursor.close()
+        return arr
+    }
+
+    fun getItemById(id: Int): LMSClass {
         val sb = StringBuffer()
         sb.append(" SELECT $ID, $CLASS_NAME, $TIMESTAMP, $TYPE, $START_TIME, $END_TIME, $LESSON_WEEK, $LESSON_LESSON, $HOMEWORK_NAME, $ALLOW_RENEW, $IS_FINISHED FROM $_TABLENAME0 WHERE $ID=$id ")
 
