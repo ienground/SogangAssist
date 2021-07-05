@@ -26,6 +26,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.installations.FirebaseInstallations
@@ -47,6 +48,7 @@ import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.receiver.ReminderReceiver
 import net.ienlab.sogangassist.utils.AppStorage
+import net.ienlab.sogangassist.utils.ClickCallbackListener
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
@@ -88,6 +90,18 @@ class MainActivity : AppCompatActivity() {
     lateinit var storage: AppStorage
 
     val decorators: MutableMap<Long, DayViewDecorator> = mutableMapOf()
+
+    val mainWorkCallbackListener = object: ClickCallbackListener {
+        override fun callBack(position: Int, items: List<LMSClass>, adapter: MainWorkAdapter) {
+            setEachDecorator(items[position].endTime)
+            Snackbar.make(window.decorView.rootView, if (items[position].isFinished) getString(R.string.marked_as_finish) else getString(R.string.marked_as_not_finish), Snackbar.LENGTH_SHORT).setAction(R.string.undo) {
+                items[position].isFinished = !items[position].isFinished
+                dbHelper.updateItemById(items[position])
+                adapter.notifyItemChanged(position)
+                setEachDecorator(items[position].endTime)
+            }.show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -162,7 +176,7 @@ class MainActivity : AppCompatActivity() {
             if (result.resultCode == RESULT_OK) {
                 val work = dbHelper.getItemAtLastDate(thisCurrentDate).toMutableList().apply {
                     sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) } as ArrayList
-                binding.mainWorkView.adapter = MainWorkAdapter(work)
+                binding.mainWorkView.adapter = MainWorkAdapter(work).apply { setCallbackListener(mainWorkCallbackListener) }
                 binding.mainWorkView.layoutManager = LinearLayoutManager(this)
                 binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
             }
@@ -317,11 +331,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val todayWork = dbHelper.getItemAtLastDate(System.currentTimeMillis()).toMutableList().apply {
-            sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
-        } as ArrayList
+        val todayWork = dbHelper.getItemAtLastDate(System.currentTimeMillis()).toMutableList().apply { sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) } as ArrayList
 
-        binding.mainWorkView.adapter = MainWorkAdapter(todayWork)
+        binding.mainWorkView.adapter = MainWorkAdapter(todayWork).apply { setCallbackListener(mainWorkCallbackListener) }
         binding.mainWorkView.layoutManager = LinearLayoutManager(this)
         binding.tvNoDeadline.visibility = if (todayWork.isEmpty()) View.VISIBLE else View.GONE
         binding.btnAdd.setOnClickListener {
@@ -348,7 +360,7 @@ class MainActivity : AppCompatActivity() {
                     startAnimation(fadeOutAnimation)
                     visibility = View.INVISIBLE
 
-                    adapter = MainWorkAdapter(work)
+                    adapter = MainWorkAdapter(work).apply { setCallbackListener(mainWorkCallbackListener) }
                     layoutManager = LinearLayoutManager(applicationContext)
                     thisCurrentDate = date.date.time
 
@@ -526,6 +538,35 @@ class MainActivity : AppCompatActivity() {
                     notiBadgeText.visibility = View.VISIBLE
                 }
             }
+        }
+    }
+
+    fun setEachDecorator(time: Long) {
+        val sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
+        val dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
+        val data = dbHelper.getItemAtLastDate(time)
+        val timeCount = intArrayOf(0, 0)
+        val decoratorTime = Calendar.getInstance().apply {
+            timeInMillis = time
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+
+        data.forEach {
+            timeCount[if (it.isFinished) 1 else 0] += 1
+        }
+
+        binding.calendarView.removeDecorator(decorators[decoratorTime])
+        if (sharedPreferences.getBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, true)) {
+            val decorator = EventDecorator2(this, decoratorTime)
+            binding.calendarView.addDecorator(decorator)
+            decorators[decoratorTime] = decorator
+        } else {
+            val decorator = EventDecorator(ContextCompat.getColor(this, R.color.colorAccent), timeCount, arrayListOf(CalendarDay.from(Date(time))))
+            binding.calendarView.addDecorator(decorator)
+            decorators[decoratorTime] = decorator
         }
     }
 

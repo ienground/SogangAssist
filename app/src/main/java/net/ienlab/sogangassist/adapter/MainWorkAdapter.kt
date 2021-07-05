@@ -28,6 +28,7 @@ import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.DBHelper
 import net.ienlab.sogangassist.utils.AppStorage
+import net.ienlab.sogangassist.utils.ClickCallbackListener
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,7 +39,9 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
     lateinit var context: Context
     lateinit var dbHelper: DBHelper
     lateinit var storage: AppStorage
+
     var interstitialAd: InterstitialAd? = null
+    var clickCallbackListener: ClickCallbackListener? = null
 
     // 새로운 뷰 홀더 생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainWorkAdapter.ItemViewHolder {
@@ -63,8 +66,7 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
         holder.end_time.typeface = gmSansMedium
 
         holder.class_name.text = items[position].className
-        holder.end_time.text =
-            context.getString(if (items[position].type != LMSClass.TYPE_ZOOM) R.string.deadline else R.string.start, timeFormat.format(Date(items[position].endTime)))
+        holder.end_time.text = context.getString(if (items[position].type != LMSClass.TYPE_ZOOM) R.string.deadline else R.string.start, timeFormat.format(Date(items[position].endTime)))
         holder.wholeView.setOnClickListener {
             Intent(context, EditActivity::class.java).apply {
                 putExtra("ID", items[position].id)
@@ -106,14 +108,7 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
                     items[position].isFinished = !items[position].isFinished
                     dbHelper.updateItemById(items[position])
                     notifyItemChanged(position)
-//                    MainActivity.setEachDecorator(this@MainWorkAdapter.context, items[position].endTime)
-//                    Snackbar.make(MainActivity.view, if (items[position].isFinished) this@MainWorkAdapter.context.getString(R.string.marked_as_finish) else this@MainWorkAdapter.context.getString(R.string.marked_as_not_finish),
-//                        Snackbar.LENGTH_SHORT).setAction(R.string.undo) {
-//                        items[position].isFinished = !items[position].isFinished
-//                        dbHelper.updateItemById(items[position])
-//                        notifyItemChanged(position)
-//                        MainActivity.setEachDecorator(this@MainWorkAdapter.context, items[position].endTime)
-//                    }.show()
+                    clickCallbackListener?.callBack(position, items, this@MainWorkAdapter)
                     dismiss()
                 }
 
@@ -174,6 +169,10 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
 
     // 데이터 셋의 크기를 리턴해줍니다.
     override fun getItemCount(): Int = items.size
+
+    fun setCallbackListener(callbackListener: ClickCallbackListener) {
+        this.clickCallbackListener = callbackListener
+    }
 
     fun setFullAd(context: Context) {
         if (BuildConfig.DEBUG) {

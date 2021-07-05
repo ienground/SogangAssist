@@ -440,7 +440,7 @@ class MainActivity2 : AppCompatActivity() {
                     binding.mainWorkView.layoutManager = LinearLayoutManager(this)
                     binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
 
-                    setEachDecorator(this, endTime)
+//                    setEachDecorator(this, endTime)
                 }
                 binding.adView.visibility = if (storage.purchasedAds()) View.GONE else View.VISIBLE
             }
@@ -631,33 +631,6 @@ class MainActivity2 : AppCompatActivity() {
 
         val decorators: MutableMap<Long, DayViewDecorator> = mutableMapOf()
 
-        fun setEachDecorator(context: Context, time: Long) {
-            val sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
-            val dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
-            val data = dbHelper.getItemAtLastDate(time)
-            val timeCount = intArrayOf(0, 0)
-            val decoratorTime = Calendar.getInstance().apply {
-                timeInMillis = time
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }.timeInMillis
 
-            data.forEach {
-                timeCount[if (it.isFinished) 1 else 0] += 1
-            }
-
-            binding.calendarView.removeDecorator(decorators[decoratorTime])
-            if (sharedPreferences.getBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, true)) {
-                val decorator = EventDecorator2(context, decoratorTime)
-                binding.calendarView.addDecorator(decorator)
-                decorators[decoratorTime] = decorator
-            } else {
-                val decorator = EventDecorator(ContextCompat.getColor(context, R.color.colorAccent), timeCount, arrayListOf(CalendarDay.from(Date(time))))
-                binding.calendarView.addDecorator(decorator)
-                decorators[decoratorTime] = decorator
-            }
-        }
     }
 }
