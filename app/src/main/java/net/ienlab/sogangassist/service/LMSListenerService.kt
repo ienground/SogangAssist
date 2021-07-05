@@ -42,8 +42,6 @@ class LMSListenerService : NotificationListenerService() {
         dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
         notiDBHelper = NotiDBHelper(this, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
         sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
-
-
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
@@ -485,6 +483,222 @@ class LMSListenerService : NotificationListenerService() {
                                 NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                     setContentTitle(className)
                                     setContentText(getString(R.string.reminder_content_zoom_update, data.homework_name, timeFormat.format(data.endTime)))
+                                    setContentIntent(clickPendingIntent)
+                                    setAutoCancel(true)
+                                    setStyle(NotificationCompat.BigTextStyle())
+                                    setSmallIcon(R.drawable.ic_icon)
+                                    addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
+                                    addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
+                                    color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+
+                                    if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                        nm.notify(699000 + id, build())
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    contains(getString(R.string.format_new_teamwork)) -> {
+                        val regex = getString(R.string.format_assignment_regex).toRegex()
+                        val matchResult = regex.matchEntire(this as CharSequence)
+
+                        if (matchResult != null) {
+                            val (homework_name, startTime, endTime) = matchResult.destructured
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.TYPE_TEAMWORK, timeFormat.parse(startTime)?.time ?: 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true,isFinished = false, -1, -1,  homework_name)
+
+                            if (!dbHelper.checkItemByData(data)) {
+                                val id = dbHelper.addItem(data)
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+
+                                hours.forEachIndexed { index, i ->
+                                    val triggerTime = data.endTime - i * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", i)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
+
+                                if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
+                                    val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    val setReadIntent = Intent(applicationContext, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 699000 + id) }
+                                    val setReadPendingIntent = PendingIntent.getBroadcast(applicationContext, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                                    NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                        setContentTitle(className)
+                                        setContentText(getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)))
+                                        setContentIntent(clickPendingIntent)
+                                        setAutoCancel(true)
+                                        setStyle(NotificationCompat.BigTextStyle())
+                                        setSmallIcon(R.drawable.ic_icon)
+                                        addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
+                                        addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
+                                        color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+
+                                        if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                            nm.notify(699000 + id, build())
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    contains(getString(R.string.format_change_teamwork)) -> {
+                        val regex = getString(R.string.format_assignment_regex).toRegex()
+                        val matchResult = regex.matchEntire(this as CharSequence)
+
+                        if (matchResult != null) {
+                            val (homework_name, startTime, endTime) = matchResult.destructured
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.TYPE_TEAMWORK, timeFormat.parse(startTime)?.time ?: 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, -1, -1, homework_name)
+
+                            val id: Int
+                            if (dbHelper.checkItemByData(data)) {
+                                val oldItem = dbHelper.getItemById(dbHelper.getIdByCondition(data))
+                                data.id = oldItem.id
+                                data.isFinished = oldItem.isFinished
+                                data.isRenewAllowed = oldItem.isRenewAllowed
+                                if (oldItem.isRenewAllowed) {
+                                    dbHelper.updateItem(data) // check
+                                }
+                                id = data.id
+                            } else {
+                                dbHelper.addItem(data)
+                                id = dbHelper.getAllData().last().id
+                            }
+
+                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+
+                            hours.forEachIndexed { index, i ->
+                                val triggerTime = data.endTime - i * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", i)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
+
+                            if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
+                                val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
+                                val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                val setReadIntent = Intent(applicationContext, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 699000 + id) }
+                                val setReadPendingIntent = PendingIntent.getBroadcast(applicationContext, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                                NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                    setContentTitle(className)
+                                    setContentText(getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)))
+                                    setContentIntent(clickPendingIntent)
+                                    setAutoCancel(true)
+                                    setStyle(NotificationCompat.BigTextStyle())
+                                    setSmallIcon(R.drawable.ic_icon)
+                                    addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
+                                    addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
+                                    color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+
+                                    if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                        nm.notify(699000 + id, build())
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    contains(getString(R.string.format_new_test)) -> {
+                        val regex = getString(R.string.format_assignment_regex).toRegex()
+                        val matchResult = regex.matchEntire(this as CharSequence)
+
+                        if (matchResult != null) {
+                            val (homework_name, startTime, endTime) = matchResult.destructured
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.TYPE_EXAM, -1, timeFormat.parse(startTime)?.time ?: 0L, isRenewAllowed = true,isFinished = false, -1, -1,  homework_name)
+
+                            if (!dbHelper.checkItemByData(data)) {
+                                val id = dbHelper.addItem(data)
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+
+                                hours.forEachIndexed { index, i ->
+                                    val triggerTime = data.endTime - i * 60 * 60 * 1000
+                                    notiIntent.putExtra("TRIGGER", triggerTime)
+                                    notiIntent.putExtra("TIME", i)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                }
+
+                                if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
+                                    val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    val setReadIntent = Intent(applicationContext, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 699000 + id) }
+                                    val setReadPendingIntent = PendingIntent.getBroadcast(applicationContext, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                                    NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                        setContentTitle(className)
+                                        setContentText(getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)))
+                                        setContentIntent(clickPendingIntent)
+                                        setAutoCancel(true)
+                                        setStyle(NotificationCompat.BigTextStyle())
+                                        setSmallIcon(R.drawable.ic_icon)
+                                        addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
+                                        addAction(R.drawable.ic_mark_as_read, getString(R.string.mark_as_read), setReadPendingIntent)
+                                        color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+
+                                        if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                            nm.notify(699000 + id, build())
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    contains(getString(R.string.format_change_test)) -> {
+                        val regex = getString(R.string.format_assignment_regex).toRegex()
+                        val matchResult = regex.matchEntire(this as CharSequence)
+
+                        if (matchResult != null) {
+                            val (homework_name, startTime, endTime) = matchResult.destructured
+                            val data = LMSClass(-1, className, sbn.postTime, LMSClass.TYPE_EXAM, -1, timeFormat.parse(startTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, -1, -1, homework_name)
+
+                            val id: Int
+                            if (dbHelper.checkItemByData(data)) {
+                                val oldItem = dbHelper.getItemById(dbHelper.getIdByCondition(data))
+                                data.id = oldItem.id
+                                data.isFinished = oldItem.isFinished
+                                data.isRenewAllowed = oldItem.isRenewAllowed
+                                if (oldItem.isRenewAllowed) {
+                                    dbHelper.updateItem(data) // check
+                                }
+                                id = data.id
+                            } else {
+                                dbHelper.addItem(data)
+                                id = dbHelper.getAllData().last().id
+                            }
+
+                            val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+
+                            hours.forEachIndexed { index, i ->
+                                val triggerTime = data.endTime - i * 60 * 60 * 1000
+                                notiIntent.putExtra("TRIGGER", triggerTime)
+                                notiIntent.putExtra("TIME", i)
+                                val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                            }
+
+                            if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
+                                val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
+                                val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                val setReadIntent = Intent(applicationContext, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 699000 + id) }
+                                val setReadPendingIntent = PendingIntent.getBroadcast(applicationContext, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                                NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
+                                    setContentTitle(className)
+                                    setContentText(getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)))
                                     setContentIntent(clickPendingIntent)
                                     setAutoCancel(true)
                                     setStyle(NotificationCompat.BigTextStyle())

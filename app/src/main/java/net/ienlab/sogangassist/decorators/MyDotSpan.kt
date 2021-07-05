@@ -87,8 +87,6 @@ class MyDotSpan(private val radius: Float, private val color: Int, amount: IntAr
 
 class MyDotSpan2(private val context: Context, private val size: Float, private val data: List<LMSClass>) : LineBackgroundSpan {
 
-//    private val finishedAmount: Int = amount[1]
-//    private val unfinishedAmount: Int = amount[0]
     override fun drawBackground(canvas: Canvas, paint: Paint, left: Int, right: Int, top: Int, baseline: Int, bottom: Int, charSequence: CharSequence, start: Int, end: Int, lineNum: Int) {
         val finishedItem = ArrayList<LMSClass>()
         val unfinishedItem = ArrayList<LMSClass>()
@@ -107,6 +105,8 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
                     LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
                     LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
                     LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
+                    LMSClass.TYPE_TEAMWORK -> R.drawable.ic_team
+                    LMSClass.TYPE_EXAM -> R.drawable.ic_test
                     else -> R.drawable.ic_icon
                 }
 

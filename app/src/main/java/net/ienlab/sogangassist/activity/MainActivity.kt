@@ -310,7 +310,7 @@ class MainActivity : AppCompatActivity() {
             if (data.endTime < System.currentTimeMillis()) continue
 
             when (data.type) {
-                LMSClass.TYPE_HOMEWORK, LMSClass.TYPE_LESSON, LMSClass.TYPE_SUP_LESSON -> {
+                LMSClass.TYPE_HOMEWORK, LMSClass.TYPE_LESSON, LMSClass.TYPE_SUP_LESSON, LMSClass.TYPE_TEAMWORK -> {
                     hours.forEachIndexed { index, i ->
                         val triggerTime = data.endTime - i * 60 * 60 * 1000
                         notiIntent.putExtra("TRIGGER", triggerTime)
@@ -319,7 +319,7 @@ class MainActivity : AppCompatActivity() {
                         am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                     }
                 }
-                LMSClass.TYPE_ZOOM -> {
+                LMSClass.TYPE_ZOOM, LMSClass.TYPE_EXAM -> {
                     minutes.forEachIndexed { index, i ->
                         val triggerTime = data.endTime - i * 60 * 1000
                         notiIntent.putExtra("TRIGGER", triggerTime)

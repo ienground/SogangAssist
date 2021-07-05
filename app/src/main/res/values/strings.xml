@@ -8,12 +8,15 @@
     <string name="sup_classtime">Make-up Lesson</string>
     <string name="assignment">Assignment</string>
     <string name="zoom">Live Lecture (Zoom)</string>
+    <string name="team_project">Team Project</string>
+    <string name="exam">Exam</string>
     <string name="allow_auto_edit_lms">Allows automatic edit by LMS notification</string>
     <string name="class_name">Subject Name</string>
     <string name="week">Week</string>
     <string name="lesson">Hour</string>
     <string name="assignment_name">Assignment Name</string>
     <string name="zoom_name">Zoom Title</string>
+    <string name="exam_name">Exam Title</string>
     <string name="dateFormat">MMM dd, yyyy (EEE)</string>
     <string name="timeFormat">a h:mm</string>
     <string name="mark_as_finish">Mark as complete</string>
@@ -145,6 +148,7 @@
     <string name="err_time_late">The deadline must be later than the start date.</string>
     <string name="err_input_assignment">Please enter the assignment name.</string>
     <string name="err_input_zoom_title">Please enter the Zoom title.</string>
+    <string name="err_input_exam_title">Please enter the Exam title.</string>
     <string name="err_assignment_time">Please enter the assignment name, and the deadline must be later than the start date.</string>
     <string name="err_class_time">Please enter the subject name, and the deadline must be later than the start date.</string>
     <string name="err_class_assignment">Please enter the class and assignment name.</string>
@@ -161,6 +165,10 @@
     <string name="format_change_sup_lecture">online make-up course is changed</string>
     <string name="format_new_zoom">New Zoom schedule</string>
     <string name="format_change_zoom">Edited Zoom schedule</string>
+    <string name="format_new_teamwork">New team project</string>
+    <string name="format_change_teamwork">Edited team project</string>
+    <string name="format_new_test">New exam</string>
+    <string name="format_change_test">Edit exam</string>
     <string name="format_lms_date">MMM dd, yyyy a h:mm</string>
     <string name="format_assignment_regex">^.+\"(.+)\" \\(Period:(.+) ~ (.+)\\)$</string>
     <string name="format_lecture_regex">^Week(\\d+) Hour (\\d+).*\\(Must complete the course by: (.+) \\)$</string>

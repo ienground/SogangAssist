@@ -66,7 +66,7 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
         holder.end_time.typeface = gmSansMedium
 
         holder.class_name.text = items[position].className
-        holder.end_time.text = context.getString(if (items[position].type != LMSClass.TYPE_ZOOM) R.string.deadline else R.string.start, timeFormat.format(Date(items[position].endTime)))
+        holder.end_time.text = context.getString(if (items[position].type != LMSClass.TYPE_ZOOM && items[position].type != LMSClass.TYPE_EXAM) R.string.deadline else R.string.start, timeFormat.format(Date(items[position].endTime)))
         holder.wholeView.setOnClickListener {
             Intent(context, EditActivity::class.java).apply {
                 putExtra("ID", items[position].id)
@@ -136,7 +136,7 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
 
             LMSClass.TYPE_SUP_LESSON -> {
                 holder.icon.setImageResource(R.drawable.ic_video_sup)
-                holder.icon.contentDescription = context.getString(R.string.classtime)
+                holder.icon.contentDescription = context.getString(R.string.sup_classtime)
                 holder.sub_name.text = context.getString(R.string.week_lesson_format, items[position].week, items[position].lesson) + context.getString(R.string.enrich_study)
             }
 
@@ -146,11 +146,16 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
                 holder.sub_name.text = items[position].homework_name
             }
 
-            LMSClass.TYPE_AD -> {
-                Glide.with(context).load(items[position].homework_name).into(holder.icon)
-                Log.d(TAG, items[position].homework_name)
-                holder.icon.background = null
-                holder.icon.setPadding(0)
+            LMSClass.TYPE_TEAMWORK -> {
+                holder.icon.setImageResource(R.drawable.ic_team)
+                holder.icon.contentDescription = context.getString(R.string.team_project)
+                holder.sub_name.text = items[position].homework_name
+            }
+
+            LMSClass.TYPE_EXAM -> {
+                holder.icon.setImageResource(R.drawable.ic_test)
+                holder.icon.contentDescription = context.getString(R.string.exam)
+                holder.sub_name.text = items[position].homework_name
             }
         }
 

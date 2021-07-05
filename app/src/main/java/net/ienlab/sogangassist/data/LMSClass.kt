@@ -18,10 +18,11 @@ class LMSClass (
     var homework_name: String
 ) {
     companion object {
-        val TYPE_LESSON = 0
-        val TYPE_SUP_LESSON = 1
-        val TYPE_HOMEWORK = 2
-        val TYPE_ZOOM = 3
-        val TYPE_AD = 4
+        const val TYPE_LESSON = 0
+        const val TYPE_SUP_LESSON = 1
+        const val TYPE_HOMEWORK = 2
+        const val TYPE_ZOOM = 3
+        const val TYPE_TEAMWORK = 4
+        const val TYPE_EXAM = 5
     }
 }
