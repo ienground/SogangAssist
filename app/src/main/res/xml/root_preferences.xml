@@ -32,6 +32,10 @@
             android:key="notify_zoom_group"
             android:title="@string/notify_zoom" />
 
+        <Preference
+            android:key="notify_exam_group"
+            android:title="@string/notify_exam" />
+
         <CheckBoxPreference
             android:key="allow_morning_reminder"
             android:title="@string/morning_reminder"
@@ -81,12 +85,10 @@
             android:summaryOn="@string/widget_dark_mode_desc_on"
             android:summaryOff="@string/widget_dark_mode_desc_off" />
 
-<!--        <Preference-->
-<!--            android:title="마감일이 오래된 일정을 자동으로 삭제"-->
-<!--            android:key="old_date_delete"-->
-<!--            android:defaultValue="true"-->
-<!--            android:summaryOn="설정된 날짜보다 오래된 일정을 자동으로 삭제해 어플리케이션 로딩 속도를 "-->
-<!--            />-->
+        <Preference
+            android:title="@string/date_delete_title"
+            android:key="date_delete"
+            android:summary="@string/date_delete_summary" />
 
         <Preference
             android:title="@string/backup"

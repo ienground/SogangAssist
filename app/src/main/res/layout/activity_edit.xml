@@ -217,7 +217,8 @@
                             android:singleLine="true"
                             android:inputType="number"
                             android:hint="@string/week"
-                            android:textColor="@color/dark_blue"/>
+                            android:textColor="@color/dark_blue"
+                            android:imeOptions="actionNext"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 

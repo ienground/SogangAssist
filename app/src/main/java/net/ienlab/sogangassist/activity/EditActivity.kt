@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -227,15 +228,15 @@ class EditActivity : AppCompatActivity() {
                     }
 
                     R.id.radioButton4 ->{
-                        zoomUI(startCalendar)
-                        binding.tvStartDate.text = dateFormat.format(startCalendar.time)
-                        binding.tvStartTime.text = timeFormat.format(startCalendar.time)
+                        zoomUI(endCalendar)
+                        binding.tvStartDate.text = dateFormat.format(endCalendar.time)
+                        binding.tvStartTime.text = timeFormat.format(endCalendar.time)
                     }
 
                     R.id.radioButton6 ->{
-                        examUI(startCalendar)
-                        binding.tvStartDate.text = dateFormat.format(startCalendar.time)
-                        binding.tvStartTime.text = timeFormat.format(startCalendar.time)
+                        examUI(endCalendar)
+                        binding.tvStartDate.text = dateFormat.format(endCalendar.time)
+                        binding.tvStartTime.text = timeFormat.format(endCalendar.time)
                     }
                 }
             }
@@ -456,6 +457,8 @@ class EditActivity : AppCompatActivity() {
                 endCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
                 binding.tvStartDate.text = dateFormat.format(endCalendar.time)
+
+                Log.d(TAG, dateFormat.format(endCalendar.time))
             }, endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH), endCalendar.get(Calendar.DAY_OF_MONTH)).show()
         }
 
@@ -465,6 +468,7 @@ class EditActivity : AppCompatActivity() {
                 endCalendar.set(Calendar.MINUTE, minute)
 
                 binding.tvStartTime.text = timeFormat.format(endCalendar.time)
+                Log.d(TAG, timeFormat.format(endCalendar.time))
             }, endCalendar.get(Calendar.HOUR_OF_DAY), endCalendar.get(Calendar.MINUTE), false).show()
         }
     }
@@ -723,9 +727,6 @@ class EditActivity : AppCompatActivity() {
         val data = LMSClass(-1, "", 0L, 0, 0L, 0L, false, false, -1, -1, "")
         if (id != -1) {
             data.id = id
-        } else {
-            val datas = dbHelper.getAllData().apply { sortedBy { l -> l.id } }
-            data.id = if (datas.isNotEmpty()) datas.last().id + 1 else 1
         }
 
         data.className = binding.etClass.editText?.text!!.toString()
@@ -752,7 +753,11 @@ class EditActivity : AppCompatActivity() {
         if (id != -1) {
             dbHelper.updateItemById(data)
         } else {
-            dbHelper.addItem(data)
+            Log.d(TAG, timeFormat.format(startCalendar.time))
+            Log.d(TAG, timeFormat.format(endCalendar.time))
+            Log.d(TAG, timeFormat.format(Date(data.startTime)))
+            Log.d(TAG, timeFormat.format(Date(data.endTime)))
+            data.id = dbHelper.addItem(data)
         }
 
         val notiIntent = Intent(this, TimeReceiver::class.java).apply { putExtra("ID", data.id) }

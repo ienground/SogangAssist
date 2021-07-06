@@ -2,6 +2,7 @@ package net.ienlab.sogangassist.activity
 
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -15,6 +16,8 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.preference.CheckBoxPreference
@@ -23,6 +26,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.anjlab.android.iab.v3.BillingProcessor
 import com.anjlab.android.iab.v3.TransactionDetails
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.radiobutton.MaterialRadioButton
 import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.data.LMSClass
@@ -70,8 +74,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             bp.consumePurchase(AppStorage.ADS_FREE)
             true
         }
-
-        val l = LinearLayout(applicationContext)
     }
 
     // ActionBar 메뉴 각각 클릭 시
@@ -145,9 +147,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val notifyHw = findPreference("notify_hw_group")
             val notifyLec = findPreference("notify_lec_group")
             val notifyZoom = findPreference("notify_zoom_group")
+            val notifyExam = findPreference("notify_exam_group")
             val timeMorningReminder = findPreference(SharedKey.TIME_MORNING_REMINDER)
             val timeNightReminder = findPreference(SharedKey.TIME_NIGHT_REMINDER)
             val calendarIconCheck = findPreference(SharedKey.CALENDAR_ICON_SHOW) as CheckBoxPreference
+            val dateDelete = findPreference("date_delete")
             val changelog = findPreference("changelog")
             val email = findPreference("ask_to_dev")
             val openSource = findPreference("open_source")
@@ -166,18 +170,22 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val hwSharedKeys = listOf(SharedKey.NOTIFY_1HOUR_HW, SharedKey.NOTIFY_2HOUR_HW, SharedKey.NOTIFY_6HOUR_HW, SharedKey.NOTIFY_12HOUR_HW, SharedKey.NOTIFY_24HOUR_HW)
             val lecSharedKeys = listOf(SharedKey.NOTIFY_1HOUR_LEC, SharedKey.NOTIFY_2HOUR_LEC, SharedKey.NOTIFY_6HOUR_LEC, SharedKey.NOTIFY_12HOUR_LEC, SharedKey.NOTIFY_24HOUR_LEC)
             val zoomSharedKeys = listOf(SharedKey.NOTIFY_3MIN_ZOOM, SharedKey.NOTIFY_5MIN_ZOOM, SharedKey.NOTIFY_10MIN_ZOOM, SharedKey.NOTIFY_20MIN_ZOOM, SharedKey.NOTIFY_30MIN_ZOOM)
+            val examSharedKeys = listOf(SharedKey.NOTIFY_3MIN_EXAM, SharedKey.NOTIFY_5MIN_EXAM, SharedKey.NOTIFY_10MIN_EXAM, SharedKey.NOTIFY_20MIN_EXAM, SharedKey.NOTIFY_30MIN_EXAM)
 
             val hwHoursOn = arrayListOf<String>()
             val lecHoursOn = arrayListOf<String>()
             val zoomMinutesOn = arrayListOf<String>()
+            val examMinutesOn = arrayListOf<String>()
 
             hwSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) hwHoursOn.add(hourData[index]) }
             lecSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) lecHoursOn.add(hourData[index]) }
             zoomSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) zoomMinutesOn.add(minuteData[index]) }
+            examSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) examMinutesOn.add(minuteData[index]) }
 
             notifyHw?.summary = if (hwHoursOn.isNotEmpty()) getString(R.string.notify_hw_on, hwHoursOn.joinToString(", ")) else getString(R.string.notify_all_off)
             notifyLec?.summary = if (lecHoursOn.isNotEmpty()) getString(R.string.notify_lec_on, lecHoursOn.joinToString(", ")) else getString(R.string.notify_all_off)
             notifyZoom?.summary = if (zoomMinutesOn.isNotEmpty()) getString(R.string.notify_zoom_on, zoomMinutesOn.joinToString(", ")) else getString(R.string.notify_all_off)
+            notifyExam?.summary = if (zoomMinutesOn.isNotEmpty()) getString(R.string.notify_exam_on, examMinutesOn.joinToString(", ")) else getString(R.string.notify_all_off)
 
             val morningCalendar = Calendar.getInstance().apply {
                 val time = sharedPreferences.getInt(SharedKey.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
@@ -322,7 +330,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                             setContentView(dialogView)
                         }.show()
                     }
-
                     tvDndEnd.setOnClickListener {
                         MyBottomSheetDialog(requireContext()).apply {
                             dismissWithAnimation = true
@@ -579,6 +586,64 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
                 true
             }
+            notifyExam?.setOnPreferenceClickListener {
+                MyBottomSheetDialog(requireContext()).apply {
+                    dismissWithAnimation = true
+
+                    val view = layoutInflater.inflate(R.layout.dialog_notify_time, LinearLayout(requireContext()), false)
+                    val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
+                    val tvTitle: TextView = view.findViewById(R.id.tv_title)
+                    val btnClose: ImageButton = view.findViewById(R.id.btn_close)
+                    val minutes = arrayListOf<Boolean>()
+
+                    tvTitle.typeface = gmSansBold
+                    tvTitle.text = getString(R.string.notify_exam)
+                    imgLogo.setImageResource(R.drawable.ic_test)
+
+                    val buttonRes = listOf(R.drawable.ic_3minute, R.drawable.ic_5minute, R.drawable.ic_10minute, R.drawable.ic_20minute, R.drawable.ic_30minute)
+                    val buttons = listOf<ImageButton>(
+                        view.findViewById(R.id.btn_1hour),
+                        view.findViewById(R.id.btn_2hour),
+                        view.findViewById(R.id.btn_6hour),
+                        view.findViewById(R.id.btn_12hour),
+                        view.findViewById(R.id.btn_24hour)
+                    )
+
+                    buttons.forEachIndexed { index, imageButton ->  imageButton.setImageResource(buttonRes[index])}
+                    examSharedKeys.forEach { minutes.add(sharedPreferences.getBoolean(it, true)) }
+
+                    buttons.forEachIndexed { index, imageButton ->
+                        imageButton.alpha = if (minutes[index]) 1f else 0.3f
+                        imageButton.setOnClickListener {
+                            ValueAnimator.ofFloat(if (minutes[index]) 1f else 0.3f, if (minutes[index]) 0.3f else 1f).apply {
+                                duration = 300
+                                addUpdateListener {
+                                    imageButton.alpha = (it.animatedValue as Float)
+                                }
+                            }.start()
+                            sharedPreferences.edit().putBoolean(examSharedKeys[index], !minutes[index]).apply()
+                            minutes[index] = !minutes[index]
+
+                            Toast.makeText(requireContext(), getString(if (minutes[index]) R.string.notify_exam_on else R.string.notify_exam_off, minuteData[index]),
+                                Toast.LENGTH_SHORT).apply { setGravity(Gravity.CENTER, 0, 0) }.show()
+                        }
+                    }
+
+                    btnClose.setOnClickListener {
+                        dismiss()
+                    }
+
+                    setOnDismissListener {
+                        val minutesOn = arrayListOf<String>()
+                        minutes.forEachIndexed { index, b ->  if (b) minutesOn.add(minuteData[index]) }
+                        notifyExam.summary = if (minutesOn.isNotEmpty()) getString(R.string.notify_exam_on, minutesOn.joinToString(", ")) else getString(R.string.notify_all_off)
+                    }
+
+                    setContentView(view)
+                }.show()
+
+                true
+            }
             timeMorningReminder?.setOnPreferenceClickListener { preference ->
                 MyBottomSheetDialog(requireContext()).apply {
                     dismissWithAnimation = true
@@ -752,6 +817,112 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                 startActivity(Intent(requireContext(), OssLicensesMenuActivity::class.java))
                 true
             }
+
+            // StartActiviyForResult 객체
+            val saveFileLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val output = JSONArray()
+                    for (lms in dbHelper.getAllData()) {
+                        val jObject = JSONObject()
+                        jObject.put("id", lms.id)
+                        jObject.put("className", lms.className)
+                        jObject.put("timeStamp", lms.timeStamp)
+                        jObject.put("type", lms.type)
+                        jObject.put("startTime", lms.startTime)
+                        jObject.put("endTime", lms.endTime)
+                        jObject.put("isRenewAllowed", lms.isRenewAllowed)
+                        jObject.put("isFinished", lms.isFinished)
+                        jObject.put("week", lms.week)
+                        jObject.put("lesson", lms.lesson)
+                        jObject.put("homework_name", lms.homework_name)
+                        output.put(jObject)
+                    }
+
+                    Log.d(TAG, output.toString())
+
+                    val uri = result.data?.data ?: Uri.EMPTY
+                    val outputStream = requireActivity().contentResolver.openOutputStream(uri)
+                    outputStream?.write(output.toString().toByteArray())
+                    outputStream?.close()
+
+                    Toast.makeText(requireContext(), getString(R.string.backup_msg), Toast.LENGTH_SHORT).show()
+                }
+            }
+            val loadFileLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val uri = result.data?.data ?: Uri.EMPTY
+                    val reader: BufferedReader
+                    val builder = StringBuilder()
+                    try {
+                        reader = BufferedReader(InputStreamReader(requireActivity().contentResolver.openInputStream(uri)))
+                        var line: String?
+                        while (reader.readLine().also { line = it } != null) {
+                            builder.append(line)
+                        }
+                        reader.close()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                    val jsonResult = JSONArray(builder.toString())
+
+                    MyBottomSheetDialog(requireContext()).apply {
+                        dismissWithAnimation = true
+
+                        val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(context), false)
+                        val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
+                        val tvTitle: TextView = view.findViewById(R.id.tv_title)
+                        val tvContent: TextView = view.findViewById(R.id.tv_content)
+                        val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
+                        val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
+                        val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
+                        val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
+
+                        imgLogo.setImageResource(R.drawable.ic_notification)
+                        tvTitle.typeface = gmSansBold
+                        tvContent.typeface = gmSansMedium
+                        tvPositive.typeface = gmSansMedium
+                        tvNegative.typeface = gmSansMedium
+
+                        tvTitle.text = getString(R.string.restore)
+                        tvContent.text = getString(R.string.restore_msg)
+                        tvPositive.text = getString(R.string.agree)
+                        tvNegative.text = getString(R.string.disagree)
+
+                        btnPositive.setOnClickListener {
+                            requireActivity().deleteDatabase(DBHelper.dbName)
+                            for (i in 0 until jsonResult.length()) {
+                                val jObject = jsonResult.getJSONObject(i)
+                                val lms = LMSClass(
+                                    -1,
+                                    jObject.getString("className"),
+                                    jObject.getLong("timeStamp"),
+                                    jObject.getInt("type"),
+                                    jObject.getLong("startTime"),
+                                    jObject.getLong("endTime"),
+                                    jObject.getBoolean("isRenewAllowed"),
+                                    jObject.getBoolean("isFinished"),
+                                    jObject.getInt("week"),
+                                    jObject.getInt("lesson"),
+                                    jObject.getString("homework_name")
+                                )
+
+                                dbHelper.addItem(lms)
+                            }
+
+                            Toast.makeText(requireContext(), getString(R.string.restore_finish), Toast.LENGTH_SHORT).show()
+                            requireActivity().finishAffinity()
+                            dismiss()
+                        }
+
+                        btnNegative.setOnClickListener {
+                            dismiss()
+                        }
+
+                        setContentView(view)
+                    }.show()
+                }
+            }
+
             backup?.setOnPreferenceClickListener {
                 val saveFormat = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault())
 
@@ -759,132 +930,124 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     addCategory(Intent.CATEGORY_OPENABLE)
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TITLE, "albatross_backup_${saveFormat.format(Calendar.getInstance().time)}.txt")
-                    startActivityForResult(this, SAVE_FILE)
+                    saveFileLauncher.launch(this)
                 }
                 true
             }
             restore?.setOnPreferenceClickListener {
                 Intent(Intent.ACTION_GET_CONTENT).apply {
                     type = "text/plain"
-                    startActivityForResult(this, LOAD_FILE)
+                    loadFileLauncher.launch(this)
                 }
                 true
             }
-        }
+            dateDelete?.setOnPreferenceClickListener {
+                MyBottomSheetDialog(requireContext()).apply {
+                    val view = layoutInflater.inflate(R.layout.dialog_date_delete, LinearLayout(requireContext()), false)
+                    val tvTitle: TextView = view.findViewById(R.id.tv_title)
+                    val tvStartDate: TextView = view.findViewById(R.id.tv_start_date)
+                    val tvEndDate: TextView = view.findViewById(R.id.tv_end_date)
+                    val tvWave: TextView = view.findViewById(R.id.tv_wave)
+                    val checkDeleteFinish: MaterialCheckBox = view.findViewById(R.id.check_delete_finish)
+                    val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
+                    val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
+                    val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
+                    val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
 
-        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-            super.onActivityResult(requestCode, resultCode, data)
-            when (requestCode) {
-                SAVE_FILE -> {
-                    if (resultCode == RESULT_OK) {
-                        val output = JSONArray()
-                        for (lms in dbHelper.getAllData()) {
-                            val jObject = JSONObject()
-                            jObject.put("id", lms.id)
-                            jObject.put("className", lms.className)
-                            jObject.put("timeStamp", lms.timeStamp)
-                            jObject.put("type", lms.type)
-                            jObject.put("startTime", lms.startTime)
-                            jObject.put("endTime", lms.endTime)
-                            jObject.put("isRenewAllowed", lms.isRenewAllowed)
-                            jObject.put("isFinished", lms.isFinished)
-                            jObject.put("week", lms.week)
-                            jObject.put("lesson", lms.lesson)
-                            jObject.put("homework_name", lms.homework_name)
-                            output.put(jObject)
-                        }
+                    tvTitle.typeface = gmSansBold
+                    tvStartDate.typeface = gmSansMedium
+                    tvEndDate.typeface = gmSansMedium
+                    tvWave.typeface = gmSansMedium
+                    checkDeleteFinish.typeface = gmSansMedium
+                    tvPositive.typeface = gmSansMedium
+                    tvNegative.typeface = gmSansMedium
 
-                        Log.d(TAG, output.toString())
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                    val startCalendar = Calendar.getInstance().apply { add(Calendar.MONTH, -2) }
+                    val endCalendar = Calendar.getInstance().apply { add(Calendar.MONTH, -1) }
 
-                        val uri = data?.data ?: Uri.EMPTY
-                        val outputStream = requireActivity().contentResolver.openOutputStream(uri)
-                        outputStream?.write(output.toString().toByteArray())
-                        outputStream?.close()
+                    tvStartDate.text = dateFormat.format(startCalendar.time)
+                    tvEndDate.text = dateFormat.format(endCalendar.time)
 
-                        Toast.makeText(requireContext(), getString(R.string.backup_msg), Toast.LENGTH_SHORT).show()
-                    }
-                }
+                    tvStartDate.setOnClickListener {
+                        DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
+                            startCalendar.set(Calendar.YEAR, year)
+                            startCalendar.set(Calendar.MONTH, month)
+                            startCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                            startCalendar.set(Calendar.HOUR_OF_DAY, 0)
+                            startCalendar.set(Calendar.MINUTE, 0)
+                            startCalendar.set(Calendar.SECOND, 0)
 
-                LOAD_FILE -> {
-                    if (resultCode == RESULT_OK) {
-                        val uri = data?.data ?: Uri.EMPTY
-                        val reader: BufferedReader
-                        val builder = StringBuilder()
-                        try {
-                            reader = BufferedReader(InputStreamReader(requireActivity().contentResolver.openInputStream(uri)))
-                            var line: String?
-                            while (reader.readLine().also { line = it } != null) {
-                                builder.append(line)
+                            tvStartDate.text = dateFormat.format(startCalendar.time)
+
+                            if (startCalendar.timeInMillis > endCalendar.timeInMillis) {
+                                tvStartDate.error = getString(R.string.err_start_date)
+                                Toast.makeText(requireContext(), getString(R.string.err_start_date), Toast.LENGTH_SHORT).show()
+                            } else {
+                                tvStartDate.error = null
+                                tvEndDate.error = null
                             }
-                            reader.close()
-                        } catch (e: IOException) {
-                            e.printStackTrace()
-                        }
-                        val result = JSONArray(builder.toString())
+                        }, startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH), startCalendar.get(Calendar.DAY_OF_MONTH)).show()
+                    }
 
-                        MyBottomSheetDialog(requireContext()).apply {
-                            dismissWithAnimation = true
+                    tvEndDate.setOnClickListener {
+                        DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
+                            endCalendar.set(Calendar.YEAR, year)
+                            endCalendar.set(Calendar.MONTH, month)
+                            endCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                            startCalendar.set(Calendar.HOUR_OF_DAY, 23)
+                            startCalendar.set(Calendar.MINUTE, 59)
+                            startCalendar.set(Calendar.SECOND, 59)
 
-                            val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(context), false)
-                            val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
-                            val tvTitle: TextView = view.findViewById(R.id.tv_title)
-                            val tvContent: TextView = view.findViewById(R.id.tv_content)
-                            val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
-                            val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
-                            val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
-                            val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
+                            tvEndDate.text = dateFormat.format(endCalendar.time)
 
-                            imgLogo.setImageResource(R.drawable.ic_notification)
-                            tvTitle.typeface = gmSansBold
-                            tvContent.typeface = gmSansMedium
-                            tvPositive.typeface = gmSansMedium
-                            tvNegative.typeface = gmSansMedium
+                            if (startCalendar.timeInMillis > endCalendar.timeInMillis) {
+                                tvEndDate.error = getString(R.string.err_end_date)
+                                Toast.makeText(requireContext(), getString(R.string.err_end_date), Toast.LENGTH_SHORT).show()
+                            } else {
+                                tvStartDate.error = null
+                                tvEndDate.error = null
+                            }
+                        }, endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH), endCalendar.get(Calendar.DAY_OF_MONTH)).show()
+                    }
 
-                            tvTitle.text = getString(R.string.restore)
-                            tvContent.text = getString(R.string.restore_msg)
-                            tvPositive.text = getString(R.string.agree)
-                            tvNegative.text = getString(R.string.disagree)
-
-                            btnPositive.setOnClickListener {
-                                requireActivity().deleteDatabase(DBHelper.dbName)
-                                for (i in 0 until result.length()) {
-                                    val jObject = result.getJSONObject(i)
-                                    val lms = LMSClass(
-                                        -1,
-                                        jObject.getString("className"),
-                                        jObject.getLong("timeStamp"),
-                                        jObject.getInt("type"),
-                                        jObject.getLong("startTime"),
-                                        jObject.getLong("endTime"),
-                                        jObject.getBoolean("isRenewAllowed"),
-                                        jObject.getBoolean("isFinished"),
-                                        jObject.getInt("week"),
-                                        jObject.getInt("lesson"),
-                                        jObject.getString("homework_name")
-                                    )
-
-                                    dbHelper.addItem(lms)
+                    btnPositive.setOnClickListener {
+                        if (startCalendar.timeInMillis > endCalendar.timeInMillis) {
+                            Toast.makeText(requireContext(), getString(R.string.err_end_date), Toast.LENGTH_SHORT).show()
+                        } else {
+                            var count = 0
+                            val datas = dbHelper.getItemDateRange(startCalendar.timeInMillis, endCalendar.timeInMillis)
+                            for (data in datas) {
+                                if (checkDeleteFinish.isChecked) {
+                                    if (data.isFinished) {
+                                        dbHelper.deleteData(data.id)
+                                        count++
+                                    }
+                                } else {
+                                    dbHelper.deleteData(data.id)
+                                    count++
                                 }
+                            }
 
-                                Toast.makeText(requireContext(), getString(R.string.restore_finish), Toast.LENGTH_SHORT).show()
+                            if (count != 0) {
+                                Toast.makeText(requireContext(), getString(R.string.delete_successfully, count), Toast.LENGTH_SHORT).show()
                                 requireActivity().finishAffinity()
-                                dismiss()
+                            } else {
+                                Toast.makeText(requireContext(), getString(R.string.no_delete_event), Toast.LENGTH_SHORT).show()
                             }
-
-                            btnNegative.setOnClickListener {
-                                dismiss()
-                            }
-
-                            setContentView(view)
-                        }.show()
+                            dismiss()
+                        }
                     }
-                }
-            }
-        }
 
-        companion object {
-            const val SAVE_FILE = 4
-            const val LOAD_FILE = 5
+                    btnNegative.setOnClickListener {
+                        dismiss()
+                    }
+
+                    setContentView(view)
+                }.show()
+
+                true
+            }
         }
     }
 }

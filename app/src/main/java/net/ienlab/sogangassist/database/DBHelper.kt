@@ -269,7 +269,6 @@ class DBHelper(context: Context, name: String, version: Int): SQLiteOpenHelper(c
         return id
     }
 
-
     fun checkItemByData(item: LMSClass): Boolean {
         val db = readableDatabase
         val query = "SELECT * FROM $_TABLENAME0 $_TABLENAME0 WHERE (($TYPE=${LMSClass.TYPE_LESSON} OR $TYPE=${LMSClass.TYPE_SUP_LESSON}) AND $LESSON_WEEK=${item.week} AND $LESSON_LESSON=${item.lesson} AND $CLASS_NAME='${item.className}') OR ($CLASS_NAME='${item.className}' AND $TYPE=${LMSClass.TYPE_HOMEWORK} AND $HOMEWORK_NAME='${item.homework_name}') "

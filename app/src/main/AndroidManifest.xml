@@ -13,7 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
         tools:replace="android:label">
         <activity android:name=".activity.NotificationsActivity" />
         <activity android:name=".activity.SplashActivity">
@@ -23,7 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.EditActivity" />
+        <activity android:name=".activity.EditActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".activity.SettingsActivity"
             android:theme="@style/AppTheme.Setting" />

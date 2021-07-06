@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgBackground"
@@ -19,8 +20,8 @@
         android:id="@+id/imgLogo"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@drawable/ic_icon"
-        android:contentDescription="@string/real_app_name"
+        android:src="@drawable/ic_delete"
+        android:contentDescription="@string/date_delete_title"
         app:tint="@android:color/white"
         app:layout_constraintStart_toStartOf="@id/imgBackground"
         app:layout_constraintEnd_toEndOf="@id/imgBackground"
@@ -31,7 +32,7 @@
         android:id="@+id/tv_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="#TITLE"
+        android:text="@string/date_delete_title"
         android:textSize="18sp"
         android:textColor="@color/dark_blue"
         android:layout_marginStart="@dimen/usual_margin"
@@ -42,15 +43,56 @@
         app:layout_constraintBottom_toBottomOf="@id/imgBackground" />
 
     <TextView
-        android:id="@+id/tv_content"
+        android:id="@+id/tv_start_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="2021-05-06"
+        android:textColor="@color/dark_blue"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginStart="@dimen/usual_margin"
+        android:layout_marginTop="@dimen/usual_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imgBackground" />
+
+    <TextView
+        android:id="@+id/tv_wave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="#CONTENT"
-        android:textColor="@color/dark_white_blue"
+        android:text="~"
+        android:textColor="@color/dark_blue"
+        android:textAlignment="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginStart="@dimen/usual_margin"
+        android:layout_marginEnd="@dimen/usual_margin"
+        android:layout_marginTop="@dimen/usual_margin"
+        app:layout_constraintStart_toEndOf="@id/tv_start_date"
+        app:layout_constraintEnd_toStartOf="@id/tv_end_date"
+        app:layout_constraintTop_toBottomOf="@id/imgBackground" />
+
+    <TextView
+        android:id="@+id/tv_end_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="2021-05-06"
+        android:textColor="@color/dark_blue"
+        android:layout_marginEnd="@dimen/usual_margin"
+        android:layout_marginTop="@dimen/usual_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imgBackground" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/check_delete_finish"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/check_delete_finish"
+        android:textColor="@color/dark_blue"
+        android:checked="true"
         android:layout_margin="@dimen/usual_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imgBackground" />
+        app:layout_constraintTop_toBottomOf="@id/tv_wave" />
 
     <LinearLayout
         android:id="@+id/btn_negative"
@@ -62,15 +104,14 @@
         android:background="?attr/selectableItemBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_positive"
-        app:layout_constraintTop_toBottomOf="@id/tv_content"
+        app:layout_constraintTop_toBottomOf="@id/check_delete_finish"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView
-            android:id="@+id/btn_negative_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_close"
-            android:contentDescription="@android:string/no"
+            android:contentDescription="@android:string/cancel"
             app:tint="@color/dark_blue"/>
 
         <TextView
@@ -79,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/usual_margin"
             android:layout_gravity="center"
-            android:text="@android:string/no"
+            android:text="@android:string/cancel"
             android:textColor="@color/dark_blue" />
 
     </LinearLayout>
@@ -94,15 +135,14 @@
         android:background="?attr/selectableItemBackground"
         app:layout_constraintStart_toEndOf="@id/btn_negative"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_content"
+        app:layout_constraintTop_toBottomOf="@id/check_delete_finish"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView
-            android:id="@+id/btn_positive_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_check"
-            android:contentDescription="@android:string/yes"
+            android:src="@drawable/ic_delete"
+            android:contentDescription="@string/delete"
             app:tint="@color/dark_blue"/>
 
         <TextView
@@ -111,7 +151,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/usual_margin"
             android:layout_gravity="center"
-            android:text="@android:string/yes"
+            android:text="@string/delete"
             android:textColor="@color/dark_blue" />
 
     </LinearLayout>

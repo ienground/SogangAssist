@@ -16,5 +16,7 @@ class NotificationItem(
         val TYPE_LESSON = 3
         val TYPE_SUP_LESSON = 4
         val TYPE_ZOOM = 5
+        val TYPE_TEAMWORK = 6
+        val TYPE_EXAM = 7
     }
 }

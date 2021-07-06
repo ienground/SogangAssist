@@ -40,6 +40,8 @@ class ReminderReceiver: BroadcastReceiver() {
         val supClasses: ArrayList<String> = arrayListOf()
         val homeworks: ArrayList<String> = arrayListOf()
         val zooms: ArrayList<String> = arrayListOf()
+        val teamworks: ArrayList<String> = arrayListOf()
+        val tests: ArrayList<String> = arrayListOf()
 
         for (d in data) {
             if (!d.isFinished) {
@@ -48,6 +50,8 @@ class ReminderReceiver: BroadcastReceiver() {
                     LMSClass.TYPE_SUP_LESSON -> supClasses.add(context.getString(R.string.reminder_class_format, d.className, d.week, d.lesson))
                     LMSClass.TYPE_HOMEWORK -> homeworks.add(context.getString(R.string.reminder_zoom_format, d.className, d.homework_name))
                     LMSClass.TYPE_ZOOM -> zooms.add(context.getString(R.string.reminder_zoom_format, d.className, d.homework_name))
+                    LMSClass.TYPE_TEAMWORK -> teamworks.add(context.getString(R.string.reminder_zoom_format, d.className, d.homework_name))
+                    LMSClass.TYPE_EXAM -> tests.add(context.getString(R.string.reminder_zoom_format, d.className, d.homework_name))
                 }
             }
         }
@@ -69,6 +73,14 @@ class ReminderReceiver: BroadcastReceiver() {
         if (zooms.isNotEmpty()) {
             content.add(context.getString(R.string.daily_reminder_zoom, zooms.size))
             bigTextContent.add("<${context.getString(R.string.zoom)}>\n${zooms.joinToString("\n")}")
+        }
+        if (teamworks.isNotEmpty()) {
+            content.add(context.getString(R.string.daily_reminder_teamwork, teamworks.size))
+            bigTextContent.add("<${context.getString(R.string.team_project)}>\n${zooms.joinToString("\n")}")
+        }
+        if (tests.isNotEmpty()) {
+            content.add(context.getString(R.string.daily_reminder_exam, tests.size))
+            bigTextContent.add("<${context.getString(R.string.exam)}>\n${zooms.joinToString("\n")}")
         }
 
         val morningData = sharedPreferences.getInt(SharedKey.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)

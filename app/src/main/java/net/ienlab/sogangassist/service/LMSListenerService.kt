@@ -519,7 +519,7 @@ class LMSListenerService : NotificationListenerService() {
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                    val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                    val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_team_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                     val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                     val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                     val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
@@ -529,7 +529,7 @@ class LMSListenerService : NotificationListenerService() {
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
-                                        setContentText(getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)))
+                                        setContentText(getString(R.string.reminder_content_team_register, data.homework_name, timeFormat.format(data.endTime)))
                                         setContentIntent(clickPendingIntent)
                                         setAutoCancel(true)
                                         setStyle(NotificationCompat.BigTextStyle())
@@ -580,7 +580,7 @@ class LMSListenerService : NotificationListenerService() {
                             }
 
                             if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_team_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                 val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
@@ -590,7 +590,7 @@ class LMSListenerService : NotificationListenerService() {
 
                                 NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                     setContentTitle(className)
-                                    setContentText(getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)))
+                                    setContentText(getString(R.string.reminder_content_team_update, data.homework_name, timeFormat.format(data.endTime)))
                                     setContentIntent(clickPendingIntent)
                                     setAutoCancel(true)
                                     setStyle(NotificationCompat.BigTextStyle())
@@ -627,7 +627,7 @@ class LMSListenerService : NotificationListenerService() {
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                    val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                    val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_exam_register, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                     val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                     val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                     val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
@@ -637,7 +637,7 @@ class LMSListenerService : NotificationListenerService() {
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
-                                        setContentText(getString(R.string.reminder_content_hw_register, data.homework_name, timeFormat.format(data.endTime)))
+                                        setContentText(getString(R.string.reminder_content_exam_register, data.homework_name, timeFormat.format(data.endTime)))
                                         setContentIntent(clickPendingIntent)
                                         setAutoCancel(true)
                                         setStyle(NotificationCompat.BigTextStyle())
@@ -688,7 +688,7 @@ class LMSListenerService : NotificationListenerService() {
                             }
 
                             if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
+                                val notiId = notiDBHelper.addItem(NotificationItem(-1, className, getString(R.string.reminder_content_exam_update, data.homework_name, timeFormat.format(data.endTime)), System.currentTimeMillis(), NotificationItem.TYPE_REGISTER, id, false))
                                 val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
                                 val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                                 val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
@@ -698,7 +698,7 @@ class LMSListenerService : NotificationListenerService() {
 
                                 NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                     setContentTitle(className)
-                                    setContentText(getString(R.string.reminder_content_hw_update, data.homework_name, timeFormat.format(data.endTime)))
+                                    setContentText(getString(R.string.reminder_content_exam_update, data.homework_name, timeFormat.format(data.endTime)))
                                     setContentIntent(clickPendingIntent)
                                     setAutoCancel(true)
                                     setStyle(NotificationCompat.BigTextStyle())

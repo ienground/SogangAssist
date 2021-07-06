@@ -52,14 +52,17 @@ class TimeReceiver : BroadcastReceiver() {
         val hwSharedKeys = listOf(SharedKey.NOTIFY_1HOUR_HW, SharedKey.NOTIFY_2HOUR_HW, SharedKey.NOTIFY_6HOUR_HW, SharedKey.NOTIFY_12HOUR_HW, SharedKey.NOTIFY_24HOUR_HW)
         val lecSharedKeys = listOf(SharedKey.NOTIFY_1HOUR_LEC, SharedKey.NOTIFY_2HOUR_LEC, SharedKey.NOTIFY_6HOUR_LEC, SharedKey.NOTIFY_12HOUR_LEC, SharedKey.NOTIFY_24HOUR_LEC)
         val zoomSharedKeys = listOf(SharedKey.NOTIFY_3MIN_ZOOM, SharedKey.NOTIFY_5MIN_ZOOM, SharedKey.NOTIFY_10MIN_ZOOM, SharedKey.NOTIFY_20MIN_ZOOM, SharedKey.NOTIFY_30MIN_ZOOM)
+        val examSharedKeys = listOf(SharedKey.NOTIFY_3MIN_EXAM, SharedKey.NOTIFY_5MIN_EXAM, SharedKey.NOTIFY_10MIN_EXAM, SharedKey.NOTIFY_20MIN_EXAM, SharedKey.NOTIFY_30MIN_EXAM)
 
         val hwHoursOn = arrayListOf<Int>()
         val lecHoursOn = arrayListOf<Int>()
         val zoomMinutesOn = arrayListOf<Int>()
+        val examMinutesOn = arrayListOf<Int>()
 
         hwSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) hwHoursOn.add(hourData[index]) }
         lecSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) lecHoursOn.add(hourData[index]) }
         zoomSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) zoomMinutesOn.add(minuteData[index]) }
+        examSharedKeys.forEachIndexed { index, s -> if (sharedPreferences.getBoolean(s, true)) examMinutesOn.add(minuteData[index]) }
 
         val dndStartData = sharedPreferences.getInt(SharedKey.DND_START_TIME, DefaultValue.DND_START_TIME)
         val dndEndData = sharedPreferences.getInt(SharedKey.DND_END_TIME, DefaultValue.DND_END_TIME)
@@ -96,7 +99,6 @@ class TimeReceiver : BroadcastReceiver() {
                     }
                 }
             }
-
             LMSClass.TYPE_SUP_LESSON -> {
                 if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in lecHoursOn)) {
                     if (item.className != "") {
@@ -126,7 +128,6 @@ class TimeReceiver : BroadcastReceiver() {
                     }
                 }
             }
-
             LMSClass.TYPE_HOMEWORK -> {
                 if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in hwHoursOn)) {
                     if (item.className != "") {
@@ -156,7 +157,6 @@ class TimeReceiver : BroadcastReceiver() {
                     }
                 }
             }
-
             LMSClass.TYPE_ZOOM -> {
                 if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (minute in zoomMinutesOn)) {
                     if (item.className != "") {
@@ -175,6 +175,64 @@ class TimeReceiver : BroadcastReceiver() {
                             setAutoCancel(true)
                             setStyle(NotificationCompat.BigTextStyle())
                             setSmallIcon(R.drawable.ic_live_class)
+                            addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                            addAction(R.drawable.ic_mark_as_read, context.getString(R.string.mark_as_read), setReadPendingIntent)
+                            color = ContextCompat.getColor(context, R.color.colorAccent)
+
+                            if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                nm.notify(693000 + id, build())
+                            }
+                        }
+                    }
+                }
+            }
+            LMSClass.TYPE_TEAMWORK -> {
+                if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in hwHoursOn)) {
+                    if (item.className != "") {
+                        NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
+                            val notiId = notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_team, item.homework_name, time), System.currentTimeMillis(), NotificationItem.TYPE_TEAMWORK, id, false))
+                            val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
+                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
+                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val setReadIntent = Intent(context, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 693000 + id) }
+                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                            setContentTitle(item.className)
+                            setContentText(context.getString(R.string.reminder_content_team, item.homework_name, time))
+                            setContentIntent(clickPendingIntent)
+                            setAutoCancel(true)
+                            setStyle(NotificationCompat.BigTextStyle())
+                            setSmallIcon(R.drawable.ic_team)
+                            addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
+                            addAction(R.drawable.ic_mark_as_read, context.getString(R.string.mark_as_read), setReadPendingIntent)
+                            color = ContextCompat.getColor(context, R.color.colorAccent)
+
+                            if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
+                                nm.notify(693000 + id, build())
+                            }
+                        }
+                    }
+                }
+            }
+            LMSClass.TYPE_EXAM -> {
+                if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (minute in examMinutesOn)) {
+                    if (item.className != "") {
+                        NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
+                            val notiId = notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_exam, item.homework_name, minute), System.currentTimeMillis(), NotificationItem.TYPE_EXAM, id, false))
+                            val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
+                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
+                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val setReadIntent = Intent(context, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 693000 + id) }
+                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                            setContentTitle(item.className)
+                            setContentText(context.getString(R.string.reminder_content_exam, item.homework_name, minute))
+                            setContentIntent(clickPendingIntent)
+                            setAutoCancel(true)
+                            setStyle(NotificationCompat.BigTextStyle())
+                            setSmallIcon(R.drawable.ic_test)
                             addAction(R.drawable.ic_check, context.getString(R.string.mark_as_finish), pendingIntent)
                             addAction(R.drawable.ic_mark_as_read, context.getString(R.string.mark_as_read), setReadPendingIntent)
                             color = ContextCompat.getColor(context, R.color.colorAccent)

@@ -105,6 +105,8 @@ class DeadlineWidget : AppWidgetProvider() {
                 LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
                 LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
                 LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
+                LMSClass.TYPE_TEAMWORK -> R.drawable.ic_team
+                LMSClass.TYPE_EXAM -> R.drawable.ic_test
                 else -> R.drawable.ic_icon
             })
 

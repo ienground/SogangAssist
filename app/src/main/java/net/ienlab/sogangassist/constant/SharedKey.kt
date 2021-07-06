@@ -20,6 +20,12 @@ class SharedKey {
         const val NOTIFY_20MIN_ZOOM = "notify_20min_zoom"
         const val NOTIFY_30MIN_ZOOM = "notify_30min_zoom"
 
+        const val NOTIFY_3MIN_EXAM = "notify_3min_exam"
+        const val NOTIFY_5MIN_EXAM = "notify_5min_exam"
+        const val NOTIFY_10MIN_EXAM = "notify_10min_exam"
+        const val NOTIFY_20MIN_EXAM = "notify_20min_exam"
+        const val NOTIFY_30MIN_EXAM = "notify_30min_exam"
+
         const val IS_FIRST_VISIT = "isFirstVisit"
         const val LAST_VERSION = "lastVersion"
         const val FULL_AD_CHARGE = "fullAdCharge"
