@@ -21,8 +21,10 @@ import net.ienlab.sogangassist.activity.*
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.data.NotificationItem
 import net.ienlab.sogangassist.database.NotiDBHelper
+import net.ienlab.sogangassist.utils.ClickCallbackListener
 import net.ienlab.sogangassist.utils.ItemActionListener
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
+import net.ienlab.sogangassist.utils.NotiClickCallbackListener
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -32,6 +34,9 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
     lateinit var sharedPreferences: SharedPreferences
     lateinit var context: Context
     lateinit var notiDBHelper: NotiDBHelper
+
+    private var clickCallback: NotiClickCallbackListener? = null
+    private var titleCountCallback: NotiClickCallbackListener? = null
 
     // 새로운 뷰 홀더 생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationsAdapter.ItemViewHolder {
@@ -105,11 +110,8 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
             items[position].isRead = true
             notifyItemChanged(position)
             notiDBHelper.updateItemById(items[position])
-            Intent(context, EditActivity::class.java).apply {
-                putExtra("ID", items[position].destination)
-                (context as Activity).startActivityForResult(this, REFRESH_MAIN_WORK)
-            }
-            NotificationsActivity.setTitleCount()
+            clickCallback?.callBack(position, items, this)
+            titleCountCallback?.callBack(position, items, this)
         }
 
         holder.wholeView.setOnLongClickListener {
@@ -153,7 +155,7 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
                         notiDBHelper.updateItemById(items[position])
                         notifyItemChanged(position)
                     }.show()
-                    NotificationsActivity.setTitleCount()
+                    titleCountCallback?.callBack(position, items, this@NotificationsAdapter)
                     dismiss()
                 }
 
@@ -181,6 +183,14 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
         notiDBHelper.deleteData(items[position].id)
         items.removeAt(position)
         notifyItemRemoved(position)
+    }
+
+    fun setClickCallbackListener(callbackListener: NotiClickCallbackListener) {
+        this.clickCallback = callbackListener
+    }
+
+    fun setTitleCountCallbackListener(callbackListener: NotiClickCallbackListener) {
+        this.titleCountCallback = callbackListener
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -123,6 +123,8 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
                     LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
                     LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
                     LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
+                    LMSClass.TYPE_TEAMWORK -> R.drawable.ic_team
+                    LMSClass.TYPE_EXAM -> R.drawable.ic_test
                     else -> R.drawable.ic_icon
                 }
 
@@ -138,11 +140,10 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
                         LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
                         LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
                         LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
+                        LMSClass.TYPE_TEAMWORK -> R.drawable.ic_team
+                        LMSClass.TYPE_EXAM -> R.drawable.ic_test
                         else -> R.drawable.ic_icon
                     }
-
-//                    for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorPrimary),
-//                        (left + right) * 0.5f - size * 0.5f * (1 + 1.5f * (data.size - 2)) + size * 1.5f * i, bottom + size / 2f, paint)
 
                     for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorPrimary),
                         (left + right) * 0.5f - size * 0.5f * (1 + 1.25f * 2) + size * 1.25f * i, bottom + size / 2f, paint)
@@ -154,6 +155,8 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
                         LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
                         LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
                         LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
+                        LMSClass.TYPE_TEAMWORK -> R.drawable.ic_team
+                        LMSClass.TYPE_EXAM -> R.drawable.ic_test
                         else -> R.drawable.ic_icon
                     }
 
@@ -168,6 +171,8 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
                         LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
                         LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
                         LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
+                        LMSClass.TYPE_TEAMWORK -> R.drawable.ic_team
+                        LMSClass.TYPE_EXAM -> R.drawable.ic_test
                         else -> R.drawable.ic_icon
                     }
 

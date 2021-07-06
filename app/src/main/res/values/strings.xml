@@ -219,6 +219,7 @@
     <string name="a_hour_format">an hour ago</string>
     <string name="minutes_format">%1$d minutes ago</string>
     <string name="hours_format">%1$d hours ago</string>
+    <string name="err_date_deleted">This event has been deleted and cannot be found</string>
 
     <!--DayNight Reminder-->
     <string name="reminder_class_format">[%1$s] %2$d week(s) %3$d hour</string>

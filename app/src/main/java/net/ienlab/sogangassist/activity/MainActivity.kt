@@ -13,13 +13,11 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginStart
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.ads.AdRequest
@@ -73,8 +71,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var fadeInAnimation: AlphaAnimation
 
     // StartActivityForResult
-    lateinit var notificationsActvityLauncher: ActivityResultLauncher<Intent>
-    lateinit var settingsActivityLauncher: ActivityResultLauncher<Intent>
+    lateinit var editActivityLauncher: ActivityResultLauncher<Intent>
+    private lateinit var notificationsActvityLauncher: ActivityResultLauncher<Intent>
+    private lateinit var settingsActivityLauncher: ActivityResultLauncher<Intent>
 
     // 뒤로가기 시간
     private val FINISH_INTERVAL_TIME: Long = 2000
@@ -91,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
     val decorators: MutableMap<Long, DayViewDecorator> = mutableMapOf()
 
-    val mainWorkCallbackListener = object: ClickCallbackListener {
+    private val deleteCallbackListener = object: ClickCallbackListener {
         override fun callBack(position: Int, items: List<LMSClass>, adapter: MainWorkAdapter) {
             setEachDecorator(items[position].endTime)
             Snackbar.make(window.decorView.rootView, if (items[position].isFinished) getString(R.string.marked_as_finish) else getString(R.string.marked_as_not_finish), Snackbar.LENGTH_SHORT).setAction(R.string.undo) {
@@ -100,6 +99,15 @@ class MainActivity : AppCompatActivity() {
                 adapter.notifyItemChanged(position)
                 setEachDecorator(items[position].endTime)
             }.show()
+        }
+    }
+
+    private val clickCallbackListener = object: ClickCallbackListener {
+        override fun callBack(position: Int, items: List<LMSClass>, adapter: MainWorkAdapter) {
+            Intent(applicationContext, EditActivity::class.java).apply {
+                putExtra("ID", items[position].id)
+                editActivityLauncher.launch(this)
+            }
         }
     }
 
@@ -136,7 +144,6 @@ class MainActivity : AppCompatActivity() {
 
         dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
         notiDBHelper = NotiDBHelper(this, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
-//        view = window.decorView.rootView
         sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
         fadeOutAnimation = AlphaAnimation(1f, 0f).apply { duration = 300 }
         fadeInAnimation = AlphaAnimation(0f, 1f).apply { duration = 300 }
@@ -172,13 +179,42 @@ class MainActivity : AppCompatActivity() {
         binding.adView.loadAd(adRequest.build())
 
         // StartActiviyForResult 객체
-        val editActivityLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        editActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                val work = dbHelper.getItemAtLastDate(thisCurrentDate).toMutableList().apply {
-                    sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) } as ArrayList
-                binding.mainWorkView.adapter = MainWorkAdapter(work).apply { setCallbackListener(mainWorkCallbackListener) }
+                val work = dbHelper.getItemAtLastDate(thisCurrentDate).toMutableList().apply { sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) } as ArrayList
+                binding.mainWorkView.adapter = MainWorkAdapter(work).apply {
+                    setDeleteCallback(deleteCallbackListener)
+                    setClickCallback(clickCallbackListener)
+                }
                 binding.mainWorkView.layoutManager = LinearLayoutManager(this)
                 binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
+
+                val dialog = AlertDialog.Builder(this).apply {
+                    val linearLayout = LinearLayout(applicationContext).apply {
+                        val size = MyUtils.dpToPx(applicationContext, 16f).toInt()
+                        orientation = LinearLayout.HORIZONTAL
+                        setPadding(size, size, size, size)
+                    }
+                    val progressBar = ProgressBar(applicationContext, null, android.R.attr.progressBarStyleHorizontal).apply {
+                        layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                        isIndeterminate = true
+                        indeterminateTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.colorAccent))
+                    }
+
+                    linearLayout.addView(progressBar)
+                    setView(linearLayout)
+                    setTitle(getString(R.string.load_data))
+                    setCancelable(false)
+
+                }.create()
+
+                dialog.show()
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    setDecorators(applicationContext)
+                    dialog.dismiss()
+                    binding.calendarView.visibility = View.VISIBLE
+                }, 1000)
             }
             binding.adView.visibility = if (storage.purchasedAds()) View.GONE else View.VISIBLE
         }
@@ -333,7 +369,10 @@ class MainActivity : AppCompatActivity() {
 
         val todayWork = dbHelper.getItemAtLastDate(System.currentTimeMillis()).toMutableList().apply { sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) } as ArrayList
 
-        binding.mainWorkView.adapter = MainWorkAdapter(todayWork).apply { setCallbackListener(mainWorkCallbackListener) }
+        binding.mainWorkView.adapter = MainWorkAdapter(todayWork).apply {
+            setDeleteCallback(deleteCallbackListener)
+            setClickCallback(clickCallbackListener)
+        }
         binding.mainWorkView.layoutManager = LinearLayoutManager(this)
         binding.tvNoDeadline.visibility = if (todayWork.isEmpty()) View.VISIBLE else View.GONE
         binding.btnAdd.setOnClickListener {
@@ -347,10 +386,6 @@ class MainActivity : AppCompatActivity() {
             topbarVisible = false
             arrowColor = ContextCompat.getColor(applicationContext, R.color.black)
             setOnDateChangedListener { widget, date, _ ->
-                //                widget.removeDecorator(currentDecorator)
-                //                currentDecorator = CurrentDecorator(this@MainActivity, date.calendar)
-                //                widget.addDecorator(currentDecorator)
-
                 binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(date.date))
                 val work = dbHelper.getItemAtLastDate(date.date.time).toMutableList().apply {
                     sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
@@ -360,7 +395,10 @@ class MainActivity : AppCompatActivity() {
                     startAnimation(fadeOutAnimation)
                     visibility = View.INVISIBLE
 
-                    adapter = MainWorkAdapter(work).apply { setCallbackListener(mainWorkCallbackListener) }
+                    adapter = MainWorkAdapter(work).apply {
+                        setDeleteCallback(deleteCallbackListener)
+                        setClickCallback(clickCallbackListener)
+                    }
                     layoutManager = LinearLayoutManager(applicationContext)
                     thisCurrentDate = date.date.time
 

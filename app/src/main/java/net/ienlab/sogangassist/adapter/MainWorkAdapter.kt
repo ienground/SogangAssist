@@ -14,13 +14,10 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
-import com.google.android.material.snackbar.Snackbar
 import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.activity.*
 import net.ienlab.sogangassist.R
@@ -41,7 +38,8 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
     lateinit var storage: AppStorage
 
     var interstitialAd: InterstitialAd? = null
-    var clickCallbackListener: ClickCallbackListener? = null
+    private var deleteCallbackListener: ClickCallbackListener? = null
+    private var clickCallbackListener: ClickCallbackListener? = null
 
     // 새로운 뷰 홀더 생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainWorkAdapter.ItemViewHolder {
@@ -68,11 +66,9 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
         holder.class_name.text = items[position].className
         holder.end_time.text = context.getString(if (items[position].type != LMSClass.TYPE_ZOOM && items[position].type != LMSClass.TYPE_EXAM) R.string.deadline else R.string.start, timeFormat.format(Date(items[position].endTime)))
         holder.wholeView.setOnClickListener {
-            Intent(context, EditActivity::class.java).apply {
-                putExtra("ID", items[position].id)
-                if (!storage.purchasedAds()) displayAd(context as Activity)
-                (context as Activity).startActivityForResult(this, REFRESH_MAIN_WORK)
-            }
+            if (!storage.purchasedAds()) displayAd(context as Activity)
+            Log.d(TAG, "clickCallbackListener null : ${clickCallbackListener == null}")
+            clickCallbackListener?.callBack(position, items, this)
         }
         holder.wholeView.setOnLongClickListener {
             MyBottomSheetDialog(context).apply {
@@ -108,7 +104,7 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
                     items[position].isFinished = !items[position].isFinished
                     dbHelper.updateItemById(items[position])
                     notifyItemChanged(position)
-                    clickCallbackListener?.callBack(position, items, this@MainWorkAdapter)
+                    deleteCallbackListener?.callBack(position, items, this@MainWorkAdapter)
                     dismiss()
                 }
 
@@ -175,7 +171,11 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
     // 데이터 셋의 크기를 리턴해줍니다.
     override fun getItemCount(): Int = items.size
 
-    fun setCallbackListener(callbackListener: ClickCallbackListener) {
+    fun setDeleteCallback(callbackListener: ClickCallbackListener?) {
+        this.deleteCallbackListener = callbackListener
+    }
+
+    fun setClickCallback(callbackListener: ClickCallbackListener?) {
         this.clickCallbackListener = callbackListener
     }
 

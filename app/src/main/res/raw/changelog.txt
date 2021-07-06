@@ -1,2 +1,4 @@
-<b>* Emergency Update *</b><br>
-We apologize for the inconvenience. We updated urgent fixes.
+- Team projects and exams are now selectable<br>
+- Improved application execution speed.<br>
+- You can delete schedules that match conditions in settings. Delete old data when loading is slow.<br>
+- Changed app icon background and other minor bugs.

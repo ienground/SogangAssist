@@ -1,6 +1,7 @@
 package net.ienlab.sogangassist.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,15 +11,18 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.adapter.NotificationsAdapter
+import net.ienlab.sogangassist.data.NotificationItem
 import net.ienlab.sogangassist.database.NotiDBHelper
 import net.ienlab.sogangassist.databinding.ActivityNotificationsBinding
 import net.ienlab.sogangassist.utils.ItemTouchHelperCallback
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
+import net.ienlab.sogangassist.utils.NotiClickCallbackListener
 
 class NotificationsActivity : AppCompatActivity() {
 
@@ -26,6 +30,28 @@ class NotificationsActivity : AppCompatActivity() {
     lateinit var gmSansMedium: Typeface
 
     lateinit var adapter: NotificationsAdapter
+    lateinit var notiDBHelper: NotiDBHelper
+    lateinit var binding: ActivityNotificationsBinding
+
+    private val clickCallbackListener = object: NotiClickCallbackListener {
+        override fun callBack(position: Int, items: List<NotificationItem>, adapter: NotificationsAdapter) {
+            Intent(applicationContext, EditActivity::class.java).apply {
+                putExtra("ID", items[position].destination)
+
+                if (notiDBHelper.checkIsDataAlreadyInDBorNot(NotiDBHelper.ID, items[position].destination.toString())) {
+                    startActivity(this)
+                } else {
+                    Snackbar.make(window.decorView.rootView, getString(R.string.err_date_deleted), Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private val titleCountCallbackListener = object: NotiClickCallbackListener {
+        override fun callBack(position: Int, items: List<NotificationItem>, adapter: NotificationsAdapter) {
+            setTitleCount()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +71,10 @@ class NotificationsActivity : AppCompatActivity() {
         notiDBHelper = NotiDBHelper(this, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
 
         val data = notiDBHelper.getAllItem().apply { sortWith( compareByDescending { it.timeStamp }) }
-        adapter = NotificationsAdapter(data)
+        adapter = NotificationsAdapter(data).apply {
+            setClickCallbackListener(clickCallbackListener)
+            setTitleCountCallbackListener(titleCountCallbackListener)
+        }
 
         val itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter))
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
@@ -117,20 +146,15 @@ class NotificationsActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    companion object {
-        lateinit var notiDBHelper: NotiDBHelper
-        lateinit var binding: ActivityNotificationsBinding
+    fun setTitleCount() {
+        val data = notiDBHelper.getAllItem()
+        var unreadCount = 0
+        data.forEach { if (!it.isRead) unreadCount++ }
 
-        fun setTitleCount() {
-            val data = notiDBHelper.getAllItem()
-            var unreadCount = 0
-            data.forEach { if (!it.isRead) unreadCount++ }
-
-            binding.appTitle.text = when (unreadCount) {
-                0 -> binding.activity?.getString(R.string.no_new_noti)
-                1 -> binding.activity?.getString(R.string.new_a_noti)
-                else -> binding.activity?.getString(R.string.new_noti, unreadCount)
-            }
+        binding.appTitle.text = when (unreadCount) {
+            0 -> binding.activity?.getString(R.string.no_new_noti)
+            1 -> binding.activity?.getString(R.string.new_a_noti)
+            else -> binding.activity?.getString(R.string.new_noti, unreadCount)
         }
     }
 }
