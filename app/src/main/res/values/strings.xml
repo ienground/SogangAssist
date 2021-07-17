@@ -122,12 +122,14 @@
     <string name="intro_page1_exp">This application works with HelloLMS. Please use the application in the installed state. Although it can be used without installation, we cannot guarantee the best user experience.</string>
     <string name="intro_page2_title">Allow Notification Access</string>
     <string name="intro_page2_exp">We need notification access in order to read notifications.</string>
-    <string name="intro_page3_title">Assignment Deadline Reminder</string>
+    <string name="intro_page3_title">Assignment, teamwork Deadline Reminder</string>
     <string name="intro_page3_exp">Get reminders 1 hour, 2 hours, 6 hours, 12 hours, and 24 hours before the deadline for each assignment. Select the notifications you want to receive.</string>
     <string name="intro_page4_title">Lecture Deadline Reminder</string>
     <string name="intro_page4_exp">Get reminders 1 hour, 2 hours, 6 hours, 12 hours, and 24 hours before the deadline for each lecture. Select the notifications you want to receive.</string>
     <string name="intro_page5_title">Lecture Deadline Reminder</string>
     <string name="intro_page5_exp">Get reminders 3 minutes, 5 minutes, 10 minutes, 20 minutes and 30 minutes before the start for each Zoom lecture. Select the notifications you want to receive.</string>
+    <string name="intro_page6_title">Exam Deadline Reminder</string>
+    <string name="intro_page6_exp">Get reminders 3 minutes, 5 minutes, 10 minutes, 20 minutes and 30 minutes before the start for each exam. Select the notifications you want to receive.</string>
     <string name="noti_access_allowed">Access Allowed</string>
 
     <!--Overall Activity-->

@@ -31,7 +31,8 @@ class OnboardingActivity : AppCompatActivity(),
     OnboardingFragment2.OnFragmentInteractionListener,
     OnboardingFragment3.OnFragmentInteractionListener,
     OnboardingFragment4.OnFragmentInteractionListener,
-    OnboardingFragment5.OnFragmentInteractionListener {
+    OnboardingFragment5.OnFragmentInteractionListener,
+    OnboardingFragment6.OnFragmentInteractionListener {
 
     private val FINISH_INTERVAL_TIME: Long = 2000
     private var backPressedTime: Long = 0
@@ -139,7 +140,7 @@ class OnboardingActivity : AppCompatActivity(),
                         }
 
                         5 -> {
-                            with (binding.introBtnFine) {
+                            with (binding.introBtnNext) {
                                 if (true in OnboardingFragment4.hours) {
                                     isEnabled = true
                                     alpha = 1f
@@ -150,6 +151,20 @@ class OnboardingActivity : AppCompatActivity(),
                             }
                             binding.sectionLabel.setText(getString(R.string.intro_page5_title))
                             binding.sectionContent.setText(getString(R.string.intro_page5_exp))
+                        }
+
+                        6 -> {
+                            with (binding.introBtnFine) {
+                                if (true in OnboardingFragment5.hours) {
+                                    isEnabled = true
+                                    alpha = 1f
+                                } else {
+                                    isEnabled = false
+                                    alpha = 0.2f
+                                }
+                            }
+                            binding.sectionLabel.setText(getString(R.string.intro_page6_title))
+                            binding.sectionContent.setText(getString(R.string.intro_page6_exp))
                         }
                     }
 

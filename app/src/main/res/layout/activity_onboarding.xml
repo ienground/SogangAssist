@@ -135,7 +135,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:piv_unselectedColor="@color/color_sogang_sub"
                 app:piv_selectedColor="@color/color_sogang"
-                app:piv_count="5"
+                app:piv_count="7"
                 app:piv_padding="16dp"
                 app:piv_radius="5dp"
                 app:piv_select="0" />
@@ -148,7 +148,7 @@
                 android:layout_gravity="end|center"
                 android:padding="@dimen/activity_horizontal_margin"
                 android:src="@drawable/ic_chevron_left"
-                android:tint="@color/black"
+                app:tint="@color/black"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
@@ -161,7 +161,7 @@
                 android:layout_gravity="end|center"
                 android:padding="@dimen/activity_horizontal_margin"
                 android:src="@drawable/ic_chevron_right"
-                android:tint="@color/black"
+                app:tint="@color/black"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -174,7 +174,7 @@
                 android:layout_gravity="end|center"
                 android:padding="@dimen/activity_horizontal_margin"
                 android:src="@drawable/ic_check"
-                android:tint="@color/black"
+                app:tint="@color/black"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
