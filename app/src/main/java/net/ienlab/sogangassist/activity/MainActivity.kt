@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
@@ -40,24 +41,19 @@ import net.ienlab.sogangassist.database.DBHelper
 import net.ienlab.sogangassist.databinding.ActivityMainBinding
 import net.ienlab.sogangassist.decorators.*
 import net.ienlab.sogangassist.receiver.TimeReceiver
-import net.ienlab.sogangassist.utils.MyUtils
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.adapter.MainWorkAdapter2
 import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.receiver.ReminderReceiver
-import net.ienlab.sogangassist.utils.AppStorage
-import net.ienlab.sogangassist.utils.ClickCallbackListener
-import net.ienlab.sogangassist.utils.MyBottomSheetDialog
+import net.ienlab.sogangassist.utils.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.abs
 
-val TAG = "SogangAssistTAG"
-val REFRESH_MAIN_WORK = 2
-val SETTINGS_CHANGED = 3
-val NOTI_REFRESH = 4
-val testDevice = "48BC2075D1B2D4652C27A690C6EF0D6F"
+const val TAG = "SogangAssistTAG"
+const val testDevice = "48BC2075D1B2D4652C27A690C6EF0D6F"
 
 class MainActivity : AppCompatActivity() {
 
@@ -72,7 +68,7 @@ class MainActivity : AppCompatActivity() {
 
     // StartActivityForResult
     lateinit var editActivityLauncher: ActivityResultLauncher<Intent>
-    private lateinit var notificationsActvityLauncher: ActivityResultLauncher<Intent>
+    private lateinit var notificationsActivityLauncher: ActivityResultLauncher<Intent>
     private lateinit var settingsActivityLauncher: ActivityResultLauncher<Intent>
 
     // 뒤로가기 시간
@@ -82,8 +78,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var currentDecorator: CurrentDecorator
     var thisCurrentDate: Long = 0
 
-    lateinit var gmSansBold: Typeface
-    lateinit var gmSansMedium: Typeface
+    lateinit var typefaceBold: Typeface
+    lateinit var typefaceRegular: Typeface
 
     lateinit var notiBadgeText: TextView
     lateinit var storage: AppStorage
@@ -149,8 +145,8 @@ class MainActivity : AppCompatActivity() {
         fadeInAnimation = AlphaAnimation(0f, 1f).apply { duration = 300 }
         am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         currentDecorator = CurrentDecorator(this, Calendar.getInstance())
-        gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
-        gmSansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
+        typefaceBold = Typeface.createFromAsset(assets, "fonts/Pretendard-Black.otf")
+        typefaceRegular = Typeface.createFromAsset(assets, "fonts/Pretendard-Regular.otf")
         storage = AppStorage(this)
 
         sharedPreferences.edit().putBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, sharedPreferences.getBoolean(SharedKey.CALENDAR_ICON_SHOW, true)).apply()
@@ -158,14 +154,12 @@ class MainActivity : AppCompatActivity() {
         val monthFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
         val dateFormat = SimpleDateFormat(getString(R.string.tag_date), Locale.getDefault())
 
-        binding.month0.typeface = gmSansBold
-        binding.month1.typeface = gmSansBold
-        binding.month.setText(monthFormat.format(Date(System.currentTimeMillis())))
-        binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(Calendar.getInstance().time))
-        binding.tagSchedule.typeface = gmSansMedium
-        binding.tagEvents.typeface = gmSansMedium
-        binding.tvNoDeadline.typeface = gmSansMedium
-        binding.tvAdd.typeface = gmSansMedium
+//        binding.month0.typeface = typefaceBold
+//        binding.month1.typeface = typefaceBold
+//        binding.month.setText(monthFormat.format(Date(System.currentTimeMillis())))
+//        binding.tvNoDeadline.typeface = typefaceRegular
+
+        binding.btnAdd.typeface = typefaceRegular
 
         if (storage.purchasedAds()) binding.adView.visibility = View.GONE
         val adRequest = AdRequest.Builder()
@@ -182,12 +176,14 @@ class MainActivity : AppCompatActivity() {
         editActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val work = dbHelper.getItemAtLastDate(thisCurrentDate).toMutableList().apply { sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) } as ArrayList
-                binding.mainWorkView.adapter = MainWorkAdapter(work).apply {
+                binding.mainWorkView.adapter = MainWorkAdapter2(work).apply {
                     setDeleteCallback(deleteCallbackListener)
                     setClickCallback(clickCallbackListener)
                 }
-                binding.mainWorkView.layoutManager = LinearLayoutManager(this)
-                binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
+                binding.mainWorkView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+                binding.mainWorkView.addItemDecoration(PagerIndicator(ContextCompat.getColor(applicationContext, R.color.colorAccent), ContextCompat.getColor(applicationContext, R.color.colorPrimary)))
+                PagerSnapHelper().attachToRecyclerView(binding.mainWorkView)
+//                binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
 
                 val dialog = AlertDialog.Builder(this).apply {
                     val linearLayout = LinearLayout(applicationContext).apply {
@@ -219,7 +215,7 @@ class MainActivity : AppCompatActivity() {
             binding.adView.visibility = if (storage.purchasedAds()) View.GONE else View.VISIBLE
         }
 
-        notificationsActvityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        notificationsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             setupBadge()
         }
 
@@ -244,10 +240,10 @@ class MainActivity : AppCompatActivity() {
                         val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
                         val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
 
-                        tvTitle.typeface = gmSansBold
-                        tvContent.typeface = gmSansMedium
-                        tvPositive.typeface = gmSansMedium
-                        tvNegative.typeface = gmSansMedium
+                        tvTitle.typeface = typefaceBold
+                        tvContent.typeface = typefaceRegular
+                        tvPositive.typeface = typefaceRegular
+                        tvNegative.typeface = typefaceRegular
 
                         icon.setImageResource(R.drawable.ic_rate_review)
                         tvTitle.text = getString(R.string.review_title)
@@ -286,10 +282,10 @@ class MainActivity : AppCompatActivity() {
                 val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
 
                 imgLogo.setImageResource(R.drawable.ic_notification)
-                tvTitle.typeface = gmSansBold
-                tvContent.typeface = gmSansMedium
-                tvPositive.typeface = gmSansMedium
-                tvNegative.typeface = gmSansMedium
+                tvTitle.typeface = typefaceBold
+                tvContent.typeface = typefaceRegular
+                tvPositive.typeface = typefaceRegular
+                tvNegative.typeface = typefaceRegular
 
                 tvTitle.text = getString(R.string.intro_page2_title)
                 tvContent.text = getString(R.string.intro_page2_exp)
@@ -333,9 +329,10 @@ class MainActivity : AppCompatActivity() {
         val morningReminderIntent = Intent(this, ReminderReceiver::class.java).apply { putExtra(ReminderReceiver.TYPE, ReminderReceiver.MORNING) }
         val nightReminderIntent = Intent(this, ReminderReceiver::class.java).apply { putExtra(ReminderReceiver.TYPE, ReminderReceiver.NIGHT) }
 
-        am.setRepeating(AlarmManager.RTC_WAKEUP, morningReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY, PendingIntent.getBroadcast(this, 14402, morningReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT else PendingIntent.FLAG_UPDATE_CURRENT
+        am.setRepeating(AlarmManager.RTC_WAKEUP, morningReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY, PendingIntent.getBroadcast(this, 14402, morningReminderIntent, flag))
 
-        am.setRepeating(AlarmManager.RTC_WAKEUP, nightReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY, PendingIntent.getBroadcast(this, 14502, nightReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+        am.setRepeating(AlarmManager.RTC_WAKEUP, nightReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY, PendingIntent.getBroadcast(this, 14502, nightReminderIntent, flag))
 
         val datas = dbHelper.getAllData()
         for (data in datas) {
@@ -369,12 +366,14 @@ class MainActivity : AppCompatActivity() {
 
         val todayWork = dbHelper.getItemAtLastDate(System.currentTimeMillis()).toMutableList().apply { sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) } as ArrayList
 
-        binding.mainWorkView.adapter = MainWorkAdapter(todayWork).apply {
+        binding.mainWorkView.adapter = MainWorkAdapter2(todayWork).apply {
             setDeleteCallback(deleteCallbackListener)
             setClickCallback(clickCallbackListener)
         }
-        binding.mainWorkView.layoutManager = LinearLayoutManager(this)
-        binding.tvNoDeadline.visibility = if (todayWork.isEmpty()) View.VISIBLE else View.GONE
+        binding.mainWorkView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+        binding.mainWorkView.addItemDecoration(PagerIndicator(ContextCompat.getColor(applicationContext, R.color.colorAccent), ContextCompat.getColor(applicationContext, R.color.colorPrimary)))
+        PagerSnapHelper().attachToRecyclerView(binding.mainWorkView)
+//        binding.tvNoDeadline.visibility = if (todayWork.isEmpty()) View.VISIBLE else View.GONE
         binding.btnAdd.setOnClickListener {
             editActivityLauncher.launch(Intent(this, EditActivity::class.java))
         }
@@ -386,7 +385,7 @@ class MainActivity : AppCompatActivity() {
             topbarVisible = false
             arrowColor = ContextCompat.getColor(applicationContext, R.color.black)
             setOnDateChangedListener { widget, date, _ ->
-                binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(date.date))
+//                binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(date.date))
                 val work = dbHelper.getItemAtLastDate(date.date.time).toMutableList().apply {
                     sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
                 } as ArrayList
@@ -395,7 +394,7 @@ class MainActivity : AppCompatActivity() {
                     startAnimation(fadeOutAnimation)
                     visibility = View.INVISIBLE
 
-                    adapter = MainWorkAdapter(work).apply {
+                    adapter = MainWorkAdapter2(work).apply {
                         setDeleteCallback(deleteCallbackListener)
                         setClickCallback(clickCallbackListener)
                     }
@@ -406,27 +405,27 @@ class MainActivity : AppCompatActivity() {
                     startAnimation(fadeInAnimation)
                 }
 
-                binding.tvNoDeadline.apply {
-                    if (work.isEmpty()) {
-                        startAnimation(fadeOutAnimation)
-                        visibility = View.INVISIBLE
-                        visibility = View.VISIBLE
-                        startAnimation(fadeInAnimation)
-                    } else {
-                        visibility = View.INVISIBLE
-                    }
-                }
+//                binding.tvNoDeadline.apply {
+//                    if (work.isEmpty()) {
+//                        startAnimation(fadeOutAnimation)
+//                        visibility = View.INVISIBLE
+//                        visibility = View.VISIBLE
+//                        startAnimation(fadeInAnimation)
+//                    } else {
+//                        visibility = View.INVISIBLE
+//                    }
+//                }
             }
             setOnMonthChangedListener { _, date ->
-                if (beforeDate > date.date) {
-                    binding.month.setInAnimation(applicationContext, R.anim.slide_in_left)
-                    binding.month.setOutAnimation(applicationContext, R.anim.slide_out_right)
-                } else {
-                    binding.month.setInAnimation(applicationContext, R.anim.slide_in_right)
-                    binding.month.setOutAnimation(applicationContext, R.anim.slide_out_left)
-                }
-
-                binding.month.setText(monthFormat.format(date.date))
+//                if (beforeDate > date.date) {
+//                    binding.month.setInAnimation(applicationContext, R.anim.slide_in_left)
+//                    binding.month.setOutAnimation(applicationContext, R.anim.slide_out_right)
+//                } else {
+//                    binding.month.setInAnimation(applicationContext, R.anim.slide_in_right)
+//                    binding.month.setOutAnimation(applicationContext, R.anim.slide_out_left)
+//                }
+//
+//                binding.month.setText(monthFormat.format(date.date))
                 beforeDate = date.date
             }
         }
@@ -475,8 +474,8 @@ class MainActivity : AppCompatActivity() {
                 val tvVersion: TextView = view.findViewById(R.id.tv_version)
                 val tvContent: TextView = view.findViewById(R.id.content)
 
-                tvVersion.typeface = gmSansBold
-                tvContent.typeface = gmSansMedium
+                tvVersion.typeface = typefaceBold
+                tvContent.typeface = typefaceRegular
 
                 tvVersion.text = "${getString(R.string.real_app_name)} ${BuildConfig.VERSION_NAME}"
                 tvContent.text = MyUtils.fromHtml(MyUtils.readTextFromRaw(resources, R.raw.changelog))
@@ -625,7 +624,7 @@ class MainActivity : AppCompatActivity() {
         val menuNoti = menu.findItem(R.id.menu_notifications)
         val actionView = menuNoti.actionView
         notiBadgeText = actionView.findViewById(R.id.tv_badge)
-        notiBadgeText.typeface = gmSansMedium
+        notiBadgeText.typeface = typefaceRegular
 
         setupBadge()
 
@@ -639,7 +638,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_notifications -> {
-                notificationsActvityLauncher.launch(Intent(this, NotificationsActivity::class.java))
+                notificationsActivityLauncher.launch(Intent(this, NotificationsActivity::class.java))
             }
 
             R.id.menu_settings -> {
@@ -653,9 +652,9 @@ class MainActivity : AppCompatActivity() {
                     val tvContent: TextView = view.findViewById(R.id.content)
                     val btnNoti: Button = view.findViewById(R.id.btn_noti)
 
-                    tvVersion.typeface = gmSansBold
-                    tvContent.typeface = gmSansMedium
-                    btnNoti.typeface = gmSansMedium
+                    tvVersion.typeface = typefaceBold
+                    tvContent.typeface = typefaceRegular
+                    btnNoti.typeface = typefaceRegular
 
                     tvVersion.text = getString(R.string.help)
                     tvContent.text = MyUtils.fromHtml(MyUtils.readTextFromRaw(resources, R.raw.help))

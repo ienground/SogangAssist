@@ -60,7 +60,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.appTitle.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
+        binding.appTitle.typeface = Typeface.createFromAsset(assets, "fonts/Pretendard-Black.otf")
 
         supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, SettingsFragment(), null).commit()
@@ -137,8 +137,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
         val timeFormat = SimpleDateFormat("a h:mm", Locale.getDefault())
 
-        lateinit var gmSansBold: Typeface
-        lateinit var gmSansMedium: Typeface
+        lateinit var typefaceBold: Typeface
+        lateinit var typefaceRegular: Typeface
 
         override fun onCreatePreferences(bundle: Bundle?, str: String?) {
             addPreferencesFromResource(R.xml.root_preferences)
@@ -158,8 +158,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val backup = findPreference("backup")
             val restore = findPreference("restore")
 
-            gmSansMedium = Typeface.createFromAsset(requireActivity().assets, "fonts/gmsans_medium.otf")
-            gmSansBold = Typeface.createFromAsset(requireActivity().assets, "fonts/gmsans_bold.otf")
+            typefaceRegular = Typeface.createFromAsset(requireActivity().assets, "fonts/Pretendard-Regular.otf")
+            typefaceBold = Typeface.createFromAsset(requireActivity().assets, "fonts/Pretendard-Black.otf")
 
             dbHelper = DBHelper(requireContext(), DBHelper.dbName, DBHelper.dbVersion)
             sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)
@@ -223,8 +223,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val tvVersion: TextView = view.findViewById(R.id.tv_version)
                     val tvContent: TextView = view.findViewById(R.id.content)
 
-                    tvVersion.typeface = gmSansBold
-                    tvContent.typeface = gmSansMedium
+                    tvVersion.typeface = typefaceBold
+                    tvContent.typeface = typefaceRegular
 
                     tvVersion.text = getString(R.string.real_app_name)
                     tvContent.text = getString(R.string.dev_ienlab)
@@ -249,13 +249,13 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
                     val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
 
-                    tvTitle.typeface = gmSansBold
-                    tvDndStartTag.typeface = gmSansMedium
-                    tvDndEndTag.typeface = gmSansMedium
-                    tvDndStart.typeface = gmSansBold
-                    tvDndEnd.typeface = gmSansBold
-                    tvPositive.typeface = gmSansMedium
-                    tvNegative.typeface = gmSansMedium
+                    tvTitle.typeface = typefaceBold
+                    tvDndStartTag.typeface = typefaceRegular
+                    tvDndEndTag.typeface = typefaceRegular
+                    tvDndStart.typeface = typefaceBold
+                    tvDndEnd.typeface = typefaceBold
+                    tvPositive.typeface = typefaceRegular
+                    tvNegative.typeface = typefaceRegular
 
                     tvDndStart.text = timeFormat.format(dndStartCalendar.time)
                     tvDndEnd.text = timeFormat.format(dndEndCalendar.time)
@@ -277,9 +277,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                             val innerTvNegative: TextView = dialogView.findViewById(R.id.btn_negative_text)
                             val calendar = startCalendar.clone() as Calendar
 
-                            innerTvTitle.typeface = gmSansBold
-                            innerTvPositive.typeface = gmSansMedium
-                            innerTvNegative.typeface = gmSansMedium
+                            innerTvTitle.typeface = typefaceBold
+                            innerTvPositive.typeface = typefaceRegular
+                            innerTvNegative.typeface = typefaceRegular
 
                             val hoursId = Resources.getSystem().getIdentifier("hours", "id", "android")
                             val separatorId = Resources.getSystem().getIdentifier("separator", "id", "android")
@@ -291,11 +291,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                             val apmLabels: ArrayList<MaterialRadioButton> = arrayListOf(timePicker.findViewById(amLabelId), timePicker.findViewById(pmLabelId))
 
                             textViews.forEach {
-                                it.typeface = gmSansMedium
+                                it.typeface = typefaceRegular
                                 it.textSize = 42f
                             }
                             apmLabels.forEachIndexed { index, button ->
-                                button.typeface = gmSansMedium
+                                button.typeface = typefaceRegular
                                 button.textSize = 12f
                                 button.gravity = (if (index == 0) Gravity.BOTTOM else Gravity.TOP) or Gravity.END
                             }
@@ -344,9 +344,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                             val innerTvNegative: TextView = dialogView.findViewById(R.id.btn_negative_text)
                             val calendar = endCalendar.clone() as Calendar
 
-                            innerTvTitle.typeface = gmSansBold
-                            innerTvPositive.typeface = gmSansMedium
-                            innerTvNegative.typeface = gmSansMedium
+                            innerTvTitle.typeface = typefaceBold
+                            innerTvPositive.typeface = typefaceRegular
+                            innerTvNegative.typeface = typefaceRegular
 
                             val hoursId = Resources.getSystem().getIdentifier("hours", "id", "android")
                             val separatorId = Resources.getSystem().getIdentifier("separator", "id", "android")
@@ -358,11 +358,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                             val apmLabels: ArrayList<MaterialRadioButton> = arrayListOf(timePicker.findViewById(amLabelId), timePicker.findViewById(pmLabelId))
 
                             textViews.forEach {
-                                it.typeface = gmSansMedium
+                                it.typeface = typefaceRegular
                                 it.textSize = 42f
                             }
                             apmLabels.forEachIndexed { index, button ->
-                                button.typeface = gmSansMedium
+                                button.typeface = typefaceRegular
                                 button.textSize = 12f
                                 button.gravity = (if (index == 0) Gravity.BOTTOM else Gravity.TOP) or Gravity.END
                             }
@@ -426,7 +426,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val btnClose: ImageButton = view.findViewById(R.id.btn_close)
                     val hours = arrayListOf<Boolean>()
 
-                    tvTitle.typeface = gmSansBold
+                    tvTitle.typeface = typefaceBold
                     tvTitle.text = getString(R.string.notify_hw)
                     imgLogo.setImageResource(R.drawable.ic_assignment)
 
@@ -482,7 +482,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val btnClose: ImageButton = view.findViewById(R.id.btn_close)
                     val hours = arrayListOf<Boolean>()
 
-                    tvTitle.typeface = gmSansBold
+                    tvTitle.typeface = typefaceBold
                     tvTitle.text = getString(R.string.notify_lec)
                     imgLogo.setImageResource(R.drawable.ic_video)
 
@@ -538,7 +538,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val btnClose: ImageButton = view.findViewById(R.id.btn_close)
                     val minutes = arrayListOf<Boolean>()
 
-                    tvTitle.typeface = gmSansBold
+                    tvTitle.typeface = typefaceBold
                     tvTitle.text = getString(R.string.notify_zoom)
                     imgLogo.setImageResource(R.drawable.ic_live_class)
 
@@ -596,7 +596,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val btnClose: ImageButton = view.findViewById(R.id.btn_close)
                     val minutes = arrayListOf<Boolean>()
 
-                    tvTitle.typeface = gmSansBold
+                    tvTitle.typeface = typefaceBold
                     tvTitle.text = getString(R.string.notify_exam)
                     imgLogo.setImageResource(R.drawable.ic_test)
 
@@ -658,9 +658,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
                     val calendar = morningCalendar.clone() as Calendar
 
-                    tvTitle.typeface = gmSansBold
-                    tvPositive.typeface = gmSansMedium
-                    tvNegative.typeface = gmSansMedium
+                    tvTitle.typeface = typefaceBold
+                    tvPositive.typeface = typefaceRegular
+                    tvNegative.typeface = typefaceRegular
 
                     val hoursId = Resources.getSystem().getIdentifier("hours", "id", "android")
                     val separatorId = Resources.getSystem().getIdentifier("separator", "id", "android")
@@ -672,11 +672,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val apmLabels: ArrayList<MaterialRadioButton> = arrayListOf(timePicker.findViewById(amLabelId), timePicker.findViewById(pmLabelId))
 
                     textViews.forEach {
-                        it.typeface = gmSansMedium
+                        it.typeface = typefaceRegular
                         it.textSize = 42f
                     }
                     apmLabels.forEachIndexed { index, button ->
-                        button.typeface = gmSansMedium
+                        button.typeface = typefaceRegular
                         button.textSize = 12f
                         button.gravity = (if (index == 0) Gravity.BOTTOM else Gravity.TOP) or Gravity.END
                     }
@@ -728,9 +728,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
                     val calendar = nightCalendar.clone() as Calendar
 
-                    tvTitle.typeface = gmSansBold
-                    tvPositive.typeface = gmSansMedium
-                    tvNegative.typeface = gmSansMedium
+                    tvTitle.typeface = typefaceBold
+                    tvPositive.typeface = typefaceRegular
+                    tvNegative.typeface = typefaceRegular
 
                     val hoursId = Resources.getSystem().getIdentifier("hours", "id", "android")
                     val separatorId = Resources.getSystem().getIdentifier("separator", "id", "android")
@@ -742,11 +742,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val apmLabels: ArrayList<MaterialRadioButton> = arrayListOf(timePicker.findViewById(amLabelId), timePicker.findViewById(pmLabelId))
 
                     textViews.forEach {
-                        it.typeface = gmSansMedium
+                        it.typeface = typefaceRegular
                         it.textSize = 42f
                     }
                     apmLabels.forEachIndexed { index, button ->
-                        button.typeface = gmSansMedium
+                        button.typeface = typefaceRegular
                         button.textSize = 12f
                         button.gravity = (if (index == 0) Gravity.BOTTOM else Gravity.TOP) or Gravity.END
                     }
@@ -790,8 +790,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val tvVersion: TextView = view.findViewById(R.id.tv_version)
                     val tvContent: TextView = view.findViewById(R.id.content)
 
-                    tvVersion.typeface = gmSansBold
-                    tvContent.typeface = gmSansMedium
+                    tvVersion.typeface = typefaceBold
+                    tvContent.typeface = typefaceRegular
 
                     tvVersion.text = "${getString(R.string.real_app_name)} ${BuildConfig.VERSION_NAME}"
                     tvContent.text = MyUtils.fromHtml(MyUtils.readTextFromRaw(resources, R.raw.changelog))
@@ -878,10 +878,10 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                         val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
 
                         imgLogo.setImageResource(R.drawable.ic_notification)
-                        tvTitle.typeface = gmSansBold
-                        tvContent.typeface = gmSansMedium
-                        tvPositive.typeface = gmSansMedium
-                        tvNegative.typeface = gmSansMedium
+                        tvTitle.typeface = typefaceBold
+                        tvContent.typeface = typefaceRegular
+                        tvPositive.typeface = typefaceRegular
+                        tvNegative.typeface = typefaceRegular
 
                         tvTitle.text = getString(R.string.restore)
                         tvContent.text = getString(R.string.restore_msg)
@@ -954,13 +954,13 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
                     val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
 
-                    tvTitle.typeface = gmSansBold
-                    tvStartDate.typeface = gmSansMedium
-                    tvEndDate.typeface = gmSansMedium
-                    tvWave.typeface = gmSansMedium
-                    checkDeleteFinish.typeface = gmSansMedium
-                    tvPositive.typeface = gmSansMedium
-                    tvNegative.typeface = gmSansMedium
+                    tvTitle.typeface = typefaceBold
+                    tvStartDate.typeface = typefaceRegular
+                    tvEndDate.typeface = typefaceRegular
+                    tvWave.typeface = typefaceRegular
+                    checkDeleteFinish.typeface = typefaceRegular
+                    tvPositive.typeface = typefaceRegular
+                    tvNegative.typeface = typefaceRegular
 
                     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     val startCalendar = Calendar.getInstance().apply { add(Calendar.MONTH, -2) }

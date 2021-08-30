@@ -49,8 +49,8 @@ class EditActivity : AppCompatActivity() {
     lateinit var currentItem: LMSClass
     var id = -1
 
-    lateinit var gmSansBold: Typeface
-    lateinit var gmSansMedium: Typeface
+    lateinit var typefaceBold: Typeface
+    lateinit var typefaceRegular: Typeface
 
     val startCalendar = Calendar.getInstance()
     val endCalendar = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
@@ -78,30 +78,30 @@ class EditActivity : AppCompatActivity() {
                 }
         }
 
-        gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
-        gmSansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
+        typefaceBold = Typeface.createFromAsset(assets, "fonts/Pretendard-Black.otf")
+        typefaceRegular = Typeface.createFromAsset(assets, "fonts/Pretendard-Regular.otf")
 
-        binding.radioButton1.typeface = gmSansMedium
-        binding.radioButton2.typeface = gmSansMedium
-        binding.radioButton3.typeface = gmSansMedium
-        binding.radioButton4.typeface = gmSansMedium
-        binding.radioButton5.typeface = gmSansMedium
-        binding.radioButton6.typeface = gmSansMedium
-        binding.checkAutoEdit.typeface = gmSansMedium
-        binding.etClass.typeface = gmSansMedium
-        binding.etClass.editText?.typeface = gmSansMedium
-        binding.etTimeLesson.typeface = gmSansMedium
-        binding.etTimeLesson.editText?.typeface = gmSansMedium
-        binding.etTimeWeek.typeface = gmSansMedium
-        binding.etTimeWeek.editText?.typeface = gmSansMedium
-        binding.etAssignment.typeface = gmSansMedium
-        binding.etAssignment.editText?.typeface = gmSansMedium
-        binding.tvStartTime.typeface = gmSansMedium
-        binding.tvEndTime.typeface = gmSansMedium
-        binding.tvStartDate.typeface = gmSansMedium
-        binding.tvEndDate.typeface = gmSansMedium
-        binding.tvClassEndTime.typeface = gmSansMedium
-        binding.tvClassEndDate.typeface = gmSansMedium
+        binding.radioButton1.typeface = typefaceRegular
+        binding.radioButton2.typeface = typefaceRegular
+        binding.radioButton3.typeface = typefaceRegular
+        binding.radioButton4.typeface = typefaceRegular
+        binding.radioButton5.typeface = typefaceRegular
+        binding.radioButton6.typeface = typefaceRegular
+        binding.checkAutoEdit.typeface = typefaceRegular
+        binding.etClass.typeface = typefaceRegular
+        binding.etClass.editText?.typeface = typefaceRegular
+        binding.etTimeLesson.typeface = typefaceRegular
+        binding.etTimeLesson.editText?.typeface = typefaceRegular
+        binding.etTimeWeek.typeface = typefaceRegular
+        binding.etTimeWeek.editText?.typeface = typefaceRegular
+        binding.etAssignment.typeface = typefaceRegular
+        binding.etAssignment.editText?.typeface = typefaceRegular
+        binding.tvStartTime.typeface = typefaceRegular
+        binding.tvEndTime.typeface = typefaceRegular
+        binding.tvStartDate.typeface = typefaceRegular
+        binding.tvEndDate.typeface = typefaceRegular
+        binding.tvClassEndTime.typeface = typefaceRegular
+        binding.tvClassEndDate.typeface = typefaceRegular
 
         dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
         radioButtonGroup = arrayOf(R.id.radioButton1, R.id.radioButton2, R.id.radioButton3, R.id.radioButton4, R.id.radioButton5, R.id.radioButton6)
@@ -578,10 +578,10 @@ class EditActivity : AppCompatActivity() {
             val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
 
             imgLogo.setImageResource(R.drawable.ic_clear_all)
-            tvTitle.typeface = gmSansBold
-            tvContent.typeface = gmSansMedium
-            tvPositive.typeface = gmSansMedium
-            tvNegative.typeface = gmSansMedium
+            tvTitle.typeface = typefaceBold
+            tvContent.typeface = typefaceRegular
+            tvPositive.typeface = typefaceRegular
+            tvNegative.typeface = typefaceRegular
 
             tvTitle.text = context.getString(R.string.delete)
             tvContent.text = context.getString(R.string.delete_msg)
@@ -624,10 +624,10 @@ class EditActivity : AppCompatActivity() {
             val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
             val tvNeutral: TextView = view.findViewById(R.id.btn_neutral_text)
 
-            tvTitle.typeface = gmSansBold
-            tvPositive.typeface = gmSansMedium
-            tvNegative.typeface = gmSansMedium
-            tvNeutral.typeface = gmSansMedium
+            tvTitle.typeface = typefaceBold
+            tvPositive.typeface = typefaceRegular
+            tvNegative.typeface = typefaceRegular
+            tvNeutral.typeface = typefaceRegular
 
             btnPositive.setOnClickListener {
                 onAutoSave(isFinished)

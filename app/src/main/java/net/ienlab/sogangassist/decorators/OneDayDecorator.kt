@@ -32,8 +32,8 @@ class OneDayDecorator(mContext: Context) : DayViewDecorator {
 
     override fun decorate(view: DayViewFacade) {
         view.addSpan(RelativeSizeSpan(1.4f))
-        view.addSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.dark_blue)))
-        view.addSpan(MyTypefaceSpan(context, "gmsans_bold.otf"))
+        view.addSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.black)))
+        view.addSpan(MyTypefaceSpan(context, "Pretendard-Black.otf"))
     }
 
     /**

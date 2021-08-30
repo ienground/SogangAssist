@@ -72,7 +72,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/intro_page0_title"
-                            android:textColor="@color/dark_blue"
+                            android:textColor="@color/black"
                             android:textSize="24sp" />
 
                         <TextView
@@ -80,7 +80,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/intro_page0_title"
-                            android:textColor="@color/dark_blue"
+                            android:textColor="@color/black"
                             android:textSize="24sp" />
 
                     </TextSwitcher>
@@ -100,14 +100,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/intro_page0_exp"
-                            android:textColor="@color/dark_white_blue" />
+                            android:textColor="@color/gray" />
 
                         <TextView
                             android:id="@+id/section_content_1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/intro_page0_exp"
-                            android:textColor="@color/dark_white_blue" />
+                            android:textColor="@color/gray" />
 
                     </TextSwitcher>
 

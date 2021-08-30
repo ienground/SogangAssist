@@ -28,7 +28,7 @@ class WeekdayDecorator(mContext: Context) : DayViewDecorator {
     }
 
     override fun decorate(view: DayViewFacade) {
-        view.addSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.dark_blue)))
-        view.addSpan(MyTypefaceSpan(context, "gmsans_medium.otf"))
+        view.addSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.black)))
+        view.addSpan(MyTypefaceSpan(context, "Pretendard-Regular.otf"))
     }
 }

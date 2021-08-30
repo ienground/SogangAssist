@@ -29,13 +29,13 @@ class OnboardingFragment1 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val gmSansBold = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
-        val gmSansMedium = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
+        val typefaceBold = Typeface.createFromAsset(requireContext().assets, "fonts/Pretendard-Black.otf")
+        val typefaceRegular = Typeface.createFromAsset(requireContext().assets, "fonts/Pretendard-Regular.otf")
 
         val pm = requireContext().packageManager
         val lmsPackageName = "kr.co.imaxsoft.hellolms"
 
-        binding.tvInstall.typeface = gmSansMedium
+        binding.tvInstall.typeface = typefaceRegular
         if (isPackageInstalled(lmsPackageName, pm)) {
             binding.tvInstall.text = getString(R.string.lms_installed)
             binding.icInstall.setImageResource(R.drawable.ic_check_circle)

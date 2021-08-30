@@ -1,9 +1,7 @@
 package net.ienlab.sogangassist.adapter
 
-import android.app.Activity
 import android.app.AlarmManager
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
@@ -21,7 +19,6 @@ import net.ienlab.sogangassist.activity.*
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.data.NotificationItem
 import net.ienlab.sogangassist.database.NotiDBHelper
-import net.ienlab.sogangassist.utils.ClickCallbackListener
 import net.ienlab.sogangassist.utils.ItemActionListener
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import net.ienlab.sogangassist.utils.NotiClickCallbackListener
@@ -50,14 +47,14 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
     override fun onBindViewHolder(holder: NotificationsAdapter.ItemViewHolder, position: Int) {
         val dateTimeFormat = SimpleDateFormat("${context.getString(R.string.dateFormat)} ${context.getString(R.string.timeFormat)}", Locale.getDefault())
         val withDayTimeFormat = SimpleDateFormat("E ${context.getString(R.string.timeFormat)}", Locale.getDefault())
-        val gmSansBold = Typeface.createFromAsset(context.assets, "fonts/gmsans_bold.otf")
-        val gmSansMedium = Typeface.createFromAsset(context.assets, "fonts/gmsans_medium.otf")
+        val typefaceBold = Typeface.createFromAsset(context.assets, "fonts/Pretendard-Black.otf")
+        val typefaceRegular = Typeface.createFromAsset(context.assets, "fonts/Pretendard-Regular.otf")
 
         notiDBHelper = NotiDBHelper(context, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
 
-        holder.tvContentTitle.typeface = gmSansBold
-        holder.tvContentText.typeface = gmSansMedium
-        holder.tvTimeStamp.typeface = gmSansMedium
+        holder.tvContentTitle.typeface = typefaceBold
+        holder.tvContentText.typeface = typefaceRegular
+        holder.tvTimeStamp.typeface = typefaceRegular
 
         holder.tvContentTitle.text = items[position].contentTitle
         holder.tvContentText.text = items[position].contentText
@@ -130,10 +127,10 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
                 btnPositive.visibility = View.VISIBLE
                 btnNegative.visibility = View.VISIBLE
 
-                tvTitle.typeface = gmSansBold
-                tvContent.typeface = gmSansMedium
-                tvPositive.typeface = gmSansMedium
-                tvNegative.typeface = gmSansMedium
+                tvTitle.typeface = typefaceBold
+                tvContent.typeface = typefaceRegular
+                tvPositive.typeface = typefaceRegular
+                tvNegative.typeface = typefaceRegular
 
                 if (items[position].isRead) {
                     imgLogo.setImageResource(R.drawable.ic_mark_as_not_read)

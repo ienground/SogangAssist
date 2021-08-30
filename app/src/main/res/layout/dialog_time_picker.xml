@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:text="@string/morning_reminder"
         android:textSize="18sp"
-        android:textColor="@color/dark_blue"
+        android:textColor="@color/black"
         android:layout_marginStart="@dimen/usual_margin"
         android:layout_marginEnd="@dimen/usual_margin"
         app:layout_constraintStart_toEndOf="@id/imgBackground"
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_close"
             android:contentDescription="@android:string/no"
-            app:tint="@color/dark_blue"/>
+            app:tint="@color/black"/>
 
         <TextView
             android:id="@+id/btn_negative_text"
@@ -77,7 +77,7 @@
             android:layout_marginStart="@dimen/usual_margin"
             android:layout_gravity="center"
             android:text="@android:string/no"
-            android:textColor="@color/dark_blue" />
+            android:textColor="@color/black" />
 
     </LinearLayout>
 
@@ -98,7 +98,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_check"
             android:contentDescription="@android:string/yes"
-            app:tint="@color/dark_blue"/>
+            app:tint="@color/black"/>
 
         <TextView
             android:id="@+id/btn_positive_text"
@@ -107,7 +107,7 @@
             android:layout_marginStart="@dimen/usual_margin"
             android:layout_gravity="center"
             android:text="@android:string/yes"
-            android:textColor="@color/dark_blue" />
+            android:textColor="@color/black" />
 
     </LinearLayout>
 

@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:text="@string/date_delete_title"
         android:textSize="18sp"
-        android:textColor="@color/dark_blue"
+        android:textColor="@color/black"
         android:layout_marginStart="@dimen/usual_margin"
         android:layout_marginEnd="@dimen/usual_margin"
         app:layout_constraintStart_toEndOf="@id/imgBackground"
@@ -47,7 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="2021-05-06"
-        android:textColor="@color/dark_blue"
+        android:textColor="@color/black"
         android:clickable="true"
         android:focusable="true"
         android:layout_marginStart="@dimen/usual_margin"
@@ -60,7 +60,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="~"
-        android:textColor="@color/dark_blue"
+        android:textColor="@color/black"
         android:textAlignment="center"
         android:clickable="true"
         android:focusable="true"
@@ -76,7 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="2021-05-06"
-        android:textColor="@color/dark_blue"
+        android:textColor="@color/black"
         android:layout_marginEnd="@dimen/usual_margin"
         android:layout_marginTop="@dimen/usual_margin"
         app:layout_constraintEnd_toEndOf="parent"
@@ -87,7 +87,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/check_delete_finish"
-        android:textColor="@color/dark_blue"
+        android:textColor="@color/black"
         android:checked="true"
         android:layout_margin="@dimen/usual_margin"
         app:layout_constraintStart_toStartOf="parent"
@@ -112,7 +112,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_close"
             android:contentDescription="@android:string/cancel"
-            app:tint="@color/dark_blue"/>
+            app:tint="@color/black"/>
 
         <TextView
             android:id="@+id/btn_negative_text"
@@ -121,7 +121,7 @@
             android:layout_marginStart="@dimen/usual_margin"
             android:layout_gravity="center"
             android:text="@android:string/cancel"
-            android:textColor="@color/dark_blue" />
+            android:textColor="@color/black" />
 
     </LinearLayout>
 
@@ -143,7 +143,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_delete"
             android:contentDescription="@string/delete"
-            app:tint="@color/dark_blue"/>
+            app:tint="@color/black"/>
 
         <TextView
             android:id="@+id/btn_positive_text"
@@ -152,7 +152,7 @@
             android:layout_marginStart="@dimen/usual_margin"
             android:layout_gravity="center"
             android:text="@string/delete"
-            android:textColor="@color/dark_blue" />
+            android:textColor="@color/black" />
 
     </LinearLayout>
 

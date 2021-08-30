@@ -187,10 +187,10 @@ class OnboardingActivity : AppCompatActivity(),
         binding.sectionContent.setOutAnimation(applicationContext, R.anim.slide_out_right)
         binding.sectionLabel.setInAnimation(applicationContext, R.anim.slide_in_left)
         binding.sectionLabel.setOutAnimation(applicationContext, R.anim.slide_out_right)
-        binding.sectionLabel0.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
-        binding.sectionContent0.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
-        binding.sectionLabel1.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
-        binding.sectionContent1.typeface = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
+        binding.sectionLabel0.typeface = Typeface.createFromAsset(assets, "fonts/Pretendard-Black.otf")
+        binding.sectionContent0.typeface = Typeface.createFromAsset(assets, "fonts/Pretendard-Regular.otf")
+        binding.sectionLabel1.typeface = Typeface.createFromAsset(assets, "fonts/Pretendard-Black.otf")
+        binding.sectionContent1.typeface = Typeface.createFromAsset(assets, "fonts/Pretendard-Regular.otf")
 
         binding.pageIndicator.selection = page
         binding.pageIndicator.setAnimationType(AnimationType.WORM)

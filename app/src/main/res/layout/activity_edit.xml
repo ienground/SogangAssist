@@ -81,7 +81,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/classtime"
                             android:textAlignment="textStart"
-                            android:textColor="@color/dark_blue"
+                            android:textColor="@color/black"
                             android:layoutDirection="rtl"/>
 
                         <RadioButton
@@ -90,7 +90,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/sup_classtime"
                             android:textAlignment="textStart"
-                            android:textColor="@color/dark_blue"
+                            android:textColor="@color/black"
                             android:layoutDirection="rtl"/>
 
                         <RadioButton
@@ -99,7 +99,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/assignment"
                             android:textAlignment="textStart"
-                            android:textColor="@color/dark_blue"
+                            android:textColor="@color/black"
                             android:layoutDirection="rtl"/>
 
                         <RadioButton
@@ -108,7 +108,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/zoom"
                             android:textAlignment="textStart"
-                            android:textColor="@color/dark_blue"
+                            android:textColor="@color/black"
                             android:layoutDirection="rtl"/>
 
                         <RadioButton
@@ -117,7 +117,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/team_project"
                             android:textAlignment="textStart"
-                            android:textColor="@color/dark_blue"
+                            android:textColor="@color/black"
                             android:layoutDirection="rtl"/>
 
                         <RadioButton
@@ -126,7 +126,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/exam"
                             android:textAlignment="textStart"
-                            android:textColor="@color/dark_blue"
+                            android:textColor="@color/black"
                             android:layoutDirection="rtl"/>
 
                     </RadioGroup>
@@ -137,7 +137,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/usual_margin"
                         android:text="@string/allow_auto_edit_lms"
-                        android:textColor="@color/dark_blue"
+                        android:textColor="@color/black"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/radioGroup" />
@@ -149,7 +149,7 @@
                         android:src="@drawable/ic_class"
                         android:contentDescription="@string/class_name"
                         android:layout_marginStart="@dimen/usual_margin"
-                        app:tint="@color/dark_blue"
+                        app:tint="@color/black"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/et_class"
                         app:layout_constraintTop_toTopOf="@id/et_class"
@@ -178,7 +178,7 @@
                             android:singleLine="true"
                             android:hint="@string/class_name"
                             android:completionThreshold="0"
-                            android:textColor="@color/dark_blue"
+                            android:textColor="@color/black"
                             android:paddingTop="16dp"
                             android:paddingBottom="16dp"/>
 
@@ -191,7 +191,7 @@
                         android:src="@drawable/ic_time"
                         android:contentDescription="@string/class_name"
                         android:layout_marginStart="@dimen/usual_margin"
-                        app:tint="@color/dark_blue"
+                        app:tint="@color/black"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/et_time_week"
                         app:layout_constraintTop_toTopOf="@id/et_time_week"
@@ -217,7 +217,7 @@
                             android:singleLine="true"
                             android:inputType="number"
                             android:hint="@string/week"
-                            android:textColor="@color/dark_blue"
+                            android:textColor="@color/black"
                             android:imeOptions="actionNext"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -241,7 +241,7 @@
                             android:singleLine="true"
                             android:inputType="number"
                             android:hint="@string/lesson"
-                            android:textColor="@color/dark_blue"/>
+                            android:textColor="@color/black"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -249,7 +249,7 @@
                         android:id="@+id/line_class"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/dark_blue"
+                        android:background="@color/black"
                         android:alpha="0.12"
                         android:layout_marginBottom="@dimen/usual_margin"
                         app:layout_constraintTop_toBottomOf="@id/et_time_week"
@@ -259,7 +259,7 @@
                         android:id="@+id/line"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/dark_blue"
+                        android:background="@color/black"
                         android:alpha="0.12"
                         android:layout_marginBottom="@dimen/usual_margin"
                         app:layout_constraintTop_toBottomOf="@id/et_assignment"
@@ -272,7 +272,7 @@
                         android:src="@drawable/ic_today"
                         android:contentDescription="@string/class_name"
                         android:layout_marginStart="@dimen/usual_margin"
-                        app:tint="@color/dark_blue"
+                        app:tint="@color/black"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/tv_start_date"
                         app:layout_constraintTop_toTopOf="@id/tv_start_date"
@@ -283,7 +283,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="2020년 10월 3일 (일)"
-                        android:textColor="@color/dark_blue"
+                        android:textColor="@color/black"
                         android:layout_margin="@dimen/usual_margin"
                         app:layout_constraintStart_toEndOf="@id/ic_date"
                         app:layout_constraintEnd_toStartOf="@id/tv_start_time"
@@ -294,7 +294,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="오후 8:30"
-                        android:textColor="@color/dark_blue"
+                        android:textColor="@color/black"
                         android:textAlignment="textEnd"
                         android:layout_marginEnd="@dimen/usual_margin"
                         app:layout_constraintStart_toEndOf="@id/tv_start_date"
@@ -307,7 +307,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="2020년 10월 4일 (일)"
-                        android:textColor="@color/dark_blue"
+                        android:textColor="@color/black"
                         android:layout_margin="@dimen/usual_margin"
                         app:layout_constraintStart_toEndOf="@id/ic_date"
                         app:layout_constraintEnd_toStartOf="@id/tv_end_time"
@@ -318,7 +318,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="오후 9:30"
-                        android:textColor="@color/dark_blue"
+                        android:textColor="@color/black"
                         android:textAlignment="textEnd"
                         android:layout_marginEnd="@dimen/usual_margin"
                         app:layout_constraintStart_toEndOf="@id/tv_end_date"
@@ -333,7 +333,7 @@
                         android:src="@drawable/ic_today"
                         android:contentDescription="@string/class_name"
                         android:layout_marginStart="@dimen/usual_margin"
-                        app:tint="@color/dark_blue"
+                        app:tint="@color/black"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/tv_class_end_date"
                         app:layout_constraintTop_toTopOf="@id/tv_class_end_date"
@@ -344,7 +344,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="2020년 10월 10일 (일)"
-                        android:textColor="@color/dark_blue"
+                        android:textColor="@color/black"
                         android:layout_margin="@dimen/usual_margin"
                         app:layout_constraintStart_toEndOf="@id/ic_class_date"
                         app:layout_constraintEnd_toStartOf="@id/tv_class_end_time"
@@ -355,7 +355,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="오후 10:30"
-                        android:textColor="@color/dark_blue"
+                        android:textColor="@color/black"
                         android:textAlignment="textEnd"
                         android:layout_marginEnd="@dimen/usual_margin"
                         app:layout_constraintStart_toEndOf="@id/tv_class_end_date"
@@ -370,7 +370,7 @@
                         android:src="@drawable/ic_assignment"
                         android:contentDescription="@string/class_name"
                         android:layout_marginStart="@dimen/usual_margin"
-                        app:tint="@color/dark_blue"
+                        app:tint="@color/black"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/et_assignment"
                         app:layout_constraintTop_toTopOf="@id/et_assignment"
@@ -395,7 +395,7 @@
                             android:layout_height="wrap_content"
                             android:singleLine="true"
                             android:hint="@string/assignment_name"
-                            android:textColor="@color/dark_blue"/>
+                            android:textColor="@color/black"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 

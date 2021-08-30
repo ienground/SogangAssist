@@ -31,12 +31,12 @@ class OnboardingFragment2 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val gmSansBold = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_bold.otf")
-        val gmSansMedium = Typeface.createFromAsset(requireContext().assets, "fonts/gmsans_medium.otf")
+        val typefaceBold = Typeface.createFromAsset(requireContext().assets, "fonts/Pretendard-Black.otf")
+        val typefaceRegular = Typeface.createFromAsset(requireContext().assets, "fonts/Pretendard-Regular.otf")
 
         introBtnNext = requireActivity().findViewById(R.id.intro_btn_next)
 
-        binding.tvNoti.typeface = gmSansMedium
+        binding.tvNoti.typeface = typefaceRegular
 
         introBtnNext.alpha = 1.0f
         introBtnNext.isEnabled = true

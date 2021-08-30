@@ -2,7 +2,6 @@ package net.ienlab.sogangassist.adapter
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -51,17 +50,17 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
     // View 의 내용을 해당 포지션의 데이터로 바꿉니다.
     override fun onBindViewHolder(holder: MainWorkAdapter.ItemViewHolder, position: Int) {
         val timeFormat = SimpleDateFormat(context.getString(R.string.timeFormat), Locale.getDefault())
-        val gmSansBold = Typeface.createFromAsset(context.assets, "fonts/gmsans_bold.otf")
-        val gmSansMedium = Typeface.createFromAsset(context.assets, "fonts/gmsans_medium.otf")
+        val typefaceBold = Typeface.createFromAsset(context.assets, "fonts/Pretendard-Black.otf")
+        val typefaceRegular = Typeface.createFromAsset(context.assets, "fonts/Pretendard-Regular.otf")
 
         setFullAd(context)
 
         storage = AppStorage(context)
         dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
 
-        holder.class_name.typeface = gmSansBold
-        holder.sub_name.typeface = gmSansBold
-        holder.end_time.typeface = gmSansMedium
+        holder.class_name.typeface = typefaceBold
+        holder.sub_name.typeface = typefaceBold
+        holder.end_time.typeface = typefaceRegular
 
         holder.class_name.text = items[position].className
         holder.end_time.text = context.getString(if (items[position].type != LMSClass.TYPE_ZOOM && items[position].type != LMSClass.TYPE_EXAM) R.string.deadline else R.string.start, timeFormat.format(Date(items[position].endTime)))
@@ -87,10 +86,10 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
                 btnNegative.visibility = View.VISIBLE
 
                 imgLogo.setImageResource(R.drawable.ic_check)
-                tvTitle.typeface = gmSansBold
-                tvContent.typeface = gmSansMedium
-                tvPositive.typeface = gmSansMedium
-                tvNegative.typeface = gmSansMedium
+                tvTitle.typeface = typefaceBold
+                tvContent.typeface = typefaceRegular
+                tvPositive.typeface = typefaceRegular
+                tvNegative.typeface = typefaceRegular
 
                 if (items[position].isFinished) {
                     tvTitle.text = this@MainWorkAdapter.context.getString(R.string.mark_as_not_finish)

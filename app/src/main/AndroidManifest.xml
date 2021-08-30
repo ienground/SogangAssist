@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.ienlab.sogangassist">
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
         android:allowBackup="false"
@@ -14,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:label">
+        <activity
+            android:name=".activity.TestActivity"
+            android:exported="true" />
         <activity android:name=".activity.NotificationsActivity" />
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
@@ -22,8 +27,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.EditActivity"
-            android:windowSoftInputMode="adjustPan"/>
+        <activity
+            android:name=".activity.EditActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activity.SettingsActivity"
             android:theme="@style/AppTheme.Setting" />
@@ -72,23 +78,21 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
-<!--        <receiver-->
-<!--            android:name=".widget.CalendarWidget"-->
-<!--            android:label="달력위젯">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
-<!--                <action android:name="net.ienlab.sogangassist.CalendarWidget.MONTH_CLICK" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-
-<!--            <meta-data-->
-<!--                android:name="android.appwidget.provider"-->
-<!--                android:resource="@xml/calendar_widget_info" />-->
-<!--        </receiver>-->
+        </receiver> <!-- <receiver -->
+        <!-- android:name=".widget.CalendarWidget" -->
+        <!-- android:label="달력위젯"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
+        <!-- <action android:name="net.ienlab.sogangassist.CalendarWidget.MONTH_CLICK" /> -->
+        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+        <!-- </intent-filter> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.appwidget.provider" -->
+        <!-- android:resource="@xml/calendar_widget_info" /> -->
+        <!-- </receiver> -->
         <receiver
             android:name=".widget.DeadlineWidget"
+            android:exported="true"
             android:label="@string/deadline_widget_title">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -105,14 +109,13 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-8050897224557020~5997367915" />
-
         <meta-data
             android:name="firebase_inapp_messaging_auto_data_collection_enabled"
             android:value="false" />
 
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false"/>
+            android:required="false" />
     </application>
 
 </manifest>

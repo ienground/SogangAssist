@@ -51,7 +51,7 @@ class CalendarWidget : AppWidgetProvider() {
 //        views.setImageViewBitmap(R.id.calendar, getCalendarBitmap(context, 800, 1000, calendar))
 //        views.setOnClickPendingIntent(R.id.refresh, pendingIntent)
 //        views.setOnClickPendingIntent(R.id.entire_widget, pendingIntent)
-//        views.setImageViewBitmap(R.id.app_name, setTextTypeface(context, "fonts/gmsans_bold.otf", context.getString(R.string.bp_app_name), 30f, color, 240, 46, Paint.Align.LEFT))
+//        views.setImageViewBitmap(R.id.app_name, setTextTypeface(context, "fonts/Pretendard-Black.otf", context.getString(R.string.bp_app_name), 30f, color, 240, 46, Paint.Align.LEFT))
 
         views.setOnClickPendingIntent(R.id.btn_month_back, pendingIntent)
 
@@ -122,44 +122,6 @@ class CalendarWidget : AppWidgetProvider() {
         }
 
         return bitmap
-    }
-
-    fun getCalendarBitmap(context: Context, width: Int, height: Int, calendar: Calendar): Bitmap {
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        val paint = Paint(Paint.LINEAR_TEXT_FLAG or Paint.ANTI_ALIAS_FLAG)
-
-        val gmSansBold = Typeface.createFromAsset(context.assets, "fonts/gmsans_bold.otf")
-        val gmSansMedium = Typeface.createFromAsset(context.assets, "fonts/gmsans_medium.otf")
-
-        val shapeBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val shapeCanvas = Canvas(shapeBitmap)
-
-        paint.color = Color.BLACK
-        canvas.drawRoundRect(0f, 0f, width.toFloat(), height.toFloat(), 20f, 20f, paint)
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-
-        canvas.drawBitmap(getScaledDrawableBitmap(context, R.drawable.background, width.toFloat(), height.toFloat()), 0f, 0f, paint)
-
-
-
-
-
-        return bitmap
-    }
-
-    fun getScaledDrawableBitmap(context: Context, resId: Int, width: Float, height: Float): Bitmap {
-        val bitmap = (ContextCompat.getDrawable(context, resId) as BitmapDrawable).bitmap.scale(width.toInt(), height.toInt(), true)
-
-        val outputBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(outputBitmap)
-        val paint = Paint(Paint.LINEAR_TEXT_FLAG or Paint.ANTI_ALIAS_FLAG)
-        val rect = Rect(0, 0, bitmap.width, bitmap.height)
-
-        paint.isAntiAlias = true
-        canvas.drawBitmap(bitmap, rect, rect, paint)
-
-        return outputBitmap
     }
 
     companion object {

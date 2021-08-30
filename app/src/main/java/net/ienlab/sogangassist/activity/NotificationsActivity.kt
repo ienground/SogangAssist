@@ -11,7 +11,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
@@ -26,8 +25,8 @@ import net.ienlab.sogangassist.utils.NotiClickCallbackListener
 
 class NotificationsActivity : AppCompatActivity() {
 
-    lateinit var gmSansBold: Typeface
-    lateinit var gmSansMedium: Typeface
+    lateinit var typefaceBold: Typeface
+    lateinit var typefaceRegular: Typeface
 
     lateinit var adapter: NotificationsAdapter
     lateinit var notiDBHelper: NotiDBHelper
@@ -62,11 +61,11 @@ class NotificationsActivity : AppCompatActivity() {
         supportActionBar?.title = null
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        gmSansBold = Typeface.createFromAsset(assets, "fonts/gmsans_bold.otf")
-        gmSansMedium = Typeface.createFromAsset(assets, "fonts/gmsans_medium.otf")
+        typefaceBold = Typeface.createFromAsset(assets, "fonts/Pretendard-Black.otf")
+        typefaceRegular = Typeface.createFromAsset(assets, "fonts/Pretendard-Regular.otf")
 
-        binding.appTitle.typeface = gmSansBold
-        binding.emptyMessage.typeface = gmSansMedium
+        binding.appTitle.typeface = typefaceBold
+        binding.emptyMessage.typeface = typefaceRegular
 
         notiDBHelper = NotiDBHelper(this, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
 
@@ -113,10 +112,10 @@ class NotificationsActivity : AppCompatActivity() {
                     btnNegative.visibility = View.VISIBLE
 
                     imgLogo.setImageResource(R.drawable.ic_clear_all)
-                    tvTitle.typeface = gmSansBold
-                    tvContent.typeface = gmSansMedium
-                    tvPositive.typeface = gmSansMedium
-                    tvNegative.typeface = gmSansMedium
+                    tvTitle.typeface = typefaceBold
+                    tvContent.typeface = typefaceRegular
+                    tvPositive.typeface = typefaceRegular
+                    tvNegative.typeface = typefaceRegular
 
                     tvTitle.text = context.getString(R.string.ask_delete_all)
                     tvContent.text = context.getString(R.string.ask_delete_all_msg)
