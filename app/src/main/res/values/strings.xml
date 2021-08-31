@@ -147,6 +147,7 @@
     <string name="twelve_hour">12 hours</string>
     <string name="twfour_hour">24 hours</string>
     <string name="deleted_noti">Notification Canceled</string>
+    <string name="enter_blank">Fill out</string>
 
     <string name="lms_install">HelloLMS Install</string>
     <string name="lms_installed">HelloLMS Installed</string>

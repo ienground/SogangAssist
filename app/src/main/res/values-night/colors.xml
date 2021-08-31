@@ -7,6 +7,9 @@
     <color name="gray">#BFBFBF</color>
     <color name="colorRED">#E57373</color>
 
+    <color name="color_app_header">#FFFFFF</color>
+    <color name="color_btn_add">#282828</color>
+
     <color name="color_sogang_sub">#7e0000</color>
 
     <color name="semi_gray">#666666</color>

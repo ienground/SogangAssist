@@ -5,14 +5,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Paint
 import android.graphics.Typeface
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -43,7 +41,10 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
     // 새로운 뷰 홀더 생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainWorkAdapter.ItemViewHolder {
         context = parent.context
+        storage = AppStorage(context)
+        dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
         sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
+
         return ItemViewHolder(LayoutInflater.from(context).inflate(R.layout.adapter_main_work, parent, false))
     }
 
@@ -55,21 +56,20 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
 
         setFullAd(context)
 
-        storage = AppStorage(context)
-        dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
+        holder.tvTime.typeface = typefaceRegular
+        holder.tvSubName.typeface = typefaceBold
+        holder.tvClassName.typeface = typefaceRegular
 
-        holder.class_name.typeface = typefaceBold
-        holder.sub_name.typeface = typefaceBold
-        holder.end_time.typeface = typefaceRegular
+        holder.tvTime.text = context.getString(if (items[holder.adapterPosition].type != LMSClass.TYPE_ZOOM && items[holder.adapterPosition].type != LMSClass.TYPE_EXAM) R.string.deadline else R.string.start, timeFormat.format(Date(items[holder.adapterPosition].endTime)))
+        holder.tvSubName.text = items[holder.adapterPosition].homework_name
+        holder.tvClassName.text = items[holder.adapterPosition].className
 
-        holder.class_name.text = items[position].className
-        holder.end_time.text = context.getString(if (items[position].type != LMSClass.TYPE_ZOOM && items[position].type != LMSClass.TYPE_EXAM) R.string.deadline else R.string.start, timeFormat.format(Date(items[position].endTime)))
-        holder.wholeView.setOnClickListener {
+        holder.itemView.setOnClickListener {
             if (!storage.purchasedAds()) displayAd(context as Activity)
-            Log.d(TAG, "clickCallbackListener null : ${clickCallbackListener == null}")
-            clickCallbackListener?.callBack(position, items, this)
+            clickCallbackListener?.callBack(holder.adapterPosition, items, this)
         }
-        holder.wholeView.setOnLongClickListener {
+
+        holder.itemView.setOnLongClickListener {
             MyBottomSheetDialog(context).apply {
                 dismissWithAnimation = true
 
@@ -91,7 +91,7 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
                 tvPositive.typeface = typefaceRegular
                 tvNegative.typeface = typefaceRegular
 
-                if (items[position].isFinished) {
+                if (items[holder.adapterPosition].isFinished) {
                     tvTitle.text = this@MainWorkAdapter.context.getString(R.string.mark_as_not_finish)
                     tvContent.text = this@MainWorkAdapter.context.getString(R.string.ask_mark_as_not_finish)
                 } else {
@@ -100,10 +100,10 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
                 }
 
                 btnPositive.setOnClickListener {
-                    items[position].isFinished = !items[position].isFinished
-                    dbHelper.updateItemById(items[position])
-                    notifyItemChanged(position)
-                    deleteCallbackListener?.callBack(position, items, this@MainWorkAdapter)
+                    items[holder.adapterPosition].isFinished = !items[holder.adapterPosition].isFinished
+                    dbHelper.updateItemById(items[holder.adapterPosition])
+                    notifyItemChanged(holder.adapterPosition)
+                    deleteCallbackListener?.callBack(holder.adapterPosition, items, this@MainWorkAdapter)
                     dismiss()
                 }
 
@@ -116,55 +116,60 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
             true
         }
 
-        when (items[position].type) {
+        when (items[holder.adapterPosition].type) {
             LMSClass.TYPE_HOMEWORK -> {
-                holder.icon.setImageResource(R.drawable.ic_assignment)
-                holder.icon.contentDescription = context.getString(R.string.assignment)
-                holder.sub_name.text = items[position].homework_name
+                holder.icIcon.setImageResource(R.drawable.ic_assignment)
+                holder.icIcon.contentDescription = context.getString(R.string.assignment)
+                holder.tvSubName.text = items[holder.adapterPosition].homework_name
             }
 
             LMSClass.TYPE_LESSON -> {
-                holder.icon.setImageResource(R.drawable.ic_video)
-                holder.icon.contentDescription = context.getString(R.string.classtime)
-                holder.sub_name.text = context.getString(R.string.week_lesson_format, items[position].week, items[position].lesson)
+                holder.icIcon.setImageResource(R.drawable.ic_video)
+                holder.icIcon.contentDescription = context.getString(R.string.classtime)
+                holder.tvSubName.text = context.getString(R.string.week_lesson_format, items[holder.adapterPosition].week, items[holder.adapterPosition].lesson)
             }
 
             LMSClass.TYPE_SUP_LESSON -> {
-                holder.icon.setImageResource(R.drawable.ic_video_sup)
-                holder.icon.contentDescription = context.getString(R.string.sup_classtime)
-                holder.sub_name.text = context.getString(R.string.week_lesson_format, items[position].week, items[position].lesson) + context.getString(R.string.enrich_study)
+                holder.icIcon.setImageResource(R.drawable.ic_video_sup)
+                holder.icIcon.contentDescription = context.getString(R.string.sup_classtime)
+                holder.tvSubName.text = context.getString(R.string.week_lesson_format, items[holder.adapterPosition].week, items[holder.adapterPosition].lesson) + context.getString(R.string.enrich_study)
             }
 
             LMSClass.TYPE_ZOOM -> {
-                holder.icon.setImageResource(R.drawable.ic_live_class)
-                holder.icon.contentDescription = context.getString(R.string.zoom)
-                holder.sub_name.text = items[position].homework_name
+                holder.icIcon.setImageResource(R.drawable.ic_live_class)
+                holder.icIcon.contentDescription = context.getString(R.string.zoom)
+                holder.tvSubName.text = items[holder.adapterPosition].homework_name
             }
 
             LMSClass.TYPE_TEAMWORK -> {
-                holder.icon.setImageResource(R.drawable.ic_team)
-                holder.icon.contentDescription = context.getString(R.string.team_project)
-                holder.sub_name.text = items[position].homework_name
+                holder.icIcon.setImageResource(R.drawable.ic_team)
+                holder.icIcon.contentDescription = context.getString(R.string.team_project)
+                holder.tvSubName.text = items[holder.adapterPosition].homework_name
             }
 
             LMSClass.TYPE_EXAM -> {
-                holder.icon.setImageResource(R.drawable.ic_test)
-                holder.icon.contentDescription = context.getString(R.string.exam)
-                holder.sub_name.text = items[position].homework_name
+                holder.icIcon.setImageResource(R.drawable.ic_test)
+                holder.icIcon.contentDescription = context.getString(R.string.exam)
+                holder.tvSubName.text = items[holder.adapterPosition].homework_name
             }
         }
 
-        if (items[position].isFinished) {
-            holder.class_name.paintFlags = holder.class_name.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            holder.sub_name.paintFlags = holder.sub_name.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            holder.end_time.paintFlags = holder.end_time.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            holder.class_name.alpha = 0.5f
-            holder.sub_name.alpha = 0.5f
-            holder.end_time.alpha = 0.5f
-            holder.check.visibility = View.VISIBLE
+        if (items[holder.adapterPosition].isFinished) {
+            holder.tvClassName.paintFlags = holder.tvClassName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            holder.tvSubName.paintFlags = holder.tvSubName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            holder.tvTime.paintFlags = holder.tvTime.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            holder.tvClassName.alpha = 0.5f
+            holder.tvSubName.alpha = 0.5f
+            holder.tvTime.alpha = 0.5f
+            holder.icCheck.visibility = View.VISIBLE
         } else {
-            holder.check.visibility = View.GONE
+            holder.icCheck.visibility = View.GONE
         }
+        val imgList = arrayOf(R.drawable.sg_img_01, R.drawable.sg_img_02, R.drawable.sg_img_03, R.drawable.sg_img_04)
+        holder.itemView.setBackgroundResource(imgList[holder.adapterPosition % 4])
+
+        holder.tvSubName.isSelected = true
+
     }
 
     // 데이터 셋의 크기를 리턴해줍니다.
@@ -209,11 +214,10 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val icon: ImageView = itemView.findViewById(R.id.icon)
-        val class_name: TextView = itemView.findViewById(R.id.class_name)
-        val sub_name: TextView = itemView.findViewById(R.id.sub_name)
-        val end_time: TextView = itemView.findViewById(R.id.end_time)
-        val check: ImageView = itemView.findViewById(R.id.check)
-        val wholeView: ConstraintLayout = itemView.findViewById(R.id.wholeView)
+        val tvTime: TextView = itemView.findViewById(R.id.tv_time)
+        val tvSubName: TextView = itemView.findViewById(R.id.tv_sub_name)
+        val tvClassName: TextView = itemView.findViewById(R.id.tv_class_name)
+        val icIcon: ImageView = itemView.findViewById(R.id.ic_icon)
+        val icCheck: ImageView = itemView.findViewById(R.id.ic_check)
     }
 }

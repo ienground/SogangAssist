@@ -35,6 +35,7 @@
     <dimen name="radio_margin">3.8dp</dimen>
     <dimen name="title_size">16sp</dimen>
     <dimen name="layout_radius">24dp</dimen>
+    <dimen name="usual_margin_radius">48dp</dimen>
 
     <dimen name="calendar_icon_size">12dp</dimen>
     <dimen name="calendar_text_size">12sp</dimen>

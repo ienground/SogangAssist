@@ -147,6 +147,7 @@
     <string name="twelve_hour">12시간</string>
     <string name="twfour_hour">24시간</string>
     <string name="deleted_noti">취소된 알림입니다</string>
+    <string name="enter_blank">빈 칸 입력</string>
 
     <string name="lms_install">HelloLMS 앱 설치</string>
     <string name="lms_installed">HelloLMS 앱이 설치됨</string>

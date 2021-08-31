@@ -31,14 +31,14 @@
             android:name=".activity.EditActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".activity.SettingsActivity"
-            android:theme="@style/AppTheme.Setting" />
+            android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.OnboardingActivity" />
 
         <service
             android:name=".service.LMSListenerService"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
@@ -78,18 +78,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver> <!-- <receiver -->
-        <!-- android:name=".widget.CalendarWidget" -->
-        <!-- android:label="달력위젯"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
-        <!-- <action android:name="net.ienlab.sogangassist.CalendarWidget.MONTH_CLICK" /> -->
-        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-        <!-- </intent-filter> -->
-        <!-- <meta-data -->
-        <!-- android:name="android.appwidget.provider" -->
-        <!-- android:resource="@xml/calendar_widget_info" /> -->
-        <!-- </receiver> -->
+        </receiver>
         <receiver
             android:name=".widget.DeadlineWidget"
             android:exported="true"

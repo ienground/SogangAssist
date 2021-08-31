@@ -34,7 +34,6 @@ import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import kotlinx.coroutines.*
 import net.ienlab.sogangassist.BuildConfig
-import net.ienlab.sogangassist.adapter.MainWorkAdapter
 import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.DBHelper
@@ -43,7 +42,7 @@ import net.ienlab.sogangassist.decorators.*
 import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.adapter.MainWorkAdapter2
+import net.ienlab.sogangassist.adapter.MainWorkAdapter
 import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.receiver.ReminderReceiver
 import net.ienlab.sogangassist.utils.*
@@ -115,6 +114,7 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
+//        startActivity(Intent(this, TestActivity::class.java))
 
         FirebaseInAppMessaging.getInstance().isAutomaticDataCollectionEnabled = true
         if (BuildConfig.DEBUG) {
@@ -151,15 +151,13 @@ class MainActivity : AppCompatActivity() {
 
         sharedPreferences.edit().putBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, sharedPreferences.getBoolean(SharedKey.CALENDAR_ICON_SHOW, true)).apply()
 
-        val monthFormat = SimpleDateFormat("MMMM", Locale.ENGLISH)
-        val dateFormat = SimpleDateFormat(getString(R.string.tag_date), Locale.getDefault())
+        val monthFormat = SimpleDateFormat("MMMM yyyy", Locale.ENGLISH)
 
-//        binding.month0.typeface = typefaceBold
-//        binding.month1.typeface = typefaceBold
-//        binding.month.setText(monthFormat.format(Date(System.currentTimeMillis())))
-//        binding.tvNoDeadline.typeface = typefaceRegular
-
+        binding.tvNoDeadline.typeface = typefaceRegular
         binding.btnAdd.typeface = typefaceRegular
+        binding.tvMonthFirst.typeface = typefaceRegular
+        binding.tvMonthSecond.typeface = typefaceRegular
+        binding.tvMonth.setText(monthFormat.format(Date(System.currentTimeMillis())))
 
         if (storage.purchasedAds()) binding.adView.visibility = View.GONE
         val adRequest = AdRequest.Builder()
@@ -176,14 +174,11 @@ class MainActivity : AppCompatActivity() {
         editActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val work = dbHelper.getItemAtLastDate(thisCurrentDate).toMutableList().apply { sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) } as ArrayList
-                binding.mainWorkView.adapter = MainWorkAdapter2(work).apply {
+                binding.mainWorkView.adapter = MainWorkAdapter(work).apply {
                     setDeleteCallback(deleteCallbackListener)
                     setClickCallback(clickCallbackListener)
                 }
-                binding.mainWorkView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
-                binding.mainWorkView.addItemDecoration(PagerIndicator(ContextCompat.getColor(applicationContext, R.color.colorAccent), ContextCompat.getColor(applicationContext, R.color.colorPrimary)))
-                PagerSnapHelper().attachToRecyclerView(binding.mainWorkView)
-//                binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
+                binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
 
                 val dialog = AlertDialog.Builder(this).apply {
                     val linearLayout = LinearLayout(applicationContext).apply {
@@ -366,14 +361,14 @@ class MainActivity : AppCompatActivity() {
 
         val todayWork = dbHelper.getItemAtLastDate(System.currentTimeMillis()).toMutableList().apply { sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) } as ArrayList
 
-        binding.mainWorkView.adapter = MainWorkAdapter2(todayWork).apply {
+        binding.mainWorkView.adapter = MainWorkAdapter(todayWork).apply {
             setDeleteCallback(deleteCallbackListener)
             setClickCallback(clickCallbackListener)
         }
         binding.mainWorkView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
         binding.mainWorkView.addItemDecoration(PagerIndicator(ContextCompat.getColor(applicationContext, R.color.colorAccent), ContextCompat.getColor(applicationContext, R.color.colorPrimary)))
         PagerSnapHelper().attachToRecyclerView(binding.mainWorkView)
-//        binding.tvNoDeadline.visibility = if (todayWork.isEmpty()) View.VISIBLE else View.GONE
+        binding.tvNoDeadline.visibility = if (todayWork.isEmpty()) View.VISIBLE else View.GONE
         binding.btnAdd.setOnClickListener {
             editActivityLauncher.launch(Intent(this, EditActivity::class.java))
         }
@@ -385,47 +380,39 @@ class MainActivity : AppCompatActivity() {
             topbarVisible = false
             arrowColor = ContextCompat.getColor(applicationContext, R.color.black)
             setOnDateChangedListener { widget, date, _ ->
-//                binding.tagEvents.text = getString(R.string.events_today, dateFormat.format(date.date))
                 val work = dbHelper.getItemAtLastDate(date.date.time).toMutableList().apply {
                     sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
                 } as ArrayList
 
                 binding.mainWorkView.apply {
-                    startAnimation(fadeOutAnimation)
-                    visibility = View.INVISIBLE
-
-                    adapter = MainWorkAdapter2(work).apply {
+                    adapter = MainWorkAdapter(work).apply {
                         setDeleteCallback(deleteCallbackListener)
                         setClickCallback(clickCallbackListener)
                     }
-                    layoutManager = LinearLayoutManager(applicationContext)
                     thisCurrentDate = date.date.time
-
-                    visibility = View.VISIBLE
-                    startAnimation(fadeInAnimation)
                 }
 
-//                binding.tvNoDeadline.apply {
-//                    if (work.isEmpty()) {
-//                        startAnimation(fadeOutAnimation)
-//                        visibility = View.INVISIBLE
-//                        visibility = View.VISIBLE
-//                        startAnimation(fadeInAnimation)
-//                    } else {
-//                        visibility = View.INVISIBLE
-//                    }
-//                }
+                binding.tvNoDeadline.apply {
+                    if (work.isEmpty()) {
+                        startAnimation(fadeOutAnimation)
+                        visibility = View.INVISIBLE
+                        visibility = View.VISIBLE
+                        startAnimation(fadeInAnimation)
+                    } else {
+                        visibility = View.INVISIBLE
+                    }
+                }
             }
             setOnMonthChangedListener { _, date ->
-//                if (beforeDate > date.date) {
-//                    binding.month.setInAnimation(applicationContext, R.anim.slide_in_left)
-//                    binding.month.setOutAnimation(applicationContext, R.anim.slide_out_right)
-//                } else {
-//                    binding.month.setInAnimation(applicationContext, R.anim.slide_in_right)
-//                    binding.month.setOutAnimation(applicationContext, R.anim.slide_out_left)
-//                }
-//
-//                binding.month.setText(monthFormat.format(date.date))
+                if (beforeDate > date.date) {
+                    binding.tvMonth.setInAnimation(applicationContext, R.anim.slide_in_top)
+                    binding.tvMonth.setOutAnimation(applicationContext, R.anim.slide_out_bottom)
+                } else {
+                    binding.tvMonth.setInAnimation(applicationContext, R.anim.slide_in_bottom)
+                    binding.tvMonth.setOutAnimation(applicationContext, R.anim.slide_out_top)
+                }
+
+                binding.tvMonth.setText(monthFormat.format(date.date))
                 beforeDate = date.date
             }
         }
