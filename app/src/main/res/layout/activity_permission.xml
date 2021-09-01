@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="activity"
+            type="net.ienlab.sogangassist.activity.PermissionActivity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/permission_title"
+            android:textColor="@color/black"
+            android:textSize="32sp"
+            android:layout_marginStart="@dimen/usual_margin"
+            android:layout_marginEnd="@dimen/usual_margin"
+            android:layout_marginTop="44dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/info_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/permission_info"
+            android:textColor="@color/gray"
+            android:layout_margin="@dimen/usual_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title" />
+
+        <ImageView
+            android:id="@+id/ic_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_check"
+            android:layout_margin="@dimen/usual_margin"
+            android:padding="8dp"
+            android:background="@drawable/bg_transparent"
+            app:tint="@android:color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_location_title"
+            app:layout_constraintBottom_toBottomOf="@id/tv_location_summary"/>
+
+        <TextView
+            android:id="@+id/tv_location_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/permission_location_title"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="@dimen/usual_margin"
+            android:layout_marginTop="@dimen/usual_margin"
+            app:layout_constraintStart_toEndOf="@id/ic_location"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info_message"
+            app:layout_constraintBottom_toTopOf="@id/tv_location_summary"
+            app:layout_constraintVertical_chainStyle="packed"/>
+
+        <TextView
+            android:id="@+id/tv_location_summary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/permission_location_summary"
+            tools:text="오후 10:46:10"
+            android:textColor="@color/gray"
+            android:layout_marginEnd="@dimen/usual_margin"
+            app:layout_constraintStart_toStartOf="@id/tv_location_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_location_title" />
+
+        <ImageView
+            android:id="@+id/ic_dnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_dnd"
+            android:layout_margin="@dimen/usual_margin"
+            android:padding="8dp"
+            android:background="@drawable/bg_transparent"
+            app:tint="@android:color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_dnd_title"
+            app:layout_constraintBottom_toBottomOf="@id/tv_dnd_summary"/>
+
+        <TextView
+            android:id="@+id/tv_dnd_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/permission_dnd_title"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="@dimen/usual_margin"
+            android:layout_marginTop="@dimen/usual_margin"
+            app:layout_constraintStart_toEndOf="@id/ic_location"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_location_summary"
+            app:layout_constraintBottom_toTopOf="@id/tv_dnd_summary"
+            app:layout_constraintVertical_chainStyle="packed"/>
+
+        <TextView
+            android:id="@+id/tv_dnd_summary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/permission_dnd_summary"
+            tools:text="오후 10:46:10"
+            android:textColor="@color/gray"
+            android:layout_marginEnd="@dimen/usual_margin"
+            app:layout_constraintStart_toStartOf="@id/tv_dnd_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_dnd_title" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/btn_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/confirm"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="@dimen/usual_margin"
+            app:icon="@drawable/ic_check"
+            app:iconTint="@android:color/white"
+            app:backgroundTint="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

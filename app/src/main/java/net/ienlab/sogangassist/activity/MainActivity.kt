@@ -114,7 +114,6 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
-//        startActivity(Intent(this, TestActivity::class.java))
 
         FirebaseInAppMessaging.getInstance().isAutomaticDataCollectionEnabled = true
         if (BuildConfig.DEBUG) {
@@ -162,6 +161,7 @@ class MainActivity : AppCompatActivity() {
         if (storage.purchasedAds()) binding.adView.visibility = View.GONE
         val adRequest = AdRequest.Builder()
         if (BuildConfig.DEBUG) {
+            binding.adView.visibility = View.GONE
             RequestConfiguration.Builder()
                 .setTestDeviceIds(arrayListOf(testDevice)).let {
                     MobileAds.setRequestConfiguration(it.build())

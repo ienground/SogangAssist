@@ -11,210 +11,102 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/group"
+        <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/background_border"
+            android:clickable="true"
+            android:focusable="true"
             android:layout_marginStart="@dimen/margin_onboarding"
             android:layout_marginEnd="@dimen/margin_onboarding"
-            android:layout_marginTop="@dimen/usual_margin"
-            android:layout_marginBottom="@dimen/usual_margin"
-            app:layout_constraintDimensionRatio="1:1"
+            app:cardElevation="0dp"
+            app:cardCornerRadius="@dimen/layout_radius"
+            app:layout_constraintDimensionRatio="3:2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.5" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:src="@drawable/ic_icon"
-                android:layout_margin="@dimen/usual_margin"
-                app:tint="@color/white"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/guideline" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:cardElevation="@dimen/cardview_elevation"
-            app:cardCornerRadius="@dimen/layout_radius"
-            app:layout_constraintDimensionRatio="2:1"
-            app:layout_constraintStart_toStartOf="@id/group"
-            app:layout_constraintEnd_toEndOf="@id/group"
-            app:layout_constraintBottom_toBottomOf="@id/group">
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/background_border_white_card">
+                android:background="@drawable/sg_img_01">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/wholeView1"
+                <com.github.mmin18.widget.RealtimeBlurView
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:realtimeBlurRadius="5dp"
+                    app:realtimeOverlayColor="@color/blur_background"/>
 
-                    <ImageView
-                        android:id="@+id/icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_video"
-                        android:layout_margin="@dimen/usual_margin"
-                        android:padding="8dp"
-                        android:background="@drawable/bg_transparent"
-                        android:contentDescription="@string/classtime"
-                        app:tint="@color/white"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/class_name"
-                        app:layout_constraintBottom_toBottomOf="@id/end_time"
-                        app:layout_constraintVertical_chainStyle="packed"/>
-
-                    <TextView
-                        android:id="@+id/class_name"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/onboarding0_ex_class"
-                        android:textSize="18sp"
-                        android:textColor="@color/black"
-                        android:layout_marginHorizontal="@dimen/usual_margin"
-                        android:layout_marginTop="@dimen/usual_margin"
-                        app:layout_constraintStart_toEndOf="@id/icon"
-                        app:layout_constraintEnd_toStartOf="@id/check"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toTopOf="@id/sub_name"/>
-
-                    <TextView
-                        android:id="@+id/sub_name"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/onboarding0_ex_week"
-                        android:textColor="@color/gray"
-                        android:layout_marginHorizontal="@dimen/usual_margin"
-                        app:layout_constraintStart_toEndOf="@id/icon"
-                        app:layout_constraintEnd_toStartOf="@id/check"
-                        app:layout_constraintTop_toBottomOf="@id/class_name"
-                        app:layout_constraintBottom_toTopOf="@id/end_time"/>
-
-                    <TextView
-                        android:id="@+id/end_time"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/onboarding0_ex_time"
-                        android:textColor="@color/gray"
-                        android:layout_marginHorizontal="@dimen/usual_margin"
-                        android:layout_marginBottom="@dimen/usual_margin"
-                        app:layout_constraintStart_toEndOf="@id/icon"
-                        app:layout_constraintEnd_toStartOf="@id/check"
-                        app:layout_constraintTop_toBottomOf="@id/sub_name"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
-
-                    <ImageView
-                        android:id="@+id/check"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_check"
-                        android:visibility="gone"
-                        android:layout_margin="@dimen/usual_margin"
-                        android:contentDescription="@string/finished"
-                        app:tint="@color/black"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/class_name"
-                        app:layout_constraintBottom_toBottomOf="@id/end_time"/>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/wholeView2"
+                <TextView
+                    android:id="@+id/tv_time"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:text="@string/onboarding0_ex_time"
+                    android:textColor="@color/gray"
+                    android:layout_marginHorizontal="@dimen/usual_margin"
+                    app:layout_constraintVertical_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/wholeView1">
+                    app:layout_constraintEnd_toStartOf="@id/guide"
+                    app:layout_constraintBottom_toTopOf="@id/tv_sub_name" />
 
-                    <ImageView
-                        android:id="@+id/icon2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_assignment"
-                        android:layout_margin="@dimen/usual_margin"
-                        android:padding="8dp"
-                        android:background="@drawable/bg_transparent"
-                        android:contentDescription="@string/classtime"
-                        app:tint="@color/white"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/class_name2"
-                        app:layout_constraintBottom_toBottomOf="@id/end_time2"
-                        app:layout_constraintVertical_chainStyle="packed"/>
+                <TextView
+                    android:id="@+id/tv_sub_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/onboarding0_ex_hw"
+                    android:textColor="@color/black"
+                    android:textSize="42sp"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:singleLine="true"
+                    android:layout_marginHorizontal="@dimen/usual_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/guide"
+                    app:layout_constraintBottom_toTopOf="@id/tv_class_name" />
 
-                    <TextView
-                        android:id="@+id/class_name2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/onboarding0_ex_class"
-                        android:textSize="18sp"
-                        android:textColor="@color/black"
-                        android:layout_marginHorizontal="@dimen/usual_margin"
-                        android:layout_marginTop="@dimen/usual_margin"
-                        app:layout_constraintStart_toEndOf="@id/icon2"
-                        app:layout_constraintEnd_toStartOf="@id/check2"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toTopOf="@id/sub_name2"/>
+                <TextView
+                    android:id="@+id/tv_class_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/onboarding0_ex_class"
+                    android:textColor="@color/gray"
+                    android:layout_marginHorizontal="@dimen/usual_margin"
+                    android:layout_marginBottom="@dimen/usual_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/guide"
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
-                    <TextView
-                        android:id="@+id/sub_name2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/onboarding0_ex_hw"
-                        android:textColor="@color/gray"
-                        android:layout_marginHorizontal="@dimen/usual_margin"
-                        app:layout_constraintStart_toEndOf="@id/icon2"
-                        app:layout_constraintEnd_toStartOf="@id/check2"
-                        app:layout_constraintTop_toBottomOf="@id/class_name2"
-                        app:layout_constraintBottom_toTopOf="@id/end_time2"/>
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guide"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.7" />
 
-                    <TextView
-                        android:id="@+id/end_time2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/onboarding0_ex_time"
-                        android:textColor="@color/gray"
-                        android:layout_marginHorizontal="@dimen/usual_margin"
-                        android:layout_marginBottom="@dimen/usual_margin"
-                        app:layout_constraintStart_toEndOf="@id/icon2"
-                        app:layout_constraintEnd_toStartOf="@id/check2"
-                        app:layout_constraintTop_toBottomOf="@id/sub_name2"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
+                <ImageView
+                    android:id="@+id/ic_icon"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/ic_assignment"
+                    app:layout_constraintStart_toStartOf="@id/guide"
+                    app:layout_constraintTop_toTopOf="@id/tv_sub_name"/>
 
-                    <ImageView
-                        android:id="@+id/check2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_check"
-                        android:visibility="gone"
-                        android:layout_margin="@dimen/usual_margin"
-                        android:contentDescription="@string/finished"
-                        app:tint="@color/black"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/class_name2"
-                        app:layout_constraintBottom_toBottomOf="@id/end_time2"/>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/ic_check"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_check_circle"
+                    app:tint="@color/colorPrimary"
+                    app:layout_constraintStart_toStartOf="@id/ic_icon"
+                    app:layout_constraintEnd_toEndOf="@id/ic_icon"
+                    app:layout_constraintTop_toTopOf="@id/ic_icon"
+                    app:layout_constraintBottom_toBottomOf="@id/ic_icon" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

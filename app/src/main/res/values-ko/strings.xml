@@ -148,6 +148,7 @@
     <string name="twfour_hour">24시간</string>
     <string name="deleted_noti">취소된 알림입니다</string>
     <string name="enter_blank">빈 칸 입력</string>
+    <string name="confirm">확인</string>
 
     <string name="lms_install">HelloLMS 앱 설치</string>
     <string name="lms_installed">HelloLMS 앱이 설치됨</string>
@@ -195,7 +196,7 @@
     <string name="onboarding0_ex_class">고급응용C프로그래밍(01)</string>
     <string name="onboarding0_ex_week">1주 3차시</string>
     <string name="onboarding0_ex_time">마감 : 오후 11:59</string>
-    <string name="onboarding0_ex_hw">과제1: 자기소개서</string>
+    <string name="onboarding0_ex_hw">과제1</string>
 
     <!--MainWorkAdapter-->
     <string name="ask_mark_as_not_finish">이 항목을 완료되지 않음으로 표시할까요?</string>
@@ -268,5 +269,21 @@
     <string name="no_unfinished">미완료된 과제나 강의 없음</string>
     <string name="deadline_widget_title">데드라인 위젯</string>
     <string name="mobon_media_code">albatross</string>
+
+    <!--PermissionActivity-->
+    <string name="permission_title">어플리케이션 이용을 위한\n권한 정보 안내</string>
+    <string name="permission_info">선택 권한 거부 시에도 어플리케이션 사용이 가능하지만, 일부 기능이 제한될 수 있습니다.</string>
+    <string name="permission_location_title">위치 (필수)</string>
+    <string name="permission_location_summary">블루투스 연결 해제 후 위치 기록 시 사용, 백그라운드에서도 동작</string>
+    <string name="background_location_message"><![CDATA[권한 > 위치에서 항상 허용으로 변경해주셔야 정상적인 사용이 가능합니다.]]></string>
+    <string name="permission_dnd_title">알림 일시중지 액세스</string>
+    <string name="permission_dnd_summary">볼륨 조절을 위해, 목록에서 OOO를 찾아 액세스를 허용해 주세요.</string>
+    <string name="background_dnd_message"><![CDATA[권한 > 위치에서 항상 허용으로 변경해주셔야 정상적인 사용이 가능합니다.]]></string>
+    <string name="permission_allow_msg">권한 허용 후 어플리케이션 사용 가능합니다</string>
+    <string name="no_gps_title">GPS가 켜져 있지 않음</string>
+    <string name="no_gps_message">GPS가 꺼져 있어 블루투스 장비의 위치를 얻을 수 없습니다. GPS를 켜 주세요.</string>
+    <string name="gps_permission_title">위치 권한이 부족함</string>
+    <string name="gps_permission_message">위치 권한이 부족해 현재 위치를 불러올 수 없습니다. 설정에서 위치 권한을 항상 허용으로 설정해주세요.</string>
+    <string name="cannot_get_address">주소를 가져올 수 없음</string>
 
 </resources>

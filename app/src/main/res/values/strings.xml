@@ -148,6 +148,7 @@
     <string name="twfour_hour">24 hours</string>
     <string name="deleted_noti">Notification Canceled</string>
     <string name="enter_blank">Fill out</string>
+    <string name="confirm">Confirm</string>
 
     <string name="lms_install">HelloLMS Install</string>
     <string name="lms_installed">HelloLMS Installed</string>
@@ -195,7 +196,7 @@
     <string name="onboarding0_ex_class">Advanced Applied C Programming(01)</string>
     <string name="onboarding0_ex_week">Week 1 Hour 3</string>
     <string name="onboarding0_ex_time">Deadline : PM 11:59</string>
-    <string name="onboarding0_ex_hw">Homework1: Introduce</string>
+    <string name="onboarding0_ex_hw">Homework1</string>
 
     <!--MainWorkAdapter-->
     <string name="ask_mark_as_not_finish">Would you like to mark this as not finished?</string>
@@ -268,5 +269,21 @@
     <string name="no_unfinished">No incomplete assignments or lectures</string>
     <string name="deadline_widget_title">Deadline Widget</string>
     <string name="mobon_media_code">albatross</string>
+
+    <!--PermissionActivity-->
+    <string name="permission_title">Permission to\nuse application</string>
+    <string name="permission_info">The application can be used even when the selection permission is denied, but some functions may be restricted..</string>
+    <string name="permission_location_title">Location (required)</string>
+    <string name="permission_location_summary">Used to record location after disconnecting from Bluetooth, in the background</string>
+    <string name="background_location_message"><![CDATA[You must change it to Always Allow in Permissions > Location to use it.]]></string>
+    <string name="permission_dnd_title">Access to Do Not Disturb (DND)</string>
+    <string name="permission_dnd_summary">For volume control, find OOO in the list and grant access.</string>
+    <string name="background_dnd_message"><![CDATA[You must change it to Always Allow in Permissions > Location to use it.]]></string>
+    <string name="permission_allow_msg">application can be used after permission is granted.</string>
+    <string name="no_gps_title">GPS not turned on</string>
+    <string name="no_gps_message">GPS is turned off, so the location of the Bluetooth device cannot be obtained. Please turn on GPS.</string>
+    <string name="gps_permission_title">Insufficient location permissions</string>
+    <string name="gps_permission_message">Insufficient location permissions to load the current location. Please set the location permission to always allow in settings.</string>
+    <string name="cannot_get_address">Cannot get address</string>
 
 </resources>

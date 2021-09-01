@@ -4,5 +4,6 @@
     <item
         android:id="@+id/menu_ads_free"
         android:title="@string/ads_free"
+        android:icon="@drawable/ic_money"
         app:showAsAction="ifRoom" />
 </menu>

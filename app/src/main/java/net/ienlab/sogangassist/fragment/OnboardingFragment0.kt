@@ -29,12 +29,9 @@ class OnboardingFragment0 : Fragment() {
         val typefaceBold = Typeface.createFromAsset(requireContext().assets, "fonts/Pretendard-Black.otf")
         val typefaceRegular = Typeface.createFromAsset(requireContext().assets, "fonts/Pretendard-Regular.otf")
 
-        binding.className.typeface = typefaceBold
-        binding.className2.typeface = typefaceBold
-        binding.subName.typeface = typefaceBold
-        binding.subName2.typeface = typefaceBold
-        binding.endTime.typeface = typefaceRegular
-        binding.endTime2.typeface = typefaceRegular
+        binding.tvClassName.typeface = typefaceBold
+        binding.tvSubName.typeface = typefaceBold
+        binding.tvTime.typeface = typefaceRegular
     }
 
     override fun onAttach(context: Context) {
