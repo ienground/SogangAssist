@@ -18,7 +18,7 @@
             android:background="@drawable/background_border"
             android:layout_marginStart="@dimen/margin_onboarding"
             android:layout_marginEnd="@dimen/margin_onboarding"
-            app:layout_constraintDimensionRatio="2:1"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -30,14 +30,12 @@
                 android:layout_height="0dp"
                 android:adjustViewBounds="true"
                 android:src="@drawable/ic_lms"
-                android:layout_marginEnd="60dp"
                 android:layout_marginTop="@dimen/usual_margin"
                 android:layout_marginBottom="@dimen/usual_margin"
-                app:tint="@color/white"
+                app:layout_constraintDimensionRatio="3:2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -45,17 +43,16 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="?attr/selectableItemBackground"
-            app:cardElevation="@dimen/cardview_elevation"
+            app:cardElevation="0dp"
             app:cardCornerRadius="@dimen/layout_radius"
-            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintDimensionRatio="2:1"
+            app:layout_constraintStart_toStartOf="@id/group_install"
             app:layout_constraintEnd_toEndOf="@id/group_install"
-            app:layout_constraintTop_toTopOf="@id/group_install"
             app:layout_constraintBottom_toBottomOf="@id/group_install">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/background_border_white_card">
+                android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/ic_install"
