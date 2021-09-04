@@ -26,6 +26,7 @@ import net.ienlab.sogangassist.databinding.ActivityOnboardingBinding
 import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.fragment.*
+import net.ienlab.sogangassist.utils.MyUtils
 import net.ienlab.sogangassist.utils.SwipeDirection
 import kotlin.system.exitProcess
 
@@ -69,17 +70,40 @@ class OnboardingActivity : AppCompatActivity(),
         val lmsPackageName = "kr.co.imaxsoft.hellolms"
 
         // 데이터 초기화
-        sharedPreferences.edit().clear().apply()
-        deleteDatabase(DBHelper.dbName)
+//        sharedPreferences.edit().clear().apply()
+//        deleteDatabase(DBHelper.dbName)
 
         // Fragment Tab 설정
         val adapter = OnboardingFragmentTabAdapter(supportFragmentManager, applicationContext)
+        var mLastOffset = 0f
         with (binding.viewPager) {
             this.adapter = adapter
+//            clipToPadding = false
+            val padding = MyUtils.dpToPx(applicationContext, 16f).toInt()
+//            setPadding(padding, 0, padding,0)
+            pageMargin = padding
             currentItem = page
-            setAllowedSwipeDirection(SwipeDirection.none)
+            setAllowedSwipeDirection(SwipeDirection.left)
+            setAllowedSwipeDirection(SwipeDirection.right)
             addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
-                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                    val realCurrentPosition: Int
+                    val nextPosition: Int
+                    val goingLeft: Boolean = mLastOffset > positionOffset
+                    if (goingLeft) {
+                        realCurrentPosition = position + 1
+                        nextPosition = position
+                    } else {
+                        nextPosition = position + 1
+                        realCurrentPosition = position
+                    }
+
+                    if (nextPosition > (binding.viewPager.adapter as OnboardingFragmentTabAdapter).count - 1 || realCurrentPosition > (binding.viewPager.adapter as OnboardingFragmentTabAdapter).count - 1) {
+                        return
+                    }
+
+                    mLastOffset = positionOffset
+                }
                 override fun onPageScrollStateChanged(state: Int) {}
                 override fun onPageSelected(position: Int) {
                     binding.pageIndicator.selection = position

@@ -36,6 +36,7 @@
             android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.OnboardingActivity" />
+        <activity android:name=".activity.OnboardingActivity2" />
 
         <service
             android:name=".service.LMSListenerService"
