@@ -17,7 +17,7 @@ class OnboardingFragment0 : Fragment() {
     lateinit var binding: FragmentOnboarding0Binding
     private var mListener: OnFragmentInteractionListener? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_onboarding0, container, false)
         binding.fragment = this
         return binding.root
@@ -29,9 +29,8 @@ class OnboardingFragment0 : Fragment() {
         val typefaceBold = Typeface.createFromAsset(requireContext().assets, "fonts/Pretendard-Black.otf")
         val typefaceRegular = Typeface.createFromAsset(requireContext().assets, "fonts/Pretendard-Regular.otf")
 
-        binding.tvClassName.typeface = typefaceBold
-        binding.tvSubName.typeface = typefaceBold
-        binding.tvTime.typeface = typefaceRegular
+        binding.tvAppName.typeface = typefaceBold
+        binding.tvContent.typeface = typefaceBold
     }
 
     override fun onAttach(context: Context) {

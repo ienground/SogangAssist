@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import net.ienlab.sogangassist.R
@@ -20,9 +21,9 @@ class OnboardingFragment2 : Fragment() {
 
     lateinit var binding: FragmentOnboarding2Binding
     private var mListener: OnFragmentInteractionListener? = null
-    lateinit var introBtnNext: ImageButton
+//    lateinit var introBtnNext: ImageButton
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_onboarding2, container, false)
         binding.fragment = this
         return binding.root
@@ -34,33 +35,30 @@ class OnboardingFragment2 : Fragment() {
         val typefaceBold = Typeface.createFromAsset(requireContext().assets, "fonts/Pretendard-Black.otf")
         val typefaceRegular = Typeface.createFromAsset(requireContext().assets, "fonts/Pretendard-Regular.otf")
 
-        introBtnNext = requireActivity().findViewById(R.id.intro_btn_next)
+        binding.tvPage.typeface = typefaceBold
+        binding.tvTitle.typeface = typefaceBold
+        binding.btnAction.typeface = typefaceRegular
 
-        binding.tvNoti.typeface = typefaceRegular
-
-        introBtnNext.alpha = 1.0f
-        introBtnNext.isEnabled = true
+        binding.btnAction.setOnClickListener { startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")) }
 
         if (MyUtils.isNotiPermissionAllowed(requireContext())) {
-            binding.tvNoti.text = getString(R.string.noti_access_allowed)
-            binding.icNoti.setImageResource(R.drawable.ic_check_circle)
+            binding.btnAction.text = getString(R.string.noti_access_allowed)
+            binding.btnAction.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_check)
+            binding.btnAction.isEnabled = false
         }
-
-        binding.groupNoti.setOnClickListener { startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")) }
-
     }
 
     override fun onResume() {
         super.onResume()
 
-        introBtnNext.alpha = 1.0f
-        introBtnNext.isEnabled = true
-
         if (MyUtils.isNotiPermissionAllowed(requireContext())) {
-            binding.tvNoti.text = getString(R.string.noti_access_allowed)
-            binding.icNoti.setImageResource(R.drawable.ic_check_circle)
-
-            binding.groupNoti.setOnClickListener(null)
+            binding.btnAction.text = getString(R.string.noti_access_allowed)
+            binding.btnAction.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_check)
+            binding.btnAction.isEnabled = false
+        } else {
+            binding.btnAction.text = getString(R.string.noti_access_allow)
+            binding.btnAction.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_notification)
+            binding.btnAction.isEnabled = true
         }
     }
 

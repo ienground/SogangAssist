@@ -15,6 +15,11 @@
     <color name="semi_gray">#666666</color>
     <color name="white_opacity">#99121212</color>
 
+    <color name="color_ienlab_pink">#AD3A62</color>
+    <color name="color_ienlab_purple">#5E42AE</color>
+    <color name="color_ienlab_skyblue">#1679A7</color>
+    <color name="color_ienlab_blue">#3A4581</color>
+
     <color name="color_ienlab_pink_70">#4c1326</color>
     <color name="color_ienlab_purple_70">#25174c</color>
     <color name="color_ienlab_skyblue_70">#013249</color>

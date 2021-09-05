@@ -170,7 +170,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.adView.loadAd(adRequest.build())
 
-        startActivity(Intent(this, OnboardingActivity::class.java))
+        startActivity(Intent(this, OnboardingActivity2::class.java))
 
         // StartActiviyForResult 객체
         editActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

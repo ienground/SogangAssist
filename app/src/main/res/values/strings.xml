@@ -130,6 +130,7 @@
     <string name="intro_page5_exp">Get reminders 3 minutes, 5 minutes, 10 minutes, 20 minutes and 30 minutes before the start for each Zoom lecture. Select the notifications you want to receive.</string>
     <string name="intro_page6_title">Exam Deadline Reminder</string>
     <string name="intro_page6_exp">Get reminders 3 minutes, 5 minutes, 10 minutes, 20 minutes and 30 minutes before the start for each exam. Select the notifications you want to receive.</string>
+    <string name="noti_access_allow">Allow notification access</string>
     <string name="noti_access_allowed">Access Allowed</string>
 
     <!--Overall Activity-->
@@ -285,5 +286,11 @@
     <string name="gps_permission_title">Insufficient location permissions</string>
     <string name="gps_permission_message">Insufficient location permissions to load the current location. Please set the location permission to always allow in settings.</string>
     <string name="cannot_get_address">Cannot get address</string>
+    <string name="tag_one">하나.</string>
+    <string name="tag_two">두울.</string>
+    <string name="tag_three">세엣.</string>
+    <string name="tag_four">네엣.</string>
+    <string name="tag_five">다섯.</string>
+    <string name="tag_six">여섯.</string>
 
 </resources>
