@@ -22,7 +22,9 @@
         tools:replace="android:label">
         <activity android:name=".activity.NotificationsActivity" />
         <activity android:name=".activity.PermissionActivity" />
-        <activity android:name=".activity.SplashActivity">
+        <activity
+            android:name=".activity.SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +38,6 @@
             android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.OnboardingActivity" />
-        <activity android:name=".activity.OnboardingActivity2" />
 
         <service
             android:name=".service.LMSListenerService"

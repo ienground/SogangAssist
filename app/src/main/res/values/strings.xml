@@ -116,20 +116,25 @@
     <string name="load_data">Loading data..</string>
 
     <!--Onboarding-->
+    <string name="tag_one">One.</string>
+    <string name="tag_two">Two.</string>
+    <string name="tag_three">Three.</string>
+    <string name="tag_four">Four.</string>
+    <string name="tag_five">Five.</string>
+    <string name="tag_six">Six.</string>
     <string name="intro_page0_title">Welcome.</string>
-    <string name="intro_page0_exp">Thank you for installing Albatross Reminder, which notifies you so as not to be late for assignments and lectures.</string>
-    <string name="intro_page1_title">HelloLMS Install</string>
-    <string name="intro_page1_exp">This application works with HelloLMS. Please use the application in the installed state. Although it can be used without installation, we cannot guarantee the best user experience.</string>
-    <string name="intro_page2_title">Allow Notification Access</string>
+    <string name="intro_page0_exp">Albatross Reminder, notifies you so as not to be late for assignments and lectures.</string>
+    <string name="intro_page1_title">Please use it with HelloLMS installed.</string>
+    <string name="intro_page2_title">Allow notification access, to get notifications</string>
     <string name="intro_page2_exp">We need notification access in order to read notifications.</string>
     <string name="intro_page3_title">Assignment, teamwork Deadline Reminder</string>
-    <string name="intro_page3_exp">Get reminders 1 hour, 2 hours, 6 hours, 12 hours, and 24 hours before the deadline for each assignment. Select the notifications you want to receive.</string>
+    <string name="intro_page3_exp">Unit: hour. Select the notifications you want to receive.</string>
     <string name="intro_page4_title">Lecture Deadline Reminder</string>
-    <string name="intro_page4_exp">Get reminders 1 hour, 2 hours, 6 hours, 12 hours, and 24 hours before the deadline for each lecture. Select the notifications you want to receive.</string>
+    <string name="intro_page4_exp">Unit: hour. Select the notifications you want to receive.</string>
     <string name="intro_page5_title">Lecture Deadline Reminder</string>
-    <string name="intro_page5_exp">Get reminders 3 minutes, 5 minutes, 10 minutes, 20 minutes and 30 minutes before the start for each Zoom lecture. Select the notifications you want to receive.</string>
+    <string name="intro_page5_exp">Unit: minute. Select the notifications you want to receive.</string>
     <string name="intro_page6_title">Exam Deadline Reminder</string>
-    <string name="intro_page6_exp">Get reminders 3 minutes, 5 minutes, 10 minutes, 20 minutes and 30 minutes before the start for each exam. Select the notifications you want to receive.</string>
+    <string name="intro_page6_exp">Unit: Minute. Select the notifications you want to receive.</string>
     <string name="noti_access_allow">Allow notification access</string>
     <string name="noti_access_allowed">Access Allowed</string>
 
@@ -286,11 +291,5 @@
     <string name="gps_permission_title">Insufficient location permissions</string>
     <string name="gps_permission_message">Insufficient location permissions to load the current location. Please set the location permission to always allow in settings.</string>
     <string name="cannot_get_address">Cannot get address</string>
-    <string name="tag_one">하나.</string>
-    <string name="tag_two">두울.</string>
-    <string name="tag_three">세엣.</string>
-    <string name="tag_four">네엣.</string>
-    <string name="tag_five">다섯.</string>
-    <string name="tag_six">여섯.</string>
 
 </resources>

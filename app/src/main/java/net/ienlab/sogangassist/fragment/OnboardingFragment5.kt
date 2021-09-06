@@ -47,6 +47,13 @@ class OnboardingFragment5 : Fragment() {
 
         buttons.forEachIndexed { index, textView ->
             hours[index] = sharedPreferences.getBoolean(sharedKeys[index], true)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                textView.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), if (hours[index]) R.color.white else android.R.color.transparent))
+                textView.setTextColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), if (hours[index]) R.color.color_ienlab_pink else R.color.white)))
+            } else {
+                textView.alpha = if (hours[index]) 1f else 0.3f
+            }
+
             textView.typeface = typefaceRegular
             textView.setOnClickListener {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

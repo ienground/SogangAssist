@@ -57,7 +57,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/usual_margin"
-        android:text="@string/intro_page2_title"
+        android:text="@string/noti_access_allow"
         android:backgroundTint="@color/colorPrimary"
         app:icon="@drawable/ic_notification"
         app:layout_constraintStart_toStartOf="parent"
