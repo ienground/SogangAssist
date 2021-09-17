@@ -17,6 +17,8 @@ import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.adapter.OnboardingFragmentTabAdapter
 import net.ienlab.sogangassist.adapter.OnboardingFragmentTabAdapter.Companion.PAGE_NUMBER
 import net.ienlab.sogangassist.constant.SharedKey
+import net.ienlab.sogangassist.database.DBHelper
+import net.ienlab.sogangassist.database.NotiDBHelper
 import net.ienlab.sogangassist.databinding.ActivityOnboardingBinding
 import net.ienlab.sogangassist.fragment.*
 import net.ienlab.sogangassist.utils.MyUtils
@@ -49,8 +51,9 @@ class OnboardingActivity : AppCompatActivity(),
         sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
 
         // 데이터 초기화
-        //        sharedPreferences.edit().clear().apply()
-        //        deleteDatabase(DBHelper.dbName)
+        sharedPreferences.edit().clear().apply()
+        deleteDatabase(DBHelper.dbName)
+        deleteDatabase(NotiDBHelper.dbName)
 
         sharedPreferences.edit().putBoolean(SharedKey.NOTIFY_1HOUR_HW, true).apply()
         sharedPreferences.edit().putBoolean(SharedKey.NOTIFY_2HOUR_HW, true).apply()

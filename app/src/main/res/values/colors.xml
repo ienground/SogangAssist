@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <color name="colorPrimary">#FF6266</color>
+    <color name="colorPrimary">#FFB0BA</color>
     <color name="colorPrimaryDark">#C13336</color>
     <color name="colorAccent">#B60005</color>
     <color name="colorAccentDark">#DB3136</color>
@@ -8,7 +8,7 @@
     <color name="navigationBarColor">#834D4F</color>
 
     <color name="color_sogang">#B60005</color>
-    <color name="color_sogang_sub">#F04A31</color>
+    <color name="color_sogang_suib">#F04A31</color>
 
     <color name="color_sogang_gray">#A8AAAE</color>
     <color name="color_sogang_gray_alpha">#66A8AAAE</color>

@@ -9,7 +9,7 @@
         android:id="@+id/imgBackground"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/ic_launcher_background"
+        android:src="@drawable/ic_background"
         android:contentDescription="@string/real_app_name"
         android:layout_marginStart="@dimen/usual_margin"
         android:layout_marginTop="@dimen/usual_margin"
