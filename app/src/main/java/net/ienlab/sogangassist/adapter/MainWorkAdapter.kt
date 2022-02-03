@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -51,8 +52,8 @@ class MainWorkAdapter(private var items: ArrayList<LMSClass>) : RecyclerView.Ada
     // View 의 내용을 해당 포지션의 데이터로 바꿉니다.
     override fun onBindViewHolder(holder: MainWorkAdapter.ItemViewHolder, position: Int) {
         val timeFormat = SimpleDateFormat(context.getString(R.string.timeFormat), Locale.getDefault())
-        val typefaceBold = Typeface.createFromAsset(context.assets, "fonts/Pretendard-Black.otf")
-        val typefaceRegular = Typeface.createFromAsset(context.assets, "fonts/Pretendard-Regular.otf")
+        val typefaceBold = ResourcesCompat.getFont(context, R.font.pretendard_black) ?: Typeface.DEFAULT
+        val typefaceRegular = ResourcesCompat.getFont(context, R.font.pretendard_regular) ?: Typeface.DEFAULT
 
         setFullAd(context)
 

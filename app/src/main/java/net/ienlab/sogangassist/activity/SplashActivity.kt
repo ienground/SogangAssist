@@ -10,6 +10,7 @@ import android.os.Looper
 import android.os.Message
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.R
@@ -33,7 +34,7 @@ class SplashActivity : AppCompatActivity() {
         val id = intent.getIntExtra("ID", -1)
         val notiId = intent.getIntExtra("NOTI_ID", -1)
 
-        val typefaceBold = Typeface.createFromAsset(assets, "fonts/Pretendard-Black.otf")
+        val typefaceBold = ResourcesCompat.getFont(this, R.font.pretendard_black) ?: Typeface.DEFAULT
         binding.appTitle?.typeface = typefaceBold
         binding.appTitle?.text = getString(R.string.real_app_name).split(" ").joinToString("\n") + "."
 

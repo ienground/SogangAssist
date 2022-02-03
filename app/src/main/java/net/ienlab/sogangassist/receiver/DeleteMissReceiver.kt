@@ -24,7 +24,7 @@ class DeleteMissReceiver : BroadcastReceiver() {
 
         for (i in 0 until 5) {
             val notiIntent = Intent(context, TimeReceiver::class.java).apply { putExtra("ID", id) }
-            val pendingIntent = PendingIntent.getBroadcast(context, id * 100 + i + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val pendingIntent = PendingIntent.getBroadcast(context, id * 100 + i + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             am.cancel(pendingIntent)
         }
 

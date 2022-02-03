@@ -57,7 +57,7 @@ class DeadlineWidget : AppWidgetProvider() {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         }
 
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val data = dbHelper.getItemAtLastDate(System.currentTimeMillis()).sortedBy { it.endTime }
         unfinishedEvents.clear()
@@ -78,8 +78,8 @@ class DeadlineWidget : AppWidgetProvider() {
             }
         )
         views.setOnClickPendingIntent(R.id.entire_widget, pendingIntent)
-        views.setOnClickPendingIntent(R.id.btn_prev, PendingIntent.getBroadcast(context, 1, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT))
-        views.setOnClickPendingIntent(R.id.btn_next, PendingIntent.getBroadcast(context, 2, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+        views.setOnClickPendingIntent(R.id.btn_prev, PendingIntent.getBroadcast(context, 1, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+        views.setOnClickPendingIntent(R.id.btn_next, PendingIntent.getBroadcast(context, 2, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 
         appWidgetManager.updateAppWidget(appWidgetId, views)
     }
@@ -143,7 +143,7 @@ class DeadlineWidget : AppWidgetProvider() {
         }
         context.applicationContext.registerReceiver(receiver, IntentFilter(Intent.ACTION_TIME_TICK))
 
-        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), widgetUpdateTime, PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), widgetUpdateTime, PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
     }
 
     override fun onEnabled(context: Context) {
@@ -152,7 +152,7 @@ class DeadlineWidget : AppWidgetProvider() {
 
     override fun onDisabled(context: Context) {
         am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        with (PendingIntent.getBroadcast(context, 1, Intent(context, DeadlineWidget::class.java), PendingIntent.FLAG_UPDATE_CURRENT)) {
+        with (PendingIntent.getBroadcast(context, 1, Intent(context, DeadlineWidget::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)) {
             am.cancel(this)
             cancel()
         }

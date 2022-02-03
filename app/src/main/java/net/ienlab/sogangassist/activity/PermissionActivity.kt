@@ -15,6 +15,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.databinding.ActivityPermissionBinding
@@ -34,8 +35,8 @@ class PermissionActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_permission)
         binding.activity = this
 
-        typefaceBold = Typeface.createFromAsset(assets, "fonts/Pretendard-Black.otf")
-        typefaceRegular = Typeface.createFromAsset(assets, "fonts/Pretendard-Regular.otf")
+        typefaceBold = ResourcesCompat.getFont(this, R.font.pretendard_black) ?: Typeface.DEFAULT
+        typefaceRegular = ResourcesCompat.getFont(this, R.font.pretendard_regular) ?: Typeface.DEFAULT
         nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         binding.title.typeface = typefaceBold

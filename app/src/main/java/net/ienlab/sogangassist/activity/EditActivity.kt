@@ -18,6 +18,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -81,8 +82,8 @@ class EditActivity : AppCompatActivity() {
                 }
         }
 
-        typefaceBold = Typeface.createFromAsset(assets, "fonts/Pretendard-Black.otf")
-        typefaceRegular = Typeface.createFromAsset(assets, "fonts/Pretendard-Regular.otf")
+        typefaceBold = ResourcesCompat.getFont(this, R.font.pretendard_black) ?: Typeface.DEFAULT
+        typefaceRegular = ResourcesCompat.getFont(this, R.font.pretendard_regular) ?: Typeface.DEFAULT
 
         binding.chip1.typeface = typefaceRegular
         binding.chip2.typeface = typefaceRegular
@@ -667,7 +668,7 @@ class EditActivity : AppCompatActivity() {
                     dbHelper.deleteData(id)
                     for (i in 0 until 5) {
                         val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
-                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + i + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + i + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                         am.cancel(pendingIntent)
                     }
                 }
@@ -839,7 +840,7 @@ class EditActivity : AppCompatActivity() {
                     val triggerTime = data.endTime - i * 60 * 60 * 1000
                     notiIntent.putExtra("TRIGGER", triggerTime)
                     notiIntent.putExtra("TIME", i)
-                    val pendingIntent = PendingIntent.getBroadcast(this, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    val pendingIntent = PendingIntent.getBroadcast(this, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                     am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
             }
@@ -848,7 +849,7 @@ class EditActivity : AppCompatActivity() {
                     val triggerTime = data.endTime - i * 60 * 1000
                     notiIntent.putExtra("TRIGGER", triggerTime)
                     notiIntent.putExtra("MINUTE", i)
-                    val pendingIntent = PendingIntent.getBroadcast(this, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    val pendingIntent = PendingIntent.getBroadcast(this, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                     am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
             }

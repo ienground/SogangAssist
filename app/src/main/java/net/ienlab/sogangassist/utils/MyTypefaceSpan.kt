@@ -7,22 +7,11 @@ import android.text.TextPaint
 import android.text.style.MetricAffectingSpan
 
 import androidx.collection.LruCache
+import androidx.core.content.res.ResourcesCompat
 
-class MyTypefaceSpan(context: Context, typefaceName: String): MetricAffectingSpan() {
+class MyTypefaceSpan(context: Context, typefaceId: Int): MetricAffectingSpan() {
 
-    private var mTypeface: Typeface? = null
-
-    init {
-        mTypeface = sTypefaceCache.get(typefaceName)
-
-        if (mTypeface == null) {
-            mTypeface = Typeface.createFromAsset(context.applicationContext
-                    .assets, "fonts/$typefaceName")
-
-            // Cache the loaded Typeface
-            sTypefaceCache.put(typefaceName, mTypeface!!)
-        }
-    }
+    private var mTypeface: Typeface? = ResourcesCompat.getFont(context, typefaceId) ?: Typeface.DEFAULT
 
     override fun updateMeasureState(p: TextPaint) {
         p.typeface = mTypeface

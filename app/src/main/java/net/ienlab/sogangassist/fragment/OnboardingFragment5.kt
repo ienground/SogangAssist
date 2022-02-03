@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import net.ienlab.sogangassist.constant.SharedKey
@@ -38,8 +39,8 @@ class OnboardingFragment5 : Fragment() {
         val buttons = listOf(binding.btn3min, binding.btn5min, binding.btn10min, binding.btn20min, binding.btn30min)
         val sharedKeys = listOf(SharedKey.NOTIFY_3MIN_ZOOM, SharedKey.NOTIFY_5MIN_ZOOM, SharedKey.NOTIFY_10MIN_ZOOM, SharedKey.NOTIFY_20MIN_ZOOM, SharedKey.NOTIFY_30MIN_ZOOM)
 
-        val typefaceBold = Typeface.createFromAsset(requireContext().assets, "fonts/Pretendard-Black.otf")
-        val typefaceRegular = Typeface.createFromAsset(requireContext().assets, "fonts/Pretendard-Regular.otf")
+        val typefaceBold = ResourcesCompat.getFont(requireContext(), R.font.pretendard_black) ?: Typeface.DEFAULT
+        val typefaceRegular = ResourcesCompat.getFont(requireContext(), R.font.pretendard_regular) ?: Typeface.DEFAULT
 
         binding.tvPage.typeface = typefaceBold
         binding.tvTitle.typeface = typefaceBold

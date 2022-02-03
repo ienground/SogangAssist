@@ -19,6 +19,7 @@ import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
@@ -60,7 +61,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.appTitle.typeface = Typeface.createFromAsset(assets, "fonts/Pretendard-Black.otf")
+        binding.appTitle.typeface = ResourcesCompat.getFont(this, R.font.pretendard_black) ?: Typeface.DEFAULT
 
         supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, SettingsFragment(), null).commit()
@@ -158,8 +159,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val backup = findPreference("backup")
             val restore = findPreference("restore")
 
-            typefaceRegular = Typeface.createFromAsset(requireActivity().assets, "fonts/Pretendard-Regular.otf")
-            typefaceBold = Typeface.createFromAsset(requireActivity().assets, "fonts/Pretendard-Black.otf")
+            typefaceBold = ResourcesCompat.getFont(requireContext(), R.font.pretendard_black) ?: Typeface.DEFAULT
+            typefaceRegular = ResourcesCompat.getFont(requireContext(), R.font.pretendard_regular) ?: Typeface.DEFAULT
 
             dbHelper = DBHelper(requireContext(), DBHelper.dbName, DBHelper.dbVersion)
             sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)

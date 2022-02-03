@@ -76,11 +76,11 @@ class TimeReceiver : BroadcastReceiver() {
                         NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
                             val notiId = notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_lec, item.week, item.lesson, time), System.currentTimeMillis(), NotificationItem.TYPE_LESSON, id, false))
                             val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
-                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                             val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
-                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                             val setReadIntent = Intent(context, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 693000 + id) }
-                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                             setContentTitle(item.className)
                             setContentText(context.getString(R.string.reminder_content_lec, item.week, item.lesson, time))
@@ -105,11 +105,11 @@ class TimeReceiver : BroadcastReceiver() {
                         NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
                             val notiId = notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_lec, item.week, item.lesson, time), System.currentTimeMillis(), NotificationItem.TYPE_SUP_LESSON, id, false))
                             val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
-                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                             val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
-                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                             val setReadIntent = Intent(context, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 693000 + id) }
-                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                             setContentTitle(item.className)
                             setContentText(context.getString(R.string.reminder_content_sup_lec, item.week, item.lesson, time))
@@ -134,11 +134,11 @@ class TimeReceiver : BroadcastReceiver() {
                         NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
                             val notiId = notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_hw, item.homework_name, time), System.currentTimeMillis(), NotificationItem.TYPE_HOMEWORK, id, false))
                             val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
-                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                             val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
-                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                             val setReadIntent = Intent(context, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 693000 + id) }
-                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                             setContentTitle(item.className)
                             setContentText(context.getString(R.string.reminder_content_hw, item.homework_name, time))
@@ -163,11 +163,11 @@ class TimeReceiver : BroadcastReceiver() {
                         NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
                             val notiId = notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_zoom, item.homework_name, minute), System.currentTimeMillis(), NotificationItem.TYPE_ZOOM, id, false))
                             val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
-                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                             val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
-                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                             val setReadIntent = Intent(context, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 693000 + id) }
-                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                             setContentTitle(item.className)
                             setContentText(context.getString(R.string.reminder_content_zoom, item.homework_name, minute))
@@ -192,11 +192,11 @@ class TimeReceiver : BroadcastReceiver() {
                         NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
                             val notiId = notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_team, item.homework_name, time), System.currentTimeMillis(), NotificationItem.TYPE_TEAMWORK, id, false))
                             val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
-                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                             val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
-                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                             val setReadIntent = Intent(context, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 693000 + id) }
-                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                             setContentTitle(item.className)
                             setContentText(context.getString(R.string.reminder_content_team, item.homework_name, time))
@@ -221,11 +221,11 @@ class TimeReceiver : BroadcastReceiver() {
                         NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
                             val notiId = notiDBHelper.addItem(NotificationItem(-1, item.className, context.getString(R.string.reminder_content_exam, item.homework_name, minute), System.currentTimeMillis(), NotificationItem.TYPE_EXAM, id, false))
                             val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
-                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                             val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id); putExtra("NOTI_ID", notiId) }
-                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                             val setReadIntent = Intent(context, SetReadReceiver::class.java).apply { putExtra("NOTI_ID", notiId); putExtra("CANCEL_ID", 693000 + id) }
-                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            val setReadPendingIntent = PendingIntent.getBroadcast(context, notiId, setReadIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                             setContentTitle(item.className)
                             setContentText(context.getString(R.string.reminder_content_exam, item.homework_name, minute))

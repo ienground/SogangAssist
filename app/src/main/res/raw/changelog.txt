@@ -1,3 +1,1 @@
-- The application has been redesigned.<br>
-- Onboarding screen has been redesigned.<br>
-<b>- From September 1 to 6, we will be holding the opening of a course event!</b> If you take a screenshot of the updated Albatross Reminder and timetable, upload it to your Instagram story, follow and tag @ienlab on Instagram and share it, we will give 2 people a Thigh burger set and 3 people a Starbucks Americano Tall! (However, you must have a public account to check).
+- Android 12 compatible

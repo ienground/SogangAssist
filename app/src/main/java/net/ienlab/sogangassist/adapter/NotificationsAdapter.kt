@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import net.ienlab.sogangassist.activity.*
@@ -47,8 +48,8 @@ class NotificationsAdapter(private var items: ArrayList<NotificationItem>) : Rec
     override fun onBindViewHolder(holder: NotificationsAdapter.ItemViewHolder, position: Int) {
         val dateTimeFormat = SimpleDateFormat("${context.getString(R.string.dateFormat)} ${context.getString(R.string.timeFormat)}", Locale.getDefault())
         val withDayTimeFormat = SimpleDateFormat("E ${context.getString(R.string.timeFormat)}", Locale.getDefault())
-        val typefaceBold = Typeface.createFromAsset(context.assets, "fonts/Pretendard-Black.otf")
-        val typefaceRegular = Typeface.createFromAsset(context.assets, "fonts/Pretendard-Regular.otf")
+        val typefaceBold = ResourcesCompat.getFont(context, R.font.pretendard_black) ?: Typeface.DEFAULT
+        val typefaceRegular = ResourcesCompat.getFont(context, R.font.pretendard_regular) ?: Typeface.DEFAULT
 
         notiDBHelper = NotiDBHelper(context, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
 

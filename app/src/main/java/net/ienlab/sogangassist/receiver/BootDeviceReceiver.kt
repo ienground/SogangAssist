@@ -65,10 +65,10 @@ class BootDeviceReceiver : BroadcastReceiver() {
         val nightReminderIntent = Intent(context, ReminderReceiver::class.java).apply { putExtra(ReminderReceiver.TYPE, ReminderReceiver.NIGHT) }
 
         am.setRepeating(AlarmManager.RTC_WAKEUP, morningReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY,
-            PendingIntent.getBroadcast(context, 14402, morningReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+            PendingIntent.getBroadcast(context, 14402, morningReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 
         am.setRepeating(AlarmManager.RTC_WAKEUP, nightReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY,
-            PendingIntent.getBroadcast(context, 14502, nightReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+            PendingIntent.getBroadcast(context, 14502, nightReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 
         val datas = dbHelper.getAllData()
         for (data in datas) {
@@ -84,7 +84,7 @@ class BootDeviceReceiver : BroadcastReceiver() {
                         val triggerTime = data.endTime - i * 60 * 60 * 1000
                         notiIntent.putExtra("TRIGGER", triggerTime)
                         notiIntent.putExtra("TIME", i)
-                        val pendingIntent = PendingIntent.getBroadcast(context, data.id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        val pendingIntent = PendingIntent.getBroadcast(context, data.id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                         am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                     }
                 }
@@ -93,7 +93,7 @@ class BootDeviceReceiver : BroadcastReceiver() {
                         val triggerTime = data.endTime - i * 60 * 1000
                         notiIntent.putExtra("TRIGGER", triggerTime)
                         notiIntent.putExtra("MINUTE", i)
-                        val pendingIntent = PendingIntent.getBroadcast(context, data.id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        val pendingIntent = PendingIntent.getBroadcast(context, data.id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                         am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                     }
                 }

@@ -18,6 +18,7 @@ import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -144,8 +145,8 @@ class MainActivity : AppCompatActivity() {
         fadeInAnimation = AlphaAnimation(0f, 1f).apply { duration = 300 }
         am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         currentDecorator = CurrentDecorator(this, Calendar.getInstance())
-        typefaceBold = Typeface.createFromAsset(assets, "fonts/Pretendard-Black.otf")
-        typefaceRegular = Typeface.createFromAsset(assets, "fonts/Pretendard-Regular.otf")
+        typefaceBold = ResourcesCompat.getFont(this, R.font.pretendard_black) ?: Typeface.DEFAULT
+        typefaceRegular = ResourcesCompat.getFont(this, R.font.pretendard_regular) ?: Typeface.DEFAULT
         storage = AppStorage(this)
 
         sharedPreferences.edit().putBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, sharedPreferences.getBoolean(SharedKey.CALENDAR_ICON_SHOW, true)).apply()
@@ -343,7 +344,7 @@ class MainActivity : AppCompatActivity() {
                         val triggerTime = data.endTime - i * 60 * 60 * 1000
                         notiIntent.putExtra("TRIGGER", triggerTime)
                         notiIntent.putExtra("TIME", i)
-                        val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                         am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                     }
                 }
@@ -352,7 +353,7 @@ class MainActivity : AppCompatActivity() {
                         val triggerTime = data.endTime - i * 60 * 1000
                         notiIntent.putExtra("TRIGGER", triggerTime)
                         notiIntent.putExtra("MINUTE", i)
-                        val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                         am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                     }
                 }

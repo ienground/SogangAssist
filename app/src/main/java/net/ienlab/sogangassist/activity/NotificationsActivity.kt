@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
@@ -61,8 +62,8 @@ class NotificationsActivity : AppCompatActivity() {
         supportActionBar?.title = null
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        typefaceBold = Typeface.createFromAsset(assets, "fonts/Pretendard-Black.otf")
-        typefaceRegular = Typeface.createFromAsset(assets, "fonts/Pretendard-Regular.otf")
+        typefaceBold = ResourcesCompat.getFont(this, R.font.pretendard_black) ?: Typeface.DEFAULT
+        typefaceRegular = ResourcesCompat.getFont(this, R.font.pretendard_regular) ?: Typeface.DEFAULT
 
         binding.appTitle.typeface = typefaceBold
         binding.emptyMessage.typeface = typefaceRegular
