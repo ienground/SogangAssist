@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import net.ienlab.sogangassist.data.LMSClass
 import java.util.*
 
-@Entity(tableName = "LMS_ASSIST")
+@Entity(tableName = "LMSDatabase")
 class LMSEntity(
     val className: String,
     val timestamp: Long,

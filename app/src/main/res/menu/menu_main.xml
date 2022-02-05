@@ -9,13 +9,6 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menu_notifications"
-        android:title="@string/notifications"
-        android:icon="@drawable/ic_notification"
-        app:actionLayout="@layout/badge_notification"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/menu_settings"
         android:title="@string/settings"
         android:icon="@drawable/ic_settings"

@@ -29,7 +29,7 @@ import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.database.*
-import net.ienlab.sogangassist.databinding.ActivityEdit2Binding
+import net.ienlab.sogangassist.databinding.ActivityEditBinding
 import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.utils.AppStorage
@@ -39,7 +39,7 @@ import java.util.*
 
 class EditActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityEdit2Binding
+    lateinit var binding: ActivityEditBinding
 
     lateinit var dbHelper: DBHelper
     lateinit var chipButtonGroup: Array<Int>
@@ -62,7 +62,7 @@ class EditActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_edit2)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_edit)
         binding.activity = this
 
         storage = AppStorage(this)

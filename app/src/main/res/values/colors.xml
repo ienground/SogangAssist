@@ -6,6 +6,7 @@
     <color name="colorAccentDark">#DB3136</color>
     <color name="colorAccentAlpha">#66B60005</color>
     <color name="navigationBarColor">#834D4F</color>
+    <color name="colorBackground">#FFF0F2</color>
 
     <color name="color_sogang">#B60005</color>
     <color name="color_sogang_suib">#F04A31</color>
@@ -17,6 +18,7 @@
     <color name="black">#000000</color>
     <color name="gray">#404040</color>
     <color name="disabled">#777777</color>
+    <color name="progress_background">#66FFFFFF</color>
 
     <color name="color_app_header">#B60005</color>
     <color name="color_btn_add">#B60005</color>

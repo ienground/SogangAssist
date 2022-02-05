@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
             name="activity"
@@ -10,6 +11,26 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/background"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/sg_img_01"
+            app:layout_constraintDimensionRatio="3:2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.github.mmin18.widget.RealtimeBlurView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="@id/background"
+            app:layout_constraintEnd_toEndOf="@id/background"
+            app:layout_constraintTop_toTopOf="@id/background"
+            app:layout_constraintBottom_toBottomOf="@id/background"
+            app:realtimeBlurRadius="10dp"
+            app:realtimeOverlayColor="@color/blur_background"/>
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -22,6 +43,86 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:text="오후 12:00"
+            android:hint="@string/enter_blank"
+            android:textColor="@color/gray"
+            android:layout_marginHorizontal="@dimen/usual_margin"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guide"
+            app:layout_constraintBottom_toTopOf="@id/tv_sub_name" />
+
+        <TextView
+            android:id="@+id/tv_sub_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:text="실시간 강의"
+            android:hint="@string/enter_blank"
+            android:textColor="@color/black"
+            android:textSize="42sp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:layout_marginHorizontal="@dimen/usual_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guide"
+            app:layout_constraintBottom_toTopOf="@id/tv_class_name" />
+
+        <TextView
+            android:id="@+id/tv_class_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:text="종교와세계문화"
+            android:hint="@string/enter_blank"
+            android:textColor="@color/gray"
+            android:layout_marginHorizontal="@dimen/usual_margin"
+            android:layout_marginBottom="@dimen/usual_margin_radius"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guide"
+            app:layout_constraintBottom_toBottomOf="@id/background" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.7" />
+
+        <ImageView
+            android:id="@+id/ic_icon"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_video"
+            app:layout_constraintStart_toStartOf="@id/guide"
+            app:layout_constraintTop_toTopOf="@id/tv_sub_name"/>
+
+        <ImageView
+            android:id="@+id/ic_check"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_check_circle"
+            app:tint="@color/colorPrimary"
+            app:layout_constraintStart_toStartOf="@id/ic_icon"
+            app:layout_constraintEnd_toEndOf="@id/ic_icon"
+            app:layout_constraintTop_toTopOf="@id/ic_icon"
+            app:layout_constraintBottom_toBottomOf="@id/ic_icon" />
+
+        <View
+            android:id="@+id/guide2"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/layout_radius"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/background" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/container"
             android:layout_width="0dp"
@@ -30,7 +131,7 @@
             app:cardElevation="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintTop_toBottomOf="@id/guide2"
             app:layout_constraintBottom_toTopOf="@id/adView">
 
             <ScrollView
@@ -41,72 +142,71 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
 
-                    <RadioGroup
-                        android:id="@+id/radioGroup"
+                    <HorizontalScrollView
+                        android:id="@+id/chip_scroll"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:layout_margin="@dimen/usual_margin"
+                        android:layout_marginVertical="@dimen/usual_margin"
+                        android:scrollbars="none"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" >
+                        app:layout_constraintTop_toTopOf="parent">
 
-                        <RadioButton
-                            android:id="@+id/radioButton1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/classtime"
-                            android:textAlignment="textStart"
-                            android:textColor="@color/black"
-                            android:layoutDirection="rtl"/>
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chip_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            app:singleSelection="true"
+                            app:selectionRequired="true"
+                            app:singleLine="true">
 
-                        <RadioButton
-                            android:id="@+id/radioButton2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/sup_classtime"
-                            android:textAlignment="textStart"
-                            android:textColor="@color/black"
-                            android:layoutDirection="rtl"/>
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip1"
+                                style="@style/Widget.MaterialComponents.Chip.Choice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/classtime"
+                                android:layout_marginStart="@dimen/usual_margin"/>
 
-                        <RadioButton
-                            android:id="@+id/radioButton3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/assignment"
-                            android:textAlignment="textStart"
-                            android:textColor="@color/black"
-                            android:layoutDirection="rtl"/>
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip2"
+                                style="@style/Widget.MaterialComponents.Chip.Choice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/sup_classtime" />
 
-                        <RadioButton
-                            android:id="@+id/radioButton4"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/zoom"
-                            android:textAlignment="textStart"
-                            android:textColor="@color/black"
-                            android:layoutDirection="rtl"/>
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip3"
+                                style="@style/Widget.MaterialComponents.Chip.Choice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/assignment" />
 
-                        <RadioButton
-                            android:id="@+id/radioButton5"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/team_project"
-                            android:textAlignment="textStart"
-                            android:textColor="@color/black"
-                            android:layoutDirection="rtl"/>
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip4"
+                                style="@style/Widget.MaterialComponents.Chip.Choice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/zoom" />
 
-                        <RadioButton
-                            android:id="@+id/radioButton6"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/exam"
-                            android:textAlignment="textStart"
-                            android:textColor="@color/black"
-                            android:layoutDirection="rtl"/>
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip5"
+                                style="@style/Widget.MaterialComponents.Chip.Choice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/team_project" />
 
-                    </RadioGroup>
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip6"
+                                style="@style/Widget.MaterialComponents.Chip.Choice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/exam"
+                                android:layout_marginEnd="@dimen/usual_margin"/>
+
+                        </com.google.android.material.chip.ChipGroup>
+
+                    </HorizontalScrollView>
 
                     <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/check_auto_edit"
@@ -117,7 +217,7 @@
                         android:textColor="@color/black"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/radioGroup" />
+                        app:layout_constraintTop_toBottomOf="@id/chip_scroll" />
 
                     <ImageView
                         android:id="@+id/ic_class"
@@ -126,7 +226,7 @@
                         android:src="@drawable/ic_class"
                         android:contentDescription="@string/class_name"
                         android:layout_marginStart="@dimen/usual_margin"
-                        app:tint="@color/black"
+                        app:tint="@color/gray"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/et_class"
                         app:layout_constraintTop_toTopOf="@id/et_class"
@@ -138,11 +238,11 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/usual_margin"
-                        app:boxStrokeColor="@color/colorAccent"
-                        app:hintTextColor="@color/colorAccent"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        app:hintTextColor="@color/colorPrimary"
                         app:endIconMode="dropdown_menu"
                         app:endIconDrawable="@drawable/ic_arrow_drop_down"
-                        app:endIconTint="@color/colorAccent"
+                        app:endIconTint="@color/colorPrimary"
                         app:layout_constraintStart_toEndOf="@id/ic_class"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/check_auto_edit" >
@@ -168,7 +268,7 @@
                         android:src="@drawable/ic_time"
                         android:contentDescription="@string/class_name"
                         android:layout_marginStart="@dimen/usual_margin"
-                        app:tint="@color/black"
+                        app:tint="@color/gray"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/et_time_week"
                         app:layout_constraintTop_toTopOf="@id/et_time_week"
@@ -181,8 +281,8 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/usual_margin"
                         app:suffixText="@string/week"
-                        app:boxStrokeColor="@color/colorAccent"
-                        app:hintTextColor="@color/colorAccent"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        app:hintTextColor="@color/colorPrimary"
                         app:layout_constraintStart_toEndOf="@id/ic_time"
                         app:layout_constraintEnd_toStartOf="@id/et_time_lesson"
                         app:layout_constraintTop_toBottomOf="@id/et_class"
@@ -206,8 +306,8 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/usual_margin"
                         app:suffixText="@string/lesson"
-                        app:boxStrokeColor="@color/colorAccent"
-                        app:hintTextColor="@color/colorAccent"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        app:hintTextColor="@color/colorPrimary"
                         app:layout_constraintStart_toEndOf="@id/et_time_week"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/et_class" >
@@ -249,7 +349,7 @@
                         android:src="@drawable/ic_today"
                         android:contentDescription="@string/class_name"
                         android:layout_marginStart="@dimen/usual_margin"
-                        app:tint="@color/black"
+                        app:tint="@color/gray"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/tv_start_date"
                         app:layout_constraintTop_toTopOf="@id/tv_start_date"
@@ -310,7 +410,7 @@
                         android:src="@drawable/ic_today"
                         android:contentDescription="@string/class_name"
                         android:layout_marginStart="@dimen/usual_margin"
-                        app:tint="@color/black"
+                        app:tint="@color/gray"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/tv_class_end_date"
                         app:layout_constraintTop_toTopOf="@id/tv_class_end_date"
@@ -347,7 +447,7 @@
                         android:src="@drawable/ic_assignment"
                         android:contentDescription="@string/class_name"
                         android:layout_marginStart="@dimen/usual_margin"
-                        app:tint="@color/black"
+                        app:tint="@color/gray"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/et_assignment"
                         app:layout_constraintTop_toTopOf="@id/et_assignment"
@@ -360,8 +460,8 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/usual_margin"
                         android:visibility="invisible"
-                        app:boxStrokeColor="@color/colorAccent"
-                        app:hintTextColor="@color/colorAccent"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        app:hintTextColor="@color/colorPrimary"
                         app:layout_constraintStart_toEndOf="@id/ic_assignment"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/et_class"

@@ -68,7 +68,6 @@ class MainActivity : AppCompatActivity() {
 
     // StartActivityForResult
     lateinit var editActivityLauncher: ActivityResultLauncher<Intent>
-    private lateinit var notificationsActivityLauncher: ActivityResultLauncher<Intent>
     private lateinit var settingsActivityLauncher: ActivityResultLauncher<Intent>
 
     // 뒤로가기 시간
@@ -116,6 +115,8 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
 
+        startActivity(Intent(this, TestActivity::class.java))
+        return
         FirebaseInAppMessaging.getInstance().isAutomaticDataCollectionEnabled = true
         if (BuildConfig.DEBUG) {
             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -209,10 +210,6 @@ class MainActivity : AppCompatActivity() {
                 }, 1000)
             }
             binding.adView.visibility = if (storage.purchasedAds()) View.GONE else View.VISIBLE
-        }
-
-        notificationsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            setupBadge()
         }
 
         settingsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -546,26 +543,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun setupBadge() {
-        val notificationData = notiDBHelper.getAllItem()
-        var count = 0
-        notificationData.forEach { if (!it.isRead) count++ }
-        if (::notiBadgeText.isInitialized) {
-            when {
-                count == 0 -> notiBadgeText.visibility = View.GONE
-                count <= 9 -> {
-                    notiBadgeText.text = count.toString()
-                    notiBadgeText.visibility = View.VISIBLE
-                }
-                else -> {
-                    notiBadgeText.text = "9+"
-                    notiBadgeText.textSize = 8f
-                    notiBadgeText.visibility = View.VISIBLE
-                }
-            }
-        }
-    }
-
     fun setEachDecorator(time: Long) {
         val sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
         val dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
@@ -608,27 +585,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-
-        val menuNoti = menu.findItem(R.id.menu_notifications)
-        val actionView = menuNoti.actionView
-        notiBadgeText = actionView.findViewById(R.id.tv_badge)
-        notiBadgeText.typeface = typefaceRegular
-
-        setupBadge()
-
-        actionView.setOnClickListener {
-            onOptionsItemSelected(menuNoti)
-        }
-
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_notifications -> {
-                notificationsActivityLauncher.launch(Intent(this, NotificationsActivity::class.java))
-            }
-
             R.id.menu_settings -> {
                 settingsActivityLauncher.launch(Intent(this, SettingsActivity::class.java))
             }
