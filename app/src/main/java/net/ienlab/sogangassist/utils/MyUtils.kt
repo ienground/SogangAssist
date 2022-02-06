@@ -74,5 +74,26 @@ class MyUtils {
             return false
         }
 
+        fun Calendar.timeZero(): Calendar {
+            val calendar = this.clone() as Calendar
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+
+            return calendar
+        }
+
+        fun Calendar.tomorrowZero(): Calendar {
+            val calendar = this.clone() as Calendar
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+
+            return calendar
+        }
+
     }
 }

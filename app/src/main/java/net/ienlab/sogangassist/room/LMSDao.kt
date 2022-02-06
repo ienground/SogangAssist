@@ -16,6 +16,9 @@ interface LMSDao {
     @Query("SELECT * FROM LMSDatabase WHERE id = :id")
     fun get(id: Long): LMSEntity
 
+    @Query("SELECT * FROM LMSDatabase WHERE endTime >= :startDate AND endTime < :endDate")
+    fun getByEndTime(startDate: Long, endDate: Long): List<LMSEntity>
+
     @Query("DELETE FROM LMSDatabase WHERE id = :id")
     fun delete(id: Long)
 

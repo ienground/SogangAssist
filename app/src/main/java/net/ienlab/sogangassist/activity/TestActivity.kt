@@ -30,6 +30,8 @@ import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.room.LMSDatabase
 import net.ienlab.sogangassist.room.LMSEntity
 import net.ienlab.sogangassist.utils.AppStorage
+import net.ienlab.sogangassist.utils.MyUtils.Companion.timeZero
+import net.ienlab.sogangassist.utils.MyUtils.Companion.tomorrowZero
 import java.util.*
 
 class TestActivity : AppCompatActivity() {
@@ -99,6 +101,9 @@ class TestActivity : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.IO) {
             val datas = lmsDatabase?.getDao()?.getAll()
+            val todayWorks = lmsDatabase?.getDao()?.getByEndTime(Calendar.getInstance().timeZero().timeInMillis, Calendar.getInstance().tomorrowZero().timeInMillis)?.toTypedArray()?.apply { sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) }
+
+
 
             withContext(Dispatchers.Main) {
                 if (datas != null) {
