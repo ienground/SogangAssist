@@ -14,6 +14,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.constant.IntentKey
 import net.ienlab.sogangassist.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {
@@ -43,8 +44,8 @@ class SplashActivity : AppCompatActivity() {
 
         Handler(Looper.getMainLooper()).postDelayed({
             val mainIntent = Intent(this, MainActivity::class.java).apply {
-                putExtra("ID", id)
-                putExtra("NOTI_ID", notiId)
+                putExtra(IntentKey.ID, id)
+                putExtra(IntentKey.NOTI_ID, notiId)
             }
             val welcomeIntent = Intent(this, OnboardingActivity::class.java)
             if (isFirstVisit) {

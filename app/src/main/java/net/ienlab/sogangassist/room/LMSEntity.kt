@@ -2,25 +2,24 @@ package net.ienlab.sogangassist.room
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import net.ienlab.sogangassist.data.LMSClass
 import java.util.*
 
 @Entity(tableName = "LMSDatabase")
 class LMSEntity(
-    val className: String,
-    val timestamp: Long,
-    val type: Int,
-    val startTime: Long, // ONLY HOMEWORK, TEAMWORK
-    val endTime: Long,
-    val isRenewAllowed: Boolean,
-    val isFinished: Boolean,
+    var className: String,
+    var timestamp: Long,
+    var type: Int,
+    var startTime: Long, // ONLY HOMEWORK, TEAMWORK
+    var endTime: Long,
+    var isRenewAllowed: Boolean,
+    var isFinished: Boolean,
 
     // TYPE = LESSON, SUP_LESSON
-    val week: Int,
-    val lesson: Int,
+    var week: Int,
+    var lesson: Int,
 
     // TYPE = HOMEWORK, TEAMWORK
-    val homework_name: String
+    var homework_name: String
 ) {
     companion object {
         const val TYPE_LESSON = 0
@@ -39,16 +38,16 @@ class LMSEntity(
 
     override fun toString(): String = "[$id] $className / ${Date(timestamp)} / $type / ${Date(startTime)} / ${Date(endTime)} / $isRenewAllowed / $isFinished / ${week}-${lesson} / $homework_name"
 
-    fun same(obj: LMSClass): Boolean {
+    fun same(obj: LMSEntity): Boolean {
         if (className != obj.className) return false
         if (type != obj.type) return false
-        if ((type == LMSClass.TYPE_HOMEWORK || type == LMSClass.TYPE_TEAMWORK) && startTime != obj.startTime) return false
+        if ((type == TYPE_HOMEWORK || type == TYPE_TEAMWORK) && startTime != obj.startTime) return false
         if (endTime != obj.endTime) return false
         if (isRenewAllowed != obj.isRenewAllowed) return false
         if (isFinished != obj.isFinished) return false
-        if ((type == LMSClass.TYPE_LESSON || type == LMSClass.TYPE_SUP_LESSON) && week != obj.week) return false
-        if ((type == LMSClass.TYPE_LESSON || type == LMSClass.TYPE_SUP_LESSON) && lesson != obj.lesson) return false
-        if ((type == LMSClass.TYPE_HOMEWORK || type == LMSClass.TYPE_TEAMWORK) && homework_name != obj.homework_name) return false
+        if ((type == TYPE_LESSON || type == TYPE_SUP_LESSON) && week != obj.week) return false
+        if ((type == TYPE_LESSON || type == TYPE_SUP_LESSON) && lesson != obj.lesson) return false
+        if ((type == TYPE_HOMEWORK || type == TYPE_TEAMWORK) && homework_name != obj.homework_name) return false
 
         return true
     }

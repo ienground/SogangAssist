@@ -4,29 +4,6 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imgBackground"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_background"
-        android:contentDescription="@string/real_app_name"
-        android:layout_marginStart="@dimen/usual_margin"
-        android:layout_marginTop="@dimen/usual_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imgLogo"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/ic_icon"
-        android:contentDescription="@string/real_app_name"
-        app:tint="@android:color/white"
-        app:layout_constraintStart_toStartOf="@id/imgBackground"
-        app:layout_constraintEnd_toEndOf="@id/imgBackground"
-        app:layout_constraintTop_toTopOf="@id/imgBackground"
-        app:layout_constraintBottom_toBottomOf="@id/imgBackground" />
-
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="0dp"
@@ -34,12 +11,13 @@
         android:text="#TITLE"
         android:textSize="18sp"
         android:textColor="@color/black"
+        android:fontFamily="@font/pretendard_black"
         android:layout_marginStart="@dimen/usual_margin"
         android:layout_marginEnd="@dimen/usual_margin"
-        app:layout_constraintStart_toEndOf="@id/imgBackground"
+        android:layout_marginTop="@dimen/usual_margin"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/imgBackground"
-        app:layout_constraintBottom_toBottomOf="@id/imgBackground" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_content"
@@ -47,10 +25,11 @@
         android:layout_height="wrap_content"
         android:text="#CONTENT"
         android:textColor="@color/gray"
+        android:fontFamily="@font/pretendard"
         android:layout_margin="@dimen/usual_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imgBackground" />
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
     <LinearLayout
         android:id="@+id/btn_negative"
@@ -80,7 +59,8 @@
             android:layout_marginStart="@dimen/usual_margin"
             android:layout_gravity="center"
             android:text="@android:string/no"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard"/>
 
     </LinearLayout>
 
@@ -112,7 +92,8 @@
             android:layout_marginStart="@dimen/usual_margin"
             android:layout_gravity="center"
             android:text="@android:string/yes"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard" />
 
     </LinearLayout>
 

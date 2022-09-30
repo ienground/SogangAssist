@@ -6,21 +6,29 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import net.ienlab.sogangassist.database.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import net.ienlab.sogangassist.room.LMSDatabase
 
 class DeleteMissReceiver : BroadcastReceiver() {
 
     lateinit var nm: NotificationManager
     lateinit var am: AlarmManager
-    lateinit var dbHelper: DBHelper
 
+    private var lmsDatabase: LMSDatabase? = null
+
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onReceive(context: Context, intent: Intent) {
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
+        lmsDatabase = LMSDatabase.getInstance(context)
 
         val id = intent.getIntExtra("ID", -1)
-        dbHelper.deleteData(id)
+        GlobalScope.launch(Dispatchers.IO) {
+            lmsDatabase?.getDao()?.delete(id.toLong())
+        }
 
         for (i in 0 until 5) {
             val notiIntent = Intent(context, TimeReceiver::class.java).apply { putExtra("ID", id) }

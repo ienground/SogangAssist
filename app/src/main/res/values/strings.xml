@@ -18,6 +18,7 @@
     <string name="zoom_name">Zoom Title</string>
     <string name="exam_name">Exam Title</string>
     <string name="dateFormat">MMM dd, yyyy (EEE)</string>
+    <string name="calendarFormat">MMMM yyyy</string>
     <string name="timeFormat">a h:mm</string>
     <string name="mark_as_finish">Mark as complete</string>
     <string name="delete">Delete</string>
@@ -291,5 +292,12 @@
     <string name="gps_permission_title">Insufficient location permissions</string>
     <string name="gps_permission_message">Insufficient location permissions to load the current location. Please set the location permission to always allow in settings.</string>
     <string name="cannot_get_address">Cannot get address</string>
+    <string name="todays_event">오늘의 일정</string>
+    <string name="check_calendar">달력 보기</string>
+    <string name="all">전체</string>
+    <string name="time_left_hour_min">%1$d시간 %2$d분 남음</string>
+    <string name="time_left_hour">%1$d시간 남음</string>
+    <string name="time_left_min">%1$d분 남음</string>
+    <string name="finished_item">완료된 항목</string>
 
 </resources>

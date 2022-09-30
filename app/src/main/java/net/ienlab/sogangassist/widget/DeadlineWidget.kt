@@ -13,19 +13,24 @@ import android.view.View
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.activity.TAG
 import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.constant.WidgetPrefGroup
-import net.ienlab.sogangassist.data.LMSClass
-import net.ienlab.sogangassist.database.DBHelper
+import net.ienlab.sogangassist.room.LMSDatabase
+import net.ienlab.sogangassist.room.LMSEntity
+import net.ienlab.sogangassist.utils.MyUtils.Companion.timeZero
 import java.util.*
+import kotlin.collections.ArrayList
 
 class DeadlineWidget : AppWidgetProvider() {
 
     lateinit var widgetPreferences: SharedPreferences
     lateinit var sharedPreferences: SharedPreferences
-    lateinit var dbHelper: DBHelper
     lateinit var am: AlarmManager
 
     lateinit var intent: Intent
@@ -34,13 +39,15 @@ class DeadlineWidget : AppWidgetProvider() {
 
     lateinit var views: RemoteViews
     lateinit var receiver: BroadcastReceiver
-    val unfinishedEvents: ArrayList<LMSClass> = arrayListOf()
+    private var lmsDatabase: LMSDatabase? = null
+    private val unfinishedEvents: ArrayList<LMSEntity> = arrayListOf()
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
         views = RemoteViews(context.packageName, R.layout.widget_deadline)
 
         am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
+        lmsDatabase = LMSDatabase.getInstance(context)
         widgetPreferences = context.getSharedPreferences("WidgetPreferences", Context.MODE_PRIVATE)
         sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
 
@@ -59,16 +66,19 @@ class DeadlineWidget : AppWidgetProvider() {
 
         val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        val data = dbHelper.getItemAtLastDate(System.currentTimeMillis()).sortedBy { it.endTime }
-        unfinishedEvents.clear()
+        GlobalScope.launch(Dispatchers.IO) {
+            val calendar = Calendar.getInstance().timeZero()
+            val data = (lmsDatabase?.getDao()?.getByEndTime(calendar.timeInMillis, calendar.timeInMillis + AlarmManager.INTERVAL_DAY) as ArrayList).sortedBy { it.endTime }
+            unfinishedEvents.clear()
 
-        data.forEach {
-            if (!it.isFinished) {
-                unfinishedEvents.add(it)
+            data.forEach {
+                if (!it.isFinished) {
+                    unfinishedEvents.add(it)
+                }
             }
-        }
 
-        setWidgetData(context, views, unfinishedEvents, widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0))
+            setWidgetData(context, views, unfinishedEvents, widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0))
+        }
 
         views.setInt(R.id.entire_widget, "setBackgroundResource",
             if (context.resources.getBoolean(R.bool.is_dark_mode) && sharedPreferences.getBoolean(SharedKey.WIDGET_DARK_MODE, true)) {
@@ -84,29 +94,29 @@ class DeadlineWidget : AppWidgetProvider() {
         appWidgetManager.updateAppWidget(appWidgetId, views)
     }
 
-    fun setWidgetData(context: Context, views: RemoteViews, item: List<LMSClass>, i: Int) {
+    fun setWidgetData(context: Context, views: RemoteViews, item: List<LMSEntity>, i: Int) {
         if (item.isNotEmpty()) {
             val index = if (i < item.size) i else 0
             val timeDifference = (item[index].endTime - System.currentTimeMillis()) / (60 * 1000)
             views.setTextViewText(R.id.tv_event, when (item[index].type) {
-                LMSClass.TYPE_SUP_LESSON, LMSClass.TYPE_LESSON -> context.getString(R.string.week_lesson_format, item[index].week, item[index].lesson)
+                LMSEntity.TYPE_SUP_LESSON, LMSEntity.TYPE_LESSON -> context.getString(R.string.week_lesson_format, item[index].week, item[index].lesson)
                 else -> item[index].homework_name
             })
             views.setTextViewText(R.id.tv_class, item[index].className)
 
             if (item[index].endTime - System.currentTimeMillis() <= 0) {
-                views.setTextViewText(R.id.tv_deadline, context.getString(if (item[index].type == LMSClass.TYPE_ZOOM) R.string.deadline_zoom_format_past else R.string.deadline_format_past, -(timeDifference / 60), -(timeDifference % 60)))
+                views.setTextViewText(R.id.tv_deadline, context.getString(if (item[index].type == LMSEntity.TYPE_ZOOM) R.string.deadline_zoom_format_past else R.string.deadline_format_past, -(timeDifference / 60), -(timeDifference % 60)))
             } else {
-                views.setTextViewText(R.id.tv_deadline, context.getString(if (item[index].type == LMSClass.TYPE_ZOOM) R.string.deadline_zoom_format else R.string.deadline_format, timeDifference / 60, timeDifference % 60))
+                views.setTextViewText(R.id.tv_deadline, context.getString(if (item[index].type == LMSEntity.TYPE_ZOOM) R.string.deadline_zoom_format else R.string.deadline_format, timeDifference / 60, timeDifference % 60))
             }
 
             views.setImageViewResource(R.id.background_logo, when (item[index].type) {
-                LMSClass.TYPE_LESSON -> R.drawable.ic_video
-                LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
-                LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
-                LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
-                LMSClass.TYPE_TEAMWORK -> R.drawable.ic_team
-                LMSClass.TYPE_EXAM -> R.drawable.ic_test
+                LMSEntity.TYPE_LESSON -> R.drawable.ic_video
+                LMSEntity.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
+                LMSEntity.TYPE_HOMEWORK -> R.drawable.ic_assignment
+                LMSEntity.TYPE_ZOOM -> R.drawable.ic_live_class
+                LMSEntity.TYPE_TEAMWORK -> R.drawable.ic_team
+                LMSEntity.TYPE_EXAM -> R.drawable.ic_test
                 else -> R.drawable.ic_icon
             })
 
@@ -158,52 +168,56 @@ class DeadlineWidget : AppWidgetProvider() {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onReceive(context: Context, intent: Intent) {
-        dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
+        lmsDatabase = LMSDatabase.getInstance(context)
         widgetPreferences = context.getSharedPreferences("WidgetPreferences", Context.MODE_PRIVATE)
 
-        val data = dbHelper.getItemAtLastDate(System.currentTimeMillis()).sortedBy { it.endTime }
-        unfinishedEvents.clear()
+        GlobalScope.launch(Dispatchers.IO) {
+            val calendar = Calendar.getInstance().timeZero()
+            val data = (lmsDatabase?.getDao()?.getByEndTime(calendar.timeInMillis, calendar.timeInMillis + AlarmManager.INTERVAL_DAY) as ArrayList).sortedBy { it.endTime }
+            unfinishedEvents.clear()
 
-        data.forEach {
-            if (!it.isFinished) {
-                unfinishedEvents.add(it)
-            }
-        }
-
-        val action = intent.action
-        if (action != null) {
-            when (action) {
-                ACTION_CLICK -> {
-                    val id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-                    updateAppWidget(context, AppWidgetManager.getInstance(context), id)
-//                    val index = widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0)
-//                    Log.d(TAG, "index: $index, size: ${unfinishedEvents.size}")
-//                    if (index < unfinishedEvents.size) {
-//                        Log.d(TAG, "launch activity")
-//                        context.startActivity(Intent(context, SplashActivity::class.java).apply { putExtra("ID", unfinishedEvents[index].id); flags = Intent.FLAG_ACTIVITY_NEW_TASK })
-//                    } else {
-//                        Log.d(TAG, "not launch activity")
-//                    }
-                }
-                PREV_ITEM -> {
-                    val id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-                    updateAppWidget(context, AppWidgetManager.getInstance(context), id)
-                    widgetPreferences.edit().putInt(WidgetPrefGroup.DEADLINE_PAGE, widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0) - 1).apply()
-                    setWidgetData(context, views, unfinishedEvents, widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0))
-                    updateAppWidget(context, AppWidgetManager.getInstance(context), id)
-                }
-                NEXT_ITEM -> {
-                    val id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-                    updateAppWidget(context, AppWidgetManager.getInstance(context), id)
-                    widgetPreferences.edit().putInt(WidgetPrefGroup.DEADLINE_PAGE, widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0) + 1).apply()
-                    setWidgetData(context, views, unfinishedEvents, widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0))
-                    updateAppWidget(context, AppWidgetManager.getInstance(context), id)
-
+            data.forEach {
+                if (!it.isFinished) {
+                    unfinishedEvents.add(it)
                 }
             }
+
+            val action = intent.action
+            if (action != null) {
+                when (action) {
+                    ACTION_CLICK -> {
+                        val id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+                        updateAppWidget(context, AppWidgetManager.getInstance(context), id)
+                        //                    val index = widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0)
+                        //                    Log.d(TAG, "index: $index, size: ${unfinishedEvents.size}")
+                        //                    if (index < unfinishedEvents.size) {
+                        //                        Log.d(TAG, "launch activity")
+                        //                        context.startActivity(Intent(context, SplashActivity::class.java).apply { putExtra("ID", unfinishedEvents[index].id); flags = Intent.FLAG_ACTIVITY_NEW_TASK })
+                        //                    } else {
+                        //                        Log.d(TAG, "not launch activity")
+                        //                    }
+                    }
+                    PREV_ITEM -> {
+                        val id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+                        updateAppWidget(context, AppWidgetManager.getInstance(context), id)
+                        widgetPreferences.edit().putInt(WidgetPrefGroup.DEADLINE_PAGE, widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0) - 1).apply()
+                        setWidgetData(context, views, unfinishedEvents, widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0))
+                        updateAppWidget(context, AppWidgetManager.getInstance(context), id)
+                    }
+                    NEXT_ITEM -> {
+                        val id = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+                        updateAppWidget(context, AppWidgetManager.getInstance(context), id)
+                        widgetPreferences.edit().putInt(WidgetPrefGroup.DEADLINE_PAGE, widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0) + 1).apply()
+                        setWidgetData(context, views, unfinishedEvents, widgetPreferences.getInt(WidgetPrefGroup.DEADLINE_PAGE, 0))
+                        updateAppWidget(context, AppWidgetManager.getInstance(context), id)
+
+                    }
+                }
+            }
+            super.onReceive(context, intent)
         }
-        super.onReceive(context, intent)
     }
 
     fun setTextTypeface(context: Context, font: String, text: String, size: Float, textColor: Int, width: Int, height: Int, align: Paint.Align): Bitmap {

@@ -4,29 +4,6 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imgBackground"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_background"
-        android:contentDescription="@string/real_app_name"
-        android:layout_marginStart="@dimen/usual_margin"
-        android:layout_marginTop="@dimen/usual_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imgLogo"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/ic_save"
-        android:contentDescription="@string/save_ask"
-        app:tint="@android:color/white"
-        app:layout_constraintStart_toStartOf="@id/imgBackground"
-        app:layout_constraintEnd_toEndOf="@id/imgBackground"
-        app:layout_constraintTop_toTopOf="@id/imgBackground"
-        app:layout_constraintBottom_toBottomOf="@id/imgBackground" />
-
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="0dp"
@@ -34,12 +11,13 @@
         android:text="@string/save_ask"
         android:textSize="18sp"
         android:textColor="@color/black"
+        android:fontFamily="@font/pretendard_black"
         android:layout_marginStart="@dimen/usual_margin"
         android:layout_marginEnd="@dimen/usual_margin"
-        app:layout_constraintStart_toEndOf="@id/imgBackground"
+        android:layout_marginTop="@dimen/usual_margin"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/imgBackground"
-        app:layout_constraintBottom_toBottomOf="@id/imgBackground" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/btn_neutral"
@@ -51,7 +29,7 @@
         android:background="?attr/selectableItemBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_negative"
-        app:layout_constraintTop_toBottomOf="@id/imgBackground"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView
@@ -68,7 +46,8 @@
             android:layout_marginStart="@dimen/usual_margin"
             android:layout_gravity="center"
             android:text="@string/delete"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard" />
 
     </LinearLayout>
 
@@ -82,7 +61,7 @@
         android:background="?attr/selectableItemBackground"
         app:layout_constraintStart_toEndOf="@id/btn_neutral"
         app:layout_constraintEnd_toStartOf="@id/btn_positive"
-        app:layout_constraintTop_toBottomOf="@id/imgBackground"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView
@@ -99,7 +78,8 @@
             android:layout_marginStart="@dimen/usual_margin"
             android:layout_gravity="center"
             android:text="@string/not_save"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard" />
 
     </LinearLayout>
 
@@ -113,7 +93,7 @@
         android:background="?attr/selectableItemBackground"
         app:layout_constraintStart_toEndOf="@id/btn_negative"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imgBackground"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView
@@ -130,7 +110,8 @@
             android:layout_marginStart="@dimen/usual_margin"
             android:layout_gravity="center"
             android:text="@string/save"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard" />
 
     </LinearLayout>
 

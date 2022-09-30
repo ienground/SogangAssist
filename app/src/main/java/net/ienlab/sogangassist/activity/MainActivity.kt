@@ -36,16 +36,14 @@ import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import kotlinx.coroutines.*
 import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.constant.SharedKey
-import net.ienlab.sogangassist.data.LMSClass
-import net.ienlab.sogangassist.database.DBHelper
 import net.ienlab.sogangassist.databinding.ActivityMainBinding
 import net.ienlab.sogangassist.decorators.*
 import net.ienlab.sogangassist.receiver.TimeReceiver
-import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.adapter.MainWorkAdapter
 import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.receiver.ReminderReceiver
+import net.ienlab.sogangassist.room.LMSDatabase
 import net.ienlab.sogangassist.utils.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -59,12 +57,13 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
 
-    lateinit var dbHelper: DBHelper
-    lateinit var notiDBHelper: NotiDBHelper
     lateinit var sharedPreferences: SharedPreferences
     lateinit var am: AlarmManager
     lateinit var fadeOutAnimation: AlphaAnimation
     lateinit var fadeInAnimation: AlphaAnimation
+
+    // Database
+    private var lmsDatabase: LMSDatabase? = null
 
     // StartActivityForResult
     lateinit var editActivityLauncher: ActivityResultLauncher<Intent>
@@ -84,6 +83,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var storage: AppStorage
 
     val decorators: MutableMap<Long, DayViewDecorator> = mutableMapOf()
+
+    /*
 
     private val deleteCallbackListener = object: ClickCallbackListener {
         override fun callBack(position: Int, items: List<LMSClass>, adapter: MainWorkAdapter) {
@@ -106,6 +107,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -115,8 +118,9 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
 
-        startActivity(Intent(this, TestActivity::class.java))
+        startActivity(Intent(this, MainActivity2::class.java))
         return
+        /*
         FirebaseInAppMessaging.getInstance().isAutomaticDataCollectionEnabled = true
         if (BuildConfig.DEBUG) {
             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -140,7 +144,6 @@ class MainActivity : AppCompatActivity() {
 
 
         dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
-        notiDBHelper = NotiDBHelper(this, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
         sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
         fadeOutAnimation = AlphaAnimation(1f, 0f).apply { duration = 300 }
         fadeInAnimation = AlphaAnimation(0f, 1f).apply { duration = 300 }
@@ -470,13 +473,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         val id = intent.getIntExtra("ID", -1)
-        val notiId = intent.getIntExtra("NOTI_ID", -1)
         if (id != -1) {
             editActivityLauncher.launch(Intent(this, EditActivity::class.java).apply { putExtra("ID", id) })
-        }
-        if (notiId != -1) {
-            val data = notiDBHelper.getItemById(notiId).apply { isRead = true }
-            notiDBHelper.updateItemById(data)
         }
     }
 
@@ -617,5 +615,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
+
+         */
     }
 }

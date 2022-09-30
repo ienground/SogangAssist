@@ -29,14 +29,18 @@ import com.anjlab.android.iab.v3.TransactionDetails
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.radiobutton.MaterialRadioButton
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.ienlab.sogangassist.BuildConfig
-import net.ienlab.sogangassist.data.LMSClass
 import net.ienlab.sogangassist.databinding.ActivitySettingsBinding
 import net.ienlab.sogangassist.utils.MyUtils
-import net.ienlab.sogangassist.database.*
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.constant.SharedKey
+import net.ienlab.sogangassist.room.LMSDatabase
+import net.ienlab.sogangassist.room.LMSEntity
 import net.ienlab.sogangassist.utils.AppStorage
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import org.json.JSONArray
@@ -93,7 +97,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
         return super.onPrepareOptionsMenu(menu)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_settings, menu)
         return super.onCreateOptionsMenu(menu)
     }
@@ -133,14 +137,13 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
 
     class SettingsFragment : PreferenceFragmentCompat() {
 
-        lateinit var dbHelper: DBHelper
         lateinit var sharedPreferences: SharedPreferences
 
-        val timeFormat = SimpleDateFormat("a h:mm", Locale.getDefault())
+        private val timeFormat = SimpleDateFormat("a h:mm", Locale.getDefault())
+        private var lmsDatabase: LMSDatabase? = null
 
-        lateinit var typefaceBold: Typeface
-        lateinit var typefaceRegular: Typeface
 
+        @OptIn(DelicateCoroutinesApi::class)
         override fun onCreatePreferences(bundle: Bundle?, str: String?) {
             addPreferencesFromResource(R.xml.root_preferences)
             val appInfo = findPreference("app_title")
@@ -159,10 +162,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val backup = findPreference("backup")
             val restore = findPreference("restore")
 
-            typefaceBold = ResourcesCompat.getFont(requireContext(), R.font.pretendard_black) ?: Typeface.DEFAULT
-            typefaceRegular = ResourcesCompat.getFont(requireContext(), R.font.pretendard_regular) ?: Typeface.DEFAULT
-
-            dbHelper = DBHelper(requireContext(), DBHelper.dbName, DBHelper.dbVersion)
+            lmsDatabase = LMSDatabase.getInstance(requireContext())
             sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)
 
             val hourData = listOf("1", "2", "6", "12", "24")
@@ -224,9 +224,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val tvVersion: TextView = view.findViewById(R.id.tv_version)
                     val tvContent: TextView = view.findViewById(R.id.content)
 
-                    tvVersion.typeface = typefaceBold
-                    tvContent.typeface = typefaceRegular
-
                     tvVersion.text = getString(R.string.real_app_name)
                     tvContent.text = getString(R.string.dev_ienlab)
 
@@ -247,16 +244,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val tvDndEnd: TextView = view.findViewById(R.id.tv_dnd_end)
                     val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
                     val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
-                    val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
-                    val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
-
-                    tvTitle.typeface = typefaceBold
-                    tvDndStartTag.typeface = typefaceRegular
-                    tvDndEndTag.typeface = typefaceRegular
-                    tvDndStart.typeface = typefaceBold
-                    tvDndEnd.typeface = typefaceBold
-                    tvPositive.typeface = typefaceRegular
-                    tvNegative.typeface = typefaceRegular
 
                     tvDndStart.text = timeFormat.format(dndStartCalendar.time)
                     tvDndEnd.text = timeFormat.format(dndEndCalendar.time)
@@ -274,13 +261,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                             val timePicker: TimePicker = dialogView.findViewById(R.id.time_picker)
                             val innerBtnPositive: LinearLayout = dialogView.findViewById(R.id.btn_positive)
                             val innerBtnNegative: LinearLayout = dialogView.findViewById(R.id.btn_negative)
-                            val innerTvPositive: TextView = dialogView.findViewById(R.id.btn_positive_text)
-                            val innerTvNegative: TextView = dialogView.findViewById(R.id.btn_negative_text)
                             val calendar = startCalendar.clone() as Calendar
-
-                            innerTvTitle.typeface = typefaceBold
-                            innerTvPositive.typeface = typefaceRegular
-                            innerTvNegative.typeface = typefaceRegular
 
                             val hoursId = Resources.getSystem().getIdentifier("hours", "id", "android")
                             val separatorId = Resources.getSystem().getIdentifier("separator", "id", "android")
@@ -292,11 +273,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                             val apmLabels: ArrayList<MaterialRadioButton> = arrayListOf(timePicker.findViewById(amLabelId), timePicker.findViewById(pmLabelId))
 
                             textViews.forEach {
-                                it.typeface = typefaceRegular
+//                                it.typeface = typefaceRegular
                                 it.textSize = 42f
                             }
                             apmLabels.forEachIndexed { index, button ->
-                                button.typeface = typefaceRegular
+//                                button.typeface = typefaceRegular
                                 button.textSize = 12f
                                 button.gravity = (if (index == 0) Gravity.BOTTOM else Gravity.TOP) or Gravity.END
                             }
@@ -308,13 +289,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                             }
 
                             with (timePicker) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    hour = calendar.get(Calendar.HOUR_OF_DAY)
-                                    minute = calendar.get(Calendar.MINUTE)
-                                } else {
-                                    currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-                                    currentMinute = calendar.get(Calendar.MINUTE)
-                                }
+                                hour = calendar.get(Calendar.HOUR_OF_DAY)
+                                minute = calendar.get(Calendar.MINUTE)
 
                                 setOnTimeChangedListener { v, hourOfDay, minute ->
                                     calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
@@ -341,13 +317,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                             val timePicker: TimePicker = dialogView.findViewById(R.id.time_picker)
                             val innerBtnPositive: LinearLayout = dialogView.findViewById(R.id.btn_positive)
                             val innerBtnNegative: LinearLayout = dialogView.findViewById(R.id.btn_negative)
-                            val innerTvPositive: TextView = dialogView.findViewById(R.id.btn_positive_text)
-                            val innerTvNegative: TextView = dialogView.findViewById(R.id.btn_negative_text)
                             val calendar = endCalendar.clone() as Calendar
-
-                            innerTvTitle.typeface = typefaceBold
-                            innerTvPositive.typeface = typefaceRegular
-                            innerTvNegative.typeface = typefaceRegular
 
                             val hoursId = Resources.getSystem().getIdentifier("hours", "id", "android")
                             val separatorId = Resources.getSystem().getIdentifier("separator", "id", "android")
@@ -359,11 +329,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                             val apmLabels: ArrayList<MaterialRadioButton> = arrayListOf(timePicker.findViewById(amLabelId), timePicker.findViewById(pmLabelId))
 
                             textViews.forEach {
-                                it.typeface = typefaceRegular
+//                                it.typeface = typefaceRegular
                                 it.textSize = 42f
                             }
                             apmLabels.forEachIndexed { index, button ->
-                                button.typeface = typefaceRegular
+//                                button.typeface = typefaceRegular
                                 button.textSize = 12f
                                 button.gravity = (if (index == 0) Gravity.BOTTOM else Gravity.TOP) or Gravity.END
                             }
@@ -375,13 +345,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                             }
 
                             with (timePicker) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    hour = calendar.get(Calendar.HOUR_OF_DAY)
-                                    minute = calendar.get(Calendar.MINUTE)
-                                } else {
-                                    currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-                                    currentMinute = calendar.get(Calendar.MINUTE)
-                                }
+                                hour = calendar.get(Calendar.HOUR_OF_DAY)
+                                minute = calendar.get(Calendar.MINUTE)
 
                                 setOnTimeChangedListener { v, hourOfDay, minute ->
                                     calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
@@ -427,7 +392,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val btnClose: ImageButton = view.findViewById(R.id.btn_close)
                     val hours = arrayListOf<Boolean>()
 
-                    tvTitle.typeface = typefaceBold
                     tvTitle.text = getString(R.string.notify_hw)
                     imgLogo.setImageResource(R.drawable.ic_assignment)
 
@@ -483,7 +447,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val btnClose: ImageButton = view.findViewById(R.id.btn_close)
                     val hours = arrayListOf<Boolean>()
 
-                    tvTitle.typeface = typefaceBold
                     tvTitle.text = getString(R.string.notify_lec)
                     imgLogo.setImageResource(R.drawable.ic_video)
 
@@ -539,7 +502,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val btnClose: ImageButton = view.findViewById(R.id.btn_close)
                     val minutes = arrayListOf<Boolean>()
 
-                    tvTitle.typeface = typefaceBold
                     tvTitle.text = getString(R.string.notify_zoom)
                     imgLogo.setImageResource(R.drawable.ic_live_class)
 
@@ -597,7 +559,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val btnClose: ImageButton = view.findViewById(R.id.btn_close)
                     val minutes = arrayListOf<Boolean>()
 
-                    tvTitle.typeface = typefaceBold
                     tvTitle.text = getString(R.string.notify_exam)
                     imgLogo.setImageResource(R.drawable.ic_test)
 
@@ -659,10 +620,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
                     val calendar = morningCalendar.clone() as Calendar
 
-                    tvTitle.typeface = typefaceBold
-                    tvPositive.typeface = typefaceRegular
-                    tvNegative.typeface = typefaceRegular
-
                     val hoursId = Resources.getSystem().getIdentifier("hours", "id", "android")
                     val separatorId = Resources.getSystem().getIdentifier("separator", "id", "android")
                     val minutesId = Resources.getSystem().getIdentifier("minutes", "id", "android")
@@ -673,11 +630,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val apmLabels: ArrayList<MaterialRadioButton> = arrayListOf(timePicker.findViewById(amLabelId), timePicker.findViewById(pmLabelId))
 
                     textViews.forEach {
-                        it.typeface = typefaceRegular
+//                        it.typeface = typefaceRegular
                         it.textSize = 42f
                     }
                     apmLabels.forEachIndexed { index, button ->
-                        button.typeface = typefaceRegular
+//                        button.typeface = typefaceRegular
                         button.textSize = 12f
                         button.gravity = (if (index == 0) Gravity.BOTTOM else Gravity.TOP) or Gravity.END
                     }
@@ -689,13 +646,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     }
 
                     with (timePicker) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            hour = calendar.get(Calendar.HOUR_OF_DAY)
-                            minute = calendar.get(Calendar.MINUTE)
-                        } else {
-                            currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-                            currentMinute = calendar.get(Calendar.MINUTE)
-                        }
+                        hour = calendar.get(Calendar.HOUR_OF_DAY)
+                        minute = calendar.get(Calendar.MINUTE)
 
                         setOnTimeChangedListener { v, hourOfDay, minute ->
                             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
@@ -729,10 +681,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
                     val calendar = nightCalendar.clone() as Calendar
 
-                    tvTitle.typeface = typefaceBold
-                    tvPositive.typeface = typefaceRegular
-                    tvNegative.typeface = typefaceRegular
-
                     val hoursId = Resources.getSystem().getIdentifier("hours", "id", "android")
                     val separatorId = Resources.getSystem().getIdentifier("separator", "id", "android")
                     val minutesId = Resources.getSystem().getIdentifier("minutes", "id", "android")
@@ -743,11 +691,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val apmLabels: ArrayList<MaterialRadioButton> = arrayListOf(timePicker.findViewById(amLabelId), timePicker.findViewById(pmLabelId))
 
                     textViews.forEach {
-                        it.typeface = typefaceRegular
+//                        it.typeface = typefaceRegular
                         it.textSize = 42f
                     }
                     apmLabels.forEachIndexed { index, button ->
-                        button.typeface = typefaceRegular
+//                        button.typeface = typefaceRegular
                         button.textSize = 12f
                         button.gravity = (if (index == 0) Gravity.BOTTOM else Gravity.TOP) or Gravity.END
                     }
@@ -759,13 +707,8 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     }
 
                     with (timePicker) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            hour = calendar.get(Calendar.HOUR_OF_DAY)
-                            minute = calendar.get(Calendar.MINUTE)
-                        } else {
-                            currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-                            currentMinute = calendar.get(Calendar.MINUTE)
-                        }
+                        hour = calendar.get(Calendar.HOUR_OF_DAY)
+                        minute = calendar.get(Calendar.MINUTE)
 
                         setOnTimeChangedListener { v, hourOfDay, minute ->
                             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
@@ -790,9 +733,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                     val view = layoutInflater.inflate(R.layout.dialog_changelog, LinearLayout(requireContext()), false)
                     val tvVersion: TextView = view.findViewById(R.id.tv_version)
                     val tvContent: TextView = view.findViewById(R.id.content)
-
-                    tvVersion.typeface = typefaceBold
-                    tvContent.typeface = typefaceRegular
 
                     tvVersion.text = "${getString(R.string.real_app_name)} ${BuildConfig.VERSION_NAME}"
                     tvContent.text = MyUtils.fromHtml(MyUtils.readTextFromRaw(resources, R.raw.changelog))
@@ -823,30 +763,35 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             val saveFileLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == RESULT_OK) {
                     val output = JSONArray()
-                    for (lms in dbHelper.getAllData()) {
-                        val jObject = JSONObject()
-                        jObject.put("id", lms.id)
-                        jObject.put("className", lms.className)
-                        jObject.put("timeStamp", lms.timeStamp)
-                        jObject.put("type", lms.type)
-                        jObject.put("startTime", lms.startTime)
-                        jObject.put("endTime", lms.endTime)
-                        jObject.put("isRenewAllowed", lms.isRenewAllowed)
-                        jObject.put("isFinished", lms.isFinished)
-                        jObject.put("week", lms.week)
-                        jObject.put("lesson", lms.lesson)
-                        jObject.put("homework_name", lms.homework_name)
-                        output.put(jObject)
+                    GlobalScope.launch(Dispatchers.IO) {
+                        val datas = lmsDatabase?.getDao()?.getAll()
+                        if (datas != null) {
+                            for (lms in datas) {
+                                val jObject = JSONObject()
+                                jObject.put("id", lms.id)
+                                jObject.put("className", lms.className)
+                                jObject.put("timeStamp", lms.timestamp)
+                                jObject.put("type", lms.type)
+                                jObject.put("startTime", lms.startTime)
+                                jObject.put("endTime", lms.endTime)
+                                jObject.put("isRenewAllowed", lms.isRenewAllowed)
+                                jObject.put("isFinished", lms.isFinished)
+                                jObject.put("week", lms.week)
+                                jObject.put("lesson", lms.lesson)
+                                jObject.put("homework_name", lms.homework_name)
+                                output.put(jObject)
+                            }
+
+                            Log.d(TAG, output.toString())
+
+                            val uri = result.data?.data ?: Uri.EMPTY
+                            val outputStream = requireActivity().contentResolver.openOutputStream(uri)
+                            outputStream?.write(output.toString().toByteArray())
+                            outputStream?.close()
+
+                            Toast.makeText(requireContext(), getString(R.string.backup_msg), Toast.LENGTH_SHORT).show()
+                        }
                     }
-
-                    Log.d(TAG, output.toString())
-
-                    val uri = result.data?.data ?: Uri.EMPTY
-                    val outputStream = requireActivity().contentResolver.openOutputStream(uri)
-                    outputStream?.write(output.toString().toByteArray())
-                    outputStream?.close()
-
-                    Toast.makeText(requireContext(), getString(R.string.backup_msg), Toast.LENGTH_SHORT).show()
                 }
             }
             val loadFileLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -879,10 +824,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                         val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
 
                         imgLogo.setImageResource(R.drawable.ic_notification)
-                        tvTitle.typeface = typefaceBold
-                        tvContent.typeface = typefaceRegular
-                        tvPositive.typeface = typefaceRegular
-                        tvNegative.typeface = typefaceRegular
 
                         tvTitle.text = getString(R.string.restore)
                         tvContent.text = getString(R.string.restore_msg)
@@ -890,11 +831,10 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                         tvNegative.text = getString(R.string.disagree)
 
                         btnPositive.setOnClickListener {
-                            requireActivity().deleteDatabase(DBHelper.dbName)
+                            requireActivity().deleteDatabase("SogangLMSAssistData.db")
                             for (i in 0 until jsonResult.length()) {
                                 val jObject = jsonResult.getJSONObject(i)
-                                val lms = LMSClass(
-                                    -1,
+                                val lms = LMSEntity(
                                     jObject.getString("className"),
                                     jObject.getLong("timeStamp"),
                                     jObject.getInt("type"),
@@ -907,7 +847,9 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                                     jObject.getString("homework_name")
                                 )
 
-                                dbHelper.addItem(lms)
+                                GlobalScope.launch(Dispatchers.IO) {
+                                    lmsDatabase?.getDao()?.add(lms)
+                                }
                             }
 
                             Toast.makeText(requireContext(), getString(R.string.restore_finish), Toast.LENGTH_SHORT).show()
@@ -945,23 +887,11 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             dateDelete?.setOnPreferenceClickListener {
                 MyBottomSheetDialog(requireContext()).apply {
                     val view = layoutInflater.inflate(R.layout.dialog_date_delete, LinearLayout(requireContext()), false)
-                    val tvTitle: TextView = view.findViewById(R.id.tv_title)
                     val tvStartDate: TextView = view.findViewById(R.id.tv_start_date)
                     val tvEndDate: TextView = view.findViewById(R.id.tv_end_date)
-                    val tvWave: TextView = view.findViewById(R.id.tv_wave)
                     val checkDeleteFinish: MaterialCheckBox = view.findViewById(R.id.check_delete_finish)
-                    val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
-                    val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
                     val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
                     val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
-
-                    tvTitle.typeface = typefaceBold
-                    tvStartDate.typeface = typefaceRegular
-                    tvEndDate.typeface = typefaceRegular
-                    tvWave.typeface = typefaceRegular
-                    checkDeleteFinish.typeface = typefaceRegular
-                    tvPositive.typeface = typefaceRegular
-                    tvNegative.typeface = typefaceRegular
 
                     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     val startCalendar = Calendar.getInstance().apply { add(Calendar.MONTH, -2) }
@@ -1016,27 +946,31 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                         if (startCalendar.timeInMillis > endCalendar.timeInMillis) {
                             Toast.makeText(requireContext(), getString(R.string.err_end_date), Toast.LENGTH_SHORT).show()
                         } else {
-                            var count = 0
-                            val datas = dbHelper.getItemDateRange(startCalendar.timeInMillis, endCalendar.timeInMillis)
-                            for (data in datas) {
-                                if (checkDeleteFinish.isChecked) {
-                                    if (data.isFinished) {
-                                        dbHelper.deleteData(data.id)
-                                        count++
+                            GlobalScope.launch(Dispatchers.IO) {
+                                var count = 0
+                                val datas = lmsDatabase?.getDao()?.getByEndTime(startCalendar.timeInMillis, endCalendar.timeInMillis)
+                                if (datas != null) {
+                                    for (data in datas) {
+                                        if (checkDeleteFinish.isChecked) {
+                                            if (data.isFinished) {
+                                                count++
+                                            }
+                                        } else {
+                                            lmsDatabase?.getDao()?.delete(data.id?.toLong() ?: -1)
+                                            count++
+                                        }
                                     }
-                                } else {
-                                    dbHelper.deleteData(data.id)
-                                    count++
                                 }
+
+                                if (count != 0) {
+                                    Toast.makeText(requireContext(), getString(R.string.delete_successfully, count), Toast.LENGTH_SHORT).show()
+                                    requireActivity().finishAffinity()
+                                } else {
+                                    Toast.makeText(requireContext(), getString(R.string.no_delete_event), Toast.LENGTH_SHORT).show()
+                                }
+                                dismiss()
                             }
 
-                            if (count != 0) {
-                                Toast.makeText(requireContext(), getString(R.string.delete_successfully, count), Toast.LENGTH_SHORT).show()
-                                requireActivity().finishAffinity()
-                            } else {
-                                Toast.makeText(requireContext(), getString(R.string.no_delete_event), Toast.LENGTH_SHORT).show()
-                            }
-                            dismiss()
                         }
                     }
 

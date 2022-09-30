@@ -4,36 +4,35 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import net.ienlab.sogangassist.database.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import net.ienlab.sogangassist.room.LMSDatabase
 
 class MarkFinishReceiver : BroadcastReceiver() {
 
     lateinit var nm: NotificationManager
-    lateinit var dbHelper: DBHelper
-    lateinit var notiDBHelper: NotiDBHelper
 
+    private var lmsDatabase: LMSDatabase? = null
+
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onReceive(context: Context, intent: Intent) {
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
-        notiDBHelper = NotiDBHelper(context, NotiDBHelper.dbName, NotiDBHelper.dbVersion)
+        lmsDatabase = LMSDatabase.getInstance(context)
 
         val id = intent.getIntExtra("ID", -1)
-        val notiId = intent.getIntExtra("NOTI_ID", -1)
 
         if (id != -1) {
-            dbHelper.getItemById(id).apply {
-                isFinished = true
-                dbHelper.updateItemById(this)
+            GlobalScope.launch(Dispatchers.IO) {
+                val item = lmsDatabase?.getDao()?.get(id.toLong())
+                if (item != null) {
+                    item.isFinished = true
+                    lmsDatabase?.getDao()?.update(item)
+                }
             }
 
             nm.cancel(693000 + id)
-        }
-
-        if (notiId != -1) {
-            notiDBHelper.getItemById(notiId).apply {
-                isRead = true
-                notiDBHelper.updateItemById(this)
-            }
         }
     }
 }

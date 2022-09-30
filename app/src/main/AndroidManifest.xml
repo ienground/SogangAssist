@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="net.ienlab.sogangassist">
+    package="net.ienlab.sogangassist" >
 
     <queries>
         <package android:name="kr.co.imaxsoft.hellolms" />
@@ -19,14 +19,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:label,android:allowBackup">
+        tools:replace="android:label,android:allowBackup" >
         <activity
             android:name=".activity.TestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.MainActivity2"
             android:exported="false" />
         <activity android:name=".activity.PermissionActivity" />
         <activity
             android:name=".activity.SplashActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,6 +39,9 @@
         <activity
             android:name=".activity.EditActivity"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.EditActivity2"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.OnboardingActivity" />
@@ -43,14 +49,14 @@
         <service
             android:name=".service.LMSListenerService"
             android:exported="true"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" >
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
         <service
             android:name=".service.MyFirebaseMessagingService"
-            android:exported="false">
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -79,7 +85,7 @@
         <receiver
             android:name=".receiver.BootDeviceReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -87,7 +93,7 @@
         <receiver
             android:name=".widget.DeadlineWidget"
             android:exported="true"
-            android:label="@string/deadline_widget_title">
+            android:label="@string/deadline_widget_title" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="net.ienlab.sogangassist.DeadlineWidget.CLICK" />

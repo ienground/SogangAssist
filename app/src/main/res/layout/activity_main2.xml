@@ -6,7 +6,7 @@
     <data>
         <variable
             name="activity"
-            type="net.ienlab.sogangassist.activity.TestActivity" />
+            type="net.ienlab.sogangassist.activity.MainActivity2" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,29 +46,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView
-                            android:id="@+id/tv_hello"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            tools:text="좋은 아침입니다,"
-                            android:textColor="@color/black"
-                            android:layout_marginEnd="@dimen/usual_margin"
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:src="@drawable/ic_icon_color"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toTopOf="@id/tv_nickname" />
-
-                        <TextView
-                            android:id="@+id/tv_nickname"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            tools:text="아이엔님!"
-                            android:textColor="@color/black"
-                            android:textSize="18sp"
-                            android:layout_marginEnd="@dimen/usual_margin"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/tv_hello"
                             app:layout_constraintBottom_toBottomOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -136,88 +119,328 @@
 
                         </androidx.cardview.widget.CardView>
 
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/card_goal"
+                        <TextView
+                            android:id="@+id/tag_event"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:text="@string/todays_event"
+                            android:textSize="24sp"
+                            android:textColor="@color/black"
+                            android:fontFamily="@font/pretendard_black"
                             android:layout_margin="@dimen/usual_margin"
-                            app:cardBackgroundColor="?attr/colorAccent"
-                            app:cardCornerRadius="@dimen/layout_radius"
-                            app:cardElevation="0dp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/group_iab">
+                            app:layout_constraintTop_toBottomOf="@id/group_iab"/>
+
+                        <androidx.viewpager2.widget.ViewPager2
+                            android:id="@+id/viewPager"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:clipToPadding="false"
+                            android:clipChildren="false"
+                            android:paddingHorizontal="40dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/tag_event" />
+
+                        <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+                            android:id="@+id/event_progress"
+                            android:layout_width="0dp"
+                            android:layout_height="36dp"
+                            android:layout_margin="@dimen/usual_margin"
+                            app:rcAnimationEnable="true"
+                            app:rcBackgroundColor="@color/blur_background"
+                            app:rcProgressColor="?attr/colorAccent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/viewPager" />
+
+                        <TextView
+                            android:id="@+id/tv_event_progress"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            tools:text="EVENT_PROGRESS"
+                            android:textAlignment="center"
+                            android:fontFamily="@font/pretendard"
+                            app:layout_constraintStart_toStartOf="@id/event_progress"
+                            app:layout_constraintEnd_toEndOf="@id/event_progress"
+                            app:layout_constraintTop_toTopOf="@id/event_progress"
+                            app:layout_constraintBottom_toBottomOf="@id/event_progress" />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card_class"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:cardBackgroundColor="@color/colorAccentAlpha"
+                            app:cardCornerRadius="@dimen/layout_radius"
+                            app:cardElevation="0dp"
+                            android:layout_marginStart="@dimen/usual_margin"
+                            android:layout_marginTop="@dimen/usual_margin"
+                            app:layout_constraintDimensionRatio="1:1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/card_homework"
+                            app:layout_constraintTop_toBottomOf="@id/event_progress">
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                                <TextView
-                                    android:id="@+id/tv_goal_sub"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:text="-"
-                                    tools:text="100일 달성을 위해"
-                                    android:textSize="18sp"
-                                    android:textColor="@android:color/white"
-                                    android:layout_margin="@dimen/usual_margin"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent" />
-
-                                <TextView
-                                    android:id="@+id/tv_goal_main"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:text="-"
-                                    tools:text="70일 째 순항 중"
-                                    android:textSize="26sp"
-                                    android:textColor="@android:color/white"
-                                    android:layout_marginHorizontal="@dimen/usual_margin"
-                                    android:layout_marginBottom="@dimen/usual_margin"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_goal_sub"
-                                    app:layout_constraintBottom_toBottomOf="parent" />
-
-                                <com.dinuscxj.progressbar.CircleProgressBar
-                                    android:id="@+id/progressBar"
-                                    android:layout_width="0dp"
-                                    android:layout_height="0dp"
-                                    android:layout_margin="@dimen/usual_margin"
-                                    app:layout_constraintDimensionRatio="1:1"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:style="solid_line"
-                                    app:progress_start_color="@android:color/white"
-                                    app:progress_end_color="@android:color/white"
-                                    app:progress_stroke_width="16dp"
-                                    app:progress_stroke_cap="round"
-                                    app:progress_background_color="@color/progress_background"
-                                    app:progress_shader="sweep"/>
+                                android:layout_height="match_parent">
 
                                 <ImageView
-                                    android:id="@+id/ic_check_circle"
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
-                                    android:src="@drawable/ic_check_circle"
-                                    app:tint="@android:color/white"
-                                    app:layout_constraintStart_toStartOf="@id/progressBar"
-                                    app:layout_constraintEnd_toEndOf="@id/progressBar"
-                                    app:layout_constraintTop_toTopOf="@id/progressBar"
-                                    app:layout_constraintBottom_toBottomOf="@id/progressBar" />
+                                    android:id="@+id/iv_lesson"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:src="@drawable/ic_video"
+                                    app:tint="@color/white"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toTopOf="@id/tv_lesson"/>
+
+                                <TextView
+                                    android:id="@+id/tv_lesson"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="@color/white"
+                                    android:textSize="24sp"
+                                    android:fontFamily="@font/pretendard_black"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@id/iv_lesson"
+                                    app:layout_constraintBottom_toBottomOf="parent" />
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
 
                         </androidx.cardview.widget.CardView>
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerView"
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card_homework"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/usual_margin"
-                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_height="0dp"
+                            app:cardBackgroundColor="@color/colorAccentAlpha"
+                            app:cardCornerRadius="@dimen/layout_radius"
+                            app:cardElevation="0dp"
+                            android:layout_marginStart="@dimen/usual_margin"
+                            app:layout_constraintDimensionRatio="1:1"
+                            app:layout_constraintStart_toEndOf="@id/card_class"
+                            app:layout_constraintEnd_toStartOf="@id/card_zoom"
+                            app:layout_constraintTop_toTopOf="@id/card_class">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:id="@+id/iv_homework"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:src="@drawable/ic_assignment"
+                                    app:tint="@color/white"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toTopOf="@id/tv_homework"/>
+
+                                <TextView
+                                    android:id="@+id/tv_homework"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="@color/white"
+                                    android:textSize="24sp"
+                                    android:fontFamily="@font/pretendard_black"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@id/iv_homework"
+                                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card_zoom"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:cardBackgroundColor="@color/colorAccentAlpha"
+                            app:cardCornerRadius="@dimen/layout_radius"
+                            app:cardElevation="0dp"
+                            android:layout_marginStart="@dimen/usual_margin"
+                            android:layout_marginEnd="@dimen/usual_margin"
+                            app:layout_constraintDimensionRatio="1:1"
+                            app:layout_constraintStart_toEndOf="@id/card_homework"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/card_goal" />
+                            app:layout_constraintTop_toTopOf="@id/card_class">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:id="@+id/iv_zoom"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:src="@drawable/ic_live_class"
+                                    app:tint="@color/white"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toTopOf="@id/tv_zoom"/>
+
+                                <TextView
+                                    android:id="@+id/tv_zoom"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="@color/white"
+                                    android:textSize="24sp"
+                                    android:fontFamily="@font/pretendard_black"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@id/iv_zoom"
+                                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card_class_sup"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:cardBackgroundColor="@color/colorAccentAlpha"
+                            app:cardCornerRadius="@dimen/layout_radius"
+                            app:cardElevation="0dp"
+                            android:layout_marginStart="@dimen/usual_margin"
+                            android:layout_marginTop="@dimen/usual_margin"
+                            app:layout_constraintDimensionRatio="1:1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/card_teamwork"
+                            app:layout_constraintTop_toBottomOf="@id/card_class">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:id="@+id/iv_lesson_sup"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:src="@drawable/ic_video_sup"
+                                    app:tint="@color/white"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toTopOf="@id/tv_lesson_sup"/>
+
+                                <TextView
+                                    android:id="@+id/tv_lesson_sup"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="@color/white"
+                                    android:textSize="24sp"
+                                    android:fontFamily="@font/pretendard_black"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@id/iv_lesson_sup"
+                                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card_teamwork"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:cardBackgroundColor="@color/colorAccentAlpha"
+                            app:cardCornerRadius="@dimen/layout_radius"
+                            app:cardElevation="0dp"
+                            android:layout_marginStart="@dimen/usual_margin"
+                            app:layout_constraintDimensionRatio="1:1"
+                            app:layout_constraintStart_toEndOf="@id/card_class_sup"
+                            app:layout_constraintEnd_toStartOf="@id/card_test"
+                            app:layout_constraintTop_toTopOf="@id/card_class_sup">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:id="@+id/iv_teamwork"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:src="@drawable/ic_team"
+                                    app:tint="@color/white"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toTopOf="@id/tv_teamwork"/>
+
+                                <TextView
+                                    android:id="@+id/tv_teamwork"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="@color/white"
+                                    android:textSize="24sp"
+                                    android:fontFamily="@font/pretendard_black"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@id/iv_teamwork"
+                                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card_test"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:cardBackgroundColor="@color/colorAccentAlpha"
+                            app:cardCornerRadius="@dimen/layout_radius"
+                            app:cardElevation="0dp"
+                            android:layout_marginStart="@dimen/usual_margin"
+                            android:layout_marginEnd="@dimen/usual_margin"
+                            app:layout_constraintDimensionRatio="1:1"
+                            app:layout_constraintStart_toEndOf="@id/card_teamwork"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/card_class_sup">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:id="@+id/iv_test"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:src="@drawable/ic_test"
+                                    app:tint="@color/white"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toTopOf="@id/tv_test"/>
+
+                                <TextView
+                                    android:id="@+id/tv_test"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="@color/white"
+                                    android:textSize="24sp"
+                                    android:fontFamily="@font/pretendard_black"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@id/iv_test"
+                                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -260,9 +483,10 @@
                             android:id="@+id/tv_panel_summary"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="string/panel_summary_empty"
+                            android:text="@string/check_calendar"
                             android:textSize="18sp"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/pretendard"
                             android:layout_margin="@dimen/usual_margin"
                             app:layout_constraintStart_toEndOf="@id/btn_slide"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -295,8 +519,9 @@
                                 android:text="@string/add_reminder"
                                 android:textAlignment="textEnd"
                                 android:textColor="@android:color/white"
+                                android:fontFamily="@font/pretendard"
                                 android:minHeight="56dp"
-                                app:backgroundTint="@color/color_btn_add"
+                                app:backgroundTint="?attr/colorAccent"
                                 app:icon="@drawable/ic_add"
                                 app:iconTint="@android:color/white"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -311,7 +536,7 @@
                                 android:stateListAnimator="@null"
                                 android:minHeight="56dp"
                                 android:layout_marginEnd="@dimen/usual_margin"
-                                app:backgroundTint="@color/color_sogang_gray"
+                                app:backgroundTint="?attr/colorAccentDark"
                                 app:icon="@drawable/ic_today"
                                 app:iconTint="@android:color/white"
                                 app:layout_constraintStart_toEndOf="@id/btn_add"
@@ -340,7 +565,8 @@
                                     android:textColor="@color/black"
                                     android:textAlignment="center"
                                     android:letterSpacing="0.2"
-                                    android:textAllCaps="true" />
+                                    android:textAllCaps="true"
+                                    android:fontFamily="@font/pretendard" />
 
                                 <TextView
                                     android:id="@+id/tv_month_1"
@@ -351,7 +577,8 @@
                                     android:textColor="@color/black"
                                     android:textAlignment="center"
                                     android:letterSpacing="0.2"
-                                    android:textAllCaps="true" />
+                                    android:textAllCaps="true"
+                                    android:fontFamily="@font/pretendard" />
 
                             </TextSwitcher>
 
@@ -360,11 +587,33 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/usual_margin"
-                                app:mcv_selectionColor="@color/colorAccentDark"
+                                app:mcv_selectionColor="?attr/colorAccentDark"
                                 app:mcv_showOtherDates="defaults"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toBottomOf="@id/tv_month"/>
+
+                            <com.google.android.material.tabs.TabLayout
+                                android:id="@+id/tabLayout"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                app:tabSelectedTextColor="?attr/colorAccent"
+                                app:tabIndicator="@drawable/tab_selector"
+                                app:tabIndicatorColor="?attr/colorAccent"
+                                app:tabGravity="start"
+                                app:tabMode="scrollable"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/calendarView" />
+
+                            <androidx.fragment.app.FragmentContainerView
+                                android:id="@+id/fragment_container"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/tabLayout" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -3,9 +3,11 @@ package net.ienlab.sogangassist.decorators
 import android.content.Context
 import android.graphics.*
 import android.text.style.LineBackgroundSpan
+import android.util.Log
 import androidx.core.content.ContextCompat
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.data.LMSClass
+import net.ienlab.sogangassist.activity.TAG
+import net.ienlab.sogangassist.room.LMSEntity
 import kotlin.collections.ArrayList
 
 /**
@@ -85,11 +87,11 @@ class MyDotSpan(private val radius: Float, private val color: Int, amount: IntAr
     }
 }
 
-class MyDotSpan2(private val context: Context, private val size: Float, private val data: List<LMSClass>) : LineBackgroundSpan {
+class MyDotSpan2(private val context: Context, private val size: Float, private val data: List<LMSEntity>) : LineBackgroundSpan {
 
     override fun drawBackground(canvas: Canvas, paint: Paint, left: Int, right: Int, top: Int, baseline: Int, bottom: Int, charSequence: CharSequence, start: Int, end: Int, lineNum: Int) {
-        val finishedItem = ArrayList<LMSClass>()
-        val unfinishedItem = ArrayList<LMSClass>()
+        val finishedItem = ArrayList<LMSEntity>()
+        val unfinishedItem = ArrayList<LMSEntity>()
         data.forEach { if (it.isFinished) finishedItem.add(it) else unfinishedItem.add(it) }
 
         val oldColor = paint.color
@@ -101,12 +103,12 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
         if (data.size <= 3) { // 0 1 2
             unfinishedItem.forEachIndexed { i, it ->
                 val image = when (it.type) {
-                    LMSClass.TYPE_LESSON -> R.drawable.ic_video
-                    LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
-                    LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
-                    LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
-                    LMSClass.TYPE_TEAMWORK -> R.drawable.ic_team
-                    LMSClass.TYPE_EXAM -> R.drawable.ic_test
+                    LMSEntity.TYPE_LESSON -> R.drawable.ic_video
+                    LMSEntity.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
+                    LMSEntity.TYPE_HOMEWORK -> R.drawable.ic_assignment
+                    LMSEntity.TYPE_ZOOM -> R.drawable.ic_live_class
+                    LMSEntity.TYPE_TEAMWORK -> R.drawable.ic_team
+                    LMSEntity.TYPE_EXAM -> R.drawable.ic_test
                     else -> R.drawable.ic_icon
                 }
 
@@ -119,12 +121,12 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
 
             finishedItem.forEachIndexed { i, it ->
                 val image = when (it.type) {
-                    LMSClass.TYPE_LESSON -> R.drawable.ic_video
-                    LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
-                    LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
-                    LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
-                    LMSClass.TYPE_TEAMWORK -> R.drawable.ic_team
-                    LMSClass.TYPE_EXAM -> R.drawable.ic_test
+                    LMSEntity.TYPE_LESSON -> R.drawable.ic_video
+                    LMSEntity.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
+                    LMSEntity.TYPE_HOMEWORK -> R.drawable.ic_assignment
+                    LMSEntity.TYPE_ZOOM -> R.drawable.ic_live_class
+                    LMSEntity.TYPE_TEAMWORK -> R.drawable.ic_team
+                    LMSEntity.TYPE_EXAM -> R.drawable.ic_test
                     else -> R.drawable.ic_icon
                 }
 
@@ -136,12 +138,12 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
                 for (i in 0 until 2) {
                     val it = unfinishedItem[i]
                     val image = when (it.type) {
-                        LMSClass.TYPE_LESSON -> R.drawable.ic_video
-                        LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
-                        LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
-                        LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
-                        LMSClass.TYPE_TEAMWORK -> R.drawable.ic_team
-                        LMSClass.TYPE_EXAM -> R.drawable.ic_test
+                        LMSEntity.TYPE_LESSON -> R.drawable.ic_video
+                        LMSEntity.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
+                        LMSEntity.TYPE_HOMEWORK -> R.drawable.ic_assignment
+                        LMSEntity.TYPE_ZOOM -> R.drawable.ic_live_class
+                        LMSEntity.TYPE_TEAMWORK -> R.drawable.ic_team
+                        LMSEntity.TYPE_EXAM -> R.drawable.ic_test
                         else -> R.drawable.ic_icon
                     }
 
@@ -151,12 +153,12 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
             } else { // 1 4 라면 표시는 1 2 (uf, f)
                 unfinishedItem.forEachIndexed { i, it ->
                     val image = when (it.type) {
-                        LMSClass.TYPE_LESSON -> R.drawable.ic_video
-                        LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
-                        LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
-                        LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
-                        LMSClass.TYPE_TEAMWORK -> R.drawable.ic_team
-                        LMSClass.TYPE_EXAM -> R.drawable.ic_test
+                        LMSEntity.TYPE_LESSON -> R.drawable.ic_video
+                        LMSEntity.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
+                        LMSEntity.TYPE_HOMEWORK -> R.drawable.ic_assignment
+                        LMSEntity.TYPE_ZOOM -> R.drawable.ic_live_class
+                        LMSEntity.TYPE_TEAMWORK -> R.drawable.ic_team
+                        LMSEntity.TYPE_EXAM -> R.drawable.ic_test
                         else -> R.drawable.ic_icon
                     }
 
@@ -167,12 +169,12 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
                 for (i in 0 until 2 - unfinishedItem.size) {
                     val it = finishedItem[i]
                     val image = when (it.type) {
-                        LMSClass.TYPE_LESSON -> R.drawable.ic_video
-                        LMSClass.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
-                        LMSClass.TYPE_HOMEWORK -> R.drawable.ic_assignment
-                        LMSClass.TYPE_ZOOM -> R.drawable.ic_live_class
-                        LMSClass.TYPE_TEAMWORK -> R.drawable.ic_team
-                        LMSClass.TYPE_EXAM -> R.drawable.ic_test
+                        LMSEntity.TYPE_LESSON -> R.drawable.ic_video
+                        LMSEntity.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
+                        LMSEntity.TYPE_HOMEWORK -> R.drawable.ic_assignment
+                        LMSEntity.TYPE_ZOOM -> R.drawable.ic_live_class
+                        LMSEntity.TYPE_TEAMWORK -> R.drawable.ic_team
+                        LMSEntity.TYPE_EXAM -> R.drawable.ic_test
                         else -> R.drawable.ic_icon
                     }
 
