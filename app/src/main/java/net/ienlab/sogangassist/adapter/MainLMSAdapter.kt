@@ -54,8 +54,10 @@ class MainLMSAdapter(var items: ArrayList<LMSEntity>, var calendar: Calendar): R
 
         val hourLeft = TimeUnit.HOURS.convert(items[holder.adapterPosition].endTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS).toInt()
         val minuteLeft = TimeUnit.MINUTES.convert(items[holder.adapterPosition].endTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS).toInt() % 60
+        val dayLeft = TimeUnit.DAYS.convert(items[holder.adapterPosition].endTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS).toInt()
 
-        holder.tvLefttime.text = if (hourLeft != 0 && minuteLeft != 0) context.getString(R.string.time_left_hour_min, hourLeft, minuteLeft)
+        holder.tvLefttime.text = if (dayLeft != 0) context.getString(R.string.time_left_day, dayLeft)
+            else if (hourLeft != 0 && minuteLeft != 0) context.getString(R.string.time_left_hour_min, hourLeft, minuteLeft)
             else if (hourLeft != 0) context.getString(R.string.time_left_hour, hourLeft)
             else context.getString(R.string.time_left_min, minuteLeft)
         holder.icCheck.visibility = if (items[holder.adapterPosition].isFinished) View.VISIBLE else View.GONE

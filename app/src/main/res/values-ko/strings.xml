@@ -295,8 +295,15 @@
     <string name="todays_event">오늘의 일정</string>
     <string name="check_calendar">달력 보기</string>
     <string name="all">전체</string>
+    <string name="time_left_day">%1$d일 남음</string>
     <string name="time_left_hour_min">%1$d시간 %2$d분 남음</string>
     <string name="time_left_hour">%1$d시간 남음</string>
     <string name="time_left_min">%1$d분 남음</string>
+    <string name="event_progress_format">%1$d개의 일정 중 %2$d개 완료</string>
+    <string name="finished_item">완료된 항목</string>
+    <string name="time_day">%1$d일</string>
+    <string name="time_hour_min">%1$d시간 %2$d분</string>
+    <string name="time_hour">%1$d시간</string>
+    <string name="time_min">%1$d분</string>
 
 </resources>

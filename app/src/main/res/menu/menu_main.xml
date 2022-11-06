@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_help"
-        android:title="@string/help"
-        android:icon="@drawable/ic_help"
+        android:id="@+id/menu_add"
+        android:title="@string/add_reminder"
+        android:icon="@drawable/ic_add"
         app:showAsAction="ifRoom" />
 
     <item

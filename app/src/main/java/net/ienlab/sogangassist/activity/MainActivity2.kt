@@ -19,6 +19,7 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
@@ -108,11 +109,6 @@ class MainActivity2 : AppCompatActivity(),
         monthFormat = SimpleDateFormat(getString(R.string.calendarFormat), Locale.getDefault())
 
         var beforeDate = binding.calendarView.currentDate.date
-//        val weekdayDecorator = WeekdayDecorator(this)
-//        val sundayDecorator = SundayDecorator(this)
-//        val saturdayDecorator = SaturdayDecorator(this)
-//        var currentDecorator = CurrentDecorator(this, Calendar.getInstance())
-//        val todayDecorator = OneDayDecorator(this)
 
         FirebaseInAppMessaging.getInstance().isAutomaticDataCollectionEnabled = true
         if (BuildConfig.DEBUG) {
@@ -284,13 +280,13 @@ class MainActivity2 : AppCompatActivity(),
 
         GlobalScope.launch(Dispatchers.IO) {
             val datas = lmsDatabase?.getDao()?.getAll()
-            val todayWorks = lmsDatabase?.getDao()?.getByEndTime(Calendar.getInstance().timeZero().timeInMillis, Calendar.getInstance().tomorrowZero().timeInMillis)?.toTypedArray()?.apply { sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) }
+            val todayWorks = lmsDatabase?.getDao()?.getByEndTime(Calendar.getInstance().timeZero().timeInMillis, Calendar.getInstance().tomorrowZero().timeInMillis)?.toMutableList()?.apply { sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) }
 
             withContext(Dispatchers.Main) {
-                if (datas != null) {
+                if (datas != null && todayWorks != null) {
                     val count = arrayListOf(0, 0, 0, 0, 0, 0)
+                    var todayFinishedCount = 0
                     for (data in datas) {
-                        count[data.type]++
                         val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ID, data.id) }
                         val hours = listOf(1, 2, 6, 12, 24)
                         val minutes = listOf(3, 5, 10, 20, 30)
@@ -318,7 +314,15 @@ class MainActivity2 : AppCompatActivity(),
                             }
                         }
                     }
+                    for (data in todayWorks) {
+                        count[data.type]++
+                        if (data.isFinished) todayFinishedCount++
+                    }
 
+                    binding.viewPager.adapter = MainWorkAdapter(todayWorks as ArrayList<LMSEntity>)
+                    binding.tvEventProgress.text = getString(R.string.event_progress_format, todayWorks?.size ?: 0, todayFinishedCount)
+
+                    TabLayoutMediator(binding.viewPagerTab, binding.viewPager) { _, _ -> }.attach()
                     binding.tvLesson.text = "${count[LMSEntity.TYPE_LESSON]}"
                     binding.tvLessonSup.text = "${count[LMSEntity.TYPE_SUP_LESSON]}"
                     binding.tvHomework.text = "${count[LMSEntity.TYPE_HOMEWORK]}"
@@ -345,18 +349,17 @@ class MainActivity2 : AppCompatActivity(),
                     })
 
                     setDecorators(datas)
-
                 }
-
-
-
-
             }
         }
     }
 
     override fun onPlanListItemClicked(position: Int, data: LMSEntity) {
+        Log.d(TAG, "onPlanListItemClicked")
+    }
 
+    override fun onPlanListItemEdited(endTime: Long) {
+        setEachDecorator(endTime)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -378,14 +381,15 @@ class MainActivity2 : AppCompatActivity(),
                 timeCount[if (it.isFinished) 1 else 0] += 1
             }
 
-            binding.calendarView.removeDecorator(decorators[decoratorTime])
+            withContext(Dispatchers.Main) {
+                binding.calendarView.removeDecorator(decorators[decoratorTime])
+            }
+
             if (sharedPreferences.getBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, true)) {
-                GlobalScope.launch(Dispatchers.IO) {
-                    val decorator = EventDecorator2(applicationContext, decoratorTime, lmsDatabase?.getDao()?.getByEndTime(decoratorTime, decoratorTime + AlarmManager.INTERVAL_DAY) ?: listOf())
-                    withContext(Dispatchers.Main) {
-                        binding.calendarView.addDecorator(decorator)
-                        decorators[time] = decorator
-                    }
+                val decorator = EventDecorator2(applicationContext, decoratorTime, lmsDatabase?.getDao()?.getByEndTime(decoratorTime, decoratorTime + AlarmManager.INTERVAL_DAY) ?: listOf())
+                withContext(Dispatchers.Main) {
+                    binding.calendarView.addDecorator(decorator)
+                    decorators[time] = decorator
                 }
             } else {
                 val decorator = EventDecorator(ContextCompat.getColor(applicationContext, R.color.colorAccent), timeCount, arrayListOf(CalendarDay.from(Date(time))))
@@ -393,7 +397,6 @@ class MainActivity2 : AppCompatActivity(),
                 decorators[decoratorTime] = decorator
             }
         }
-
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -444,12 +447,7 @@ class MainActivity2 : AppCompatActivity(),
 
         }
 
-        for (time in timeCount) {
-            Log.d(TAG, "${Date(time.key)} : ${time.value.toStr()}")
-        }
-
-        if (true) {
-//        if (sharedPreferences.getBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, true)) {
+        if (sharedPreferences.getBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, true)) {
             for (time in endTimes) {
                 GlobalScope.launch(Dispatchers.IO) {
                     val decorator = EventDecorator2(applicationContext, time, lmsDatabase?.getDao()?.getByEndTime(time, time + AlarmManager.INTERVAL_DAY) ?: listOf())
@@ -461,21 +459,10 @@ class MainActivity2 : AppCompatActivity(),
             }
         } else {
             for (time in timeCount) {
-//                Log.d(TAG, "timecount ${Date(time.key)} : ${time.value.toStr()}")
                 val decorator = EventDecorator(ContextCompat.getColor(this, R.color.colorAccent), time.value, arrayListOf(CalendarDay.from(Date(time.key))))
                 binding.calendarView.addDecorator(decorator)
                 decorators[time.key] = decorator
             }
         }
-    }
-
-    fun IntArray.toStr(): String {
-        val builder = StringBuilder("{")
-        for (i in this) {
-            builder.append("${i},")
-        }
-        builder.append("}")
-
-        return builder.toString()
     }
 }

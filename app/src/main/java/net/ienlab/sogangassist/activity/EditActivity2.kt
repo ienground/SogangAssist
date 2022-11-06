@@ -528,7 +528,7 @@ class EditActivity2 : AppCompatActivity() {
                 val id = intent.getIntExtra("ID", -1)
                 if (id != -1) {
                     GlobalScope.launch(Dispatchers.IO) {
-                        result.putExtra("ENDTIME", lmsDatabase?.getDao()?.get(id.toLong())?.endTime ?: 0L)
+                        result.putExtra(IntentKey.ENDTIME, lmsDatabase?.getDao()?.get(id.toLong())?.endTime ?: 0L)
                         lmsDatabase?.getDao()?.delete(id.toLong())
                         for (i in 0 until 5) {
                             val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ID, id) }
@@ -585,7 +585,7 @@ class EditActivity2 : AppCompatActivity() {
             R.id.chip1, R.id.chip2 -> {
                 if (binding.etClass.editText?.text?.toString() != "" && binding.etTimeWeek.editText?.text?.toString() != "" && binding.etTimeLesson.editText?.text?.toString() != "") {
                     val result = Intent()
-                    result.putExtra("ENDTIME", onSave(isFinished))
+                    result.putExtra(IntentKey.ENDTIME, onSave(isFinished))
                     setResult(RESULT_OK, result)
                     finish()
                 } else if (binding.etTimeWeek.editText?.text?.toString() != "" && binding.etTimeLesson.editText?.text?.toString() != "") {
@@ -602,7 +602,7 @@ class EditActivity2 : AppCompatActivity() {
             R.id.chip3, R.id.chip5 -> {
                 if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 123
                     val result = Intent()
-                    result.putExtra("ENDTIME", onSave(isFinished))
+                    result.putExtra(IntentKey.ENDTIME, onSave(isFinished))
                     setResult(RESULT_OK, result)
                     finish()
                 } else if (binding.etAssignment.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 23
@@ -625,7 +625,7 @@ class EditActivity2 : AppCompatActivity() {
             R.id.chip4 -> {
                 if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != "") { // 12
                     val result = Intent()
-                    result.putExtra("ENDTIME", onSave(isFinished))
+                    result.putExtra(IntentKey.ENDTIME, onSave(isFinished))
                     setResult(RESULT_OK, result)
                     finish()
                 } else if (binding.etAssignment.editText?.text?.toString() != "" ) { // 2
@@ -640,7 +640,7 @@ class EditActivity2 : AppCompatActivity() {
             R.id.chip6 -> {
                 if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != "") { // 12
                     val result = Intent()
-                    result.putExtra("ENDTIME", onSave(isFinished))
+                    result.putExtra(IntentKey.ENDTIME, onSave(isFinished))
                     setResult(RESULT_OK, result)
                     finish()
                 } else if (binding.etAssignment.editText?.text?.toString() != "" ) { // 2

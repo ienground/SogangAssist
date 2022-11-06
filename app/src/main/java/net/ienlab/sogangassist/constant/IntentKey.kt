@@ -7,5 +7,6 @@ class IntentKey {
         const val TRIGGER = "TRIGGER"
         const val TIME = "TIME"
         const val MINUTE = "MINUTE"
+        const val ENDTIME = "ENDTIME"
     }
 }

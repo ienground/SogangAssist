@@ -46,7 +46,7 @@ class MainAllListFragment() : Fragment() {
     private val clickCallbackListener = object: MainAllListClickCallbackListener {
         override fun callBack(position: Int, data: LMSEntity) {
             mListener?.onPlanListItemClicked(position, data)
-            startActivity(Intent(context, EditActivity2::class.java).apply {
+            editActivityLauncher.launch(Intent(context, EditActivity2::class.java).apply {
                 putExtra(IntentKey.ID, data.id)
             })
         }
@@ -66,28 +66,18 @@ class MainAllListFragment() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lmsDatabase = LMSDatabase.getInstance(requireContext())
+//skejt ghdtiloh lketj gkldj l;v j,trlhytmjyorklgsdfxmf v;xljvyhklrjkfp[askd l;
+//XURY 최고 우주 지배]
+
 
         editActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
-
+                setData()
+                mListener?.onPlanListItemEdited(result.data?.getLongExtra(IntentKey.ENDTIME, -1L) ?: -1L)
             }
         }
 
-        GlobalScope.launch(Dispatchers.IO) {
-            val data: ArrayList<LMSEntity> = arrayListOf()
-
-            data.addAll(lmsDatabase?.getDao()?.getByEndTime(calendar.timeZero().timeInMillis, calendar.tomorrowZero().timeInMillis) ?: listOf())
-            data.sortWith(compareBy( { it.endTime } , { it.startTime } ))
-
-            val adapter = MainLMSAdapter(data, calendar).apply {
-                setCallbackListener(clickCallbackListener)
-            }
-
-            withContext(Dispatchers.Main) {
-                binding.allList.adapter = adapter
-            }
-        }
-
+        setData()
     }
 
     override fun onAttach(context: Context) {
@@ -104,7 +94,26 @@ class MainAllListFragment() : Fragment() {
         mListener = null
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun setData() {
+        GlobalScope.launch(Dispatchers.IO) {
+            val data: ArrayList<LMSEntity> = arrayListOf()
+
+            data.addAll(lmsDatabase?.getDao()?.getByEndTime(calendar.timeZero().timeInMillis, calendar.tomorrowZero().timeInMillis) ?: listOf())
+            data.sortWith(compareBy( { it.endTime } , { it.startTime } ))
+
+            val adapter = MainLMSAdapter(data, calendar).apply {
+                setCallbackListener(clickCallbackListener)
+            }
+
+            withContext(Dispatchers.Main) {
+                binding.allList.adapter = adapter
+            }
+        }
+    }
+
     interface OnFragmentInteractionListener {
         fun onPlanListItemClicked(position: Int, data: LMSEntity)
+        fun onPlanListItemEdited(endTime: Long)
     }
 }

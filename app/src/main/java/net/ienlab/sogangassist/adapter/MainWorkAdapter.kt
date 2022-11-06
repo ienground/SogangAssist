@@ -1,6 +1,7 @@
 package net.ienlab.sogangassist.adapter
 
 import android.app.Activity
+import android.app.AlarmManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Paint
@@ -13,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.dinuscxj.progressbar.CircleProgressBar
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
@@ -31,6 +33,7 @@ import net.ienlab.sogangassist.utils.ClickCallbackListener
 import net.ienlab.sogangassist.utils.MyBottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class MainWorkAdapter(private var items: ArrayList<LMSEntity>) : RecyclerView.Adapter<MainWorkAdapter.ItemViewHolder>() {
 
@@ -38,7 +41,7 @@ class MainWorkAdapter(private var items: ArrayList<LMSEntity>) : RecyclerView.Ad
     lateinit var context: Context
     lateinit var storage: AppStorage
 
-    var interstitialAd: InterstitialAd? = null
+//    var interstitialAd: InterstitialAd? = null
     private var deleteCallbackListener: ClickCallbackListener? = null
     private var clickCallbackListener: ClickCallbackListener? = null
     private var lmsDatabase: LMSDatabase? = null
@@ -58,14 +61,28 @@ class MainWorkAdapter(private var items: ArrayList<LMSEntity>) : RecyclerView.Ad
     override fun onBindViewHolder(holder: MainWorkAdapter.ItemViewHolder, position: Int) {
         val timeFormat = SimpleDateFormat(context.getString(R.string.timeFormat), Locale.getDefault())
 
-        setFullAd(context)
+//        setFullAd(context)
 
-        holder.tvTime.text = context.getString(if (items[holder.adapterPosition].type != LMSEntity.TYPE_ZOOM && items[holder.adapterPosition].type != LMSEntity.TYPE_EXAM) R.string.deadline else R.string.start, timeFormat.format(Date(items[holder.adapterPosition].endTime)))
-        holder.tvSubName.text = items[holder.adapterPosition].homework_name
-        holder.tvClassName.text = items[holder.adapterPosition].className
+        holder.tvClass.text = "${items[holder.adapterPosition].className} · ${timeFormat.format(Date(items[holder.adapterPosition].endTime))}"
+
+        val leftTime = items[holder.adapterPosition].endTime - System.currentTimeMillis()
+
+
+        val hourLeft = TimeUnit.HOURS.convert(items[holder.adapterPosition].endTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS).toInt()
+        val minuteLeft = TimeUnit.MINUTES.convert(items[holder.adapterPosition].endTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS).toInt() % 60
+        val dayLeft = TimeUnit.DAYS.convert(items[holder.adapterPosition].endTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS).toInt()
+
+        holder.tvTime.text = if (dayLeft != 0) context.getString(R.string.time_day, dayLeft)
+        else if (hourLeft != 0 && minuteLeft != 0) context.getString(R.string.time_hour_min, hourLeft, minuteLeft)
+        else if (hourLeft != 0) context.getString(R.string.time_hour, hourLeft)
+        else context.getString(R.string.time_min, minuteLeft)
+
+        holder.progressBar.max = (AlarmManager.INTERVAL_DAY / 1000).toInt()
+        holder.progressBar.progress = (leftTime / 1000).toInt()
+        holder.progressBar.setProgressFormatter { _, _ ->  "" }
 
         holder.itemView.setOnClickListener {
-            if (!storage.purchasedAds()) displayAd(context as Activity)
+//            if (!storage.purchasedAds()) displayAd(context as Activity)
             clickCallbackListener?.callBack(holder.adapterPosition, items, this)
         }
 
@@ -74,18 +91,13 @@ class MainWorkAdapter(private var items: ArrayList<LMSEntity>) : RecyclerView.Ad
                 dismissWithAnimation = true
 
                 val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(this@MainWorkAdapter.context), false)
-                val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
                 val tvTitle: TextView = view.findViewById(R.id.tv_title)
                 val tvContent: TextView = view.findViewById(R.id.tv_content)
                 val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
                 val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
-                val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
-                val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
 
                 btnPositive.visibility = View.VISIBLE
                 btnNegative.visibility = View.VISIBLE
-
-                imgLogo.setImageResource(R.drawable.ic_check)
 
                 if (items[holder.adapterPosition].isFinished) {
                     tvTitle.text = this@MainWorkAdapter.context.getString(R.string.mark_as_not_finish)
@@ -118,55 +130,53 @@ class MainWorkAdapter(private var items: ArrayList<LMSEntity>) : RecyclerView.Ad
             LMSEntity.TYPE_HOMEWORK -> {
                 holder.icIcon.setImageResource(R.drawable.ic_assignment)
                 holder.icIcon.contentDescription = context.getString(R.string.assignment)
-                holder.tvSubName.text = items[holder.adapterPosition].homework_name
+                holder.tvContent.text = items[holder.adapterPosition].homework_name
             }
 
             LMSEntity.TYPE_LESSON -> {
                 holder.icIcon.setImageResource(R.drawable.ic_video)
                 holder.icIcon.contentDescription = context.getString(R.string.classtime)
-                holder.tvSubName.text = context.getString(R.string.week_lesson_format, items[holder.adapterPosition].week, items[holder.adapterPosition].lesson)
+                holder.tvContent.text = context.getString(R.string.week_lesson_format, items[holder.adapterPosition].week, items[holder.adapterPosition].lesson)
             }
 
             LMSEntity.TYPE_SUP_LESSON -> {
                 holder.icIcon.setImageResource(R.drawable.ic_video_sup)
                 holder.icIcon.contentDescription = context.getString(R.string.sup_classtime)
-                holder.tvSubName.text = context.getString(R.string.week_lesson_format, items[holder.adapterPosition].week, items[holder.adapterPosition].lesson) + context.getString(R.string.enrich_study)
+                holder.tvContent.text = context.getString(R.string.week_lesson_format, items[holder.adapterPosition].week, items[holder.adapterPosition].lesson) + context.getString(R.string.enrich_study)
             }
 
             LMSEntity.TYPE_ZOOM -> {
                 holder.icIcon.setImageResource(R.drawable.ic_live_class)
                 holder.icIcon.contentDescription = context.getString(R.string.zoom)
-                holder.tvSubName.text = items[holder.adapterPosition].homework_name
+                holder.tvContent.text = items[holder.adapterPosition].homework_name
             }
 
             LMSEntity.TYPE_TEAMWORK -> {
                 holder.icIcon.setImageResource(R.drawable.ic_team)
                 holder.icIcon.contentDescription = context.getString(R.string.team_project)
-                holder.tvSubName.text = items[holder.adapterPosition].homework_name
+                holder.tvContent.text = items[holder.adapterPosition].homework_name
             }
 
             LMSEntity.TYPE_EXAM -> {
                 holder.icIcon.setImageResource(R.drawable.ic_test)
                 holder.icIcon.contentDescription = context.getString(R.string.exam)
-                holder.tvSubName.text = items[holder.adapterPosition].homework_name
+                holder.tvContent.text = items[holder.adapterPosition].homework_name
             }
         }
 
         if (items[holder.adapterPosition].isFinished) {
-            holder.tvClassName.paintFlags = holder.tvClassName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            holder.tvSubName.paintFlags = holder.tvSubName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            holder.tvClass.paintFlags = holder.tvClass.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            holder.tvContent.paintFlags = holder.tvContent.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             holder.tvTime.paintFlags = holder.tvTime.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            holder.tvClassName.alpha = 0.5f
-            holder.tvSubName.alpha = 0.5f
+            holder.tvClass.alpha = 0.5f
+            holder.tvContent.alpha = 0.5f
             holder.tvTime.alpha = 0.5f
             holder.icCheck.visibility = View.VISIBLE
         } else {
             holder.icCheck.visibility = View.GONE
         }
-        val imgList = arrayOf(R.drawable.sg_img_01, R.drawable.sg_img_02, R.drawable.sg_img_03, R.drawable.sg_img_04)
-        holder.itemView.setBackgroundResource(imgList[holder.adapterPosition % 4])
 
-        holder.tvSubName.isSelected = true
+        holder.tvContent.isSelected = true
 
     }
 
@@ -181,6 +191,7 @@ class MainWorkAdapter(private var items: ArrayList<LMSEntity>) : RecyclerView.Ad
         this.clickCallbackListener = callbackListener
     }
 
+    /*
     fun setFullAd(context: Context) {
         if (BuildConfig.DEBUG) {
             RequestConfiguration.Builder()
@@ -211,10 +222,13 @@ class MainWorkAdapter(private var items: ArrayList<LMSEntity>) : RecyclerView.Ad
         }
     }
 
+     */
+
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvTime: TextView = itemView.findViewById(R.id.tv_time)
-        val tvSubName: TextView = itemView.findViewById(R.id.tv_sub_name)
-        val tvClassName: TextView = itemView.findViewById(R.id.tv_class_name)
+        val tvClass: TextView = itemView.findViewById(R.id.tv_class)
+        val tvContent: TextView = itemView.findViewById(R.id.tv_content)
+        val progressBar: CircleProgressBar = itemView.findViewById(R.id.progressBar)
         val icIcon: ImageView = itemView.findViewById(R.id.ic_icon)
         val icCheck: ImageView = itemView.findViewById(R.id.ic_check)
     }

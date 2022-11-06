@@ -79,6 +79,7 @@
                             android:layout_margin="@dimen/usual_margin"
                             android:clickable="true"
                             android:focusable="true"
+                            android:visibility="gone"
                             app:cardBackgroundColor="@color/white"
                             app:cardCornerRadius="@dimen/layout_radius"
                             app:cardElevation="0dp"
@@ -135,13 +136,25 @@
                         <androidx.viewpager2.widget.ViewPager2
                             android:id="@+id/viewPager"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="100dp"
                             android:clipToPadding="false"
                             android:clipChildren="false"
-                            android:paddingHorizontal="40dp"
+                            android:layout_marginTop="@dimen/usual_margin"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/tag_event" />
+
+                        <com.google.android.material.tabs.TabLayout
+                            android:id="@+id/viewPagerTab"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:tabBackground="@drawable/tab_selector_main"
+                            android:background="@android:color/transparent"
+                            app:tabGravity="center"
+                            app:tabIndicatorHeight="0dp"
+                            app:layout_constraintStart_toStartOf="@id/viewPager"
+                            app:layout_constraintEnd_toEndOf="@id/viewPager"
+                            app:layout_constraintTop_toBottomOf="@id/viewPager"/>
 
                         <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
                             android:id="@+id/event_progress"
@@ -153,7 +166,7 @@
                             app:rcProgressColor="?attr/colorAccent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/viewPager" />
+                            app:layout_constraintTop_toBottomOf="@id/viewPagerTab" />
 
                         <TextView
                             android:id="@+id/tv_event_progress"
@@ -613,7 +626,7 @@
                                 android:layout_height="wrap_content"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/tabLayout" />
+                                app:layout_constraintTop_toBottomOf="@id/tabLayout"/>
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -629,6 +642,7 @@
             android:id="@+id/adView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/sliding_pane_layout"
             app:layout_constraintBottom_toBottomOf="parent"
             app:adSize="BANNER"
