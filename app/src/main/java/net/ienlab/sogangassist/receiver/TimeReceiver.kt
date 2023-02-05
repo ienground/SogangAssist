@@ -18,6 +18,7 @@ import net.ienlab.sogangassist.*
 import net.ienlab.sogangassist.constant.ChannelId
 import net.ienlab.sogangassist.activity.*
 import net.ienlab.sogangassist.constant.DefaultValue
+import net.ienlab.sogangassist.constant.IntentKey
 import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.room.LMSDatabase
 import net.ienlab.sogangassist.room.LMSEntity
@@ -42,10 +43,10 @@ class TimeReceiver : BroadcastReceiver() {
             nm.createNotificationChannel(channel)
         }
 
-        val id = intent.getIntExtra("ID", -1)
-        val time = intent.getIntExtra("TIME", -1)
-        val minute = intent.getIntExtra("MINUTE", -1)
-        val triggerTime = intent.getLongExtra("TRIGGER", -1)
+        val id = intent.getLongExtra(IntentKey.ITEM_ID, -1)
+        val time = intent.getIntExtra(IntentKey.TIME, -1)
+        val minute = intent.getIntExtra(IntentKey.MINUTE, -1)
+        val triggerTime = intent.getLongExtra(IntentKey.TRIGGER, -1)
 
         val hourData = listOf(1, 2, 6, 12, 24)
         val minuteData = listOf(3, 5, 10, 20, 30)
@@ -77,10 +78,10 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in lecHoursOn)) {
                         if (item.className != "") {
                             NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
-                                val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
-                                val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                val clickIntent = Intent(context, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                val clickPendingIntent = PendingIntent.getActivity(context, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                val pendingIntent = PendingIntent.getBroadcast(context, id.toInt(), markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                 setContentTitle(item.className)
                                 setContentText(context.getString(R.string.reminder_content_lec, item.week, item.lesson, time))
@@ -92,7 +93,7 @@ class TimeReceiver : BroadcastReceiver() {
                                 color = ContextCompat.getColor(context, R.color.colorAccent)
 
                                 if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                    nm.notify(693000 + id, build())
+                                    nm.notify(693000 + id.toInt(), build())
                                 }
                             }
                         }
@@ -102,10 +103,10 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in lecHoursOn)) {
                         if (item.className != "") {
                             NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
-                                val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
-                                val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                val clickIntent = Intent(context, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                val clickPendingIntent = PendingIntent.getActivity(context, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                val pendingIntent = PendingIntent.getBroadcast(context, id.toInt(), markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                 setContentTitle(item.className)
                                 setContentText(context.getString(R.string.reminder_content_sup_lec, item.week, item.lesson, time))
@@ -117,7 +118,7 @@ class TimeReceiver : BroadcastReceiver() {
                                 color = ContextCompat.getColor(context, R.color.colorAccent)
 
                                 if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                    nm.notify(693000 + id, build())
+                                    nm.notify(693000 + id.toInt(), build())
                                 }
                             }
                         }
@@ -127,10 +128,10 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in hwHoursOn)) {
                         if (item.className != "") {
                             NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
-                                val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
-                                val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                val clickIntent = Intent(context, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                val clickPendingIntent = PendingIntent.getActivity(context, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                val pendingIntent = PendingIntent.getBroadcast(context, id.toInt(), markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                 setContentTitle(item.className)
                                 setContentText(context.getString(R.string.reminder_content_hw, item.homework_name, time))
@@ -142,7 +143,7 @@ class TimeReceiver : BroadcastReceiver() {
                                 color = ContextCompat.getColor(context, R.color.colorAccent)
 
                                 if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                    nm.notify(693000 + id, build())
+                                    nm.notify(693000 + id.toInt(), build())
                                 }
                             }
                         }
@@ -152,10 +153,10 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (minute in zoomMinutesOn)) {
                         if (item.className != "") {
                             NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
-                                val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
-                                val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                val clickIntent = Intent(context, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                val clickPendingIntent = PendingIntent.getActivity(context, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                val pendingIntent = PendingIntent.getBroadcast(context, id.toInt(), markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                 setContentTitle(item.className)
                                 setContentText(context.getString(R.string.reminder_content_zoom, item.homework_name, minute))
@@ -167,7 +168,7 @@ class TimeReceiver : BroadcastReceiver() {
                                 color = ContextCompat.getColor(context, R.color.colorAccent)
 
                                 if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                    nm.notify(693000 + id, build())
+                                    nm.notify(693000 + id.toInt(), build())
                                 }
                             }
                         }
@@ -177,10 +178,10 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (time in hwHoursOn)) {
                         if (item.className != "") {
                             NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
-                                val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
-                                val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                val clickIntent = Intent(context, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                val clickPendingIntent = PendingIntent.getActivity(context, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                val pendingIntent = PendingIntent.getBroadcast(context, id.toInt(), markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                 setContentTitle(item.className)
                                 setContentText(context.getString(R.string.reminder_content_team, item.homework_name, time))
@@ -192,7 +193,7 @@ class TimeReceiver : BroadcastReceiver() {
                                 color = ContextCompat.getColor(context, R.color.colorAccent)
 
                                 if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                    nm.notify(693000 + id, build())
+                                    nm.notify(693000 + id.toInt(), build())
                                 }
                             }
                         }
@@ -202,10 +203,10 @@ class TimeReceiver : BroadcastReceiver() {
                     if (abs(System.currentTimeMillis() - triggerTime) <= 3000 && !item.isFinished && (minute in examMinutesOn)) {
                         if (item.className != "") {
                             NotificationCompat.Builder(context, ChannelId.DEFAULT_ID).apply {
-                                val clickIntent = Intent(context, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                val clickPendingIntent = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra("ID", id) }
-                                val pendingIntent = PendingIntent.getBroadcast(context, id, markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                val clickIntent = Intent(context, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                val clickPendingIntent = PendingIntent.getActivity(context, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                val pendingIntent = PendingIntent.getBroadcast(context, id.toInt(), markIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                 setContentTitle(item.className)
                                 setContentText(context.getString(R.string.reminder_content_exam, item.homework_name, minute))
@@ -217,7 +218,7 @@ class TimeReceiver : BroadcastReceiver() {
                                 color = ContextCompat.getColor(context, R.color.colorAccent)
 
                                 if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                    nm.notify(693000 + id, build())
+                                    nm.notify(693000 + id.toInt(), build())
                                 }
                             }
                         }

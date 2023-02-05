@@ -5,7 +5,7 @@
     <data>
         <variable
             name="activity"
-            type="net.ienlab.sogangassist.activity.EditActivity2" />
+            type="net.ienlab.sogangassist.activity.EditActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,52 +43,52 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip1"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/classtime"
                     android:fontFamily="@font/pretendard"
+                    android:checkable="true"
                     android:layout_marginStart="@dimen/usual_margin"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip2"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sup_classtime"
-                    android:fontFamily="@font/pretendard" />
+                    android:fontFamily="@font/pretendard"
+                    android:checkable="true" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip3"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/assignment"
-                    android:fontFamily="@font/pretendard" />
+                    android:fontFamily="@font/pretendard"
+                    android:checkable="true" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip4"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/zoom"
-                    android:fontFamily="@font/pretendard" />
+                    android:fontFamily="@font/pretendard"
+                    android:checkable="true" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip5"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/team_project"
-                    android:fontFamily="@font/pretendard" />
+                    android:fontFamily="@font/pretendard"
+                    android:checkable="true" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip6"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/exam"
                     android:fontFamily="@font/pretendard"
+                    android:checkable="true"
                     android:layout_marginEnd="@dimen/usual_margin"/>
 
             </com.google.android.material.chip.ChipGroup>
@@ -101,12 +101,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/usual_margin"
-            app:boxStrokeColor="@color/colorPrimary"
-            app:boxBackgroundColor="@color/white"
-            app:hintTextColor="@color/colorPrimary"
             app:endIconMode="dropdown_menu"
             app:endIconDrawable="@drawable/ic_arrow_drop_down"
-            app:endIconTint="@color/colorPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/chip_scroll" >
@@ -118,7 +114,6 @@
                 android:singleLine="true"
                 android:hint="@string/class_name"
                 android:completionThreshold="0"
-                android:textColor="@color/black"
                 android:fontFamily="@font/pretendard"
                 android:textSize="32sp"/>
 
@@ -131,9 +126,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/usual_margin"
             android:visibility="invisible"
-            app:boxStrokeColor="@color/colorPrimary"
-            app:boxBackgroundColor="@color/white"
-            app:hintTextColor="@color/colorPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_class" >
@@ -144,7 +136,6 @@
                 android:singleLine="true"
                 android:hint="@string/assignment_name"
                 android:textSize="26sp"
-                android:textColor="@color/black"
                 android:fontFamily="@font/pretendard"/>
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -156,9 +147,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/usual_margin"
             app:suffixText="@string/week"
-            app:boxStrokeColor="@color/colorPrimary"
-            app:boxBackgroundColor="@color/white"
-            app:hintTextColor="@color/colorPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/et_time_lesson"
             app:layout_constraintTop_toBottomOf="@id/et_class" >
@@ -170,7 +158,6 @@
                 android:hint="@string/week"
                 android:textSize="26sp"
                 android:inputType="number"
-                android:textColor="@color/black"
                 android:fontFamily="@font/pretendard"
                 android:imeOptions="actionNext" />
 
@@ -184,9 +171,6 @@
             android:layout_marginVertical="@dimen/usual_margin"
             android:layout_marginEnd="@dimen/usual_margin"
             app:suffixText="@string/lesson"
-            app:boxStrokeColor="@color/colorPrimary"
-            app:boxBackgroundColor="@color/white"
-            app:hintTextColor="@color/colorPrimary"
             app:layout_constraintStart_toEndOf="@id/et_time_week"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_class" >
@@ -198,20 +182,19 @@
                 android:hint="@string/lesson"
                 android:textSize="26sp"
                 android:inputType="number"
-                android:textColor="@color/black"
                 android:fontFamily="@font/pretendard"
                 android:imeOptions="actionDone" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <View
+        <com.google.android.material.divider.MaterialDivider
             android:id="@+id/line_class"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/black"
-            android:alpha="0.12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/usual_margin"
             android:layout_marginBottom="@dimen/usual_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_time_week"/>
 
         <ImageView
@@ -221,7 +204,7 @@
             android:src="@drawable/ic_today"
             android:contentDescription="@string/class_name"
             android:layout_marginStart="@dimen/usual_margin"
-            app:tint="@color/gray"
+            app:tint="?attr/colorOnSecondaryContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/tv_start_date"
             app:layout_constraintTop_toTopOf="@id/tv_start_date"
@@ -232,7 +215,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="2020년 10월 3일 (일)"
-            android:textColor="@color/black"
+            android:textColor="?attr/colorOnSecondaryContainer"
             android:fontFamily="@font/pretendard"
             android:layout_margin="@dimen/usual_margin"
             app:layout_constraintStart_toEndOf="@id/ic_date"
@@ -244,7 +227,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="오후 8:30"
-            android:textColor="@color/black"
+            android:textColor="?attr/colorOnSecondaryContainer"
             android:textAlignment="textEnd"
             android:fontFamily="@font/pretendard"
             android:layout_marginEnd="@dimen/usual_margin"
@@ -258,7 +241,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="2020년 10월 4일 (일)"
-            android:textColor="@color/black"
+            android:textColor="?attr/colorOnSecondaryContainer"
             android:fontFamily="@font/pretendard"
             android:layout_margin="@dimen/usual_margin"
             app:layout_constraintStart_toEndOf="@id/ic_date"
@@ -270,7 +253,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="오후 9:30"
-            android:textColor="@color/black"
+            android:textColor="?attr/colorOnSecondaryContainer"
             android:textAlignment="textEnd"
             android:fontFamily="@font/pretendard"
             android:layout_marginEnd="@dimen/usual_margin"
@@ -286,7 +269,7 @@
             android:src="@drawable/ic_today"
             android:contentDescription="@string/class_name"
             android:layout_marginStart="@dimen/usual_margin"
-            app:tint="@color/gray"
+            app:tint="?attr/colorOnSecondaryContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/tv_class_end_date"
             app:layout_constraintTop_toTopOf="@id/tv_class_end_date"
@@ -297,7 +280,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="2020년 10월 10일 (일)"
-            android:textColor="@color/black"
+            android:textColor="?attr/colorOnSecondaryContainer"
             android:fontFamily="@font/pretendard"
             android:layout_margin="@dimen/usual_margin"
             app:layout_constraintStart_toEndOf="@id/ic_class_date"
@@ -309,7 +292,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="오후 10:30"
-            android:textColor="@color/black"
+            android:textColor="?attr/colorOnSecondaryContainer"
             android:textAlignment="textEnd"
             android:fontFamily="@font/pretendard"
             android:layout_marginEnd="@dimen/usual_margin"
@@ -324,7 +307,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/usual_margin"
             android:text="@string/allow_auto_edit_lms"
-            android:textColor="@color/black"
+            android:textColor="?attr/colorOnSecondaryContainer"
             android:fontFamily="@font/pretendard"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

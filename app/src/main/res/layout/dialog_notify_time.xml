@@ -1,127 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.button.MaterialButtonToggleGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="64dp"
+    android:orientation="horizontal"
+    android:weightSum="5"
+    android:paddingHorizontal="@dimen/usual_margin"
+    android:paddingTop="@dimen/usual_margin"
+    app:selectionRequired="true"
+    app:singleSelection="false">
 
-    <TextView
-        android:id="@+id/tv_title"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_1hour"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/notify_hw"
-        android:textSize="18sp"
-        android:textColor="@color/black"
-        android:fontFamily="@font/pretendard_black"
-        android:layout_marginStart="@dimen/usual_margin"
-        android:layout_marginEnd="@dimen/usual_margin"
-        android:layout_marginTop="@dimen/usual_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_close"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:text="@string/one_hour"
+        android:checkable="true"
+        android:autoSizeTextType="uniform"
+        android:padding="@dimen/usual_margin_half"
+        android:fontFamily="@font/pretendard"/>
 
-    <ImageButton
-        android:id="@+id/btn_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_close"
-        android:contentDescription="@string/save"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:layout_marginEnd="@dimen/usual_margin"
-        app:tint="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_title"
-        app:layout_constraintBottom_toBottomOf="@id/tv_title"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_2hour"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:text="@string/two_hour"
+        android:checkable="true"
+        android:autoSizeTextType="uniform"
+        android:padding="@dimen/usual_margin_half"
+        android:fontFamily="@font/pretendard"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/usual_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title"
-        app:layout_constraintBottom_toBottomOf="parent">
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_6hour"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:text="@string/six_hour"
+        android:checkable="true"
+        android:autoSizeTextType="uniform"
+        android:padding="@dimen/usual_margin_half"
+        android:fontFamily="@font/pretendard"/>
 
-        <ImageButton
-            android:id="@+id/btn_1hour"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_1hour"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:alpha="0.3"
-            android:contentDescription="@string/one_hour"
-            android:layout_marginStart="@dimen/usual_margin"
-            android:layout_marginTop="@dimen/usual_margin"
-            android:layout_marginBottom="@dimen/usual_margin"
-            app:tint="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_chainStyle="spread"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_12hour"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:text="@string/twelve_hour"
+        android:checkable="true"
+        android:autoSizeTextType="uniform"
+        android:padding="@dimen/usual_margin_half"
+        android:fontFamily="@font/pretendard"/>
 
-        <ImageButton
-            android:id="@+id/btn_2hour"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_2hour"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:alpha="0.3"
-            android:contentDescription="@string/two_hour"
-            android:layout_marginTop="@dimen/usual_margin"
-            android:layout_marginBottom="@dimen/usual_margin"
-            app:tint="@color/black"
-            app:layout_constraintStart_toEndOf="@id/btn_1hour"
-            app:layout_constraintEnd_toStartOf="@id/btn_6hour"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_24hour"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:text="@string/twfour_hour"
+        android:checkable="true"
+        android:autoSizeTextType="uniform"
+        android:padding="@dimen/usual_margin_half"
+        android:fontFamily="@font/pretendard"/>
 
-        <ImageButton
-            android:id="@+id/btn_6hour"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_6hour"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:alpha="0.3"
-            android:contentDescription="@string/six_hour"
-            android:layout_marginTop="@dimen/usual_margin"
-            android:layout_marginBottom="@dimen/usual_margin"
-            app:tint="@color/black"
-            app:layout_constraintStart_toEndOf="@id/btn_2hour"
-            app:layout_constraintEnd_toStartOf="@id/btn_12hour"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-        <ImageButton
-            android:id="@+id/btn_12hour"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_12hour"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:alpha="0.3"
-            android:contentDescription="@string/twelve_hour"
-            android:layout_marginTop="@dimen/usual_margin"
-            android:layout_marginBottom="@dimen/usual_margin"
-            app:tint="@color/black"
-            app:layout_constraintStart_toEndOf="@id/btn_6hour"
-            app:layout_constraintEnd_toStartOf="@id/btn_24hour"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-        <ImageButton
-            android:id="@+id/btn_24hour"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_24hour"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:alpha="0.3"
-            android:contentDescription="@string/twfour_hour"
-            android:layout_marginEnd="@dimen/usual_margin"
-            android:layout_marginTop="@dimen/usual_margin"
-            android:layout_marginBottom="@dimen/usual_margin"
-            app:tint="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.button.MaterialButtonToggleGroup>

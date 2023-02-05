@@ -1,7 +1,6 @@
 package net.ienlab.sogangassist.adapter
 
 import android.content.Context
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
@@ -11,15 +10,11 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.activity.EditActivity2
 import net.ienlab.sogangassist.callback.MainAllListClickCallbackListener
-import net.ienlab.sogangassist.callback.MainLMSClickCallback
-import net.ienlab.sogangassist.constant.IntentKey
 import net.ienlab.sogangassist.room.LMSEntity
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.math.min
 
 class MainLMSAdapter(var items: ArrayList<LMSEntity>, var calendar: Calendar): RecyclerView.Adapter<MainLMSAdapter.ItemViewHolder>() {
 

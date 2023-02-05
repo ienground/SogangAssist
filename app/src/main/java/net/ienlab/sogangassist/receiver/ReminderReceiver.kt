@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.activity.SplashActivity
+import net.ienlab.sogangassist.activity.MainActivity
 import net.ienlab.sogangassist.activity.TAG
 import net.ienlab.sogangassist.constant.ChannelId
 import net.ienlab.sogangassist.constant.DefaultValue
@@ -110,7 +110,7 @@ class ReminderReceiver: BroadcastReceiver() {
                             setStyle(NotificationCompat.BigTextStyle()
                                 .bigText(context.getString(R.string.daily_reminder_content_format, content.joinToString(", "), bigTextContent.joinToString("\n\n")))
                             )
-                            setContentIntent(PendingIntent.getActivity(context, 1, Intent(context, SplashActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+                            setContentIntent(PendingIntent.getActivity(context, 1, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
                             setSmallIcon(R.drawable.ic_reminder_icon)
                             setAutoCancel(true)
                             color = ContextCompat.getColor(context, R.color.colorAccent)
@@ -129,7 +129,7 @@ class ReminderReceiver: BroadcastReceiver() {
                             setStyle(NotificationCompat.BigTextStyle()
                                 .bigText(context.getString(R.string.daily_reminder_content_format, content.joinToString(", "), bigTextContent.joinToString("\n\n")))
                             )
-                            setContentIntent(PendingIntent.getActivity(context, 1, Intent(context, SplashActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+                            setContentIntent(PendingIntent.getActivity(context, 1, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
                             setSmallIcon(R.drawable.ic_reminder_icon)
                             setAutoCancel(true)
                             color = ContextCompat.getColor(context, R.color.colorAccent)

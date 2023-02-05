@@ -1,126 +1,150 @@
 package net.ienlab.sogangassist.activity
 
-import android.app.*
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
+import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.res.ColorStateList
-import android.content.res.Configuration
-import android.graphics.*
-import android.os.*
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.animation.AlphaAnimation
-import android.widget.*
+import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
-import com.prolificinteractive.materialcalendarview.CalendarDay
-import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import kotlinx.coroutines.*
 import net.ienlab.sogangassist.BuildConfig
-import net.ienlab.sogangassist.constant.SharedKey
-import net.ienlab.sogangassist.databinding.ActivityMainBinding
+import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.adapter.MainLMSEventAdapter
+import net.ienlab.sogangassist.constant.IntentKey
+import net.ienlab.sogangassist.constant.IntentValue
+import net.ienlab.sogangassist.databinding.ActivityMain2Binding
 import net.ienlab.sogangassist.decorators.*
 import net.ienlab.sogangassist.receiver.TimeReceiver
-import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.adapter.MainWorkAdapter
-import net.ienlab.sogangassist.constant.DefaultValue
-import net.ienlab.sogangassist.receiver.ReminderReceiver
 import net.ienlab.sogangassist.room.LMSDatabase
-import net.ienlab.sogangassist.utils.*
+import net.ienlab.sogangassist.room.LMSEntity
+import net.ienlab.sogangassist.singlerowcalendar.calendar.CalendarChangesObserver
+import net.ienlab.sogangassist.singlerowcalendar.calendar.CalendarViewManager
+import net.ienlab.sogangassist.singlerowcalendar.calendar.SingleRowCalendar
+import net.ienlab.sogangassist.singlerowcalendar.calendar.SingleRowCalendarAdapter
+import net.ienlab.sogangassist.singlerowcalendar.selection.CalendarSelectionManager
+import net.ienlab.sogangassist.utils.AppStorage
+import net.ienlab.sogangassist.utils.ClickCallbackListener
+import net.ienlab.sogangassist.utils.MyUtils
+import net.ienlab.sogangassist.utils.MyUtils.Companion.timeZero
+import net.ienlab.sogangassist.utils.MyUtils.Companion.tomorrowZero
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.abs
 
 const val TAG = "SogangAssistTAG"
-const val testDevice = "48BC2075D1B2D4652C27A690C6EF0D6F"
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMain2Binding
 
+    private var lmsDatabase: LMSDatabase? = null
     lateinit var sharedPreferences: SharedPreferences
     lateinit var am: AlarmManager
-    lateinit var fadeOutAnimation: AlphaAnimation
-    lateinit var fadeInAnimation: AlphaAnimation
-
-    // Database
-    private var lmsDatabase: LMSDatabase? = null
 
     // StartActivityForResult
-    lateinit var editActivityLauncher: ActivityResultLauncher<Intent>
+    lateinit var editActivityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var settingsActivityLauncher: ActivityResultLauncher<Intent>
 
     // 뒤로가기 시간
     private val FINISH_INTERVAL_TIME: Long = 2000
     private var backPressedTime: Long = 0
 
-    lateinit var currentDecorator: CurrentDecorator
-    var thisCurrentDate: Long = 0
+    private lateinit var monthFormat: SimpleDateFormat
 
-    lateinit var typefaceBold: Typeface
-    lateinit var typefaceRegular: Typeface
-
-    lateinit var notiBadgeText: TextView
     lateinit var storage: AppStorage
 
-    val decorators: MutableMap<Long, DayViewDecorator> = mutableMapOf()
+    private var adapter: MainLMSEventAdapter? = null
+    var calendarViewSelected = ArrayList(Collections.nCopies(61, false))
 
-    /*
+//    private val deleteCallbackListener = object: ClickCallbackListener {
+//        override fun callBack(position: Int, items: List<LMSEntity>, adapter: MainWorkAdapter) {
+//            Snackbar.make(window.decorView.rootView, if (items[position].isFinished) getString(R.string.marked_as_finish) else getString(R.string.marked_as_not_finish), Snackbar.LENGTH_SHORT).setAction(R.string.undo) {
+//                items[position].isFinished = !items[position].isFinished
+//                adapter.notifyItemChanged(position)
+//            }.show()
+//        }
+//    }
 
-    private val deleteCallbackListener = object: ClickCallbackListener {
-        override fun callBack(position: Int, items: List<LMSClass>, adapter: MainWorkAdapter) {
-            setEachDecorator(items[position].endTime)
-            Snackbar.make(window.decorView.rootView, if (items[position].isFinished) getString(R.string.marked_as_finish) else getString(R.string.marked_as_not_finish), Snackbar.LENGTH_SHORT).setAction(R.string.undo) {
-                items[position].isFinished = !items[position].isFinished
-                dbHelper.updateItemById(items[position])
-                adapter.notifyItemChanged(position)
-                setEachDecorator(items[position].endTime)
+    @OptIn(DelicateCoroutinesApi::class)
+    private val clickCallbackListener = object: ClickCallbackListener {
+        override fun callBack(position: Int, entity: LMSEntity) {
+            Intent(applicationContext, EditActivity::class.java).apply {
+                putExtra(IntentKey.ITEM_ID, entity.id)
+                editActivityResultLauncher.launch(this)
+            }
+        }
+
+        override fun longClick(position: Int, entity: LMSEntity) {
+
+        }
+
+        override fun delete(position: Int, entity: LMSEntity) {
+            MaterialAlertDialogBuilder(this@MainActivity, R.style.Theme_SogangAssist_MaterialAlertDialog).apply {
+                setIcon(R.drawable.ic_delete)
+                setTitle(R.string.delete)
+                setMessage(R.string.delete_msg)
+                setPositiveButton(android.R.string.ok) { dialog, id ->
+                    entity.id?.let {
+                        if (it != -1L) {
+                            GlobalScope.launch(Dispatchers.IO) {
+                                lmsDatabase?.getDao()?.delete(it)
+                                for (i in 0 until 5) {
+                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, it) }
+                                    val pendingIntent =
+                                        PendingIntent.getBroadcast(applicationContext, it.toInt() * 100 + i + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    am.cancel(pendingIntent)
+
+                                    withContext(Dispatchers.Main) {
+                                        adapter?.delete(it)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                setNegativeButton(android.R.string.cancel) { dialog, id ->
+                    dialog.dismiss()
+                }
             }.show()
         }
     }
 
-    private val clickCallbackListener = object: ClickCallbackListener {
-        override fun callBack(position: Int, items: List<LMSClass>, adapter: MainWorkAdapter) {
-            Intent(applicationContext, EditActivity::class.java).apply {
-                putExtra("ID", items[position].id)
-                editActivityLauncher.launch(this)
-            }
-        }
-    }
-
-
-     */
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main2)
         binding.activity = this
+
+        lmsDatabase = LMSDatabase.getInstance(this)
+        sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
+        am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        storage = AppStorage(this)
+        monthFormat = SimpleDateFormat(getString(R.string.calendarFormat), Locale.getDefault())
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
 
-        startActivity(Intent(this, MainActivity2::class.java))
-        return
-        /*
         FirebaseInAppMessaging.getInstance().isAutomaticDataCollectionEnabled = true
         if (BuildConfig.DEBUG) {
             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -142,442 +166,172 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
-        dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
-        sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
-        fadeOutAnimation = AlphaAnimation(1f, 0f).apply { duration = 300 }
-        fadeInAnimation = AlphaAnimation(0f, 1f).apply { duration = 300 }
-        am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        currentDecorator = CurrentDecorator(this, Calendar.getInstance())
-        typefaceBold = ResourcesCompat.getFont(this, R.font.pretendard_black) ?: Typeface.DEFAULT
-        typefaceRegular = ResourcesCompat.getFont(this, R.font.pretendard_regular) ?: Typeface.DEFAULT
-        storage = AppStorage(this)
-
-        sharedPreferences.edit().putBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, sharedPreferences.getBoolean(SharedKey.CALENDAR_ICON_SHOW, true)).apply()
-
-        val monthFormat = SimpleDateFormat("MMMM yyyy", Locale.ENGLISH)
-
-        binding.tvNoDeadline.typeface = typefaceRegular
-        binding.btnAdd.typeface = typefaceRegular
-        binding.tvMonthFirst.typeface = typefaceRegular
-        binding.tvMonthSecond.typeface = typefaceRegular
-        binding.tvMonth.setText(monthFormat.format(Date(System.currentTimeMillis())))
-
-        if (storage.purchasedAds()) binding.adView.visibility = View.GONE
-        val adRequest = AdRequest.Builder()
-        if (BuildConfig.DEBUG) {
-            binding.adView.visibility = View.GONE
-            RequestConfiguration.Builder()
-                .setTestDeviceIds(arrayListOf(testDevice)).let {
-                    MobileAds.setRequestConfiguration(it.build())
-                }
+        binding.subTitle.text = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
+            in 6..10 -> getString(R.string.user_hello_morning)
+            in 11..16 -> getString(R.string.user_hello_afternoon)
+            in 17..20 -> getString(R.string.user_hello_evening)
+            else -> getString(R.string.user_hello_night)
         }
 
-        binding.adView.loadAd(adRequest.build())
+        val calendarViewManager = object: CalendarViewManager {
+            override fun setCalendarViewResourceId(position: Int, date: Date, isSelected: Boolean): Int = R.layout.adapter_main_calarm_date
+            override fun bindDataToCalendarView(holder: SingleRowCalendarAdapter.CalendarViewHolder, date: Date, position: Int, isSelected: Boolean) {
+                val calendar = Calendar.getInstance().apply { time = date }
+                val dayFormat = SimpleDateFormat("EEE", Locale.getDefault())
+                val dateFormat = SimpleDateFormat("dd", Locale.getDefault())
+                val monthFormat = SimpleDateFormat("M", Locale.getDefault())
+                val cardSelected: MaterialCardView = holder.itemView.findViewById(R.id.card_selected)
+                val cardUnselected: MaterialCardView = holder.itemView.findViewById(R.id.card_unselected)
+                val tvDateSelected: MaterialTextView = holder.itemView.findViewById(R.id.tv_date_selected)
+                val tvDaySelected: MaterialTextView = holder.itemView.findViewById(R.id.tv_day_selected)
+                val tvMonthSelected: MaterialTextView = holder.itemView.findViewById(R.id.tv_month_selected)
+                val tvDateUnselected: MaterialTextView = holder.itemView.findViewById(R.id.tv_date_unselected)
+                val tvDayUnselected: MaterialTextView = holder.itemView.findViewById(R.id.tv_day_unselected)
+                val tvMonthUnselected: MaterialTextView = holder.itemView.findViewById(R.id.tv_month_unselected)
 
-        // StartActiviyForResult 객체
-        editActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val work = dbHelper.getItemAtLastDate(thisCurrentDate).toMutableList().apply { sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) } as ArrayList
-                binding.mainWorkView.adapter = MainWorkAdapter(work).apply {
-                    setDeleteCallback(deleteCallbackListener)
-                    setClickCallback(clickCallbackListener)
+                if (position == 60) {
+                    val params = holder.itemView.layoutParams as (ViewGroup.MarginLayoutParams)
+                    params.marginEnd = MyUtils.dpToPx(applicationContext, 16f).toInt()
                 }
-                binding.tvNoDeadline.visibility = if (work.isEmpty()) View.VISIBLE else View.GONE
 
-                val dialog = AlertDialog.Builder(this).apply {
-                    val linearLayout = LinearLayout(applicationContext).apply {
-                        val size = MyUtils.dpToPx(applicationContext, 16f).toInt()
-                        orientation = LinearLayout.HORIZONTAL
-                        setPadding(size, size, size, size)
+                tvDaySelected.text = dayFormat.format(calendar.time)
+                tvDateSelected.text = dateFormat.format(calendar.time)
+                tvDayUnselected.text = dayFormat.format(calendar.time)
+                tvDateUnselected.text = dateFormat.format(calendar.time)
+                tvMonthSelected.text = monthFormat.format(calendar.time) + "/"
+                tvMonthUnselected.text = monthFormat.format(calendar.time) + "/"
+
+                if (Calendar.getInstance().get(Calendar.MONTH) == calendar.get(Calendar.MONTH)) {
+                    tvMonthSelected.visibility = View.GONE
+                    tvMonthUnselected.visibility = View.GONE
+                } else {
+                    tvMonthSelected.visibility = View.VISIBLE
+                    tvMonthUnselected.visibility = View.VISIBLE
+                }
+
+                if (calendarViewSelected[position]) {
+                    if (isSelected) {
+                        cardSelected.alpha = 1f
+                        cardUnselected.alpha = 0f
+                    } else {
+                        ValueAnimator.ofFloat(1f, 0f).apply {
+                            duration = 300
+                            addUpdateListener {
+                                cardSelected.alpha = it.animatedValue as Float
+                                cardUnselected.alpha = 1f - it.animatedValue as Float
+                            }
+                        }.start()
+                        calendarViewSelected[position] = false
                     }
-                    val progressBar = ProgressBar(applicationContext, null, android.R.attr.progressBarStyleHorizontal).apply {
-                        layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                        isIndeterminate = true
-                        indeterminateTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.colorAccent))
+                } else {
+                    if (isSelected) {
+                        ValueAnimator.ofFloat(0f, 1f).apply {
+                            duration = 300
+                            addUpdateListener {
+                                cardSelected.alpha = it.animatedValue as Float
+                                cardUnselected.alpha = 1f - it.animatedValue as Float
+                            }
+                        }.start()
+                        calendarViewSelected[position] = true
+                    } else {
+                        cardSelected.alpha = 0f
+                        cardUnselected.alpha = 1f
                     }
-
-                    linearLayout.addView(progressBar)
-                    setView(linearLayout)
-                    setTitle(getString(R.string.load_data))
-                    setCancelable(false)
-
-                }.create()
-
-                dialog.show()
-
-                Handler(Looper.getMainLooper()).postDelayed({
-                    setDecorators(applicationContext)
-                    dialog.dismiss()
-                    binding.calendarView.visibility = View.VISIBLE
-                }, 1000)
+                }
             }
-            binding.adView.visibility = if (storage.purchasedAds()) View.GONE else View.VISIBLE
+        }
+        val calendarSelectionManager = object: CalendarSelectionManager {
+            override fun canBeItemSelected(position: Int, date: Date): Boolean {
+                binding.shimmerFrame.startShimmer()
+                binding.shimmerFrame.visibility = View.VISIBLE
+                binding.listEvent.visibility = View.INVISIBLE
+                binding.icNoCalarms.alpha = 0f
+                binding.tvNoCalarms.alpha = 0f
+                binding.shimmerFrame.alpha = 1f
+                binding.listEvent.alpha = 0f
+
+                GlobalScope.launch(Dispatchers.IO) {
+                    val calendar = Calendar.getInstance().apply { time = date }
+                    val datas = lmsDatabase?.getDao()?.getByEndTime(calendar.timeZero().timeInMillis, calendar.tomorrowZero().timeInMillis)
+                    withContext(Dispatchers.Main) {
+                        adapter = MainLMSEventAdapter(datas as ArrayList<LMSEntity>, calendar).apply { setClickCallback(clickCallbackListener) }
+                        binding.listEvent.adapter = adapter
+                        binding.shimmerFrame.stopShimmer()
+
+                        ValueAnimator.ofFloat(0f, 1f).apply {
+                            duration = 300
+                            addUpdateListener {
+                                binding.listEvent.alpha = it.animatedValue as Float
+                                binding.shimmerFrame.alpha = 1f - it.animatedValue as Float
+
+                                if (datas.isEmpty()) {
+                                    binding.icNoCalarms.alpha = (it.animatedValue as Float) * 0.4f
+                                    binding.tvNoCalarms.alpha = (it.animatedValue as Float) * 0.4f
+                                }
+                            }
+                            addListener(object : AnimatorListenerAdapter() {
+                                override fun onAnimationStart(animation: Animator) {
+                                    super.onAnimationStart(animation)
+                                    binding.listEvent.visibility = View.VISIBLE
+                                }
+
+                                override fun onAnimationEnd(animation: Animator) {
+                                    super.onAnimationEnd(animation)
+                                    binding.shimmerFrame.visibility = View.INVISIBLE
+                                }
+                            })
+                        }.start()
+                    }
+                }
+                binding.listEvent.adapter = adapter
+                return true
+            }
+        }
+        val calendarChangesObserver = object: CalendarChangesObserver {}
+
+        (binding.listDate as SingleRowCalendar).apply {
+            this.calendarViewManager = calendarViewManager
+            this.calendarSelectionManager = calendarSelectionManager
+            this.calendarChangesObserver = calendarChangesObserver
+
+            pastDaysCount = 30
+            futureDaysCount = 30
+            includeCurrentDate = true
+            initialPositionIndex = 30
+            init()
         }
 
-        settingsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            binding.adView.visibility = if (storage.purchasedAds()) View.GONE else View.VISIBLE
-        }
+        calendarViewSelected[30] = true
+        (binding.listDate as SingleRowCalendar).select(30)
 
-        // 리뷰 요청
-        val installedDate = packageManager.getPackageInfo(packageName, 0).firstInstallTime
-        if (abs(installedDate - System.currentTimeMillis()) >= 6 * AlarmManager.INTERVAL_DAY) {
-            val reviewManager = ReviewManagerFactory.create(this)
-            val reviewRequest = reviewManager.requestReviewFlow()
-            reviewRequest.addOnCompleteListener {
-                if (reviewRequest.isSuccessful && !sharedPreferences.getBoolean(SharedKey.REVIEW_WRITE, false)) {
-                    MyBottomSheetDialog(this).apply {
-                        val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(applicationContext), false)
-                        val icon: ImageView = view.findViewById(R.id.imgLogo)
-                        val tvTitle: TextView = view.findViewById(R.id.tv_title)
-                        val tvContent: TextView = view.findViewById(R.id.tv_content)
-                        val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
-                        val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
-                        val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
-                        val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
-
-                        tvTitle.typeface = typefaceBold
-                        tvContent.typeface = typefaceRegular
-                        tvPositive.typeface = typefaceRegular
-                        tvNegative.typeface = typefaceRegular
-
-                        icon.setImageResource(R.drawable.ic_rate_review)
-                        tvTitle.text = getString(R.string.review_title)
-                        tvContent.text = getString(R.string.review_content)
-
-                        btnPositive.setOnClickListener {
-                            dismiss()
-                            val reviewInfo = reviewRequest.result
-                            val reviewFlow = reviewManager.launchReviewFlow(this@MainActivity, reviewInfo)
-                            reviewFlow.addOnCompleteListener {
-                                sharedPreferences.edit().putBoolean(SharedKey.REVIEW_WRITE, true).apply()
+        editActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val id = result.data?.getLongExtra(IntentKey.ITEM_ID, -1) ?: -1
+                when (result.data?.getIntExtra(IntentKey.ACTION_TYPE, -1)) {
+                    IntentValue.ACTION_EDIT -> {
+                        GlobalScope.launch(Dispatchers.IO) {
+                            val item = lmsDatabase?.getDao()?.get(id)
+                            if (item != null) {
+                                withContext(Dispatchers.Main) {
+                                    adapter?.edit(id, item)
+                                }
                             }
                         }
-                        btnNegative.setOnClickListener {
-                            dismiss()
+                    }
+                    IntentValue.ACTION_DELETE -> {
+                        if (id != -1L) {
+                            adapter?.delete(id)
                         }
-
-                        setContentView(view)
-                    }.show()
-                }
-            }
-        }
-
-        // NotificationListener 꺼져 있을 때
-        if (!MyUtils.isNotiPermissionAllowed(this)) {
-            MyBottomSheetDialog(this).apply {
-                dismissWithAnimation = true
-
-                val view = layoutInflater.inflate(R.layout.dialog, LinearLayout(context), false)
-                val imgLogo: ImageView = view.findViewById(R.id.imgLogo)
-                val tvTitle: TextView = view.findViewById(R.id.tv_title)
-                val tvContent: TextView = view.findViewById(R.id.tv_content)
-                val btnPositive: LinearLayout = view.findViewById(R.id.btn_positive)
-                val btnNegative: LinearLayout = view.findViewById(R.id.btn_negative)
-                val tvPositive: TextView = view.findViewById(R.id.btn_positive_text)
-                val tvNegative: TextView = view.findViewById(R.id.btn_negative_text)
-
-                imgLogo.setImageResource(R.drawable.ic_notification)
-                tvTitle.typeface = typefaceBold
-                tvContent.typeface = typefaceRegular
-                tvPositive.typeface = typefaceRegular
-                tvNegative.typeface = typefaceRegular
-
-                tvTitle.text = getString(R.string.intro_page2_title)
-                tvContent.text = getString(R.string.intro_page2_exp)
-                tvPositive.text = getString(R.string.ok)
-                tvNegative.text = getString(R.string.cancel)
-
-                btnPositive.setOnClickListener {
-                    startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
-                    dismiss()
-                }
-
-                btnNegative.setOnClickListener {
-                    dismiss()
-                }
-
-                setContentView(view)
-            }.show()
-        }
-
-        // 하루 시작, 끝 리마인더 알람 만들기
-        val morningReminderCalendar = Calendar.getInstance().apply {
-            val time = sharedPreferences.getInt(SharedKey.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
-
-            set(Calendar.HOUR_OF_DAY, time / 60)
-            set(Calendar.MINUTE, time % 60)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-
-        val nightReminderCalendar = Calendar.getInstance().apply {
-            val time = sharedPreferences.getInt(SharedKey.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
-
-            set(Calendar.HOUR_OF_DAY, time / 60)
-            set(Calendar.MINUTE, time % 60)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-
-        // set reminder alarm
-
-        val morningReminderIntent = Intent(this, ReminderReceiver::class.java).apply { putExtra(ReminderReceiver.TYPE, ReminderReceiver.MORNING) }
-        val nightReminderIntent = Intent(this, ReminderReceiver::class.java).apply { putExtra(ReminderReceiver.TYPE, ReminderReceiver.NIGHT) }
-
-        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT else PendingIntent.FLAG_UPDATE_CURRENT
-        am.setRepeating(AlarmManager.RTC_WAKEUP, morningReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY, PendingIntent.getBroadcast(this, 14402, morningReminderIntent, flag))
-
-        am.setRepeating(AlarmManager.RTC_WAKEUP, nightReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY, PendingIntent.getBroadcast(this, 14502, nightReminderIntent, flag))
-
-        val datas = dbHelper.getAllData()
-        for (data in datas) {
-            val notiIntent = Intent(this, TimeReceiver::class.java).apply { putExtra("ID", data.id) }
-            val hours = listOf(1, 2, 6, 12, 24)
-            val minutes = listOf(3, 5, 10, 20, 30)
-
-            if (data.endTime < System.currentTimeMillis()) continue
-
-            when (data.type) {
-                LMSClass.TYPE_HOMEWORK, LMSClass.TYPE_LESSON, LMSClass.TYPE_SUP_LESSON, LMSClass.TYPE_TEAMWORK -> {
-                    hours.forEachIndexed { index, i ->
-                        val triggerTime = data.endTime - i * 60 * 60 * 1000
-                        notiIntent.putExtra("TRIGGER", triggerTime)
-                        notiIntent.putExtra("TIME", i)
-                        val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
-                }
-                LMSClass.TYPE_ZOOM, LMSClass.TYPE_EXAM -> {
-                    minutes.forEachIndexed { index, i ->
-                        val triggerTime = data.endTime - i * 60 * 1000
-                        notiIntent.putExtra("TRIGGER", triggerTime)
-                        notiIntent.putExtra("MINUTE", i)
-                        val pendingIntent = PendingIntent.getBroadcast(this, data.id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                     }
                 }
             }
         }
+        settingsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 
-        val todayWork = dbHelper.getItemAtLastDate(System.currentTimeMillis()).toMutableList().apply { sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} )) } as ArrayList
-
-        binding.mainWorkView.adapter = MainWorkAdapter(todayWork).apply {
-            setDeleteCallback(deleteCallbackListener)
-            setClickCallback(clickCallbackListener)
         }
-        binding.mainWorkView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        binding.mainWorkView.addItemDecoration(PagerIndicator(ContextCompat.getColor(applicationContext, R.color.colorAccent), ContextCompat.getColor(applicationContext, R.color.colorPrimary)))
-        PagerSnapHelper().attachToRecyclerView(binding.mainWorkView)
-        binding.tvNoDeadline.visibility = if (todayWork.isEmpty()) View.VISIBLE else View.GONE
+
         binding.btnAdd.setOnClickListener {
-            editActivityLauncher.launch(Intent(this, EditActivity::class.java))
-        }
-        thisCurrentDate = System.currentTimeMillis()
-
-        // 달력
-        var beforeDate = binding.calendarView.currentDate.date
-        binding.calendarView.apply {
-            topbarVisible = false
-            arrowColor = ContextCompat.getColor(applicationContext, R.color.black)
-            setOnDateChangedListener { widget, date, _ ->
-                val work = dbHelper.getItemAtLastDate(date.date.time).toMutableList().apply {
-                    sortWith( compareBy ({ it.isFinished }, {it.endTime}, {it.type} ))
-                } as ArrayList
-
-                binding.mainWorkView.apply {
-                    adapter = MainWorkAdapter(work).apply {
-                        setDeleteCallback(deleteCallbackListener)
-                        setClickCallback(clickCallbackListener)
-                    }
-                    thisCurrentDate = date.date.time
-                }
-
-                binding.tvNoDeadline.apply {
-                    if (work.isEmpty()) {
-                        startAnimation(fadeOutAnimation)
-                        visibility = View.INVISIBLE
-                        visibility = View.VISIBLE
-                        startAnimation(fadeInAnimation)
-                    } else {
-                        visibility = View.INVISIBLE
-                    }
-                }
-            }
-            setOnMonthChangedListener { _, date ->
-                if (beforeDate > date.date) {
-                    binding.tvMonth.setInAnimation(applicationContext, R.anim.slide_in_top)
-                    binding.tvMonth.setOutAnimation(applicationContext, R.anim.slide_out_bottom)
-                } else {
-                    binding.tvMonth.setInAnimation(applicationContext, R.anim.slide_in_bottom)
-                    binding.tvMonth.setOutAnimation(applicationContext, R.anim.slide_out_top)
-                }
-
-                binding.tvMonth.setText(monthFormat.format(date.date))
-                beforeDate = date.date
-            }
-        }
-
-        val dialog = AlertDialog.Builder(this).apply {
-            val linearLayout = LinearLayout(applicationContext).apply {
-                val size = MyUtils.dpToPx(applicationContext, 16f).toInt()
-                orientation = LinearLayout.HORIZONTAL
-                setPadding(size, size, size, size)
-            }
-            val progressBar = ProgressBar(applicationContext, null, android.R.attr.progressBarStyleHorizontal).apply {
-                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                isIndeterminate = true
-                indeterminateTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.colorAccent))
-            }
-
-            linearLayout.addView(progressBar)
-            setView(linearLayout)
-            setTitle(getString(R.string.load_data))
-            setCancelable(false)
-
-        }.create()
-
-        dialog.show()
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            setDecorators(applicationContext)
-            dialog.dismiss()
-            binding.calendarView.visibility = View.VISIBLE
-        }, 1000)
-
-        binding.btnMoveToday.setOnClickListener {
-            binding.calendarView.setCurrentDate(Date(System.currentTimeMillis()))
-            thisCurrentDate = System.currentTimeMillis()
-        }
-
-        // 체인지로그
-        val info = packageManager.getPackageInfo(packageName, 0)
-        val currentVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.longVersionCode.toInt() else info.versionCode
-        val lastVersion = sharedPreferences.getInt(SharedKey.LAST_VERSION, 0)
-
-        if (currentVersion > lastVersion) {
-            sharedPreferences.edit().putInt(SharedKey.LAST_VERSION, currentVersion).apply()
-            MyBottomSheetDialog(this).apply {
-                val view = layoutInflater.inflate(R.layout.dialog_changelog, LinearLayout(applicationContext), false)
-                val tvVersion: TextView = view.findViewById(R.id.tv_version)
-                val tvContent: TextView = view.findViewById(R.id.content)
-
-                tvVersion.typeface = typefaceBold
-                tvContent.typeface = typefaceRegular
-
-                tvVersion.text = "${getString(R.string.real_app_name)} ${BuildConfig.VERSION_NAME}"
-                tvContent.text = MyUtils.fromHtml(MyUtils.readTextFromRaw(resources, R.raw.changelog))
-
-                setContentView(view)
-            }.show()
-        }
-
-        val id = intent.getIntExtra("ID", -1)
-        if (id != -1) {
-            editActivityLauncher.launch(Intent(this, EditActivity::class.java).apply { putExtra("ID", id) })
-        }
-    }
-
-    fun setDecorators(context: Context) {
-        val sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
-        val dbHelper = DBHelper(context, DBHelper.dbName, DBHelper.dbVersion)
-
-        val datas = dbHelper.getAllData()
-        val endTimes = ArrayList<Long>()
-        val timeCount = mutableMapOf<Long, IntArray>()
-
-        binding.calendarView.removeDecorators()
-
-        val weekdayDecorator = WeekdayDecorator(context)
-        val sundayDecorator = SundayDecorator(context)
-        val saturdayDecorator = SaturdayDecorator(context)
-        val todayDecorator = OneDayDecorator(context).apply {
-            setDate(Date(System.currentTimeMillis()))
-        }
-
-        binding.calendarView.addDecorators(weekdayDecorator, sundayDecorator, saturdayDecorator, todayDecorator)
-        if (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
-            binding.calendarView.addDecorator(NightModeDecorator(context))
-        }
-
-        for (data in datas) {
-            Calendar.getInstance().apply {
-                timeInMillis = data.endTime
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-
-                if (timeInMillis !in endTimes) {
-                    endTimes.add(timeInMillis)
-                }
-
-                if (timeInMillis in timeCount.keys) {
-                    val value = timeCount[timeInMillis] ?: intArrayOf(0, 0)
-                    value[if (data.isFinished) 1 else 0] += 1
-                    timeCount[timeInMillis] = value
-                } else {
-                    if (data.isFinished) {
-                        timeCount[timeInMillis] = intArrayOf(0, 1)
-                    } else {
-                        timeCount[timeInMillis] = intArrayOf(1, 0)
-                    }
-                }
-            }
-        }
-
-        if (sharedPreferences.getBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, true)) {
-            for (time in endTimes) {
-                val decorator = EventDecorator2(context, time)
-                binding.calendarView.addDecorator(decorator)
-                decorators[time] = decorator
-            }
-        } else {
-            for (time in timeCount) {
-                val decorator = EventDecorator(ContextCompat.getColor(context, R.color.colorAccent), time.value, arrayListOf(CalendarDay.from(Date(time.key))))
-                binding.calendarView.addDecorator(decorator)
-                decorators[time.key] = decorator
-            }
-        }
-    }
-
-    fun setEachDecorator(time: Long) {
-        val sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
-        val dbHelper = DBHelper(this, DBHelper.dbName, DBHelper.dbVersion)
-        val data = dbHelper.getItemAtLastDate(time)
-        val timeCount = intArrayOf(0, 0)
-        val decoratorTime = Calendar.getInstance().apply {
-            timeInMillis = time
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.timeInMillis
-
-        data.forEach {
-            timeCount[if (it.isFinished) 1 else 0] += 1
-        }
-
-        binding.calendarView.removeDecorator(decorators[decoratorTime])
-        if (sharedPreferences.getBoolean(SharedKey.CURRENT_CALENDAR_ICON_SHOW, true)) {
-            val decorator = EventDecorator2(this, decoratorTime)
-            binding.calendarView.addDecorator(decorator)
-            decorators[decoratorTime] = decorator
-        } else {
-            val decorator = EventDecorator(ContextCompat.getColor(this, R.color.colorAccent), timeCount, arrayListOf(CalendarDay.from(Date(time))))
-            binding.calendarView.addDecorator(decorator)
-            decorators[decoratorTime] = decorator
-        }
-    }
-
-    override fun onBackPressed() {
-        val tempTime = System.currentTimeMillis()
-        val intervalTime = tempTime - backPressedTime
-        if (intervalTime in 0..FINISH_INTERVAL_TIME) {
-            super.onBackPressed()
-        } else {
-            backPressedTime = tempTime
-            Toast.makeText(applicationContext, getString(R.string.press_back_to_exit), Toast.LENGTH_SHORT).show()
+            editActivityResultLauncher.launch(Intent(this, EditActivity::class.java))
         }
     }
 
@@ -591,31 +345,13 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_settings -> {
                 settingsActivityLauncher.launch(Intent(this, SettingsActivity::class.java))
             }
-
-            R.id.menu_help -> {
-                MyBottomSheetDialog(this).apply {
-                    val view = layoutInflater.inflate(R.layout.dialog_help, LinearLayout(applicationContext), false)
-                    val tvVersion: TextView = view.findViewById(R.id.tv_version)
-                    val tvContent: TextView = view.findViewById(R.id.content)
-                    val btnNoti: Button = view.findViewById(R.id.btn_noti)
-
-                    tvVersion.typeface = typefaceBold
-                    tvContent.typeface = typefaceRegular
-                    btnNoti.typeface = typefaceRegular
-
-                    tvVersion.text = getString(R.string.help)
-                    tvContent.text = MyUtils.fromHtml(MyUtils.readTextFromRaw(resources, R.raw.help))
-                    btnNoti.setOnClickListener {
-                        startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
-                    }
-
-                    setContentView(view)
-                }.show()
+            R.id.menu_today -> {
+                (binding.listDate as SingleRowCalendar).select(30)
+                (binding.listDate as SingleRowCalendar).smoothScrollToPosition(30)
             }
         }
 
         return super.onOptionsItemSelected(item)
-
-         */
     }
+
 }

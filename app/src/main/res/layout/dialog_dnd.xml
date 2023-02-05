@@ -5,45 +5,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/dnd_time"
-        android:textSize="18sp"
-        android:textColor="@color/black"
-        android:fontFamily="@font/pretendard_black"
-        android:layout_marginStart="@dimen/usual_margin"
-        android:layout_marginEnd="@dimen/usual_margin"
-        android:layout_marginTop="@dimen/usual_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/tv_dnd_start_tag"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/start_at"
-        android:textColor="@color/gray"
+        android:textColor="?attr/colorOnSecondaryContainer"
         android:fontFamily="@font/pretendard"
         android:layout_margin="@dimen/usual_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tv_dnd_end_tag"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_dnd_end_tag"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/end_at"
-        android:textColor="@color/gray"
+        android:textColor="?attr/colorOnSecondaryContainer"
         android:fontFamily="@font/pretendard"
         android:layout_marginEnd="@dimen/usual_margin"
         android:layout_marginTop="@dimen/usual_margin"
         android:layout_marginBottom="@dimen/usual_margin"
         app:layout_constraintStart_toEndOf="@id/tv_dnd_start_tag"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_dnd_start"
@@ -51,7 +36,7 @@
         android:layout_height="wrap_content"
         android:text="오후 12:00"
         android:textSize="24sp"
-        android:textColor="@color/black"
+        android:textColor="?attr/colorOnSecondaryContainer"
         android:fontFamily="@font/pretendard_black"
         android:clickable="true"
         android:focusable="true"
@@ -67,7 +52,7 @@
         android:layout_height="wrap_content"
         android:text="오후 12:00"
         android:textSize="24sp"
-        android:textColor="@color/black"
+        android:textColor="?attr/colorOnSecondaryContainer"
         android:fontFamily="@font/pretendard_black"
         android:clickable="true"
         android:focusable="true"
@@ -78,71 +63,5 @@
         app:layout_constraintStart_toEndOf="@id/tv_dnd_start"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_dnd_start_tag" />
-
-    <LinearLayout
-        android:id="@+id/btn_negative"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/usual_margin"
-        android:padding="@dimen/usual_margin"
-        android:background="?attr/selectableItemBackground"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_positive"
-        app:layout_constraintTop_toBottomOf="@id/tv_dnd_start"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <ImageView
-            android:id="@+id/btn_negative_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_close"
-            android:contentDescription="@android:string/no"
-            app:tint="@color/black"/>
-
-        <TextView
-            android:id="@+id/btn_negative_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/usual_margin"
-            android:layout_gravity="center"
-            android:text="@android:string/no"
-            android:textColor="@color/black"
-            android:fontFamily="@font/pretendard" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/btn_positive"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/usual_margin"
-        android:padding="@dimen/usual_margin"
-        android:background="?attr/selectableItemBackground"
-        app:layout_constraintStart_toEndOf="@id/btn_negative"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_dnd_start"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <ImageView
-            android:id="@+id/btn_positive_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_check"
-            android:contentDescription="@android:string/yes"
-            app:tint="@color/black"/>
-
-        <TextView
-            android:id="@+id/btn_positive_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/usual_margin"
-            android:layout_gravity="center"
-            android:text="@android:string/yes"
-            android:textColor="@color/black"
-            android:fontFamily="@font/pretendard" />
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

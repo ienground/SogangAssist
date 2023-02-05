@@ -83,7 +83,7 @@ class MainWorkAdapter(private var items: ArrayList<LMSEntity>) : RecyclerView.Ad
 
         holder.itemView.setOnClickListener {
 //            if (!storage.purchasedAds()) displayAd(context as Activity)
-            clickCallbackListener?.callBack(holder.adapterPosition, items, this)
+//            clickCallbackListener?.callBack(holder.absoluteAdapterPosition, items, this)
         }
 
         holder.itemView.setOnLongClickListener {
@@ -112,7 +112,7 @@ class MainWorkAdapter(private var items: ArrayList<LMSEntity>) : RecyclerView.Ad
                     GlobalScope.launch(Dispatchers.IO) {
                         lmsDatabase?.getDao()?.update(items[holder.adapterPosition])
                         notifyItemChanged(holder.adapterPosition)
-                        deleteCallbackListener?.callBack(holder.adapterPosition, items, this@MainWorkAdapter)
+//                        deleteCallbackListener?.callBack(holder.adapterPosition, items, this@MainWorkAdapter)
                         dismiss()
                     }
                 }

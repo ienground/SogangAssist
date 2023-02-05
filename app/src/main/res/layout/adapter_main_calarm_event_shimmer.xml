@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/Widget.Material3.CardView.Elevated"
+    android:layout_marginHorizontal="@dimen/usual_margin"
+    android:layout_marginBottom="@dimen/usual_margin">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/usual_margin">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_color"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@color/cardview_shadow_start_color"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_label"
+            app:layout_constraintBottom_toBottomOf="@id/tv_label" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_label"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:fontFamily="@font/pretendard"
+            android:textSize="20sp"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            android:gravity="center_vertical"
+            android:background="@drawable/shimmer_background"
+            android:layout_marginHorizontal="@dimen/usual_margin"
+            app:layout_constraintStart_toEndOf="@id/iv_color"
+            app:layout_constraintEnd_toStartOf="@id/switch_on"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_time"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pretendard"
+            android:textSize="36sp"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            android:background="@drawable/shimmer_background"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_label" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pretendard"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            android:background="@drawable/shimmer_background"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_time" />
+
+        <HorizontalScrollView
+            android:id="@+id/chips_scroll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/usual_margin"
+            android:fadingEdgeLength="@dimen/usual_margin"
+            android:fadingEdge="horizontal"
+            android:requiresFadingEdge="horizontal"
+            android:scrollbars="none"
+            android:layout_marginTop="@dimen/usual_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/badge"
+            app:layout_constraintTop_toBottomOf="@id/tv_address"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chips_mini_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/usual_margin"
+                app:singleLine="true">
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="           "
+                    android:clickable="false" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </HorizontalScrollView>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/badge"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/badge_background"
+            android:backgroundTint="@color/cardview_shadow_start_color"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_black"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/chips_scroll"
+            app:layout_constraintBottom_toBottomOf="@id/chips_scroll" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

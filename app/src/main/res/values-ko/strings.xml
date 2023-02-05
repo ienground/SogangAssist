@@ -24,7 +24,7 @@
     <string name="delete">삭제</string>
     <string name="mark_as_not_finish">완료되지 않음으로 표시</string>
     <string name="delete_msg">정말 삭제하시겠습니까?</string>
-    <string name="changelog">체인지로그</string>
+    <string name="changelog">업데이트 로그</string>
     <string name="ask">문의</string>
     <string name="info_and_ask"><![CDATA[정보 & 문의]]></string>
     <string name="email_text">알바트로스 리마인더 사용자 커멘트</string>
@@ -153,6 +153,11 @@
     <string name="six_hour">6시간</string>
     <string name="twelve_hour">12시간</string>
     <string name="twfour_hour">24시간</string>
+    <string name="three_minute">3 mins</string>
+    <string name="five_minute">5 mins</string>
+    <string name="ten_minute">10 mins</string>
+    <string name="twenty_minute">20 mins</string>
+    <string name="thirty_minute">30 mins</string>
     <string name="deleted_noti">취소된 알림입니다</string>
     <string name="enter_blank">빈 칸 입력</string>
     <string name="confirm">확인</string>
@@ -196,7 +201,6 @@
 
     <!--EditActivity-->
     <string name="save_ask">저장할까요?</string>
-    <string name="not_save">저장 안함</string>
     <string name="schedule">일정</string>
     <string name="events_today">%1$s까지 해야할 일</string>
     <string name="tag_date">M월 d일</string>
@@ -305,5 +309,16 @@
     <string name="time_hour_min">%1$d시간 %2$d분</string>
     <string name="time_hour">%1$d시간</string>
     <string name="time_min">%1$d분</string>
+    <string name="apmTimeFormat">a h:mm</string>
+
+
+    <string name="user_hello_morning">좋은 아침이에요☀️</string>
+    <string name="user_hello_afternoon">점심 맛있게 드세요🍽️</string>
+    <string name="user_hello_evening">행복한 저녁이에요🎆</string>
+    <string name="user_hello_night">오늘은 어떠셨나요?🌙</string>
+
+    <string name="ask_to_save">저장할까요?</string>
+    <string name="ask_to_save_message">저장하지 않은 정보는 손실됩니다.</string>
+    <string name="not_save">저장하지 않음</string>
 
 </resources>

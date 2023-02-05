@@ -6,40 +6,25 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/date_delete_title"
-        android:textSize="18sp"
-        android:textColor="@color/black"
-        android:fontFamily="@font/pretendard_black"
-        android:layout_marginStart="@dimen/usual_margin"
-        android:layout_marginEnd="@dimen/usual_margin"
-        android:layout_marginTop="@dimen/usual_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/tv_start_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="2021-05-06"
-        android:textColor="@color/black"
+        android:textColor="?attr/colorOnSecondaryContainer"
         android:fontFamily="@font/pretendard"
         android:clickable="true"
         android:focusable="true"
         android:layout_marginStart="@dimen/usual_margin"
         android:layout_marginTop="@dimen/usual_margin"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/tv_wave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="~"
-        android:textColor="@color/black"
+        android:textColor="?attr/colorOnSecondaryContainer"
         android:textAlignment="center"
         android:fontFamily="@font/pretendard"
         android:clickable="true"
@@ -49,95 +34,31 @@
         android:layout_marginTop="@dimen/usual_margin"
         app:layout_constraintStart_toEndOf="@id/tv_start_date"
         app:layout_constraintEnd_toStartOf="@id/tv_end_date"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_end_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="2021-05-06"
-        android:textColor="@color/black"
+        android:textColor="?attr/colorOnSecondaryContainer"
         android:fontFamily="@font/pretendard"
         android:layout_marginEnd="@dimen/usual_margin"
         android:layout_marginTop="@dimen/usual_margin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/check_delete_finish"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/check_delete_finish"
-        android:textColor="@color/black"
+        android:textColor="?attr/colorOnSecondaryContainer"
         android:fontFamily="@font/pretendard"
         android:checked="true"
         android:layout_margin="@dimen/usual_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_wave" />
-
-    <LinearLayout
-        android:id="@+id/btn_negative"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/usual_margin"
-        android:padding="@dimen/usual_margin"
-        android:background="?attr/selectableItemBackground"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_positive"
-        app:layout_constraintTop_toBottomOf="@id/check_delete_finish"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_close"
-            android:contentDescription="@android:string/cancel"
-            app:tint="@color/black"/>
-
-        <TextView
-            android:id="@+id/btn_negative_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/usual_margin"
-            android:layout_gravity="center"
-            android:text="@android:string/cancel"
-            android:textColor="@color/black"
-            android:fontFamily="@font/pretendard" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/btn_positive"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/usual_margin"
-        android:padding="@dimen/usual_margin"
-        android:background="?attr/selectableItemBackground"
-        app:layout_constraintStart_toEndOf="@id/btn_negative"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/check_delete_finish"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_delete"
-            android:contentDescription="@string/delete"
-            app:tint="@color/black"/>
-
-        <TextView
-            android:id="@+id/btn_positive_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/usual_margin"
-            android:layout_gravity="center"
-            android:text="@string/delete"
-            android:textColor="@color/black"
-            android:fontFamily="@font/pretendard" />
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

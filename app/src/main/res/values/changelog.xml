@@ -1,0 +1,12 @@
+<resources>
+    <string name="changelog_content">
+        - Add help window.\n
+        - Fixed error of beta test submission channel screen.\n
+        - Fixed the notification to show content when recording a stopwatch lap.\n
+        - You can change the alarm volume in settings.\n
+        - Fixed an issue where some notifications did not appear on the deskclock.
+        - Improved Stopwatch UI.\n
+        - Missed alarm notification works properly.\n
+        - Themed icon.
+    </string>
+</resources>

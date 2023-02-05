@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="colorPrimary" format="color" />
-    <attr name="colorAccent" format="color" />
-    <attr name="colorAccentDark" format="color" />
-    <attr name="colorAccentAlpha" format="color" />
+    <declare-styleable name="SingleRowCalendar">
+        <attr format="integer" name="pastDaysCount"/>
+        <attr format="integer" name="futureDaysCount"/>
+        <attr format="boolean" name="includeCurrentDate"/>
+        <attr format="integer" name="initialPositionIndex"/>
+        <attr format="boolean" name="multiSelection"/>
+        <attr format="boolean" name="deselection"/>
+        <attr format="boolean" name="longPress"/>
+    </declare-styleable>
 </resources>

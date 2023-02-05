@@ -24,7 +24,7 @@
     <string name="delete">Delete</string>
     <string name="mark_as_not_finish">Mark as not complete</string>
     <string name="delete_msg">Are you sure to delete this?</string>
-    <string name="changelog">Changelog</string>
+    <string name="changelog">Update log</string>
     <string name="ask">Ask</string>
     <string name="info_and_ask"><![CDATA[Info & Ask]]></string>
     <string name="email_text">Albatross Reminder User Comment</string>
@@ -148,11 +148,16 @@
     <string name="agree">Agree</string>
     <string name="disagree">Disagree</string>
     <string name="quit">Quit</string>
-    <string name="one_hour">1 hour</string>
-    <string name="two_hour">2 hours</string>
-    <string name="six_hour">6 hours</string>
-    <string name="twelve_hour">12 hours</string>
-    <string name="twfour_hour">24 hours</string>
+    <string name="one_hour">1 hr</string>
+    <string name="two_hour">2 hrs</string>
+    <string name="six_hour">6 hrs</string>
+    <string name="twelve_hour">12 hrs</string>
+    <string name="twfour_hour">24 hrs</string>
+    <string name="three_minute">3 mins</string>
+    <string name="five_minute">5 mins</string>
+    <string name="ten_minute">10 mins</string>
+    <string name="twenty_minute">20 mins</string>
+    <string name="thirty_minute">30 mins</string>
     <string name="deleted_noti">Notification Canceled</string>
     <string name="enter_blank">Fill out</string>
     <string name="confirm">Confirm</string>
@@ -196,7 +201,6 @@
 
     <!--EditActivity-->
     <string name="save_ask">Save?</string>
-    <string name="not_save">Not Save</string>
     <string name="schedule">Schedule</string>
     <string name="events_today">Events Until %1$s</string>
     <string name="tag_date">MMM dd</string>
@@ -305,5 +309,18 @@
     <string name="time_hour_min">%1$d시간 %2$d분</string>
     <string name="time_hour">%1$d시간</string>
     <string name="time_min">%1$d분</string>
+    <string name="apmTimeFormat">h:mm a</string>
+
+
+    <string name="user_hello_morning">Good morning☀️</string>
+    <string name="user_hello_afternoon">Have a great lunch🍽️</string>
+    <string name="user_hello_evening">Good evening🎆</string>
+    <string name="user_hello_night">Sleep tight🌙</string>
+
+
+    <string name="ask_to_save">Save?</string>
+    <string name="ask_to_save_message">Unsaved changes will be lost.</string>
+    <string name="not_save">Not save</string>
+    <string name="close">Close</string>
 
 </resources>

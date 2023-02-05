@@ -43,5 +43,7 @@ class SharedKey {
         const val CALENDAR_ICON_SHOW = "calendar_icon_show"
         const val CURRENT_CALENDAR_ICON_SHOW = "current_calendar_icon_show"
         const val WIDGET_DARK_MODE = "widget_dark_mode"
+
+        const val MATERIAL_YOU = "is_material_you"
     }
 }

@@ -3,7 +3,6 @@ package net.ienlab.sogangassist.fragment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,8 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import kotlinx.coroutines.*
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.activity.EditActivity2
-import net.ienlab.sogangassist.activity.TAG
+import net.ienlab.sogangassist.activity.EditActivity
 import net.ienlab.sogangassist.adapter.MainLMSAdapter
 import net.ienlab.sogangassist.callback.MainAllListClickCallbackListener
 import net.ienlab.sogangassist.constant.IntentKey
@@ -46,8 +44,8 @@ class MainAllListFragment() : Fragment() {
     private val clickCallbackListener = object: MainAllListClickCallbackListener {
         override fun callBack(position: Int, data: LMSEntity) {
             mListener?.onPlanListItemClicked(position, data)
-            editActivityLauncher.launch(Intent(context, EditActivity2::class.java).apply {
-                putExtra(IntentKey.ID, data.id)
+            editActivityLauncher.launch(Intent(context, EditActivity::class.java).apply {
+                putExtra(IntentKey.ITEM_ID, data.id)
             })
         }
     }

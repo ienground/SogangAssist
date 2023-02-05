@@ -20,6 +20,7 @@ import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.activity.*
 import net.ienlab.sogangassist.constant.DefaultValue
+import net.ienlab.sogangassist.constant.IntentKey
 import net.ienlab.sogangassist.receiver.DeleteMissReceiver
 import net.ienlab.sogangassist.room.LMSDatabase
 import net.ienlab.sogangassist.room.LMSEntity
@@ -82,20 +83,20 @@ class LMSListenerService : NotificationListenerService() {
                             GlobalScope.launch(Dispatchers.IO) {
                                 if (lmsDatabase?.getDao()?.checkIsAlreadyInDB(data.className, data.week, data.lesson, data.homework_name) != true) {
                                     val id = lmsDatabase?.getDao()?.add(data)?.toInt() ?: -1
-                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
 
                                     hours.forEachIndexed { index, i ->
                                         val triggerTime = data.endTime - i * 60 * 60 * 1000
-                                        notiIntent.putExtra("TRIGGER", triggerTime)
-                                        notiIntent.putExtra("TIME", i)
+                                        notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                        notiIntent.putExtra(IntentKey.TIME, i)
                                         val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                         am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                     }
 
                                     if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                        val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                        val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
                                         val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                        val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
+                                        val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
                                         val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                         NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
@@ -125,7 +126,7 @@ class LMSListenerService : NotificationListenerService() {
                             val (homework_name, startTime, endTime) = matchResult.destructured
                             val data = LMSEntity(className, sbn.postTime, LMSEntity.TYPE_HOMEWORK, timeFormat.parse(startTime)?.time ?: 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true,isFinished = false, -1, -1,  homework_name)
 
-                            var id: Int
+                            var id: Long
 
                             GlobalScope.launch(Dispatchers.IO) {
                                 if (lmsDatabase?.getDao()?.checkIsAlreadyInDB(data.className, data.week, data.lesson, data.homework_name) == true) {
@@ -140,24 +141,24 @@ class LMSListenerService : NotificationListenerService() {
 
                                     id = data.id ?: -1
                                 } else {
-                                    id = lmsDatabase?.getDao()?.add(data)?.toInt() ?: -1
+                                    id = lmsDatabase?.getDao()?.add(data) ?: -1
                                 }
 
-                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
 
                                 hours.forEachIndexed { index, i ->
                                     val triggerTime = data.endTime - i * 60 * 60 * 1000
-                                    notiIntent.putExtra("TRIGGER", triggerTime)
-                                    notiIntent.putExtra("TIME", i)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                    notiIntent.putExtra(IntentKey.TIME, i)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
-                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -170,7 +171,7 @@ class LMSListenerService : NotificationListenerService() {
                                         color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                         if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                            nm.notify(699000 + id, build())
+                                            nm.notify(699000 + id.toInt(), build())
                                         }
                                     }
                                 }
@@ -188,20 +189,20 @@ class LMSListenerService : NotificationListenerService() {
                             GlobalScope.launch(Dispatchers.IO) {
                                 if (lmsDatabase?.getDao()?.checkIsAlreadyInDB(data.className, data.week, data.lesson, data.homework_name) != true) {
                                     val id = lmsDatabase?.getDao()?.add(data)?.toInt() ?: -1
-                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
 
                                     hours.forEachIndexed { index, i ->
                                         val triggerTime = data.endTime - i * 60 * 60 * 1000
-                                        notiIntent.putExtra("TRIGGER", triggerTime)
-                                        notiIntent.putExtra("TIME", i)
+                                        notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                        notiIntent.putExtra(IntentKey.TIME, i)
                                         val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                         am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                     }
 
                                     if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                        val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                        val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
                                         val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                        val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
+                                        val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
                                         val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                         NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
@@ -231,7 +232,7 @@ class LMSListenerService : NotificationListenerService() {
                             val (week, lesson, endTime) = matchResult.destructured
                             val data = LMSEntity(className, sbn.postTime, LMSEntity.TYPE_LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
 
-                            var id: Int
+                            var id: Long
 
                             GlobalScope.launch(Dispatchers.IO) {
                                 if (lmsDatabase?.getDao()?.checkIsAlreadyInDB(data.className, data.week, data.lesson, data.homework_name) == true) {
@@ -246,24 +247,24 @@ class LMSListenerService : NotificationListenerService() {
 
                                     id = data.id ?: -1
                                 } else {
-                                    id = lmsDatabase?.getDao()?.add(data)?.toInt() ?: -1
+                                    id = lmsDatabase?.getDao()?.add(data) ?: -1
                                 }
 
-                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
 
                                 hours.forEachIndexed { index, i ->
                                     val triggerTime = data.endTime - i * 60 * 60 * 1000
-                                    notiIntent.putExtra("TRIGGER", triggerTime)
-                                    notiIntent.putExtra("TIME", i)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                    notiIntent.putExtra(IntentKey.TIME, i)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
-                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -276,7 +277,7 @@ class LMSListenerService : NotificationListenerService() {
                                         color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                         if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                            nm.notify(699000 + id, build())
+                                            nm.notify(699000 + id.toInt(), build())
                                         }
                                     }
                                 }
@@ -295,20 +296,20 @@ class LMSListenerService : NotificationListenerService() {
                             GlobalScope.launch(Dispatchers.IO) {
                                 if (lmsDatabase?.getDao()?.checkIsAlreadyInDB(data.className, data.week, data.lesson, data.homework_name) != true) {
                                     val id = lmsDatabase?.getDao()?.add(data)?.toInt() ?: -1
-                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
 
                                     hours.forEachIndexed { index, i ->
                                         val triggerTime = data.endTime - i * 60 * 60 * 1000
-                                        notiIntent.putExtra("TRIGGER", triggerTime)
-                                        notiIntent.putExtra("TIME", i)
+                                        notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                        notiIntent.putExtra(IntentKey.TIME, i)
                                         val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                         am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                     }
 
                                     if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                        val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                        val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
                                         val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                        val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
+                                        val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
                                         val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                         NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
@@ -338,7 +339,7 @@ class LMSListenerService : NotificationListenerService() {
                             val (week, lesson, endTime) = matchResult.destructured
                             val data = LMSEntity(className, sbn.postTime, LMSEntity.TYPE_SUP_LESSON, -1, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, week.toInt(), lesson.toInt(), "#NONE")
 
-                            var id: Int
+                            var id: Long
 
                             GlobalScope.launch(Dispatchers.IO) {
                                 if (lmsDatabase?.getDao()?.checkIsAlreadyInDB(data.className, data.week, data.lesson, data.homework_name) == true) {
@@ -353,24 +354,24 @@ class LMSListenerService : NotificationListenerService() {
 
                                     id = data.id ?: -1
                                 } else {
-                                    id = lmsDatabase?.getDao()?.add(data)?.toInt() ?: -1
+                                    id = lmsDatabase?.getDao()?.add(data) ?: -1
                                 }
 
-                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
 
                                 hours.forEachIndexed { index, i ->
                                     val triggerTime = data.endTime - i * 60 * 60 * 1000
-                                    notiIntent.putExtra("TRIGGER", triggerTime)
-                                    notiIntent.putExtra("TIME", i)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                    notiIntent.putExtra(IntentKey.TIME, i)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
-                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -383,7 +384,7 @@ class LMSListenerService : NotificationListenerService() {
                                         color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                         if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                            nm.notify(699000 + id, build())
+                                            nm.notify(699000 + id.toInt(), build())
                                         }
                                     }
                                 }
@@ -401,20 +402,20 @@ class LMSListenerService : NotificationListenerService() {
                             GlobalScope.launch(Dispatchers.IO) {
                                 if (lmsDatabase?.getDao()?.checkIsAlreadyInDB(data.className, data.week, data.lesson, data.homework_name) != true) {
                                     val id = lmsDatabase?.getDao()?.add(data)?.toInt() ?: -1
-                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
 
                                     minutes.forEachIndexed { index, i ->
                                         val triggerTime = data.endTime - i * 60 * 1000
-                                        notiIntent.putExtra("TRIGGER", triggerTime)
-                                        notiIntent.putExtra("MINUTE", i)
+                                        notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                        notiIntent.putExtra(IntentKey.MINUTE, i)
                                         val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                         am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                     }
 
                                     if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                        val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                        val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
                                         val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                        val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
+                                        val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
                                         val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                         NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
@@ -444,7 +445,7 @@ class LMSListenerService : NotificationListenerService() {
                             val (homework_name, endTime) = matchResult.destructured
                             val data = LMSEntity(className, sbn.postTime, LMSEntity.TYPE_ZOOM, 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, -1, -1, homework_name)
 
-                            var id: Int
+                            var id: Long
 
                             GlobalScope.launch(Dispatchers.IO) {
                                 if (lmsDatabase?.getDao()?.checkIsAlreadyInDB(data.className, data.week, data.lesson, data.homework_name) == true) {
@@ -459,24 +460,24 @@ class LMSListenerService : NotificationListenerService() {
 
                                     id = data.id ?: -1
                                 } else {
-                                    id = lmsDatabase?.getDao()?.add(data)?.toInt() ?: -1
+                                    id = lmsDatabase?.getDao()?.add(data) ?: -1
                                 }
 
-                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
 
                                 minutes.forEachIndexed { index, i ->
                                     val triggerTime = data.endTime - i * 60 * 1000
-                                    notiIntent.putExtra("TRIGGER", triggerTime)
-                                    notiIntent.putExtra("MINUTE", i)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                    notiIntent.putExtra(IntentKey.MINUTE, i)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
-                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -489,7 +490,7 @@ class LMSListenerService : NotificationListenerService() {
                                         color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                         if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                            nm.notify(699000 + id, build())
+                                            nm.notify(699000 + id.toInt(), build())
                                         }
                                     }
                                 }
@@ -507,20 +508,20 @@ class LMSListenerService : NotificationListenerService() {
                             GlobalScope.launch(Dispatchers.IO) {
                                 if (lmsDatabase?.getDao()?.checkIsAlreadyInDB(data.className, data.week, data.lesson, data.homework_name) != true) {
                                     val id = lmsDatabase?.getDao()?.add(data)?.toInt() ?: -1
-                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
 
                                     hours.forEachIndexed { index, i ->
                                         val triggerTime = data.endTime - i * 60 * 60 * 1000
-                                        notiIntent.putExtra("TRIGGER", triggerTime)
-                                        notiIntent.putExtra("TIME", i)
+                                        notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                        notiIntent.putExtra(IntentKey.TIME, i)
                                         val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                         am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                     }
 
                                     if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                        val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                        val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
                                         val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                        val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
+                                        val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
                                         val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                         NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
@@ -550,7 +551,7 @@ class LMSListenerService : NotificationListenerService() {
                             val (homework_name, startTime, endTime) = matchResult.destructured
                             val data = LMSEntity(className, sbn.postTime, LMSEntity.TYPE_TEAMWORK, timeFormat.parse(startTime)?.time ?: 0L, timeFormat.parse(endTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, -1, -1, homework_name)
 
-                            var id: Int
+                            var id: Long
 
                             GlobalScope.launch(Dispatchers.IO) {
                                 if (lmsDatabase?.getDao()?.checkIsAlreadyInDB(data.className, data.week, data.lesson, data.homework_name) == true) {
@@ -565,24 +566,24 @@ class LMSListenerService : NotificationListenerService() {
 
                                     id = data.id ?: -1
                                 } else {
-                                    id = lmsDatabase?.getDao()?.add(data)?.toInt() ?: -1
+                                    id = lmsDatabase?.getDao()?.add(data) ?: -1
                                 }
 
-                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
 
                                 hours.forEachIndexed { index, i ->
                                     val triggerTime = data.endTime - i * 60 * 60 * 1000
-                                    notiIntent.putExtra("TRIGGER", triggerTime)
-                                    notiIntent.putExtra("TIME", i)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                    notiIntent.putExtra(IntentKey.TIME, i)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
-                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -595,7 +596,7 @@ class LMSListenerService : NotificationListenerService() {
                                         color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                         if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                            nm.notify(699000 + id, build())
+                                            nm.notify(699000 + id.toInt(), build())
                                         }
                                     }
                                 }
@@ -613,20 +614,20 @@ class LMSListenerService : NotificationListenerService() {
                             GlobalScope.launch(Dispatchers.IO) {
                                 if (lmsDatabase?.getDao()?.checkIsAlreadyInDB(data.className, data.week, data.lesson, data.homework_name) != true) {
                                     val id = lmsDatabase?.getDao()?.add(data)?.toInt() ?: -1
-                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                                    val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
 
                                     hours.forEachIndexed { index, i ->
                                         val triggerTime = data.endTime - i * 60 * 60 * 1000
-                                        notiIntent.putExtra("TRIGGER", triggerTime)
-                                        notiIntent.putExtra("TIME", i)
+                                        notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                        notiIntent.putExtra(IntentKey.TIME, i)
                                         val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                         am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                     }
 
                                     if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                        val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
+                                        val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
                                         val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                        val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
+                                        val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
                                         val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                         NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
@@ -656,7 +657,7 @@ class LMSListenerService : NotificationListenerService() {
                             val (homework_name, startTime, endTime) = matchResult.destructured
                             val data = LMSEntity(className, sbn.postTime, LMSEntity.TYPE_EXAM, -1, timeFormat.parse(startTime)?.time ?: 0L, isRenewAllowed = true, isFinished = false, -1, -1, homework_name)
 
-                            var id: Int
+                            var id: Long
 
                             GlobalScope.launch(Dispatchers.IO) {
                                 if (lmsDatabase?.getDao()?.checkIsAlreadyInDB(data.className, data.week, data.lesson, data.homework_name) == true) {
@@ -671,24 +672,24 @@ class LMSListenerService : NotificationListenerService() {
 
                                     id = data.id ?: -1
                                 } else {
-                                    id = lmsDatabase?.getDao()?.add(data)?.toInt() ?: -1
+                                    id = lmsDatabase?.getDao()?.add(data) ?: -1
                                 }
 
-                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra("ID", id) }
+                                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
 
                                 hours.forEachIndexed { index, i ->
                                     val triggerTime = data.endTime - i * 60 * 60 * 1000
-                                    notiIntent.putExtra("TRIGGER", triggerTime)
-                                    notiIntent.putExtra("TIME", i)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                    notiIntent.putExtra(IntentKey.TIME, i)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
-                                    val clickIntent = Intent(applicationContext, SplashActivity::class.java).apply { putExtra("ID", id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra("ID", id) }
-                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -701,7 +702,7 @@ class LMSListenerService : NotificationListenerService() {
                                         color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
 
                                         if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                            nm.notify(699000 + id, build())
+                                            nm.notify(699000 + id.toInt(), build())
                                         }
                                     }
                                 }

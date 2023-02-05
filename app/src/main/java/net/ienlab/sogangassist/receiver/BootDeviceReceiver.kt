@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.ienlab.sogangassist.constant.DefaultValue
+import net.ienlab.sogangassist.constant.IntentKey
 import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.room.LMSDatabase
 import net.ienlab.sogangassist.room.LMSEntity
@@ -79,7 +80,7 @@ class BootDeviceReceiver : BroadcastReceiver() {
             val datas = lmsDatabase?.getDao()?.getAll()
             if (datas != null) {
                 for (data in datas) {
-                    val notiIntent = Intent(context, TimeReceiver::class.java).apply { putExtra("ID", data.id) }
+                    val notiIntent = Intent(context, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, data.id) }
                     val hours = listOf(1, 2, 6, 12, 24)
                     val minutes = listOf(3, 5, 10, 20, 30)
 
@@ -89,18 +90,18 @@ class BootDeviceReceiver : BroadcastReceiver() {
                         LMSEntity.TYPE_HOMEWORK, LMSEntity.TYPE_LESSON, LMSEntity.TYPE_SUP_LESSON, LMSEntity.TYPE_TEAMWORK -> {
                             hours.forEachIndexed { index, i ->
                                 val triggerTime = data.endTime - i * 60 * 60 * 1000
-                                notiIntent.putExtra("TRIGGER", triggerTime)
-                                notiIntent.putExtra("TIME", i)
-                                val pendingIntent = PendingIntent.getBroadcast(context, (data.id?.times(100) ?: 0) + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                notiIntent.putExtra(IntentKey.TIME, i)
+                                val pendingIntent = PendingIntent.getBroadcast(context, (data.id?.toInt()?.times(100) ?: 0) + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                 am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                             }
                         }
                         LMSEntity.TYPE_ZOOM, LMSEntity.TYPE_EXAM -> {
                             minutes.forEachIndexed { index, i ->
                                 val triggerTime = data.endTime - i * 60 * 1000
-                                notiIntent.putExtra("TRIGGER", triggerTime)
-                                notiIntent.putExtra("MINUTE", i)
-                                val pendingIntent = PendingIntent.getBroadcast(context, (data.id?.times(100) ?: 0) + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                                notiIntent.putExtra(IntentKey.MINUTE, i)
+                                val pendingIntent = PendingIntent.getBroadcast(context, (data.id?.toInt()?.times(100) ?: 0) + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                 am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                             }
                         }

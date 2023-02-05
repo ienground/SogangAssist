@@ -30,9 +30,9 @@ class LMSEntity(
         const val TYPE_EXAM = 5
     }
 
-    @PrimaryKey(autoGenerate = true) var id: Int? = null
+    @PrimaryKey(autoGenerate = true) var id: Long? = null
 
-    fun setDataId(id: Int) {
+    fun setDataId(id: Long) {
         this.id = id
     }
 

@@ -8,6 +8,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import net.ienlab.sogangassist.constant.IntentKey
 import net.ienlab.sogangassist.room.LMSDatabase
 
 class MarkFinishReceiver : BroadcastReceiver() {
@@ -21,9 +22,9 @@ class MarkFinishReceiver : BroadcastReceiver() {
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         lmsDatabase = LMSDatabase.getInstance(context)
 
-        val id = intent.getIntExtra("ID", -1)
+        val id = intent.getLongExtra(IntentKey.ITEM_ID, -1)
 
-        if (id != -1) {
+        if (id != -1L) {
             GlobalScope.launch(Dispatchers.IO) {
                 val item = lmsDatabase?.getDao()?.get(id.toLong())
                 if (item != null) {
@@ -32,7 +33,7 @@ class MarkFinishReceiver : BroadcastReceiver() {
                 }
             }
 
-            nm.cancel(693000 + id)
+            nm.cancel(693000 + id.toInt())
         }
     }
 }
