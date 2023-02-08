@@ -116,7 +116,6 @@ class MainLMSEventAdapter(var items: ArrayList<LMSEntity>, var calendar: Calenda
 
     fun edit(id: Long, item: LMSEntity) {
         val position = items.indexOfFirst { it.id == id }
-        Log.d(TAG, "$position")
         if (position != -1) {
             items[position] = item
             notifyItemChanged(position)

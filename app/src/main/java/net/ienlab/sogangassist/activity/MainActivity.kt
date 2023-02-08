@@ -1,14 +1,14 @@
 package net.ienlab.sogangassist.activity
 
+import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +19,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -30,9 +31,11 @@ import kotlinx.coroutines.*
 import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.adapter.MainLMSEventAdapter
+import net.ienlab.sogangassist.constant.IntentID
 import net.ienlab.sogangassist.constant.IntentKey
 import net.ienlab.sogangassist.constant.IntentValue
-import net.ienlab.sogangassist.databinding.ActivityMain2Binding
+import net.ienlab.sogangassist.constant.PendingIntentReqCode
+import net.ienlab.sogangassist.databinding.ActivityMainBinding
 import net.ienlab.sogangassist.decorators.*
 import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.room.LMSDatabase
@@ -55,7 +58,7 @@ const val TAG = "SogangAssistTAG"
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMain2Binding
+    lateinit var binding: ActivityMainBinding
 
     private var lmsDatabase: LMSDatabase? = null
     lateinit var sharedPreferences: SharedPreferences
@@ -76,14 +79,7 @@ class MainActivity : AppCompatActivity() {
     private var adapter: MainLMSEventAdapter? = null
     var calendarViewSelected = ArrayList(Collections.nCopies(61, false))
 
-//    private val deleteCallbackListener = object: ClickCallbackListener {
-//        override fun callBack(position: Int, items: List<LMSEntity>, adapter: MainWorkAdapter) {
-//            Snackbar.make(window.decorView.rootView, if (items[position].isFinished) getString(R.string.marked_as_finish) else getString(R.string.marked_as_not_finish), Snackbar.LENGTH_SHORT).setAction(R.string.undo) {
-//                items[position].isFinished = !items[position].isFinished
-//                adapter.notifyItemChanged(position)
-//            }.show()
-//        }
-//    }
+    private var markingResultReceiver: BroadcastReceiver? = null
 
     @OptIn(DelicateCoroutinesApi::class)
     private val clickCallbackListener = object: ClickCallbackListener {
@@ -95,7 +91,28 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun longClick(position: Int, entity: LMSEntity) {
-
+            MaterialAlertDialogBuilder(this@MainActivity, R.style.Theme_SogangAssist_MaterialAlertDialog).apply {
+                setIcon(if (!entity.isFinished) R.drawable.ic_done_all else R.drawable.ic_remove_done)
+                setTitle(if (!entity.isFinished) R.string.mark_as_finish else R.string.mark_as_not_finish)
+                setMessage(if (!entity.isFinished) R.string.ask_mark_as_finish else R.string.ask_mark_as_not_finish)
+                setPositiveButton(android.R.string.ok) { dialog, id ->
+                    entity.id?.let {
+                        if (it != -1L) {
+                            entity.isFinished = !entity.isFinished
+                            GlobalScope.launch(Dispatchers.IO) {
+                                lmsDatabase?.getDao()?.update(entity)
+                                withContext(Dispatchers.Main) {
+                                    adapter?.edit(it, entity)
+                                    setAppTitle()
+                                }
+                            }
+                        }
+                    }
+                }
+                setNegativeButton(android.R.string.cancel) { dialog, id ->
+                    dialog.dismiss()
+                }
+            }.show()
         }
 
         override fun delete(position: Int, entity: LMSEntity) {
@@ -111,11 +128,12 @@ class MainActivity : AppCompatActivity() {
                                 for (i in 0 until 5) {
                                     val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, it) }
                                     val pendingIntent =
-                                        PendingIntent.getBroadcast(applicationContext, it.toInt() * 100 + i + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + it.toInt() * 100 + i + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     am.cancel(pendingIntent)
 
                                     withContext(Dispatchers.Main) {
                                         adapter?.delete(it)
+                                        setAppTitle()
                                     }
                                 }
                             }
@@ -132,7 +150,7 @@ class MainActivity : AppCompatActivity() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main2)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.activity = this
 
         lmsDatabase = LMSDatabase.getInstance(this)
@@ -165,6 +183,23 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        val permissions: ArrayList<String> = arrayListOf()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { group ->
+            group.forEach {
+                when (it.key) {
+                    Manifest.permission.POST_NOTIFICATIONS -> {}
+                }
+            }
+        }
+        permissionLauncher.launch(permissions.toTypedArray())
+
+        setAppTitle()
 
         binding.subTitle.text = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
             in 6..10 -> getString(R.string.user_hello_morning)
@@ -242,48 +277,53 @@ class MainActivity : AppCompatActivity() {
         }
         val calendarSelectionManager = object: CalendarSelectionManager {
             override fun canBeItemSelected(position: Int, date: Date): Boolean {
-                binding.shimmerFrame.startShimmer()
-                binding.shimmerFrame.visibility = View.VISIBLE
-                binding.listEvent.visibility = View.INVISIBLE
-                binding.icNoCalarms.alpha = 0f
-                binding.tvNoCalarms.alpha = 0f
-                binding.shimmerFrame.alpha = 1f
-                binding.listEvent.alpha = 0f
+                if ((binding.listDate as SingleRowCalendar).getSelectedIndexes().let { it.isEmpty() || it.first() != position }) {
+                    binding.shimmerFrame.startShimmer()
+                    binding.shimmerFrame.visibility = View.VISIBLE
+                    binding.listEvent.visibility = View.INVISIBLE
+                    binding.icNoCalarms.alpha = 0f
+                    binding.tvNoCalarms.alpha = 0f
+                    binding.shimmerFrame.alpha = 1f
+                    binding.listEvent.alpha = 0f
 
-                GlobalScope.launch(Dispatchers.IO) {
-                    val calendar = Calendar.getInstance().apply { time = date }
-                    val datas = lmsDatabase?.getDao()?.getByEndTime(calendar.timeZero().timeInMillis, calendar.tomorrowZero().timeInMillis)
-                    withContext(Dispatchers.Main) {
-                        adapter = MainLMSEventAdapter(datas as ArrayList<LMSEntity>, calendar).apply { setClickCallback(clickCallbackListener) }
-                        binding.listEvent.adapter = adapter
-                        binding.shimmerFrame.stopShimmer()
+                    GlobalScope.launch(Dispatchers.IO) {
+                        val calendar = Calendar.getInstance().apply { time = date }
+                        val datas = lmsDatabase?.getDao()?.getByEndTime(calendar.timeZero().timeInMillis, calendar.tomorrowZero().timeInMillis)
+                        withContext(Dispatchers.Main) {
+                            adapter =
+                                MainLMSEventAdapter(datas as ArrayList<LMSEntity>, calendar).apply { setClickCallback(clickCallbackListener) }
+                            binding.listEvent.adapter = adapter
+                            binding.shimmerFrame.stopShimmer()
 
-                        ValueAnimator.ofFloat(0f, 1f).apply {
-                            duration = 300
-                            addUpdateListener {
-                                binding.listEvent.alpha = it.animatedValue as Float
-                                binding.shimmerFrame.alpha = 1f - it.animatedValue as Float
+                            ValueAnimator.ofFloat(0f, 1f).apply {
+                                duration = 300
+                                addUpdateListener {
+                                    binding.listEvent.alpha = it.animatedValue as Float
+                                    binding.shimmerFrame.alpha = 1f - it.animatedValue as Float
 
-                                if (datas.isEmpty()) {
-                                    binding.icNoCalarms.alpha = (it.animatedValue as Float) * 0.4f
-                                    binding.tvNoCalarms.alpha = (it.animatedValue as Float) * 0.4f
+                                    if (datas.isEmpty()) {
+                                        binding.icNoCalarms.alpha =
+                                            (it.animatedValue as Float) * 0.4f
+                                        binding.tvNoCalarms.alpha =
+                                            (it.animatedValue as Float) * 0.4f
+                                    }
                                 }
-                            }
-                            addListener(object : AnimatorListenerAdapter() {
-                                override fun onAnimationStart(animation: Animator) {
-                                    super.onAnimationStart(animation)
-                                    binding.listEvent.visibility = View.VISIBLE
-                                }
+                                addListener(object : AnimatorListenerAdapter() {
+                                    override fun onAnimationStart(animation: Animator) {
+                                        super.onAnimationStart(animation)
+                                        binding.listEvent.visibility = View.VISIBLE
+                                    }
 
-                                override fun onAnimationEnd(animation: Animator) {
-                                    super.onAnimationEnd(animation)
-                                    binding.shimmerFrame.visibility = View.INVISIBLE
-                                }
-                            })
-                        }.start()
+                                    override fun onAnimationEnd(animation: Animator) {
+                                        super.onAnimationEnd(animation)
+                                        binding.shimmerFrame.visibility = View.INVISIBLE
+                                    }
+                                })
+                            }.start()
+                        }
                     }
+                    binding.listEvent.adapter = adapter
                 }
-                binding.listEvent.adapter = adapter
                 return true
             }
         }
@@ -314,6 +354,7 @@ class MainActivity : AppCompatActivity() {
                             if (item != null) {
                                 withContext(Dispatchers.Main) {
                                     adapter?.edit(id, item)
+                                    setAppTitle()
                                 }
                             }
                         }
@@ -321,6 +362,7 @@ class MainActivity : AppCompatActivity() {
                     IntentValue.ACTION_DELETE -> {
                         if (id != -1L) {
                             adapter?.delete(id)
+                            setAppTitle()
                         }
                     }
                 }
@@ -333,6 +375,25 @@ class MainActivity : AppCompatActivity() {
         binding.btnAdd.setOnClickListener {
             editActivityResultLauncher.launch(Intent(this, EditActivity::class.java))
         }
+
+        markingResultReceiver = object: BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                val id = intent.getLongExtra(IntentKey.ITEM_ID, -1)
+                if (id != -1L) {
+                    GlobalScope.launch(Dispatchers.IO) {
+                        val entity = lmsDatabase?.getDao()?.get(id)
+                        entity?.let {
+                            withContext(Dispatchers.Main) {
+                                adapter?.edit(entity.id ?: -1, entity)
+                                setAppTitle()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(markingResultReceiver as BroadcastReceiver, IntentFilter(IntentID.MARKING_RESULT))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -352,6 +413,27 @@ class MainActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun setAppTitle() {
+        GlobalScope.launch(Dispatchers.IO) {
+            val calendar = Calendar.getInstance()
+            val datas = lmsDatabase?.getDao()?.getByEndTime(calendar.timeZero().timeInMillis, calendar.tomorrowZero().timeInMillis)
+
+            withContext(Dispatchers.Main) {
+                binding.appTitle.text = datas?.filter { !it.isFinished }?.size?.let {
+                    if (it > 1) getString(R.string.event_count, it)
+                    else if (it == 1) getString(R.string.event_count_one)
+                    else getString(R.string.event_count_none)
+                }
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        markingResultReceiver?.let { LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(it) }
     }
 
 }

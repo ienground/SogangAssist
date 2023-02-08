@@ -18,9 +18,7 @@ import kotlinx.coroutines.launch
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.activity.MainActivity
 import net.ienlab.sogangassist.activity.TAG
-import net.ienlab.sogangassist.constant.ChannelId
-import net.ienlab.sogangassist.constant.DefaultValue
-import net.ienlab.sogangassist.constant.SharedKey
+import net.ienlab.sogangassist.constant.*
 import net.ienlab.sogangassist.room.LMSDatabase
 import net.ienlab.sogangassist.room.LMSEntity
 import net.ienlab.sogangassist.utils.MyUtils
@@ -110,13 +108,13 @@ class ReminderReceiver: BroadcastReceiver() {
                             setStyle(NotificationCompat.BigTextStyle()
                                 .bigText(context.getString(R.string.daily_reminder_content_format, content.joinToString(", "), bigTextContent.joinToString("\n\n")))
                             )
-                            setContentIntent(PendingIntent.getActivity(context, 1, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+                            setContentIntent(PendingIntent.getActivity(context, PendingIntentReqCode.MORNING_REMINDER_LAUNCH, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
                             setSmallIcon(R.drawable.ic_reminder_icon)
                             setAutoCancel(true)
-                            color = ContextCompat.getColor(context, R.color.colorAccent)
+                            color = ContextCompat.getColor(context, R.color.colorPrimary)
 
                             if (content.isNotEmpty() && !sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) && (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                nm.notify(680000, build())
+                                nm.notify(NotificationId.REMINDER, build())
                             }
                         }
                     }
@@ -129,13 +127,13 @@ class ReminderReceiver: BroadcastReceiver() {
                             setStyle(NotificationCompat.BigTextStyle()
                                 .bigText(context.getString(R.string.daily_reminder_content_format, content.joinToString(", "), bigTextContent.joinToString("\n\n")))
                             )
-                            setContentIntent(PendingIntent.getActivity(context, 1, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+                            setContentIntent(PendingIntent.getActivity(context, PendingIntentReqCode.NIGHT_REMINDER_LAUNCH, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
                             setSmallIcon(R.drawable.ic_reminder_icon)
                             setAutoCancel(true)
-                            color = ContextCompat.getColor(context, R.color.colorAccent)
+                            color = ContextCompat.getColor(context, R.color.colorPrimary)
 
                             if (content.isNotEmpty() && (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) && (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt)))) {
-                                nm.notify(680000, build())
+                                nm.notify(NotificationId.REMINDER, build())
                             }
                         }
                     }

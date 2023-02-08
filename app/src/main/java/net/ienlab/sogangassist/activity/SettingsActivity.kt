@@ -22,6 +22,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
+import androidx.preference.SwitchPreferenceCompat
 import com.anjlab.android.iab.v3.BillingProcessor
 import com.anjlab.android.iab.v3.TransactionDetails
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
@@ -53,7 +55,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.min
 
-class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListener, BillingProcessor.IBillingHandler {
+class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
 
     lateinit var binding: ActivitySettingsBinding
 
@@ -77,10 +79,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
     }
 
     // ActionBar 메뉴 각각 클릭 시
-
-    override fun onPreferenceClick(preference: Preference?): Boolean {
-        return true
-    }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         bp.loadOwnedPurchasesFromGoogle()
@@ -141,21 +139,21 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
         @OptIn(DelicateCoroutinesApi::class)
         override fun onCreatePreferences(bundle: Bundle?, str: String?) {
             addPreferencesFromResource(R.xml.root_preferences)
-            val prefAppInfo = findPreference("app_title")
-            val prefDndTime = findPreference("dnd_time")
-            val prefNotifyHw = findPreference("notify_hw_group")
-            val prefNotifyLec = findPreference("notify_lec_group")
-            val prefNotifyZoom = findPreference("notify_zoom_group")
-            val prefNotifyExam = findPreference("notify_exam_group")
-            val prefTimeMorningReminder = findPreference(SharedKey.TIME_MORNING_REMINDER)
-            val prefTimeNightReminder = findPreference(SharedKey.TIME_NIGHT_REMINDER)
-            val prefCalendarIconCheck = findPreference(SharedKey.CALENDAR_ICON_SHOW) as CheckBoxPreference
-            val prefDateDelete = findPreference("date_delete")
-            val prefChangelog = findPreference("changelog")
-            val prefEmail = findPreference("ask_to_dev")
-            val prefOpenSource = findPreference("open_source")
-            val prefBackup = findPreference("backup")
-            val prefRestore = findPreference("restore")
+            val prefAppInfo = findPreference<Preference>("app_title")
+            val prefDndTime = findPreference<Preference>("dnd_time")
+            val prefNotifyHw = findPreference<Preference>("notify_hw_group")
+            val prefNotifyLec = findPreference<Preference>("notify_lec_group")
+            val prefNotifyZoom = findPreference<Preference>("notify_zoom_group")
+            val prefNotifyExam = findPreference<Preference>("notify_exam_group")
+            val prefTimeMorningReminder = findPreference<Preference>(SharedKey.TIME_MORNING_REMINDER)
+            val prefTimeNightReminder = findPreference<Preference>(SharedKey.TIME_NIGHT_REMINDER)
+            val prefCalendarIconCheck = findPreference<SwitchPreferenceCompat>(SharedKey.CALENDAR_ICON_SHOW)
+            val prefDateDelete = findPreference<Preference>("date_delete")
+            val prefChangelog = findPreference<Preference>("changelog")
+            val prefEmail = findPreference<Preference>("ask_to_dev")
+            val prefOpenSource = findPreference<Preference>("open_source")
+            val prefBackup = findPreference<Preference>("backup")
+            val prefRestore = findPreference<Preference>("restore")
 
             lmsDatabase = LMSDatabase.getInstance(requireContext())
             sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)
@@ -208,7 +206,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             prefTimeNightReminder?.summary = timeFormat.format(nightCalendar.time)
             prefDndTime?.summary = "${timeFormat.format(dndStartCalendar.time)} ~ ${timeFormat.format(dndEndCalendar.time)}"
 
-            prefCalendarIconCheck.setOnPreferenceChangeListener { _, _ ->
+            prefCalendarIconCheck?.setOnPreferenceChangeListener { _, _ ->
                 Toast.makeText(context, requireContext().getString(R.string.restart_to_apply), Toast.LENGTH_SHORT).show()
                 true
             }
@@ -702,7 +700,7 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
                                                 count++
                                             }
                                         } else {
-                                            lmsDatabase?.getDao()?.delete(data.id?.toLong() ?: -1)
+                                            lmsDatabase?.getDao()?.delete(data.id ?: -1)
                                             count++
                                         }
                                     }
@@ -730,4 +728,6 @@ class SettingsActivity : AppCompatActivity(), Preference.OnPreferenceClickListen
             }
         }
     }
+
+
 }

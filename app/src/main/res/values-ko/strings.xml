@@ -17,7 +17,8 @@
     <string name="assignment_name">과제명</string>
     <string name="zoom_name">강의명</string>
     <string name="exam_name">시험명</string>
-    <string name="dateFormat">yyyy년 M월 d일 (E)</string>
+    <string name="dateFormat">yyyy년 M월 d일 E요일</string>
+    <string name="dateFormatNoYear">M월 d일 E요일</string>
     <string name="calendarFormat">yyyy년 M월</string>
     <string name="timeFormat">a h:mm</string>
     <string name="mark_as_finish">완료로 표시</string>
@@ -64,6 +65,7 @@
     <string name="notify_exam">시험 알림 설정</string>
     <string name="channel_name">LMS 리마인더</string>
     <string name="channel_daily_reminder">데일리 리마인더</string>
+    <string name="channel_time_reminder">Time Reminder</string>
     <string name="reminder_content_lec">%1$d주 %2$d차시 강의가 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
     <string name="reminder_content_sup_lec">%1$d주 %2$d차시 보강이 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
     <string name="reminder_content_hw">\"%1$s\" 과제 마감 기간까지 %2$d시간 남았습니다. 늦지 않게 제출하세요.</string>
@@ -317,8 +319,19 @@
     <string name="user_hello_evening">행복한 저녁이에요🎆</string>
     <string name="user_hello_night">오늘은 어떠셨나요?🌙</string>
 
+    <string name="event_count">오늘은 %1$d개의 할 일이 있어요</string>
+    <string name="event_count_one">오늘은 1개의 할 일이 있어요</string>
+    <string name="event_count_none">오늘은 할 일이 없어요</string>
+
     <string name="ask_to_save">저장할까요?</string>
     <string name="ask_to_save_message">저장하지 않은 정보는 손실됩니다.</string>
     <string name="not_save">저장하지 않음</string>
+    <string name="today">오늘</string>
+    <string name="tomorrow">내일</string>
+    <string name="yesterday">어제</string>
+    <string name="use_dynamic_colors">동적 색상 사용</string>
+    <string name="use_dynamic_colors_sum_off">기본 색상을 앱 전반에 적용합니다.</string>
+    <string name="use_dynamic_colors_sum_on">동적 색상을 앱 전반에 적용합니다.</string>
+    <string name="no_todos">할 일 없음</string>
 
 </resources>

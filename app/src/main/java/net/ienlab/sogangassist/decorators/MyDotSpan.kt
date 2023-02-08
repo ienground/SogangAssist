@@ -98,7 +98,7 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
         val oldStrokeWidth = paint.strokeWidth
         val oldStyle = paint.style
 
-        paint.color = ContextCompat.getColor(context, R.color.colorAccent)
+        paint.color = ContextCompat.getColor(context, R.color.colorPrimary)
 
         if (data.size <= 3) { // 0 1 2
             unfinishedItem.forEachIndexed { i, it ->
@@ -130,7 +130,7 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
                     else -> R.drawable.ic_icon
                 }
 
-                for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorAccent),
+                for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorPrimary),
                     (left + right) * 0.5f - size * 0.5f * (1 + 1.25f * (data.size - 1)) + size * 1.25f * (i + unfinishedItem.size), bottom + size / 2f, paint)
             }
         } else { // 0 1 +
@@ -178,7 +178,7 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
                         else -> R.drawable.ic_icon
                     }
 
-                    for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorAccent),
+                    for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorPrimary),
                         (left + right) * 0.5f - size * 0.5f * (1 + 1.25f * 2) + size * 1.25f * (i + unfinishedItem.size), bottom + size / 2f, paint)
                 }
             }
@@ -193,7 +193,7 @@ class MyDotSpan2(private val context: Context, private val size: Float, private 
                 else -> R.drawable.ic_plus_box
             }
 
-            for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorAccent),
+            for (k in 0..5) canvas.drawBitmap(getBitmapFromVectorDrawable(context, image, size.toInt(), size.toInt(), R.color.colorPrimary),
                 (left + right) * 0.5f - size * 0.5f * (1 + 1.25f * 2) + size * 1.25f * 2, bottom + size / 2f, paint)
 
         }

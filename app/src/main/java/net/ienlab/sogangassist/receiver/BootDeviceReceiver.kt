@@ -12,6 +12,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.ienlab.sogangassist.constant.DefaultValue
 import net.ienlab.sogangassist.constant.IntentKey
+import net.ienlab.sogangassist.constant.PendingIntentReqCode
 import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.room.LMSDatabase
 import net.ienlab.sogangassist.room.LMSEntity
@@ -71,10 +72,10 @@ class BootDeviceReceiver : BroadcastReceiver() {
         val nightReminderIntent = Intent(context, ReminderReceiver::class.java).apply { putExtra(ReminderReceiver.TYPE, ReminderReceiver.NIGHT) }
 
         am.setRepeating(AlarmManager.RTC_WAKEUP, morningReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY,
-            PendingIntent.getBroadcast(context, 14402, morningReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+            PendingIntent.getBroadcast(context, PendingIntentReqCode.MORNING_REMINDER, morningReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 
         am.setRepeating(AlarmManager.RTC_WAKEUP, nightReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY,
-            PendingIntent.getBroadcast(context, 14502, nightReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+            PendingIntent.getBroadcast(context, PendingIntentReqCode.NIGHT_REMINDER, nightReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 
         GlobalScope.launch(Dispatchers.IO) {
             val datas = lmsDatabase?.getDao()?.getAll()
@@ -92,8 +93,8 @@ class BootDeviceReceiver : BroadcastReceiver() {
                                 val triggerTime = data.endTime - i * 60 * 60 * 1000
                                 notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                 notiIntent.putExtra(IntentKey.TIME, i)
-                                val pendingIntent = PendingIntent.getBroadcast(context, (data.id?.toInt()?.times(100) ?: 0) + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                val pendingIntent = PendingIntent.getBroadcast(context, PendingIntentReqCode.LAUNCH_NOTI + (data.id?.toInt()?.times(100) ?: 0) + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                             }
                         }
                         LMSEntity.TYPE_ZOOM, LMSEntity.TYPE_EXAM -> {
@@ -101,8 +102,8 @@ class BootDeviceReceiver : BroadcastReceiver() {
                                 val triggerTime = data.endTime - i * 60 * 1000
                                 notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                 notiIntent.putExtra(IntentKey.MINUTE, i)
-                                val pendingIntent = PendingIntent.getBroadcast(context, (data.id?.toInt()?.times(100) ?: 0) + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                val pendingIntent = PendingIntent.getBroadcast(context, PendingIntentReqCode.LAUNCH_NOTI + (data.id?.toInt()?.times(100) ?: 0) + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                             }
                         }
                     }

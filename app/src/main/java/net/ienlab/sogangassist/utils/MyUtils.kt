@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.ienlab.sogangassist.R
 import java.io.*
 import java.net.URL
 import java.nio.charset.Charset
@@ -27,12 +28,25 @@ import kotlin.math.abs
 
 class MyUtils {
     companion object {
-        fun fromHtml(source: String): Spanned {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY)
+        fun getDateLabel(context: Context, date: Date): String {
+            val time = date.time
+            val dateFormat = SimpleDateFormat(context.getString(R.string.dateFormat), Locale.getDefault())
+            val dateFormatNoYear = SimpleDateFormat(context.getString(R.string.dateFormatNoYear), Locale.getDefault())
+            val calendar = Calendar.getInstance().apply { timeInMillis = time }
+            return if (calendar.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)) {
+                when (calendar.get(Calendar.DAY_OF_YEAR) - Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) {
+                    0 -> context.getString(R.string.today)
+                    1 -> context.getString(R.string.tomorrow)
+                    -1 -> context.getString(R.string.yesterday)
+                    else -> dateFormatNoYear.format(calendar.time)
+                }
             } else {
-                Html.fromHtml(source)
+                dateFormat.format(calendar.time)
             }
+        }
+
+        fun fromHtml(source: String): Spanned {
+            return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY)
         }
 
         fun readTextFromRaw(res: Resources, rawId: Int): String {

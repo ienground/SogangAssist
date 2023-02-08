@@ -17,7 +17,8 @@
     <string name="assignment_name">Assignment Name</string>
     <string name="zoom_name">Zoom Title</string>
     <string name="exam_name">Exam Title</string>
-    <string name="dateFormat">MMM dd, yyyy (EEE)</string>
+    <string name="dateFormat">EEEE, MMM d yyyy</string>
+    <string name="dateFormatNoYear">EEEE, MMM d</string>
     <string name="calendarFormat">MMMM yyyy</string>
     <string name="timeFormat">a h:mm</string>
     <string name="mark_as_finish">Mark as complete</string>
@@ -64,6 +65,7 @@
     <string name="notify_exam">Exam Notify</string>
     <string name="channel_name">LMS Reminder</string>
     <string name="channel_daily_reminder">Daily Reminder</string>
+    <string name="channel_time_reminder">Time Reminder</string>
     <string name="reminder_content_lec">%1$d week(s) %2$d hour: %3$d hours left until the class deadline. Take the class on time.</string>
     <string name="reminder_content_sup_lec">%1$d week(s) %2$d hour: %3$d hours left until the make-up class deadline. Take the class on time.</string>
     <string name="reminder_content_hw">\"%1$s\" %2$d hour(s) left until the assignment deadline. Don\' be late.</string>
@@ -317,10 +319,21 @@
     <string name="user_hello_evening">Good evening🎆</string>
     <string name="user_hello_night">Sleep tight🌙</string>
 
+    <string name="event_count">You have %1$d todos today</string>
+    <string name="event_count_one">You have one todo today</string>
+    <string name="event_count_none">You have no todos today</string>
+
 
     <string name="ask_to_save">Save?</string>
     <string name="ask_to_save_message">Unsaved changes will be lost.</string>
     <string name="not_save">Not save</string>
     <string name="close">Close</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="use_dynamic_colors">Use dynamic colors</string>
+    <string name="use_dynamic_colors_sum_off">Apply the default color throughout the app.</string>
+    <string name="use_dynamic_colors_sum_on">Apply dynamic colors throughout the app.</string>
+    <string name="no_todos">No todos</string>
 
 </resources>

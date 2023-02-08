@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_dnd_start_tag"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toStartOf="@id/tv_dnd_end_tag"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_dnd_end_tag"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_dnd_start"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
         app:layout_constraintEnd_toStartOf="@id/tv_dnd_end"
         app:layout_constraintTop_toBottomOf="@id/tv_dnd_start_tag" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_dnd_end"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -15,12 +15,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.ienlab.sogangassist.*
-import net.ienlab.sogangassist.constant.ChannelId
-import net.ienlab.sogangassist.constant.SharedKey
 import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.activity.*
-import net.ienlab.sogangassist.constant.DefaultValue
-import net.ienlab.sogangassist.constant.IntentKey
+import net.ienlab.sogangassist.constant.*
 import net.ienlab.sogangassist.receiver.DeleteMissReceiver
 import net.ienlab.sogangassist.room.LMSDatabase
 import net.ienlab.sogangassist.room.LMSEntity
@@ -56,18 +53,16 @@ class LMSListenerService : NotificationListenerService() {
         val hours = listOf(1, 2, 6, 12, 24)
         val minutes = listOf(3, 5, 10, 20, 30)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(ChannelId.DEFAULT_ID, getString(R.string.channel_name), NotificationManager.IMPORTANCE_HIGH)
-            nm.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(ChannelId.DEFAULT_ID, getString(R.string.channel_name), NotificationManager.IMPORTANCE_HIGH)
+        nm.createNotificationChannel(channel)
 
         val dndStartData = sharedPreferences.getInt(SharedKey.DND_START_TIME, DefaultValue.DND_START_TIME)
         val dndEndData = sharedPreferences.getInt(SharedKey.DND_END_TIME, DefaultValue.DND_END_TIME)
         val now = Calendar.getInstance()
         val nowInt = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
 
-//        if (sbn.packageName == "net.ienlab.notificationtest") {
-        if (sbn.packageName == "kr.co.imaxsoft.hellolms") {
+        if (sbn.packageName == "zone.ien.sogangassistnoti") {
+//        if (sbn.packageName == "kr.co.imaxsoft.hellolms") {
             val className = extras.getString(Notification.EXTRA_TITLE) ?: ""
 
             with (extras.getString(Notification.EXTRA_TEXT) ?: "") {
@@ -89,15 +84,15 @@ class LMSListenerService : NotificationListenerService() {
                                         val triggerTime = data.endTime - i * 60 * 60 * 1000
                                         notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                         notiIntent.putExtra(IntentKey.TIME, i)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                     }
 
                                     if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                         val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                         val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                        val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.DELETE + id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                         NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                             setContentTitle(className)
@@ -107,10 +102,10 @@ class LMSListenerService : NotificationListenerService() {
                                             setStyle(NotificationCompat.BigTextStyle())
                                             setSmallIcon(R.drawable.ic_icon)
                                             addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
-                                            color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                                            color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
 
                                             if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                                nm.notify(699000 + id, build())
+                                                nm.notify(NotificationId.REGISTER + id, build())
                                             }
                                         }
                                     }
@@ -150,15 +145,15 @@ class LMSListenerService : NotificationListenerService() {
                                     val triggerTime = data.endTime - i * 60 * 60 * 1000
                                     notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                     notiIntent.putExtra(IntentKey.TIME, i)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                     val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.DELETE + id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -168,10 +163,10 @@ class LMSListenerService : NotificationListenerService() {
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
                                         addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
-                                        color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                                        color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
 
                                         if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                            nm.notify(699000 + id.toInt(), build())
+                                            nm.notify(NotificationId.REGISTER + id.toInt(), build())
                                         }
                                     }
                                 }
@@ -195,15 +190,15 @@ class LMSListenerService : NotificationListenerService() {
                                         val triggerTime = data.endTime - i * 60 * 60 * 1000
                                         notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                         notiIntent.putExtra(IntentKey.TIME, i)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                     }
 
                                     if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                         val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                         val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                        val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.DELETE + id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                         NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                             setContentTitle(className)
@@ -213,10 +208,10 @@ class LMSListenerService : NotificationListenerService() {
                                             setStyle(NotificationCompat.BigTextStyle())
                                             setSmallIcon(R.drawable.ic_icon)
                                             addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
-                                            color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                                            color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
 
                                             if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                                nm.notify(699000 + id, build())
+                                                nm.notify(NotificationId.REGISTER + id, build())
                                             }
                                         }
                                     }
@@ -256,15 +251,15 @@ class LMSListenerService : NotificationListenerService() {
                                     val triggerTime = data.endTime - i * 60 * 60 * 1000
                                     notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                     notiIntent.putExtra(IntentKey.TIME, i)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                     val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.DELETE + id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -274,10 +269,10 @@ class LMSListenerService : NotificationListenerService() {
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
                                         addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
-                                        color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                                        color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
 
                                         if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                            nm.notify(699000 + id.toInt(), build())
+                                            nm.notify(NotificationId.REGISTER + id.toInt(), build())
                                         }
                                     }
                                 }
@@ -302,15 +297,15 @@ class LMSListenerService : NotificationListenerService() {
                                         val triggerTime = data.endTime - i * 60 * 60 * 1000
                                         notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                         notiIntent.putExtra(IntentKey.TIME, i)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                     }
 
                                     if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                         val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                         val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                        val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.DELETE + id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                         NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                             setContentTitle(className)
@@ -320,10 +315,10 @@ class LMSListenerService : NotificationListenerService() {
                                             setStyle(NotificationCompat.BigTextStyle())
                                             setSmallIcon(R.drawable.ic_icon)
                                             addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
-                                            color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                                            color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
 
                                             if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                                nm.notify(699000 + id, build())
+                                                nm.notify(NotificationId.REGISTER + id, build())
                                             }
                                         }
                                     }
@@ -363,15 +358,15 @@ class LMSListenerService : NotificationListenerService() {
                                     val triggerTime = data.endTime - i * 60 * 60 * 1000
                                     notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                     notiIntent.putExtra(IntentKey.TIME, i)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                     val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.DELETE + id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -381,10 +376,10 @@ class LMSListenerService : NotificationListenerService() {
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
                                         addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
-                                        color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                                        color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
 
                                         if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                            nm.notify(699000 + id.toInt(), build())
+                                            nm.notify(NotificationId.REGISTER + id.toInt(), build())
                                         }
                                     }
                                 }
@@ -408,15 +403,15 @@ class LMSListenerService : NotificationListenerService() {
                                         val triggerTime = data.endTime - i * 60 * 1000
                                         notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                         notiIntent.putExtra(IntentKey.MINUTE, i)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                     }
 
                                     if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                         val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                         val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                        val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.DELETE + id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                         NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                             setContentTitle(className)
@@ -426,10 +421,10 @@ class LMSListenerService : NotificationListenerService() {
                                             setStyle(NotificationCompat.BigTextStyle())
                                             setSmallIcon(R.drawable.ic_icon)
                                             addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
-                                            color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                                            color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
 
                                             if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                                nm.notify(699000 + id, build())
+                                                nm.notify(NotificationId.REGISTER + id, build())
                                             }
                                         }
                                     }
@@ -469,15 +464,15 @@ class LMSListenerService : NotificationListenerService() {
                                     val triggerTime = data.endTime - i * 60 * 1000
                                     notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                     notiIntent.putExtra(IntentKey.MINUTE, i)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                     val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.DELETE + id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -487,10 +482,10 @@ class LMSListenerService : NotificationListenerService() {
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
                                         addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
-                                        color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                                        color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
 
                                         if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                            nm.notify(699000 + id.toInt(), build())
+                                            nm.notify(NotificationId.REGISTER + id.toInt(), build())
                                         }
                                     }
                                 }
@@ -514,15 +509,15 @@ class LMSListenerService : NotificationListenerService() {
                                         val triggerTime = data.endTime - i * 60 * 60 * 1000
                                         notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                         notiIntent.putExtra(IntentKey.TIME, i)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                     }
 
                                     if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                         val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                         val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                        val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.DELETE + id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                         NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                             setContentTitle(className)
@@ -532,10 +527,10 @@ class LMSListenerService : NotificationListenerService() {
                                             setStyle(NotificationCompat.BigTextStyle())
                                             setSmallIcon(R.drawable.ic_icon)
                                             addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
-                                            color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                                            color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
 
                                             if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                                nm.notify(699000 + id, build())
+                                                nm.notify(NotificationId.REGISTER + id, build())
                                             }
                                         }
                                     }
@@ -575,15 +570,15 @@ class LMSListenerService : NotificationListenerService() {
                                     val triggerTime = data.endTime - i * 60 * 60 * 1000
                                     notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                     notiIntent.putExtra(IntentKey.TIME, i)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                     val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.DELETE + id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -593,10 +588,10 @@ class LMSListenerService : NotificationListenerService() {
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
                                         addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
-                                        color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                                        color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
 
                                         if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                            nm.notify(699000 + id.toInt(), build())
+                                            nm.notify(NotificationId.REGISTER + id.toInt(), build())
                                         }
                                     }
                                 }
@@ -620,15 +615,15 @@ class LMSListenerService : NotificationListenerService() {
                                         val triggerTime = data.endTime - i * 60 * 60 * 1000
                                         notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                         notiIntent.putExtra(IntentKey.TIME, i)
-                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                        am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                     }
 
                                     if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                         val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        val clickPendingIntent = PendingIntent.getActivity(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                         val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                        val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                        val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.DELETE + id, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                         NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                             setContentTitle(className)
@@ -638,10 +633,10 @@ class LMSListenerService : NotificationListenerService() {
                                             setStyle(NotificationCompat.BigTextStyle())
                                             setSmallIcon(R.drawable.ic_icon)
                                             addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
-                                            color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                                            color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
 
                                             if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                                nm.notify(699000 + id, build())
+                                                nm.notify(NotificationId.REGISTER + id, build())
                                             }
                                         }
                                     }
@@ -681,15 +676,15 @@ class LMSListenerService : NotificationListenerService() {
                                     val triggerTime = data.endTime - i * 60 * 60 * 1000
                                     notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
                                     notiIntent.putExtra(IntentKey.TIME, i)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                                    am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                                 }
 
                                 if (sharedPreferences.getBoolean(SharedKey.SET_REGISTER_ALERT, true)) {
                                     val clickIntent = Intent(applicationContext, MainActivity::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val clickPendingIntent = PendingIntent.getActivity(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt(), clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                                     val deleteIntent = Intent(applicationContext, DeleteMissReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, id) }
-                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                                    val deletePendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.DELETE + id.toInt(), deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
                                     NotificationCompat.Builder(applicationContext, ChannelId.DEFAULT_ID).apply {
                                         setContentTitle(className)
@@ -699,10 +694,10 @@ class LMSListenerService : NotificationListenerService() {
                                         setStyle(NotificationCompat.BigTextStyle())
                                         setSmallIcon(R.drawable.ic_icon)
                                         addAction(R.drawable.ic_delete, getString(R.string.deleted_noti), deletePendingIntent)
-                                        color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                                        color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
 
                                         if (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) || (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                            nm.notify(699000 + id.toInt(), build())
+                                            nm.notify(NotificationId.REGISTER + id.toInt(), build())
                                         }
                                     }
                                 }

@@ -1,123 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <net.ienlab.sogangassist.preference.AppInfoPreference
-        android:key="app_title"
-        android:layout="@layout/preference_app_info"/>
+        app:key="app_title"
+        app:layout="@layout/preference_app_info"/>
 
-    <PreferenceCategory android:title="@string/notifications" >
-        <CheckBoxPreference
-            android:key="dnd_time_check"
-            android:title="@string/dnd_time_check"
-            android:defaultValue="false"
-            android:summaryOn="@string/dnd_time_check_on"
-            android:summaryOff="@string/dnd_time_check_off"/>
+    <PreferenceCategory
+        app:title="@string/settings"
+        app:icon="@drawable/ic_settings"
+        app:key="group_settings">
 
-        <Preference
-            android:key="dnd_time"
-            android:title="@string/dnd_time"
-            android:dependency="dnd_time_check" />
-
-        <Preference
-            android:key="notify_hw_group"
-            android:title="@string/notify_hw" />
-
-        <Preference
-            android:key="notify_lec_group"
-            android:title="@string/notify_lec" />
-
-        <Preference
-            android:key="notify_zoom_group"
-            android:title="@string/notify_zoom" />
-
-        <Preference
-            android:key="notify_exam_group"
-            android:title="@string/notify_exam" />
-
-        <CheckBoxPreference
-            android:key="allow_morning_reminder"
-            android:title="@string/morning_reminder"
-            android:defaultValue="true"
-            android:summaryOn="@string/morning_reminder_desc_on"
-            android:summaryOff="@string/morning_reminder_desc_off"/>
-
-        <Preference
-            android:key="time_morning_reminder"
-            android:title="@string/morning_reminder_time"
-            android:dependency="allow_morning_reminder"/>
-
-        <CheckBoxPreference
-            android:key="allow_night_reminder"
-            android:title="@string/night_reminder"
-            android:defaultValue="true"
-            android:summaryOn="@string/night_reminder_desc_on"
-            android:summaryOff="@string/night_reminder_desc_off"/>
-
-        <Preference
-            android:key="time_night_reminder"
-            android:title="@string/night_reminder_time"
-            android:dependency="allow_night_reminder" />
+        <SwitchPreferenceCompat
+            app:title="@string/use_dynamic_colors"
+            app:key="is_material_you"
+            app:defaultValue="true"
+            app:summaryOn="@string/use_dynamic_colors_sum_on"
+            app:summaryOff="@string/use_dynamic_colors_sum_off"
+            app:widgetLayout="@layout/preference_material_switch" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/other_settings">
+    <PreferenceCategory
+        app:title="@string/notifications"
+        app:icon="@drawable/ic_notification"
+        app:key="group_notifications">
 
-        <CheckBoxPreference
-            android:title="@string/notify_when_lms"
-            android:key="setRegisterAlert"
-            android:defaultValue="true"
-            android:summaryOn="@string/notify_when_lms_sum_on"
-            android:summaryOff="@string/notify_when_lms_sum_off" />
-
-        <CheckBoxPreference
-            android:title="@string/calendar_icon_view"
-            android:key="calendar_icon_show"
-            android:defaultValue="true"
-            android:summaryOn="@string/calendar_icon_view_desc_on"
-            android:summaryOff="@string/calendar_icon_view_desc_off" />
-
-        <CheckBoxPreference
-            android:title="@string/widget_dark_mode_title"
-            android:key="widget_dark_mode"
-            android:defaultValue="true"
-            android:summaryOn="@string/widget_dark_mode_desc_on"
-            android:summaryOff="@string/widget_dark_mode_desc_off" />
+        <SwitchPreferenceCompat
+            app:key="dnd_time_check"
+            app:title="@string/dnd_time_check"
+            app:defaultValue="false"
+            app:summaryOn="@string/dnd_time_check_on"
+            app:summaryOff="@string/dnd_time_check_off"
+            app:widgetLayout="@layout/preference_material_switch"/>
 
         <Preference
-            android:title="@string/date_delete_title"
-            android:key="date_delete"
-            android:summary="@string/date_delete_summary" />
+            app:key="dnd_time"
+            app:title="@string/dnd_time"
+            app:dependency="dnd_time_check" />
 
         <Preference
-            android:title="@string/backup"
-            android:key="backup"
-            android:summary="@string/backup_desc" />
+            app:key="notify_hw_group"
+            app:title="@string/notify_hw" />
 
         <Preference
-            android:title="@string/restore"
-            android:key="restore"
-            android:summary="@string/restore_desc" />
+            app:key="notify_lec_group"
+            app:title="@string/notify_lec" />
+
+        <Preference
+            app:key="notify_zoom_group"
+            app:title="@string/notify_zoom" />
+
+        <Preference
+            app:key="notify_exam_group"
+            app:title="@string/notify_exam" />
+
+        <SwitchPreferenceCompat
+            app:key="allow_morning_reminder"
+            app:title="@string/morning_reminder"
+            app:defaultValue="true"
+            app:summaryOn="@string/morning_reminder_desc_on"
+            app:summaryOff="@string/morning_reminder_desc_off"
+            app:widgetLayout="@layout/preference_material_switch"/>
+
+        <Preference
+            app:key="time_morning_reminder"
+            app:title="@string/morning_reminder_time"
+            app:dependency="allow_morning_reminder"/>
+
+        <SwitchPreferenceCompat
+            app:key="allow_night_reminder"
+            app:title="@string/night_reminder"
+            app:defaultValue="true"
+            app:summaryOn="@string/night_reminder_desc_on"
+            app:summaryOff="@string/night_reminder_desc_off"
+            app:widgetLayout="@layout/preference_material_switch"/>
+
+        <Preference
+            app:key="time_night_reminder"
+            app:title="@string/night_reminder_time"
+            app:dependency="allow_night_reminder" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/info_and_ask" >
+    <PreferenceCategory app:title="@string/other_settings">
+
+        <SwitchPreferenceCompat
+            app:title="@string/notify_when_lms"
+            app:key="setRegisterAlert"
+            app:defaultValue="true"
+            app:summaryOn="@string/notify_when_lms_sum_on"
+            app:summaryOff="@string/notify_when_lms_sum_off"
+            app:widgetLayout="@layout/preference_material_switch"/>
+
+        <SwitchPreferenceCompat
+            app:title="@string/calendar_icon_view"
+            app:key="calendar_icon_show"
+            app:defaultValue="true"
+            app:summaryOn="@string/calendar_icon_view_desc_on"
+            app:summaryOff="@string/calendar_icon_view_desc_off"
+            app:widgetLayout="@layout/preference_material_switch"/>
+
+<!--        <CheckBoxPreference-->
+<!--            app:title="@string/widget_dark_mode_title"-->
+<!--            app:key="widget_dark_mode"-->
+<!--            app:defaultValue="true"-->
+<!--            app:summaryOn="@string/widget_dark_mode_desc_on"-->
+<!--            app:summaryOff="@string/widget_dark_mode_desc_off" />-->
 
         <Preference
-            android:title="@string/changelog"
-            android:key="changelog"
-            android:summary="@string/pref_changelog_exp"/>
+            app:title="@string/date_delete_title"
+            app:key="date_delete"
+            app:summary="@string/date_delete_summary" />
 
         <Preference
-            android:title="@string/ask_to_dev"
-            android:key="ask_to_dev"
-            android:summary="@string/pref_ask_exp"/>
+            app:title="@string/backup"
+            app:key="backup"
+            app:summary="@string/backup_desc" />
 
         <Preference
-            android:title="@string/open_source_license"
-            android:key="open_source"
-            android:summary="@string/pref_opens_exp"/>
+            app:title="@string/restore"
+            app:key="restore"
+            app:summary="@string/restore_desc" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="@string/info_and_ask"
+        app:icon="@drawable/ic_qmark"
+        app:key="group_info" >
+
+        <Preference
+            app:title="@string/changelog"
+            app:key="changelog"
+            app:summary="@string/pref_changelog_exp"/>
+
+        <Preference
+            app:title="@string/ask_to_dev"
+            app:key="ask_to_dev"
+            app:summary="@string/pref_ask_exp"/>
+
+        <Preference
+            app:title="@string/open_source_license"
+            app:key="open_source"
+            app:summary="@string/pref_opens_exp"/>
 
     </PreferenceCategory>
 

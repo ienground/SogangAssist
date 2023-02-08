@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".MyApplication"
@@ -85,21 +86,21 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name=".widget.DeadlineWidget"
-            android:exported="true"
-            android:label="@string/deadline_widget_title" >
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="net.ienlab.sogangassist.DeadlineWidget.CLICK" />
+<!--        <receiver-->
+<!--            android:name=".widget.DeadlineWidget"-->
+<!--            android:exported="true"-->
+<!--            android:label="@string/deadline_widget_title" >-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
+<!--                <action android:name="net.ienlab.sogangassist.DeadlineWidget.CLICK" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
 
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/deadline_widget_info" />
-        </receiver>
+<!--            <meta-data-->
+<!--                android:name="android.appwidget.provider"-->
+<!--                android:resource="@xml/deadline_widget_info" />-->
+<!--        </receiver>-->
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

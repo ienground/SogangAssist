@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_start_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_wave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         app:layout_constraintEnd_toStartOf="@id/tv_end_date"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_end_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

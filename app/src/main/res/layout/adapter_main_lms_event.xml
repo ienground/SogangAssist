@@ -126,7 +126,7 @@
             android:id="@+id/iv_check"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_check"
+            android:src="@drawable/ic_done_all"
             app:tint="?attr/colorOnSecondaryContainer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />

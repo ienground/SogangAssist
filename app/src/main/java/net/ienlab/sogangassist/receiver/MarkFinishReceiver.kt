@@ -4,11 +4,11 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import kotlinx.coroutines.*
+import net.ienlab.sogangassist.constant.IntentID
 import net.ienlab.sogangassist.constant.IntentKey
+import net.ienlab.sogangassist.constant.NotificationId
 import net.ienlab.sogangassist.room.LMSDatabase
 
 class MarkFinishReceiver : BroadcastReceiver() {
@@ -26,14 +26,20 @@ class MarkFinishReceiver : BroadcastReceiver() {
 
         if (id != -1L) {
             GlobalScope.launch(Dispatchers.IO) {
-                val item = lmsDatabase?.getDao()?.get(id.toLong())
-                if (item != null) {
-                    item.isFinished = true
-                    lmsDatabase?.getDao()?.update(item)
+                val item = lmsDatabase?.getDao()?.get(id)
+                item?.let {
+                    it.isFinished = true
+                    lmsDatabase?.getDao()?.update(it)
+
+                    withContext(Dispatchers.Main) {
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(IntentID.MARKING_RESULT).apply {
+                            putExtra(IntentKey.ITEM_ID, id)
+                        })
+                    }
                 }
             }
 
-            nm.cancel(693000 + id.toInt())
+            nm.cancel(NotificationId.TIME_REMINDER + id.toInt())
         }
     }
 }
