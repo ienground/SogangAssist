@@ -27,8 +27,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.iterator
 import androidx.databinding.DataBindingUtil
 import androidx.preference.*
-import com.anjlab.android.iab.v3.BillingProcessor
-import com.anjlab.android.iab.v3.TransactionDetails
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.checkbox.MaterialCheckBox
@@ -58,12 +56,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.min
 
-class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
+class SettingsActivity : AppCompatActivity() {
 
     lateinit var binding: ActivitySettingsBinding
 
     lateinit var storage: AppStorage
-    lateinit var bp: BillingProcessor
 
     private val onBackPressedCallback = object: OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -85,9 +82,9 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
         supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment(), null).commit()
 
         storage = AppStorage(this)
-        bp = BillingProcessor(this, getString(R.string.iab_license), this)
-        bp.initialize()
-        bp.loadOwnedPurchasesFromGoogle()
+//        bp = BillingProcessor(this, getString(R.string.iab_license), this)
+//        bp.initialize()
+//        bp.loadOwnedPurchasesFromGoogle()
     }
 
     // ActionBar 메뉴 각각 클릭 시
@@ -123,21 +120,6 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
         }
         return super.onOptionsItemSelected(item)
     }
-
-    override fun onBillingInitialized() {
-//        bp.loadOwnedPurchasesFromGoogle()
-    }
-
-    override fun onPurchaseHistoryRestored() {
-//        storage.setPurchasedAds(bp.isPurchased(AppStorage.ADS_FREE))
-    }
-
-    override fun onProductPurchased(productId: String, details: TransactionDetails?) {
-//        bp.loadOwnedPurchasesFromGoogle()
-//        storage.setPurchasedAds(bp.isPurchased(AppStorage.ADS_FREE))
-    }
-
-    override fun onBillingError(errorCode: Int, error: Throwable?) {}
 
     class SettingsFragment : PreferenceFragmentCompat() {
 
