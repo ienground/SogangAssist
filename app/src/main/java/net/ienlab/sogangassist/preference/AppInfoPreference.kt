@@ -18,7 +18,5 @@ class AppInfoPreference(context: Context, attrs: AttributeSet): Preference(conte
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
-        (holder.findViewById(R.id.typo) as TextView).typeface = ResourcesCompat.getFont(context, R.font.pretendard_black) ?: Typeface.DEFAULT
-        (holder.findViewById(R.id.version) as TextView).typeface = ResourcesCompat.getFont(context, R.font.pretendard_black) ?: Typeface.DEFAULT
     }
 }

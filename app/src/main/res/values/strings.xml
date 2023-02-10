@@ -20,7 +20,7 @@
     <string name="dateFormat">EEEE, MMM d yyyy</string>
     <string name="dateFormatNoYear">EEEE, MMM d</string>
     <string name="calendarFormat">MMMM yyyy</string>
-    <string name="timeFormat">a h:mm</string>
+    <string name="timeFormat">h:mm a</string>
     <string name="mark_as_finish">Mark as complete</string>
     <string name="delete">Delete</string>
     <string name="mark_as_not_finish">Mark as not complete</string>
@@ -66,25 +66,25 @@
     <string name="channel_name">LMS Reminder</string>
     <string name="channel_daily_reminder">Daily Reminder</string>
     <string name="channel_time_reminder">Time Reminder</string>
-    <string name="reminder_content_lec">%1$d week(s) %2$d hour: %3$d hours left until the class deadline. Take the class on time.</string>
-    <string name="reminder_content_sup_lec">%1$d week(s) %2$d hour: %3$d hours left until the make-up class deadline. Take the class on time.</string>
+    <string name="reminder_content_lec">%1$d-%2$d: %3$d hours left until the class deadline. Take the class on time.</string>
+    <string name="reminder_content_sup_lec">%1$d-%2$d: %3$d hours left until the make-up class deadline. Take the class on time.</string>
     <string name="reminder_content_hw">\"%1$s\" %2$d hour(s) left until the assignment deadline. Don\' be late.</string>
     <string name="reminder_content_zoom">\"%1$s\" %2$d minutes left until the Zoom lecture starts. Don\' be late.</string>
     <string name="reminder_content_team">\"%1$s\" %2$d hour(s) left until the team project deadline. Don\' be late.</string>
     <string name="reminder_content_exam">\"%1$s\" %2$d minutes left until the exam starts. Don\' be late.</string>
-    <string name="reminder_content_lec_register">%1$d week(s) %2$d hour: Class has been enrolled. Take the class until %3$s.</string>
-    <string name="reminder_content_sup_lec_register">%1$d week(s) %2$d hour: Make-up class has been enrolled. Take the class until %3$s.</string>
+    <string name="reminder_content_lec_register">%1$d-%2$d: Class has been enrolled. Take the class until %3$s.</string>
+    <string name="reminder_content_sup_lec_register">%1$d-%2$d: Make-up class has been enrolled. Take the class until %3$s.</string>
     <string name="reminder_content_hw_register">\"%1$s\" The assignment has been enrolled. Submit up until %2$s.</string>
     <string name="reminder_content_zoom_register">\"%1$s\" Zoom lecture has been enrolled. Attend until %2$s.</string>
     <string name="reminder_content_team_register">\"%1$s\" Team project has been enrolled. Submit up until %2$s.</string>
     <string name="reminder_content_exam_register">\"%1$s\" Exam has been enrolled. Start taking the exam until %2$s.</string>
-    <string name="reminder_content_lec_update">%1$d week(s) %2$d hour: Class has been updated. Take the class until %3$s.</string>
-    <string name="reminder_content_sup_lec_update">%1$d week(s) %2$d hour: Make-up class has been updated. Take the class until %3$s.</string>
+    <string name="reminder_content_lec_update">%1$d-%2$d: Class has been updated. Take the class until %3$s.</string>
+    <string name="reminder_content_sup_lec_update">%1$d-%2$d: Make-up class has been updated. Take the class until %3$s.</string>
     <string name="reminder_content_hw_update">\"%1$s\" The assignment has been updated. Submit up until %2$s.</string>
     <string name="reminder_content_zoom_update">\"%1$s\" Zoom lecture has been updated. Attend until %2$s.</string>
     <string name="reminder_content_team_update">\"%1$s\" Team project has been updated. Submit up until %2$s.</string>
     <string name="reminder_content_exam_update">\"%1$s\" Exam has been updated. Start taking the exam until %2$s.</string>
-    <string name="week_lesson_format">%1$d week(s) %2$d hour</string>
+    <string name="week_lesson_format">%1$d-%2$d</string>
     <string name="finished">Complete</string>
     <string name="deadline">Deadline : %1$s</string>
     <string name="start">Start : %1$s</string>
@@ -196,7 +196,7 @@
     <string name="format_change_teamwork">Edited team project</string>
     <string name="format_new_test">New exam</string>
     <string name="format_change_test">Edit exam</string>
-    <string name="format_lms_date">MMM dd, yyyy a h:mm</string>
+    <string name="format_lms_date">MMM dd, yyyy h:mm a</string>
     <string name="format_assignment_regex">^.+\"(.+)\" \\(Period:(.+) ~ (.+)\\)$</string>
     <string name="format_lecture_regex">^Week(\\d+) Hour (\\d+).*\\(Must complete the course by: (.+) \\)$</string>
     <string name="format_zoom_regex">^.+\"(.+)\" \\(start at:(.+)\\)$</string>
@@ -239,7 +239,7 @@
     <string name="err_date_deleted">This event has been deleted and cannot be found</string>
 
     <!--DayNight Reminder-->
-    <string name="reminder_class_format">[%1$s] %2$d week(s) %3$d hour</string>
+    <string name="reminder_class_format">[%1$s] %2$d-%3$d</string>
     <string name="reminder_zoom_format">[%1$s] %2$s</string>
 
     <!--Preferences-->
@@ -252,8 +252,8 @@
     <string name="night_reminder_desc_on">At night, we will inform you of assignments or lectures with an impending deadline.</string>
     <string name="night_reminder_desc_off">At night, we won\'t inform you of assignments or lectures with an impending deadline.</string>
 
-    <string name="daily_reminder_title_morning">🌤 Good Morning</string>
-    <string name="daily_reminder_title_night">🌙 Sun\'s Getting Real Low</string>
+    <string name="daily_reminder_title_morning">🌤 Good morning</string>
+    <string name="daily_reminder_title_night">🌙 Sun\'s getting real low</string>
     <string name="daily_reminder_class">%1$d lesson(s)</string>
     <string name="daily_reminder_sup">%1$d make-up lesson(s)</string>
     <string name="daily_reminder_hw">%1$d assignment(s)</string>
@@ -298,21 +298,15 @@
     <string name="gps_permission_title">Insufficient location permissions</string>
     <string name="gps_permission_message">Insufficient location permissions to load the current location. Please set the location permission to always allow in settings.</string>
     <string name="cannot_get_address">Cannot get address</string>
-    <string name="todays_event">오늘의 일정</string>
-    <string name="check_calendar">달력 보기</string>
-    <string name="all">전체</string>
-    <string name="time_left_day">%1$d일 남음</string>
-    <string name="time_left_hour_min">%1$d시간 %2$d분 남음</string>
-    <string name="time_left_hour">%1$d시간 남음</string>
-    <string name="time_left_min">%1$d분 남음</string>
-    <string name="event_progress_format">%1$d개의 일정 중 %2$d개 완료</string>
-    <string name="finished_item">완료된 항목</string>
-    <string name="time_day">%1$d일</string>
-    <string name="time_hour_min">%1$d시간 %2$d분</string>
-    <string name="time_hour">%1$d시간</string>
-    <string name="time_min">%1$d분</string>
+    <string name="time_left_day">%1$dd left</string>
+    <string name="time_left_hour_min">%1$dh %2$dm left</string>
+    <string name="time_left_hour">%1$dh left</string>
+    <string name="time_left_min">%1$dm left</string>
+    <string name="time_past_day">%1$dd past</string>
+    <string name="time_past_hour_min">%1$dh %2$dm past</string>
+    <string name="time_past_hour">%1$dh past</string>
+    <string name="time_past_min">%1$dm past</string>
     <string name="apmTimeFormat">h:mm a</string>
-
 
     <string name="user_hello_morning">Good morning☀️</string>
     <string name="user_hello_afternoon">Have a great lunch🍽️</string>
@@ -322,7 +316,6 @@
     <string name="event_count">You have %1$d todos today</string>
     <string name="event_count_one">You have one todo today</string>
     <string name="event_count_none">You have no todos today</string>
-
 
     <string name="ask_to_save">Save?</string>
     <string name="ask_to_save_message">Unsaved changes will be lost.</string>

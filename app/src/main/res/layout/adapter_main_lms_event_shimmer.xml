@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/Widget.Material3.CardView.Elevated"
+    android:layout_marginHorizontal="@dimen/usual_margin"
+    android:layout_marginBottom="@dimen/usual_margin">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/usual_margin">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_color"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@color/cardview_shadow_start_color"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_homework_name"
+            app:layout_constraintBottom_toBottomOf="@id/tv_homework_name" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_homework_name"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:fontFamily="@font/pretendard"
+            android:textSize="20sp"
+            android:background="@drawable/shimmer_background"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="@dimen/usual_margin"
+            app:layout_constraintStart_toEndOf="@id/iv_color"
+            app:layout_constraintEnd_toStartOf="@id/btn_delete"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
+            app:iconPadding="0dp"
+            app:iconGravity="textStart"
+            app:iconSize="18dp"
+            app:icon="@drawable/ic_close"
+            app:iconTint="?attr/colorOnSurfaceVariant"
+            app:backgroundTint="?attr/colorSurfaceVariant"
+            app:rippleColor="?attr/colorSecondary"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/group_time"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textSize="36sp"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            android:background="@drawable/shimmer_background"
+            android:layout_marginTop="@dimen/usual_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_homework_name" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_left_time"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="?attr/colorSecondaryContainer"
+            android:fontFamily="@font/pretendard"
+            android:gravity="center"
+            android:background="@drawable/round_corners"
+            android:backgroundTint="?attr/colorOnSecondaryContainer"
+            android:padding="@dimen/usual_margin_half"
+            android:layout_marginStart="@dimen/usual_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/group_time"
+            app:layout_constraintBottom_toBottomOf="@id/group_time" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_class"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pretendard"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            android:background="@drawable/shimmer_background"
+            android:layout_marginTop="@dimen/usual_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/group_time" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

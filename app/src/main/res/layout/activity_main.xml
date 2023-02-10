@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/usual_margin"
             android:orientation="horizontal"
-            tools:listitem="@layout/adapter_main_calarm_date"
+            tools:listitem="@layout/adapter_main_lms_date"
             tools:itemCount="1"
             app:deselection="false"
             app:longPress="false"
@@ -93,7 +93,7 @@
             android:id="@+id/ic_no_calarms"
             android:layout_width="128dp"
             android:layout_height="128dp"
-            android:src="@drawable/ic_icon"
+            android:src="@drawable/ic_work_off"
             android:alpha="0"
             app:tint="?attr/colorOnSecondaryContainer"
             app:layout_constraintVertical_chainStyle="packed"
@@ -132,11 +132,11 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <include layout="@layout/adapter_main_calarm_event_shimmer" />
-                <include layout="@layout/adapter_main_calarm_event_shimmer" />
-                <include layout="@layout/adapter_main_calarm_event_shimmer" />
-                <include layout="@layout/adapter_main_calarm_event_shimmer" />
-                <include layout="@layout/adapter_main_calarm_event_shimmer" />
+                <include layout="@layout/adapter_main_lms_event_shimmer" />
+                <include layout="@layout/adapter_main_lms_event_shimmer" />
+                <include layout="@layout/adapter_main_lms_event_shimmer" />
+                <include layout="@layout/adapter_main_lms_event_shimmer" />
+                <include layout="@layout/adapter_main_lms_event_shimmer" />
 
             </LinearLayout>
 

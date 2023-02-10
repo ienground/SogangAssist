@@ -8,16 +8,23 @@ import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.*
+import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.iterator
 import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.tasks.OnCompleteListener
@@ -31,12 +38,10 @@ import kotlinx.coroutines.*
 import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.adapter.MainLMSEventAdapter
-import net.ienlab.sogangassist.constant.IntentID
-import net.ienlab.sogangassist.constant.IntentKey
-import net.ienlab.sogangassist.constant.IntentValue
-import net.ienlab.sogangassist.constant.PendingIntentReqCode
+import net.ienlab.sogangassist.constant.*
 import net.ienlab.sogangassist.databinding.ActivityMainBinding
-import net.ienlab.sogangassist.decorators.*
+import net.ienlab.sogangassist.databinding.DialogPermissionBinding
+import net.ienlab.sogangassist.receiver.ReminderReceiver
 import net.ienlab.sogangassist.receiver.TimeReceiver
 import net.ienlab.sogangassist.room.LMSDatabase
 import net.ienlab.sogangassist.room.LMSEntity
@@ -48,6 +53,8 @@ import net.ienlab.sogangassist.singlerowcalendar.selection.CalendarSelectionMana
 import net.ienlab.sogangassist.utils.AppStorage
 import net.ienlab.sogangassist.utils.ClickCallbackListener
 import net.ienlab.sogangassist.utils.MyUtils
+import net.ienlab.sogangassist.utils.MyUtils.Companion.isNotiPermissionAllowed
+import net.ienlab.sogangassist.utils.MyUtils.Companion.isPackageInstalled
 import net.ienlab.sogangassist.utils.MyUtils.Companion.timeZero
 import net.ienlab.sogangassist.utils.MyUtils.Companion.tomorrowZero
 import java.text.SimpleDateFormat
@@ -63,10 +70,13 @@ class MainActivity : AppCompatActivity() {
     private var lmsDatabase: LMSDatabase? = null
     lateinit var sharedPreferences: SharedPreferences
     lateinit var am: AlarmManager
+    private val lmsPackageName = "kr.co.imaxsoft.hellolms"
 
     // StartActivityForResult
-    lateinit var editActivityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var editActivityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var settingsActivityLauncher: ActivityResultLauncher<Intent>
+    private lateinit var lmsResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var notiAccessResultLauncher: ActivityResultLauncher<Intent>
 
     // 뒤로가기 시간
     private val FINISH_INTERVAL_TIME: Long = 2000
@@ -134,6 +144,11 @@ class MainActivity : AppCompatActivity() {
                                     withContext(Dispatchers.Main) {
                                         adapter?.delete(it)
                                         setAppTitle()
+
+                                        if (adapter?.itemCount == 0) {
+                                            binding.tvNoCalarms.visibility = View.VISIBLE
+                                            binding.icNoCalarms.visibility = View.VISIBLE
+                                        }
                                     }
                                 }
                             }
@@ -147,11 +162,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val onBackPressedCallback = object: OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val tempTime = System.currentTimeMillis()
+            val intervalTime = tempTime - backPressedTime
+            if (intervalTime in 0 .. FINISH_INTERVAL_TIME) {
+                finish()
+            } else {
+                backPressedTime = tempTime
+                Toast.makeText(applicationContext, getString(R.string.press_back_to_exit), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.activity = this
+
+        onBackPressedDispatcher.addCallback(onBackPressedCallback)
 
         lmsDatabase = LMSDatabase.getInstance(this)
         sharedPreferences = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
@@ -201,6 +231,34 @@ class MainActivity : AppCompatActivity() {
 
         setAppTitle()
 
+        // 하루 시작, 끝 리마인더 알람 만들기
+        val morningReminderCalendar = Calendar.getInstance().apply {
+            val time = sharedPreferences.getInt(SharedKey.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
+
+            set(Calendar.HOUR_OF_DAY, time / 60)
+            set(Calendar.MINUTE, time % 60)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val nightReminderCalendar = Calendar.getInstance().apply {
+            val time = sharedPreferences.getInt(SharedKey.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
+
+            set(Calendar.HOUR_OF_DAY, time / 60)
+            set(Calendar.MINUTE, time % 60)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val morningReminderIntent = Intent(applicationContext, ReminderReceiver::class.java).apply { putExtra(ReminderReceiver.TYPE, ReminderReceiver.MORNING) }
+        val nightReminderIntent = Intent(applicationContext, ReminderReceiver::class.java).apply { putExtra(ReminderReceiver.TYPE, ReminderReceiver.NIGHT) }
+
+        am.setRepeating(AlarmManager.RTC_WAKEUP, morningReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY,
+            PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.MORNING_REMINDER, morningReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+
+        am.setRepeating(AlarmManager.RTC_WAKEUP, nightReminderCalendar.timeInMillis, AlarmManager.INTERVAL_DAY,
+            PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.NIGHT_REMINDER, nightReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+
         binding.subTitle.text = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
             in 6..10 -> getString(R.string.user_hello_morning)
             in 11..16 -> getString(R.string.user_hello_afternoon)
@@ -208,8 +266,90 @@ class MainActivity : AppCompatActivity() {
             else -> getString(R.string.user_hello_night)
         }
 
+        // First Visit
+        if (!isPackageInstalled(lmsPackageName, packageManager) || !isNotiPermissionAllowed(applicationContext)) {
+            MaterialAlertDialogBuilder(this, R.style.Theme_SogangAssist_MaterialAlertDialog).apply {
+                setIcon(R.drawable.ic_security)
+                setTitle(R.string.permission_title)
+
+                val dialogBinding: DialogPermissionBinding =
+                    DataBindingUtil.inflate(layoutInflater, R.layout.dialog_permission, null, false)
+
+                lmsResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                    if (isPackageInstalled(lmsPackageName, packageManager)) {
+                        dialogBinding.cardLms.isChecked = true
+                        dialogBinding.icLms.setImageResource(R.drawable.ic_check_circle)
+                        dialogBinding.tvLms.text = getString(R.string.lms_installed)
+                        dialogBinding.cardLms.isEnabled = false
+                    }
+                }
+
+                notiAccessResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                    if (isNotiPermissionAllowed(applicationContext)) {
+                        dialogBinding.cardNotiAccess.isChecked = true
+                        dialogBinding.icNotiAccess.setImageResource(R.drawable.ic_check_circle)
+                        dialogBinding.tvNotiAccess.text =
+                            getString(R.string.noti_access_allowed)
+                        dialogBinding.cardNotiAccess.isEnabled = false
+                    }
+                }
+
+                dialogBinding.cardLms.setOnClickListener {
+                    try {
+                        lmsResultLauncher.launch(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$lmsPackageName")))
+                    } catch (e: ActivityNotFoundException) {
+                        lmsResultLauncher.launch(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$lmsPackageName")))
+                    }
+                }
+
+                dialogBinding.cardNotiAccess.setOnClickListener {
+                    notiAccessResultLauncher.launch(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+                }
+
+                if (isPackageInstalled(lmsPackageName, packageManager)) {
+                    dialogBinding.cardLms.isChecked = true
+                    dialogBinding.icLms.setImageResource(R.drawable.ic_check_circle)
+                    dialogBinding.tvLms.text = getString(R.string.lms_installed)
+                    dialogBinding.cardLms.isEnabled = false
+                }
+
+                if (isNotiPermissionAllowed(applicationContext)) {
+                    dialogBinding.cardNotiAccess.isChecked = true
+                    dialogBinding.icNotiAccess.setImageResource(R.drawable.ic_check_circle)
+                    dialogBinding.tvNotiAccess.text = getString(R.string.noti_access_allowed)
+                    dialogBinding.cardNotiAccess.isEnabled = false
+                }
+
+                setPositiveButton(R.string.close) { dialog, id ->
+                    dialog.dismiss()
+                }
+                setView(dialogBinding.root)
+            }.show()
+        }
+
+        // 체인지로그
+        val info = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0L))
+        } else {
+            packageManager.getPackageInfo(packageName, 0)
+        }
+        val currentVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.longVersionCode.toInt() else info.versionCode
+        val lastVersion = sharedPreferences.getInt(SharedKey.LAST_VERSION, 0)
+
+        if (currentVersion > lastVersion) {
+            sharedPreferences.edit().putInt(SharedKey.LAST_VERSION, currentVersion).apply()
+            MaterialAlertDialogBuilder(this, R.style.Theme_SogangAssist_MaterialAlertDialog).apply {
+                setIcon(R.drawable.ic_icon)
+                setTitle("${BuildConfig.VERSION_NAME} ${getString(R.string.changelog)}")
+                setMessage(R.string.changelog_content)
+                setPositiveButton(R.string.close) { dialog, id ->
+                    dialog.dismiss()
+                }
+            }.show()
+        }
+
         val calendarViewManager = object: CalendarViewManager {
-            override fun setCalendarViewResourceId(position: Int, date: Date, isSelected: Boolean): Int = R.layout.adapter_main_calarm_date
+            override fun setCalendarViewResourceId(position: Int, date: Date, isSelected: Boolean): Int = R.layout.adapter_main_lms_date
             override fun bindDataToCalendarView(holder: SingleRowCalendarAdapter.CalendarViewHolder, date: Date, position: Int, isSelected: Boolean) {
                 val calendar = Calendar.getInstance().apply { time = date }
                 val dayFormat = SimpleDateFormat("EEE", Locale.getDefault())
@@ -288,10 +428,9 @@ class MainActivity : AppCompatActivity() {
 
                     GlobalScope.launch(Dispatchers.IO) {
                         val calendar = Calendar.getInstance().apply { time = date }
-                        val datas = lmsDatabase?.getDao()?.getByEndTime(calendar.timeZero().timeInMillis, calendar.tomorrowZero().timeInMillis)
+                        val datas = lmsDatabase?.getDao()?.getByEndTime(calendar.timeZero().timeInMillis, calendar.tomorrowZero().timeInMillis)?.sortedBy { it.endTime } ?: listOf()
                         withContext(Dispatchers.Main) {
-                            adapter =
-                                MainLMSEventAdapter(datas as ArrayList<LMSEntity>, calendar).apply { setClickCallback(clickCallbackListener) }
+                            adapter = MainLMSEventAdapter(ArrayList(datas), calendar).apply { setClickCallback(clickCallbackListener) }
                             binding.listEvent.adapter = adapter
                             binding.shimmerFrame.stopShimmer()
 
@@ -351,10 +490,18 @@ class MainActivity : AppCompatActivity() {
                     IntentValue.ACTION_EDIT -> {
                         GlobalScope.launch(Dispatchers.IO) {
                             val item = lmsDatabase?.getDao()?.get(id)
+                            Log.d(TAG, id.toString())
                             if (item != null) {
                                 withContext(Dispatchers.Main) {
                                     adapter?.edit(id, item)
                                     setAppTitle()
+                                    if (adapter?.itemCount == 0) {
+                                        binding.icNoCalarms.visibility = View.VISIBLE
+                                        binding.tvNoCalarms.visibility = View.VISIBLE
+                                    } else {
+                                        binding.icNoCalarms.visibility = View.GONE
+                                        binding.tvNoCalarms.visibility = View.GONE
+                                    }
                                 }
                             }
                         }
@@ -398,6 +545,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+        for (menuItem in menu.iterator()) {
+            val colorOnSecondaryContainer = TypedValue().apply { theme.resolveAttribute(com.google.android.material.R.attr.colorOnSecondaryContainer, this, true) }
+            menuItem.iconTintList = ColorStateList.valueOf(colorOnSecondaryContainer.data)
+        }
         return super.onCreateOptionsMenu(menu)
     }
 

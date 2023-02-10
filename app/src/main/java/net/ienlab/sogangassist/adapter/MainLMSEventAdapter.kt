@@ -1,6 +1,7 @@
 package net.ienlab.sogangassist.adapter
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.util.TypedValue
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
+import androidx.preference.PreferenceGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.ChipGroup
@@ -20,8 +22,11 @@ import net.ienlab.sogangassist.activity.TAG
 import net.ienlab.sogangassist.callback.MainLMSClickCallback
 import net.ienlab.sogangassist.room.LMSEntity
 import net.ienlab.sogangassist.utils.ClickCallbackListener
+import net.ienlab.sogangassist.utils.MyUtils.Companion.timeZero
+import net.ienlab.sogangassist.utils.MyUtils.Companion.tomorrowZero
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 class MainLMSEventAdapter(var items: ArrayList<LMSEntity>, var calendar: Calendar): RecyclerView.Adapter<MainLMSEventAdapter.ItemViewHolder>() {
@@ -49,9 +54,9 @@ class MainLMSEventAdapter(var items: ArrayList<LMSEntity>, var calendar: Calenda
             LMSEntity.TYPE_LESSON -> R.drawable.ic_video
             LMSEntity.TYPE_SUP_LESSON -> R.drawable.ic_video_sup
             LMSEntity.TYPE_HOMEWORK -> R.drawable.ic_assignment
-            LMSEntity.TYPE_ZOOM -> R.drawable.ic_video
-            LMSEntity.TYPE_TEAMWORK -> R.drawable.ic_video
-            LMSEntity.TYPE_EXAM -> R.drawable.ic_video
+            LMSEntity.TYPE_ZOOM -> R.drawable.ic_live_class
+            LMSEntity.TYPE_TEAMWORK -> R.drawable.ic_team
+            LMSEntity.TYPE_EXAM -> R.drawable.ic_test
             else -> R.drawable.ic_video
         })
 
@@ -75,6 +80,33 @@ class MainLMSEventAdapter(var items: ArrayList<LMSEntity>, var calendar: Calenda
         holder.tvApm.text = apmFormat.format(time.time)
         holder.tvApmKo.text = apmFormat.format(time.time)
         holder.tvTime.text = timeFormat.format(time.time)
+
+        val dayLeft = TimeUnit.DAYS.convert(items[holder.absoluteAdapterPosition].endTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS).toInt()
+        val hourLeft = TimeUnit.HOURS.convert(items[holder.absoluteAdapterPosition].endTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS).toInt()
+        val minuteLeft = TimeUnit.MINUTES.convert(items[holder.absoluteAdapterPosition].endTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS).toInt() % 60
+
+        holder.tvLeftTime.text = if (items[holder.absoluteAdapterPosition].endTime - System.currentTimeMillis() > 0) {
+            if (dayLeft != 0) context.getString(R.string.time_left_day, dayLeft)
+            else if (hourLeft != 0 && minuteLeft != 0) context.getString(R.string.time_left_hour_min, hourLeft, minuteLeft)
+            else if (hourLeft != 0) context.getString(R.string.time_left_hour, hourLeft)
+            else context.getString(R.string.time_left_min, minuteLeft)
+        } else {
+            if (dayLeft != 0) context.getString(R.string.time_past_day, -dayLeft)
+            else if (hourLeft != 0 && minuteLeft != 0) context.getString(R.string.time_past_hour_min, -hourLeft, -minuteLeft)
+            else if (hourLeft != 0) context.getString(R.string.time_past_hour, -hourLeft)
+            else context.getString(R.string.time_past_min, -minuteLeft)
+        }
+
+        val colorTvLeftTime = TypedValue().apply { context.theme.resolveAttribute(
+            if (items[holder.absoluteAdapterPosition].endTime - System.currentTimeMillis() > 0) com.google.android.material.R.attr.colorOnSecondaryContainer
+            else com.google.android.material.R.attr.colorError,
+            this, true) }
+        val colorTextTvLeftTime = TypedValue().apply { context.theme.resolveAttribute(
+            if (items[holder.absoluteAdapterPosition].endTime - System.currentTimeMillis() > 0) com.google.android.material.R.attr.colorSecondaryContainer
+            else com.google.android.material.R.attr.colorOnError,
+            this, true) }
+        holder.tvLeftTime.backgroundTintList = ColorStateList.valueOf(colorTvLeftTime.data)
+        holder.tvLeftTime.setTextColor(ColorStateList.valueOf(colorTextTvLeftTime.data))
 
         holder.tvApm.typeface = ResourcesCompat.getFont(context, if (!items[holder.absoluteAdapterPosition].isFinished) R.font.pretendard_black else R.font.pretendard)
         holder.tvApmKo.typeface = ResourcesCompat.getFont(context, if (!items[holder.absoluteAdapterPosition].isFinished) R.font.pretendard_black else R.font.pretendard)
@@ -117,8 +149,20 @@ class MainLMSEventAdapter(var items: ArrayList<LMSEntity>, var calendar: Calenda
     fun edit(id: Long, item: LMSEntity) {
         val position = items.indexOfFirst { it.id == id }
         if (position != -1) {
-            items[position] = item
-            notifyItemChanged(position)
+            if (item.endTime in calendar.timeZero().timeInMillis until calendar.tomorrowZero().timeInMillis) {
+                items[position] = item
+                notifyItemChanged(position)
+            } else {
+                items.removeAt(position)
+                notifyItemRemoved(position)
+            }
+        } else {
+            if (item.endTime in calendar.timeZero().timeInMillis until calendar.tomorrowZero().timeInMillis) {
+                items.add(item)
+                items.sortBy { it.endTime }
+                val newPosition = items.indexOf(item)
+                notifyItemInserted(newPosition)
+            }
         }
     }
 
@@ -144,6 +188,7 @@ class MainLMSEventAdapter(var items: ArrayList<LMSEntity>, var calendar: Calenda
         val ivColor: CircleImageView = itemView.findViewById(R.id.iv_color)
         val ivIcon: ImageView = itemView.findViewById(R.id.iv_icon)
         val ivCheck: ImageView = itemView.findViewById(R.id.iv_check)
+        val tvLeftTime: MaterialTextView = itemView.findViewById(R.id.tv_left_time)
     }
 
     companion object {

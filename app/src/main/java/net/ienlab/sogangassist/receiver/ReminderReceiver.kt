@@ -36,9 +36,7 @@ class ReminderReceiver: BroadcastReceiver() {
 
         val type = intent.getIntExtra(TYPE, -1)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            nm.createNotificationChannel(NotificationChannel(ChannelId.DAILY_REMINDER_ID, context.getString(R.string.channel_daily_reminder), NotificationManager.IMPORTANCE_HIGH))
-        }
+        nm.createNotificationChannel(NotificationChannel(ChannelId.DAILY_REMINDER_ID, context.getString(R.string.channel_daily_reminder), NotificationManager.IMPORTANCE_HIGH))
 
         GlobalScope.launch(Dispatchers.IO) {
             val calendar = Calendar.getInstance().timeZero()

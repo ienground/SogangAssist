@@ -2,47 +2,50 @@ package net.ienlab.sogangassist.activity
 
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.iterator
 import androidx.databinding.DataBindingUtil
-import androidx.preference.CheckBoxPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
-import androidx.preference.SwitchPreferenceCompat
+import androidx.preference.*
 import com.anjlab.android.iab.v3.BillingProcessor
 import com.anjlab.android.iab.v3.TransactionDetails
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.checkbox.MaterialCheckBox
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.radiobutton.MaterialRadioButton
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.databinding.ActivitySettingsBinding
 import net.ienlab.sogangassist.utils.MyUtils
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.constant.DefaultValue
+import net.ienlab.sogangassist.constant.PendingIntentReqCode
 import net.ienlab.sogangassist.constant.SharedKey
+import net.ienlab.sogangassist.receiver.ReminderReceiver
 import net.ienlab.sogangassist.room.LMSDatabase
 import net.ienlab.sogangassist.room.LMSEntity
 import net.ienlab.sogangassist.utils.AppStorage
@@ -62,10 +65,19 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
     lateinit var storage: AppStorage
     lateinit var bp: BillingProcessor
 
+    private val onBackPressedCallback = object: OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            setResult(Activity.RESULT_OK)
+            finish()
+        }
+    }
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_settings)
         binding.activity = this
+
+        onBackPressedDispatcher.addCallback(onBackPressedCallback)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -81,17 +93,21 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
     // ActionBar 메뉴 각각 클릭 시
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        bp.loadOwnedPurchasesFromGoogle()
-
-        if (bp.isPurchased(AppStorage.ADS_FREE)) {
-            menu.findItem(R.id.menu_ads_free).isVisible = false
-            storage.setPurchasedAds(bp.isPurchased(AppStorage.ADS_FREE))
-        }
+//        bp.loadOwnedPurchasesFromGoogle()
+//
+//        if (bp.isPurchased(AppStorage.ADS_FREE)) {
+//            menu.findItem(R.id.menu_ads_free).isVisible = false
+//            storage.setPurchasedAds(bp.isPurchased(AppStorage.ADS_FREE))
+//        }
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_settings, menu)
+        for (menuItem in menu.iterator()) {
+            val colorOnSecondaryContainer = TypedValue().apply { theme.resolveAttribute(com.google.android.material.R.attr.colorOnSecondaryContainer, this, true) }
+            menuItem.iconTintList = ColorStateList.valueOf(colorOnSecondaryContainer.data)
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -99,41 +115,38 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
         when (item.itemId) {
             android.R.id.home -> {
                 setResult(Activity.RESULT_OK)
-                super.onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
-            R.id.menu_ads_free -> {
-                bp.purchase(this, AppStorage.ADS_FREE)
-            }
+//            R.id.menu_ads_free -> {
+//                bp.purchase(this, AppStorage.ADS_FREE)
+//            }
         }
         return super.onOptionsItemSelected(item)
     }
 
     override fun onBillingInitialized() {
-        bp.loadOwnedPurchasesFromGoogle()
+//        bp.loadOwnedPurchasesFromGoogle()
     }
 
     override fun onPurchaseHistoryRestored() {
-        storage.setPurchasedAds(bp.isPurchased(AppStorage.ADS_FREE))
+//        storage.setPurchasedAds(bp.isPurchased(AppStorage.ADS_FREE))
     }
 
     override fun onProductPurchased(productId: String, details: TransactionDetails?) {
-        bp.loadOwnedPurchasesFromGoogle()
-        storage.setPurchasedAds(bp.isPurchased(AppStorage.ADS_FREE))
+//        bp.loadOwnedPurchasesFromGoogle()
+//        storage.setPurchasedAds(bp.isPurchased(AppStorage.ADS_FREE))
     }
 
     override fun onBillingError(errorCode: Int, error: Throwable?) {}
-
-    override fun onBackPressed() {
-        setResult(Activity.RESULT_OK)
-        super.onBackPressed()
-    }
 
     class SettingsFragment : PreferenceFragmentCompat() {
 
         lateinit var sharedPreferences: SharedPreferences
 
-        private val timeFormat = SimpleDateFormat("a h:mm", Locale.getDefault())
+        private lateinit var timeFormat: SimpleDateFormat
         private var lmsDatabase: LMSDatabase? = null
+        private val timeZone = TimeZone.getDefault()
+        private lateinit var am: AlarmManager
 
 
         @OptIn(DelicateCoroutinesApi::class)
@@ -155,8 +168,15 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
             val prefBackup = findPreference<Preference>("backup")
             val prefRestore = findPreference<Preference>("restore")
 
+            timeFormat = SimpleDateFormat(getString(R.string.timeFormat), Locale.getDefault())
             lmsDatabase = LMSDatabase.getInstance(requireContext())
             sharedPreferences = requireContext().getSharedPreferences("${requireContext().packageName}_preferences", Context.MODE_PRIVATE)
+            am = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+            val typedValue = TypedValue().apply { requireContext().theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, this, true) }
+            findPreference<PreferenceGroup>("group_settings")?.icon?.setTint(typedValue.data)
+            findPreference<PreferenceGroup>("group_notifications")?.icon?.setTint(typedValue.data)
+            findPreference<PreferenceGroup>("group_info")?.icon?.setTint(typedValue.data)
 
             val hourData = listOf("1", "2", "6", "12", "24")
             val minuteData = listOf("3", "5", "10", "20", "30")
@@ -212,17 +232,12 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
             }
 
             prefAppInfo?.setOnPreferenceClickListener {
-//                MyBottomSheetDialog(requireContext()).apply {
-//                    val view = layoutInflater.inflate(R.layout.dialog_changelog, LinearLayout(requireContext()), false)
-//                    val tvVersion: TextView = view.findViewById(R.id.tv_version)
-//                    val tvContent: TextView = view.findViewById(R.id.content)
-//
-//                    tvVersion.text = getString(R.string.real_app_name)
-//                    tvContent.text = getString(R.string.dev_ienlab)
-//
-//                    setContentView(view)
-//                }.show()
-
+                MaterialAlertDialogBuilder(requireContext(), R.style.Theme_SogangAssist_MaterialAlertDialog).apply {
+                    setIcon(R.drawable.ic_icon)
+                    setTitle(R.string.real_app_name)
+                    setMessage(R.string.dev_ienlab)
+                    setPositiveButton(android.R.string.ok) { _, _ -> }
+                }.show()
                 true
             }
             prefDndTime?.setOnPreferenceClickListener { preference ->
@@ -465,9 +480,13 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
                 timePicker.addOnPositiveButtonClickListener {
                     morningCalendar.set(Calendar.HOUR_OF_DAY, timePicker.hour)
                     morningCalendar.set(Calendar.MINUTE, timePicker.minute)
+                    morningCalendar.set(Calendar.SECOND, 0)
 
                     sharedPreferences.edit().putInt(SharedKey.TIME_MORNING_REMINDER, morningCalendar.get(Calendar.HOUR_OF_DAY) * 60 + morningCalendar.get(Calendar.MINUTE)).apply()
                     preference.summary = timeFormat.format(morningCalendar.time)
+                    val morningReminderIntent = Intent(requireContext(), ReminderReceiver::class.java).apply { putExtra(ReminderReceiver.TYPE, ReminderReceiver.MORNING) }
+                    am.setRepeating(AlarmManager.RTC_WAKEUP, morningCalendar.timeInMillis, AlarmManager.INTERVAL_DAY, PendingIntent.getBroadcast(requireActivity(), PendingIntentReqCode.MORNING_REMINDER, morningReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+
                 }
                 timePicker.show(parentFragmentManager, "MORNING_TIME_PICKER")
 
@@ -483,9 +502,14 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
                 timePicker.addOnPositiveButtonClickListener {
                     nightCalendar.set(Calendar.HOUR_OF_DAY, timePicker.hour)
                     nightCalendar.set(Calendar.MINUTE, timePicker.minute)
+                    nightCalendar.set(Calendar.SECOND, 0)
 
                     sharedPreferences.edit().putInt(SharedKey.TIME_NIGHT_REMINDER, nightCalendar.get(Calendar.HOUR_OF_DAY) * 60 + nightCalendar.get(Calendar.MINUTE)).apply()
                     preference.summary = timeFormat.format(nightCalendar.time)
+                    Log.d(TAG, nightCalendar.time.toString())
+                    val nightReminderIntent = Intent(requireContext(), ReminderReceiver::class.java).apply { putExtra(ReminderReceiver.TYPE, ReminderReceiver.NIGHT) }
+                    am.setRepeating(AlarmManager.RTC_WAKEUP, nightCalendar.timeInMillis, AlarmManager.INTERVAL_DAY,
+                        PendingIntent.getBroadcast(requireContext(), PendingIntentReqCode.NIGHT_REMINDER, nightReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
                 }
                 timePicker.show(parentFragmentManager, "NIGHT_TIME_PICKER")
 
@@ -494,7 +518,7 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
             prefChangelog?.setOnPreferenceClickListener {
                 MaterialAlertDialogBuilder(requireContext(), R.style.Theme_SogangAssist_MaterialAlertDialog).apply {
                     setIcon(R.drawable.ic_icon)
-                    setTitle("${getString(R.string.real_app_name)} ${BuildConfig.VERSION_NAME} ${getString(R.string.changelog)}")
+                    setTitle("${BuildConfig.VERSION_NAME} ${getString(R.string.changelog)}")
                     setMessage(R.string.changelog_content)
                     setPositiveButton(R.string.close) { dialog, id ->
                         dialog.dismiss()
@@ -644,11 +668,21 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
                     tvStartDate.text = dateFormat.format(startCalendar.time)
                     tvEndDate.text = dateFormat.format(endCalendar.time)
 
+                    val errorColor = TypedValue().apply { requireContext().theme.resolveAttribute(com.google.android.material.R.attr.colorError, this, true) }
+                    val errorIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_error)?.apply {
+                        setTint(errorColor.data)
+                        setBounds(0, 0, intrinsicWidth, intrinsicHeight)
+                    }
+
                     tvStartDate.setOnClickListener {
-                        DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
-                            startCalendar.set(Calendar.YEAR, year)
-                            startCalendar.set(Calendar.MONTH, month)
-                            startCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                        val datePicker = MaterialDatePicker.Builder.datePicker()
+                            .setTitleText(R.string.start_at)
+                            .setPositiveButtonText(android.R.string.ok)
+                            .setNegativeButtonText(android.R.string.cancel)
+                            .setSelection(startCalendar.timeInMillis.let { it + timeZone.getOffset(it) })
+                            .build()
+                        datePicker.addOnPositiveButtonClickListener {
+                            startCalendar.timeInMillis = it
                             startCalendar.set(Calendar.HOUR_OF_DAY, 0)
                             startCalendar.set(Calendar.MINUTE, 0)
                             startCalendar.set(Calendar.SECOND, 0)
@@ -656,34 +690,40 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
                             tvStartDate.text = dateFormat.format(startCalendar.time)
 
                             if (startCalendar.timeInMillis > endCalendar.timeInMillis) {
-                                tvStartDate.error = getString(R.string.err_start_date)
+                                tvStartDate.setError(getString(R.string.err_start_date), errorIcon)
                                 Toast.makeText(requireContext(), getString(R.string.err_start_date), Toast.LENGTH_SHORT).show()
                             } else {
                                 tvStartDate.error = null
                                 tvEndDate.error = null
                             }
-                        }, startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH), startCalendar.get(Calendar.DAY_OF_MONTH)).show()
+                        }
+                        datePicker.show(parentFragmentManager, "DELETE_START_DATE_PICKER")
                     }
 
                     tvEndDate.setOnClickListener {
-                        DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
-                            endCalendar.set(Calendar.YEAR, year)
-                            endCalendar.set(Calendar.MONTH, month)
-                            endCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                            startCalendar.set(Calendar.HOUR_OF_DAY, 23)
-                            startCalendar.set(Calendar.MINUTE, 59)
-                            startCalendar.set(Calendar.SECOND, 59)
+                        val datePicker = MaterialDatePicker.Builder.datePicker()
+                            .setTitleText(R.string.start_at)
+                            .setPositiveButtonText(android.R.string.ok)
+                            .setNegativeButtonText(android.R.string.cancel)
+                            .setSelection(startCalendar.timeInMillis.let { it + timeZone.getOffset(it) })
+                            .build()
+                        datePicker.addOnPositiveButtonClickListener {
+                            endCalendar.timeInMillis = it
+                            endCalendar.set(Calendar.HOUR_OF_DAY, 23)
+                            endCalendar.set(Calendar.MINUTE, 59)
+                            endCalendar.set(Calendar.SECOND, 59)
 
-                            tvEndDate.text = dateFormat.format(endCalendar.time)
+                            tvStartDate.text = dateFormat.format(startCalendar.time)
 
                             if (startCalendar.timeInMillis > endCalendar.timeInMillis) {
-                                tvEndDate.error = getString(R.string.err_end_date)
+                                tvEndDate.setError(getString(R.string.err_end_date), errorIcon)
                                 Toast.makeText(requireContext(), getString(R.string.err_end_date), Toast.LENGTH_SHORT).show()
                             } else {
                                 tvStartDate.error = null
                                 tvEndDate.error = null
                             }
-                        }, endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH), endCalendar.get(Calendar.DAY_OF_MONTH)).show()
+                        }
+                        datePicker.show(parentFragmentManager, "DELETE_END_DATE_PICKER")
                     }
 
                     setPositiveButton(R.string.delete) { dialog, id ->
@@ -706,18 +746,20 @@ class SettingsActivity : AppCompatActivity(), BillingProcessor.IBillingHandler {
                                     }
                                 }
 
-                                if (count != 0) {
-                                    Toast.makeText(requireContext(), getString(R.string.delete_successfully, count), Toast.LENGTH_SHORT).show()
-                                    requireActivity().finishAffinity()
-                                } else {
-                                    Toast.makeText(requireContext(), getString(R.string.no_delete_event), Toast.LENGTH_SHORT).show()
+                                withContext(Dispatchers.Main) {
+                                    if (count != 0) {
+                                        Toast.makeText(requireContext(), getString(R.string.delete_successfully, count), Toast.LENGTH_SHORT).show()
+                                        requireActivity().finishAffinity()
+                                    } else {
+                                        Toast.makeText(requireContext(), getString(R.string.no_delete_event), Toast.LENGTH_SHORT).show()
+                                    }
+                                    dialog.dismiss()
                                 }
-                                dialog.dismiss()
                             }
                         }
                     }
 
-                    setPositiveButton(android.R.string.cancel) { dialog, id ->
+                    setNegativeButton(android.R.string.cancel) { dialog, id ->
                         dialog.dismiss()
                     }
 

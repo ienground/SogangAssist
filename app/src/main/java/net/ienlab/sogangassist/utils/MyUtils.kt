@@ -3,6 +3,7 @@ package net.ienlab.sogangassist.utils
 import android.app.ActivityManager
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -42,6 +43,19 @@ class MyUtils {
                 }
             } else {
                 dateFormat.format(calendar.time)
+            }
+        }
+
+        fun isPackageInstalled(packageName: String, pm: PackageManager): Boolean {
+            return try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0L))
+                } else {
+                    pm.getPackageInfo(packageName, 0)
+                }
+                true
+            } catch (e: PackageManager.NameNotFoundException) {
+                false
             }
         }
 

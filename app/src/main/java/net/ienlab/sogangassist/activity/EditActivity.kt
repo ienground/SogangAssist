@@ -4,7 +4,9 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
@@ -12,7 +14,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.iterator
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.ads.*
 import com.google.android.material.chip.Chip
@@ -50,15 +54,24 @@ class EditActivity : AppCompatActivity() {
     lateinit var currentItem: LMSEntity
     var id = -1L
 
-    val startCalendar = Calendar.getInstance()
-    val endCalendar = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
+    private val startCalendar = Calendar.getInstance()
+    private val endCalendar = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
     var isFinished = false
+    private val timeZone = TimeZone.getDefault()
+
+    private val onBackPressedCallback = object: OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            onBackAutoSave(isFinished)
+        }
+    }
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_edit)
         binding.activity = this
+
+        onBackPressedDispatcher.addCallback(onBackPressedCallback)
 
         storage = AppStorage(this)
         lmsDatabase = LMSDatabase.getInstance(this)
@@ -160,8 +173,6 @@ class EditActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-//                    binding.icCheck.visibility = View.GONE
-
                     binding.checkAutoEdit.isChecked = true
                     binding.chipGroup.check(R.id.chip1)
 
@@ -187,7 +198,7 @@ class EditActivity : AppCompatActivity() {
         View.VISIBLE.let {
             binding.etTimeWeek.visibility = it
             binding.etTimeLesson.visibility = it
-            binding.lineClass.visibility = it
+            binding.lineClass?.visibility = it
             binding.icClassDate.visibility = it
             binding.tvClassEndDate.visibility = it
         }
@@ -197,7 +208,7 @@ class EditActivity : AppCompatActivity() {
                 .setTitleText(R.string.end_at)
                 .setPositiveButtonText(android.R.string.ok)
                 .setNegativeButtonText(android.R.string.cancel)
-                .setSelection(endCalendar.timeInMillis)
+                .setSelection(endCalendar.timeInMillis.let { it + timeZone.getOffset(it) })
                 .build()
             datePicker.addOnPositiveButtonClickListener {
                 val scheduledTime = Calendar.getInstance().apply { timeInMillis = endCalendar.timeInMillis }
@@ -244,7 +255,7 @@ class EditActivity : AppCompatActivity() {
                 .setTitleText(R.string.start_at)
                 .setPositiveButtonText(android.R.string.ok)
                 .setNegativeButtonText(android.R.string.cancel)
-                .setSelection(startCalendar.timeInMillis)
+                .setSelection(startCalendar.timeInMillis.let { it + timeZone.getOffset(it) })
                 .build()
             datePicker.addOnPositiveButtonClickListener {
                 val scheduledTime = Calendar.getInstance().apply { timeInMillis = startCalendar.timeInMillis }
@@ -270,7 +281,7 @@ class EditActivity : AppCompatActivity() {
                 .setTitleText(R.string.end_at)
                 .setPositiveButtonText(android.R.string.ok)
                 .setNegativeButtonText(android.R.string.cancel)
-                .setSelection(endCalendar.timeInMillis)
+                .setSelection(endCalendar.timeInMillis.let { it + timeZone.getOffset(it) })
                 .build()
             datePicker.addOnPositiveButtonClickListener {
                 val scheduledTime = Calendar.getInstance().apply { timeInMillis = endCalendar.timeInMillis }
@@ -317,7 +328,7 @@ class EditActivity : AppCompatActivity() {
                 .setTitleText(R.string.end_at)
                 .setPositiveButtonText(android.R.string.ok)
                 .setNegativeButtonText(android.R.string.cancel)
-                .setSelection(endCalendar.timeInMillis)
+                .setSelection(endCalendar.timeInMillis.let { it + timeZone.getOffset(it) })
                 .build()
             datePicker.addOnPositiveButtonClickListener {
                 val scheduledTime = Calendar.getInstance().apply { timeInMillis = endCalendar.timeInMillis }
@@ -364,7 +375,7 @@ class EditActivity : AppCompatActivity() {
                 .setTitleText(R.string.end_at)
                 .setPositiveButtonText(android.R.string.ok)
                 .setNegativeButtonText(android.R.string.cancel)
-                .setSelection(endCalendar.timeInMillis)
+                .setSelection(endCalendar.timeInMillis.let { it + timeZone.getOffset(it) })
                 .build()
             datePicker.addOnPositiveButtonClickListener {
                 val scheduledTime = Calendar.getInstance().apply { timeInMillis = endCalendar.timeInMillis }
@@ -467,7 +478,6 @@ class EditActivity : AppCompatActivity() {
                 val itemId = intent.getLongExtra(IntentKey.ITEM_ID, -1)
                 if (itemId != -1L) {
                     GlobalScope.launch(Dispatchers.IO) {
-                        result.putExtra(IntentKey.ENDTIME, lmsDatabase?.getDao()?.get(itemId)?.endTime ?: 0L)
                         result.putExtra(IntentKey.ITEM_ID, itemId)
                         result.putExtra(IntentKey.ACTION_TYPE, IntentValue.ACTION_DELETE)
                         lmsDatabase?.getDao()?.delete(itemId)
@@ -508,90 +518,69 @@ class EditActivity : AppCompatActivity() {
     }
 
     private fun onAutoSave(isFinished: Boolean) {
-        val view = window.decorView.rootView
         when (binding.chipGroup.checkedChipId) {
             R.id.chip1, R.id.chip2 -> {
                 if (binding.etClass.editText?.text?.toString() != "" && binding.etTimeWeek.editText?.text?.toString() != "" && binding.etTimeLesson.editText?.text?.toString() != "") {
-                    val result = Intent()
-                    result.putExtra(IntentKey.ENDTIME, onSave(isFinished))
-                    result.putExtra(IntentKey.ITEM_ID, id)
-                    result.putExtra(IntentKey.ACTION_TYPE, IntentValue.ACTION_EDIT)
-                    setResult(RESULT_OK, result)
-                    finish()
+                    onSave(isFinished)
                 } else if (binding.etTimeWeek.editText?.text?.toString() != "" && binding.etTimeLesson.editText?.text?.toString() != "") {
-                    Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
                 } else if (binding.etClass.editText?.text?.toString() != "" && binding.etTimeLesson.editText?.text?.toString() != "") {
-                    Snackbar.make(view, getString(R.string.err_input_week), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_input_week), Snackbar.LENGTH_SHORT).show()
                 } else if (binding.etClass.editText?.text?.toString() != "" && binding.etTimeWeek.editText?.text?.toString() != "") {
-                    Snackbar.make(view, getString(R.string.err_input_lesson), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_input_lesson), Snackbar.LENGTH_SHORT).show()
                 } else {
-                    Snackbar.make(view, getString(R.string.err_input_blank), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_input_blank), Snackbar.LENGTH_SHORT).show()
                 }
             }
 
             R.id.chip3, R.id.chip5 -> {
                 if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 123
-                    val result = Intent()
-                    result.putExtra(IntentKey.ENDTIME, onSave(isFinished))
-                    result.putExtra(IntentKey.ITEM_ID, id)
-                    result.putExtra(IntentKey.ACTION_TYPE, IntentValue.ACTION_EDIT)
-                    setResult(RESULT_OK, result)
-                    finish()
+                    onSave(isFinished)
                 } else if (binding.etAssignment.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 23
-                    Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
                 } else if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != "") { // 12
-                    Snackbar.make(view, getString(R.string.err_time_late), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_time_late), Snackbar.LENGTH_SHORT).show()
                 } else if (binding.etClass.editText?.text?.toString() != "" && startCalendar.timeInMillis < endCalendar.timeInMillis) { // 13
-                    Snackbar.make(view, getString(R.string.err_input_assignment), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_input_assignment), Snackbar.LENGTH_SHORT).show()
                 } else if (binding.etClass.editText?.text?.toString() != "") { // 1
-                    Snackbar.make(view, getString(R.string.err_assignment_time), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_assignment_time), Snackbar.LENGTH_SHORT).show()
                 } else if (binding.etAssignment.editText?.text?.toString() != "") { // 2
-                    Snackbar.make(view, getString(R.string.err_class_time), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_class_time), Snackbar.LENGTH_SHORT).show()
                 } else if (startCalendar.timeInMillis < endCalendar.timeInMillis) { // 3
-                    Snackbar.make(view, getString(R.string.err_class_assignment), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_class_assignment), Snackbar.LENGTH_SHORT).show()
                 } else {
-                    Snackbar.make(view, getString(R.string.err_all), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_all), Snackbar.LENGTH_SHORT).show()
                 }
             }
 
             R.id.chip4 -> {
                 if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != "") { // 12
-                    val result = Intent()
-                    result.putExtra(IntentKey.ENDTIME, onSave(isFinished))
-                    result.putExtra(IntentKey.ITEM_ID, id)
-                    result.putExtra(IntentKey.ACTION_TYPE, IntentValue.ACTION_EDIT)
-                    setResult(RESULT_OK, result)
-                    finish()
+                    onSave(isFinished)
                 } else if (binding.etAssignment.editText?.text?.toString() != "" ) { // 2
-                    Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
                 } else if (binding.etClass.editText?.text?.toString() != "") { // 1
-                    Snackbar.make(view, getString(R.string.err_input_zoom_title), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_input_zoom_title), Snackbar.LENGTH_SHORT).show()
                 } else {
-                    Snackbar.make(view, getString(R.string.err_all), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_all), Snackbar.LENGTH_SHORT).show()
                 }
             }
 
             R.id.chip6 -> {
                 if (binding.etClass.editText?.text?.toString() != "" && binding.etAssignment.editText?.text?.toString() != "") { // 12
-                    val result = Intent()
-                    result.putExtra(IntentKey.ENDTIME, onSave(isFinished))
-                    result.putExtra(IntentKey.ITEM_ID, id)
-                    result.putExtra(IntentKey.ACTION_TYPE, IntentValue.ACTION_EDIT)
-                    setResult(RESULT_OK, result)
-                    finish()
+                    onSave(isFinished)
                 } else if (binding.etAssignment.editText?.text?.toString() != "" ) { // 2
-                    Snackbar.make(view, getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_input_class), Snackbar.LENGTH_SHORT).show()
                 } else if (binding.etClass.editText?.text?.toString() != "") { // 1
-                    Snackbar.make(view, getString(R.string.err_input_exam_title), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_input_exam_title), Snackbar.LENGTH_SHORT).show()
                 } else {
-                    Snackbar.make(view, getString(R.string.err_all), Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.err_all), Snackbar.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun onSave(isFinished: Boolean): Long {
+    private fun onSave(isFinished: Boolean) {
         val id = intent.getLongExtra(IntentKey.ITEM_ID, -1)
         val data = LMSEntity("", 0L, 0, 0L, 0L, false, false, -1, -1, "")
         if (id != -1L) {
@@ -625,38 +614,50 @@ class EditActivity : AppCompatActivity() {
             } else {
                 data.id = lmsDatabase?.getDao()?.add(data) ?: -1
             }
-        }
 
-        val notiIntent = Intent(this, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, data.id) }
-        val hours = listOf(1, 2, 6, 12, 24)
-        val minutes = listOf(3, 5, 10, 20, 30)
+            withContext(Dispatchers.Main) {
+                val notiIntent = Intent(applicationContext, TimeReceiver::class.java).apply { putExtra(IntentKey.ITEM_ID, data.id) }
+                val hours = listOf(1, 2, 6, 12, 24)
+                val minutes = listOf(3, 5, 10, 20, 30)
 
-        when (data.type) {
-            LMSEntity.TYPE_HOMEWORK, LMSEntity.TYPE_LESSON, LMSEntity.TYPE_SUP_LESSON, LMSEntity.TYPE_TEAMWORK -> {
-                hours.forEachIndexed { index, i ->
-                    val triggerTime = data.endTime - i * 60 * 60 * 1000
-                    notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
-                    notiIntent.putExtra(IntentKey.TIME, i)
-                    val pendingIntent = PendingIntent.getBroadcast(this, PendingIntentReqCode.LAUNCH_NOTI + id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                    if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                when (data.type) {
+                    LMSEntity.TYPE_HOMEWORK, LMSEntity.TYPE_LESSON, LMSEntity.TYPE_SUP_LESSON, LMSEntity.TYPE_TEAMWORK -> {
+                        hours.forEachIndexed { index, i ->
+                            val triggerTime = data.endTime - i * 60 * 60 * 1000
+                            Log.d(TAG, "${triggerTime > System.currentTimeMillis()}")
+                            notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                            notiIntent.putExtra(IntentKey.TIME, i)
+                            val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                            if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                        }
+                    }
+                    LMSEntity.TYPE_ZOOM, LMSEntity.TYPE_EXAM -> {
+                        minutes.forEachIndexed { index, i ->
+                            val triggerTime = data.endTime - i * 60 * 1000
+                            notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
+                            notiIntent.putExtra(IntentKey.MINUTE, i)
+                            val pendingIntent = PendingIntent.getBroadcast(applicationContext, PendingIntentReqCode.LAUNCH_NOTI + id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                            if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                        }
+                    }
                 }
-            }
-            LMSEntity.TYPE_ZOOM, LMSEntity.TYPE_EXAM -> {
-                minutes.forEachIndexed { index, i ->
-                    val triggerTime = data.endTime - i * 60 * 1000
-                    notiIntent.putExtra(IntentKey.TRIGGER, triggerTime)
-                    notiIntent.putExtra(IntentKey.MINUTE, i)
-                    val pendingIntent = PendingIntent.getBroadcast(this, PendingIntentReqCode.LAUNCH_NOTI + id.toInt() * 100 + index + 1, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                    if (triggerTime > System.currentTimeMillis()) am.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                }
+
+                val result = Intent()
+                result.putExtra(IntentKey.ITEM_ID, data.id)
+                result.putExtra(IntentKey.ACTION_TYPE, IntentValue.ACTION_EDIT)
+                setResult(RESULT_OK, result)
+                finish()
             }
         }
-
-        return data.endTime
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_edit, menu)
+        if (id == -1L) menu.findItem(R.id.menu_mark_as_finish).isVisible = false
+        for (menuItem in menu.iterator()) {
+            val colorOnSecondaryContainer = TypedValue().apply { theme.resolveAttribute(com.google.android.material.R.attr.colorOnSecondaryContainer, this, true) }
+            menuItem.iconTintList = ColorStateList.valueOf(colorOnSecondaryContainer.data)
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -673,7 +674,7 @@ class EditActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                onBackAutoSave(isFinished)
+                onBackPressedDispatcher.onBackPressed()
             }
 
             R.id.menu_delete -> {
@@ -709,9 +710,5 @@ class EditActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onBackPressed() {
-        onBackAutoSave(isFinished)
     }
 }

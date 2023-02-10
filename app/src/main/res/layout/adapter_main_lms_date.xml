@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:layout_marginStart="@dimen/usual_margin">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_selected"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/Widget.Material3.CardView.Filled">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_day_selected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tue"
+                android:fontFamily="@font/pretendard"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tv_date_selected"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_month_selected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 /"
+                android:textSize="12sp"
+                android:fontFamily="@font/pretendard_black"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tv_date_selected"
+                app:layout_constraintTop_toTopOf="@id/tv_date_selected"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_date_selected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20"
+                android:textSize="24sp"
+                android:fontFamily="@font/pretendard_black"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                app:layout_constraintStart_toEndOf="@id/tv_month_selected"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_day_selected"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_unselected"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/Widget.Material3.CardView.Elevated">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_day_unselected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tue"
+                android:fontFamily="@font/pretendard"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tv_date_unselected"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_month_unselected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 /"
+                android:textSize="12sp"
+                android:fontFamily="@font/pretendard_black"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tv_date_unselected"
+                app:layout_constraintTop_toTopOf="@id/tv_date_unselected"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_date_unselected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20"
+                android:textSize="24sp"
+                android:fontFamily="@font/pretendard_black"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                app:layout_constraintStart_toEndOf="@id/tv_month_unselected"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_day_unselected"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

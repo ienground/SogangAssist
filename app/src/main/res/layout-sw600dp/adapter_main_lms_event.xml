@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/Widget.Material3.CardView.Elevated"
+    android:layout_marginHorizontal="@dimen/usual_margin_half"
+    android:layout_marginBottom="@dimen/usual_margin">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/usual_margin">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_color"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="?attr/colorSecondary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_homework_name"
+            app:layout_constraintBottom_toBottomOf="@id/tv_homework_name" />
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_video"
+            app:tint="?attr/colorOnSecondary"
+            app:layout_constraintStart_toStartOf="@id/iv_color"
+            app:layout_constraintEnd_toEndOf="@id/iv_color"
+            app:layout_constraintTop_toTopOf="@id/iv_color"
+            app:layout_constraintBottom_toBottomOf="@id/iv_color" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_homework_name"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:fontFamily="@font/pretendard"
+            android:textSize="20sp"
+            android:text="event"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="@dimen/usual_margin"
+            app:layout_constraintStart_toEndOf="@id/iv_color"
+            app:layout_constraintEnd_toStartOf="@id/btn_delete"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
+            app:iconPadding="0dp"
+            app:iconGravity="textStart"
+            app:iconSize="18dp"
+            app:icon="@drawable/ic_close"
+            app:iconTint="?attr/colorOnSurfaceVariant"
+            app:backgroundTint="?attr/colorSurfaceVariant"
+            app:rippleColor="?attr/colorSecondary"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/group_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_homework_name">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_apm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/pretendard"
+                android:text="AM"
+                android:textSize="18sp"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                android:layout_marginStart="4dp"
+                app:layout_constraintStart_toEndOf="@id/tv_time"
+                app:layout_constraintBaseline_toBaselineOf="@id/tv_time" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_apm_ko"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/pretendard"
+                android:text="AM"
+                android:textSize="18sp"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBaseline_toBaselineOf="@id/tv_time" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/pretendard"
+                android:text="09:00"
+                android:textSize="36sp"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                android:layout_marginStart="4dp"
+                app:layout_constraintStart_toEndOf="@id/tv_apm_ko"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_left_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1시간 남음"
+            android:textSize="12sp"
+            android:textColor="?attr/colorSecondaryContainer"
+            android:fontFamily="@font/pretendard"
+            android:gravity="center"
+            android:background="@drawable/round_corners"
+            android:backgroundTint="?attr/colorOnSecondaryContainer"
+            android:padding="@dimen/usual_margin_half"
+            android:layout_marginStart="@dimen/usual_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/group_time"
+            app:layout_constraintBottom_toBottomOf="@id/group_time" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_class"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pretendard"
+            android:text="HL"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            android:layout_marginEnd="@dimen/usual_margin"
+            android:layout_marginTop="@dimen/usual_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/iv_check"
+            app:layout_constraintTop_toBottomOf="@id/group_time" />
+
+        <ImageView
+            android:id="@+id/iv_check"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_done_all"
+            app:tint="?attr/colorOnSecondaryContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

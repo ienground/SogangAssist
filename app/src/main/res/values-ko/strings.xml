@@ -298,21 +298,15 @@
     <string name="gps_permission_title">위치 권한이 부족함</string>
     <string name="gps_permission_message">위치 권한이 부족해 현재 위치를 불러올 수 없습니다. 설정에서 위치 권한을 항상 허용으로 설정해주세요.</string>
     <string name="cannot_get_address">주소를 가져올 수 없음</string>
-    <string name="todays_event">오늘의 일정</string>
-    <string name="check_calendar">달력 보기</string>
-    <string name="all">전체</string>
     <string name="time_left_day">%1$d일 남음</string>
     <string name="time_left_hour_min">%1$d시간 %2$d분 남음</string>
     <string name="time_left_hour">%1$d시간 남음</string>
     <string name="time_left_min">%1$d분 남음</string>
-    <string name="event_progress_format">%1$d개의 일정 중 %2$d개 완료</string>
-    <string name="finished_item">완료된 항목</string>
-    <string name="time_day">%1$d일</string>
-    <string name="time_hour_min">%1$d시간 %2$d분</string>
-    <string name="time_hour">%1$d시간</string>
-    <string name="time_min">%1$d분</string>
+    <string name="time_past_day">%1$d일 지남</string>
+    <string name="time_past_hour_min">%1$d시간 %2$d분 지남</string>
+    <string name="time_past_hour">%1$d시간 지남</string>
+    <string name="time_past_min">%1$d분 지남</string>
     <string name="apmTimeFormat">a h:mm</string>
-
 
     <string name="user_hello_morning">좋은 아침이에요☀️</string>
     <string name="user_hello_afternoon">점심 맛있게 드세요🍽️</string>
@@ -326,6 +320,7 @@
     <string name="ask_to_save">저장할까요?</string>
     <string name="ask_to_save_message">저장하지 않은 정보는 손실됩니다.</string>
     <string name="not_save">저장하지 않음</string>
+    <string name="close">닫기</string>
     <string name="today">오늘</string>
     <string name="tomorrow">내일</string>
     <string name="yesterday">어제</string>
