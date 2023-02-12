@@ -61,8 +61,8 @@ class LMSListenerService : NotificationListenerService() {
         val now = Calendar.getInstance()
         val nowInt = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
 
-        if (sbn.packageName == "zone.ien.sogangassistnoti") {
-//        if (sbn.packageName == "kr.co.imaxsoft.hellolms") {
+//        if (sbn.packageName == "zone.ien.sogangassistnoti") {
+        if (sbn.packageName == "kr.co.imaxsoft.hellolms") {
             val className = extras.getString(Notification.EXTRA_TITLE) ?: ""
 
             with (extras.getString(Notification.EXTRA_TEXT) ?: "") {

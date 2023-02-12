@@ -35,12 +35,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.PermissionActivity" />
         <activity
             android:name=".activity.EditActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".activity.SettingsActivity" />
-        <activity android:name=".activity.OnboardingActivity" />
 
         <service
             android:name=".service.LMSListenerService"
@@ -72,10 +70,6 @@
             android:exported="true" />
         <receiver
             android:name=".receiver.DeleteMissReceiver"
-            android:enabled="true"
-            android:exported="true" />
-        <receiver
-            android:name=".receiver.SetReadReceiver"
             android:enabled="true"
             android:exported="true" />
         <receiver

@@ -113,6 +113,7 @@ class EditActivity : AppCompatActivity() {
             }
 
         }
+        binding.groupAutoEdit.setOnClickListener { binding.checkAutoEdit.toggle() }
 
         GlobalScope.launch(Dispatchers.IO) {
             val classList = lmsDatabase?.getDao()?.getClasses()?.distinct()?.toTypedArray() ?: arrayOf()
@@ -181,9 +182,7 @@ class EditActivity : AppCompatActivity() {
 
                     currentItem = LMSEntity("", 0L, 0, 0L, 0L, false, false, -1, -1, "")
                 }
-
             }
-
         }
     }
 

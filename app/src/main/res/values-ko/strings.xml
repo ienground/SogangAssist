@@ -65,7 +65,7 @@
     <string name="notify_exam">시험 알림 설정</string>
     <string name="channel_name">LMS 리마인더</string>
     <string name="channel_daily_reminder">데일리 리마인더</string>
-    <string name="channel_time_reminder">Time Reminder</string>
+    <string name="channel_time_reminder">시간 리마인더</string>
     <string name="reminder_content_lec">%1$d주 %2$d차시 강의가 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
     <string name="reminder_content_sup_lec">%1$d주 %2$d차시 보강이 수강기간까지 %3$d시간 남았습니다. 늦지 않게 수강하세요.</string>
     <string name="reminder_content_hw">\"%1$s\" 과제 마감 기간까지 %2$d시간 남았습니다. 늦지 않게 제출하세요.</string>
@@ -155,11 +155,11 @@
     <string name="six_hour">6시간</string>
     <string name="twelve_hour">12시간</string>
     <string name="twfour_hour">24시간</string>
-    <string name="three_minute">3 mins</string>
-    <string name="five_minute">5 mins</string>
-    <string name="ten_minute">10 mins</string>
-    <string name="twenty_minute">20 mins</string>
-    <string name="thirty_minute">30 mins</string>
+    <string name="three_minute">3분</string>
+    <string name="five_minute">5분</string>
+    <string name="ten_minute">10분</string>
+    <string name="twenty_minute">20분</string>
+    <string name="thirty_minute">30분</string>
     <string name="deleted_noti">취소된 알림입니다</string>
     <string name="enter_blank">빈 칸 입력</string>
     <string name="confirm">확인</string>
