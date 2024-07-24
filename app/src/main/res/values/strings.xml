@@ -328,5 +328,6 @@
     <string name="use_dynamic_colors_sum_off">Apply the default color throughout the app.</string>
     <string name="use_dynamic_colors_sum_on">Apply dynamic colors throughout the app.</string>
     <string name="no_todos">No todos</string>
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>
