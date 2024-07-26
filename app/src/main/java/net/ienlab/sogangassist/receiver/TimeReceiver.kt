@@ -32,6 +32,7 @@ class TimeReceiver : BroadcastReceiver() {
 //
     @OptIn(DelicateCoroutinesApi::class)
     override fun onReceive(context: Context, intent: Intent) {
+        Dlog.d(TAG, "receive timeReceiver")
 //        nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 //        sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
 //        lmsDatabase = LmsDatabase.getDatabase(context)

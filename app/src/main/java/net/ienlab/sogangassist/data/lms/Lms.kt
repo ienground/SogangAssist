@@ -32,5 +32,7 @@ data class Lms(
         const val ZOOM = 3
         const val TEAMWORK = 4
         const val EXAM = 5
+
+        val All = listOf(LESSON, SUP_LESSON, HOMEWORK, ZOOM, TEAMWORK, EXAM)
     }
 }

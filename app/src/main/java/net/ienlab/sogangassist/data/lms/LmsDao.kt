@@ -17,10 +17,10 @@ interface LmsDao {
     @Query("SELECT * FROM LMSDatabase")
     fun getAll(): Flow<List<Lms>>
 
-    @Query("SELECT className FROM LMSDatabase")
+    @Query("SELECT DISTINCT className FROM LMSDatabase")
     fun getClasses(): Flow<List<String>>
 
-    @Query("SELECT * FROM LMSDatabase WHERE endTime >= :startDate AND endTime < :endDate")
+    @Query("SELECT * FROM LMSDatabase WHERE endTime >= :startDate AND endTime < :endDate ORDER BY isFinished, endTime")
     fun getByEndTime(startDate: Long, endDate: Long): Flow<List<Lms>>
 
     @Query("SELECT * FROM LMSDatabase WHERE ((type = 0 OR type = 1) AND week = :week AND lesson = :lesson AND className = :className) OR (className = :className AND type = 2 AND homework_name = :homework_name)")

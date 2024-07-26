@@ -11,6 +11,7 @@ object Intents {
         const val NOTI_TYPE = "noti_type"
         const val TRIGGER = "TRIGGER"
         const val TIME = "TIME"
+        const val HOUR = "HOUR"
         const val MINUTE = "MINUTE"
         const val ACTION_TYPE = "action_type" // Int
     }

@@ -1,6 +1,9 @@
 package net.ienlab.sogangassist.data.lms
 
+import android.app.AlarmManager
 import kotlinx.coroutines.flow.Flow
+import net.ienlab.sogangassist.utils.Utils.timeInMillis
+import java.time.LocalDate
 
 class LmsOfflineRepository(private val dao: LmsDao): LmsRepository {
     override fun getAllStream(): Flow<List<Lms>> = dao.getAll()
@@ -9,7 +12,10 @@ class LmsOfflineRepository(private val dao: LmsDao): LmsRepository {
 
     override fun getClassesStream(): Flow<List<String>> = dao.getClasses()
 
-    override fun getByEndTimeStream(startDate: Long, endDate: Long): Flow<List<Lms>> = dao.getByEndTime(startDate, endDate)
+    override fun getByEndTimeStream(date: LocalDate): Flow<List<Lms>> {
+        val endDate = date.plusDays(1)
+        return dao.getByEndTime(date.timeInMillis(), endDate.timeInMillis())
+    }
 
     override fun getByDataStream(className: String, week: Int, lesson: Int, homework_name: String): Flow<List<Lms>> = dao.getByData(className, week, lesson, homework_name)
 

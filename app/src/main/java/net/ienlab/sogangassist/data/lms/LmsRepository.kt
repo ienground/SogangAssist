@@ -1,6 +1,7 @@
 package net.ienlab.sogangassist.data.lms
 
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 interface LmsRepository {
     fun getAllStream(): Flow<List<Lms>>
@@ -9,7 +10,7 @@ interface LmsRepository {
 
     fun getClassesStream(): Flow<List<String>>
 
-    fun getByEndTimeStream(startDate: Long, endDate: Long): Flow<List<Lms>>
+    fun getByEndTimeStream(date: LocalDate): Flow<List<Lms>>
 
     fun getByDataStream(className: String, week: Int, lesson: Int, homework_name: String): Flow<List<Lms>>
 
