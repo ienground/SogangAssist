@@ -61,10 +61,10 @@
     <string name="notify_24hour_lec_off">You will not receive a notification 24 hours before the course deadline.</string>
     <string name="notify_all_off">You will not receive a notification.</string>
     <string name="notifications">Notifications</string>
-    <string name="notify_hw">Assignment &amp; Team Project Notify</string>
-    <string name="notify_lec">Lecture Notify</string>
-    <string name="notify_zoom">Zoom Notify</string>
-    <string name="notify_exam">Exam Notify</string>
+    <string name="notify_hw">Assignment &amp; Team Project notify</string>
+    <string name="notify_lec">Lecture notify</string>
+    <string name="notify_zoom">Zoom notify</string>
+    <string name="notify_exam">Exam notify</string>
     <string name="channel_name">LMS Reminder</string>
     <string name="channel_daily_reminder">Daily Reminder</string>
     <string name="channel_time_reminder">Time Reminder</string>
@@ -108,10 +108,13 @@
     <string name="review_title">Is this app useful?</string>
     <string name="review_content">If you are satisfied, please leave a review and rating!</string>
     <string name="mark_all_read">Mark all read</string>
+    <string name="dnd_time_category">Do Not Disturb mode</string>
+    <string name="item_notification_category">Notifications by item</string>
+    <string name="reminder_category">Reminder</string>
     <string name="delete_all">Delete all</string>
     <string name="dnd_time">Set Do Not Disturb time</string>
     <string name="dnd_time_check">Enable Do Not Disturb time</string>
-    <string name="dnd_time_check_on">Won\'t be notified at the set time. Instead, it is kept in a notification window of the app.</string>
+    <string name="dnd_time_check_on">Won\'t be notified at the set time.</string>
     <string name="dnd_time_check_off">Won\'t use Do Not Disturb mode.</string>
     <string name="start_at">Start at..</string>
     <string name="end_at">End at..</string>
@@ -152,16 +155,8 @@
     <string name="agree">Agree</string>
     <string name="disagree">Disagree</string>
     <string name="quit">Quit</string>
-    <string name="one_hour">1 hr</string>
-    <string name="two_hour">2 hrs</string>
-    <string name="six_hour">6 hrs</string>
-    <string name="twelve_hour">12 hrs</string>
-    <string name="twfour_hour">24 hrs</string>
-    <string name="three_minute">3 mins</string>
-    <string name="five_minute">5 mins</string>
-    <string name="ten_minute">10 mins</string>
-    <string name="twenty_minute">20 mins</string>
-    <string name="thirty_minute">30 mins</string>
+    <string name="pref_hour_format">%1$dh</string>
+    <string name="pref_minute_format">%1$dmin</string>
     <string name="deleted_noti">Notification Canceled</string>
     <string name="enter_blank">Fill out</string>
     <string name="confirm">Confirm</string>
@@ -333,5 +328,10 @@
     <string name="more_options">More options</string>
     <string name="select_date">Select date</string>
     <string name="select_time">Select time</string>
+
+    <string name="app_version">알바트로스 리마인더 버전</string>
+    <string name="settings_general">General</string>
+    <string name="select_the_menu_settings">Select the menu</string>
+    <string name="channel_lms_register">LMS Register</string>
 
 </resources>

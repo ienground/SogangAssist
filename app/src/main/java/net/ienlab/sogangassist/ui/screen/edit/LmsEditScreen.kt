@@ -92,8 +92,12 @@ import net.ienlab.sogangassist.ui.utils.DeleteAlertDialog
 import net.ienlab.sogangassist.ui.utils.TimePickerDialog
 import net.ienlab.sogangassist.ui.utils.Utils.animateAlignmentAsState
 import net.ienlab.sogangassist.ui.utils.Utils.getDateLabel
+import net.ienlab.sogangassist.ui.utils.Utils.rememberMyDatePickerState
 import net.ienlab.sogangassist.utils.Utils.parseLongToLocalDate
 import net.ienlab.sogangassist.utils.Utils.timeInMillis
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 object LmsEditDestination: NavigationDestination {
@@ -220,7 +224,11 @@ fun LmsEditScreen(
     }
 
     if (viewModel.uiState.item.showEndDatePicker) {
-        val datePickerState = viewModel.uiState.item.endTime.let { rememberDatePickerState(initialSelectedDateMillis = it.timeInMillis()) }
+        val datePickerState = viewModel.uiState.item.endTime.let {
+            rememberMyDatePickerState(
+                initialSelectedDateMillis = it.timeInMillis()
+            )
+        }
         DatePickerDialog(
             state = datePickerState,
             title = stringResource(id = R.string.select_date),
@@ -394,6 +402,7 @@ fun LmsEditScreenBody(
                         value = uiState.item.week,
                         onValueChange = { if (pattern.matches(it) || it.isEmpty()) onItemValueChanged(uiState.item.copy(week = it)) },
                         label = { Text(text = stringResource(id = R.string.week)) },
+                        suffix = { Text(text = stringResource(id = R.string.week)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         textStyle = TextStyle(fontSize = 26.sp),
@@ -403,6 +412,7 @@ fun LmsEditScreenBody(
                         value = uiState.item.lesson,
                         onValueChange = { if (pattern.matches(it) || it.isEmpty()) onItemValueChanged(uiState.item.copy(lesson = it)) },
                         label = { Text(text = stringResource(id = R.string.lesson)) },
+                        suffix = { Text(text = stringResource(id = R.string.lesson)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         textStyle = TextStyle(fontSize = 26.sp),
@@ -527,6 +537,26 @@ private fun LmsEditScreenPreview() {
                 item = LmsDetails(
                     id = 0,
                     type = Lms.Type.HOMEWORK,
+                    className = "34"
+                )
+            ),
+            onItemValueChanged = {},
+            classNames = listOf("hi")
+        )
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+private fun LmsEditScreenPreview2() {
+    AppTheme {
+        LmsEditScreenBody(
+            uiState = LmsUiState(
+                item = LmsDetails(
+                    id = 0,
+                    type = Lms.Type.LESSON,
+                    week = "2",
+                    lesson = "3",
                     className = "34"
                 )
             ),

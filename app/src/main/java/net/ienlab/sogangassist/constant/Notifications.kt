@@ -6,6 +6,7 @@ object Notifications {
         const val FIREBASE_ID = "net.ienlab.sogangassist.firebase"
         const val DAILY_REMINDER_ID = "net.ienlab.sogangassist.daily_reminder"
         const val TIME_REMINDER_ID = "net.ienlab.sogangassist.time_reminder"
+        const val REGISTER_ID = "net.ienlab.sogangassist.register"
     }
 
     object Id {

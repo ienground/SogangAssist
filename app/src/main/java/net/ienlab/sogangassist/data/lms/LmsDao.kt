@@ -23,9 +23,9 @@ interface LmsDao {
     @Query("SELECT * FROM LMSDatabase WHERE endTime >= :startDate AND endTime < :endDate ORDER BY isFinished, endTime")
     fun getByEndTime(startDate: Long, endDate: Long): Flow<List<Lms>>
 
-    @Query("SELECT * FROM LMSDatabase WHERE ((type = 0 OR type = 1) AND week = :week AND lesson = :lesson AND className = :className) OR (className = :className AND type = 2 AND homework_name = :homework_name)")
-    fun getByData(className: String, week: Int, lesson: Int, homework_name: String): Flow<List<Lms>>
+    @Query("SELECT * FROM LMSDatabase WHERE ((type = 0 OR type = 1) AND week = :week AND lesson = :lesson AND className = :className) OR ((type = 2 OR type = 3 OR type = 4 OR type = 5) AND className = :className AND homework_name = :homework_name)")
+    fun getByData(className: String, week: Int, lesson: Int, homework_name: String): Flow<Lms>
 
-    @Query("SELECT id FROM LMSDatabase WHERE ((type = 0 OR type = 1) AND week = :week AND lesson = :lesson AND className = :className) OR (className = :className AND type = 2 AND homework_name = :homework_name)")
-    fun getIdByData(className: String, week: Int, lesson: Int, homework_name: String): Flow<List<Int>>
+    @Query("SELECT id FROM LMSDatabase WHERE ((type = 0 OR type = 1) AND week = :week AND lesson = :lesson AND className = :className) OR ((type = 2 OR type = 3 OR type = 4 OR type = 5) AND className = :className AND homework_name = :homework_name)")
+    fun getIdByData(className: String, week: Int, lesson: Int, homework_name: String): Flow<Int>
 }

@@ -39,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,7 +64,9 @@ import com.gigamole.composefadingedges.content.scrollconfig.FadingEdgesScrollCon
 import com.gigamole.composefadingedges.verticalFadingEdges
 import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.launch
+import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.TAG
 import net.ienlab.sogangassist.data.lms.Lms
 import net.ienlab.sogangassist.ui.AppViewModelProvider
 import net.ienlab.sogangassist.ui.navigation.NavigationDestination
@@ -87,11 +90,19 @@ object LmsListDestination: NavigationDestination {
 fun LmsList(
     modifier: Modifier = Modifier,
     navigateToItemDetail: (Long) -> Unit,
+    setEnabledSize: (Int) -> Unit,
     viewModel: LmsListViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
     val uiStateList by viewModel.uiStateList.collectAsState()
+    val todayStateList by viewModel.todayStateList.collectAsState()
     var showDeleteDialog by remember { mutableStateOf<LmsDetails?>(null) }
+
+    LaunchedEffect(todayStateList) {
+        if (todayStateList.isInitialized) {
+            setEnabledSize(todayStateList.lmsList.filter { !it.isFinished }.size)
+        }
+    }
 
     Box(modifier = modifier) {
         AnimatedVisibility(

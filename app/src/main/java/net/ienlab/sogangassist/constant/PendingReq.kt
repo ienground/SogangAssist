@@ -2,7 +2,8 @@ package net.ienlab.sogangassist.constant
 
 class PendingReq {
     companion object {
-        const val LAUNCH_NOTI = 96000
+        const val REGISTER = 95000
+        const val REMINDER = 96000
         const val MARKING = 98000
         const val DELETE = 99000
         const val MORNING_REMINDER = 100000

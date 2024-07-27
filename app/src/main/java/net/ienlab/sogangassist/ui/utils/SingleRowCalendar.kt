@@ -1,5 +1,6 @@
 package net.ienlab.sogangassist.ui.utils
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -100,7 +101,9 @@ fun SingleRowCalendarItem(
             }) {
             Text(text = date.format(dayFormat))
             Row(verticalAlignment = Alignment.Top) {
-                if (date.month != currentMonth.month) {
+                AnimatedVisibility(
+                    visible = date.month != currentMonth.month
+                ) {
                     Text(text = "${date.format(monthFormat)} /", fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.wrapContentHeight(align = Alignment.Top))
                 }
                 Text(text = date.format(dateFormat), fontSize = 24.sp, fontWeight = FontWeight.Bold, modifier = Modifier.wrapContentHeight(align = Alignment.Top))

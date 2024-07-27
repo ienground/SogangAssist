@@ -10,10 +10,10 @@ object Intents {
         const val NOTI_ID = "NOTI_ID"
         const val NOTI_TYPE = "noti_type"
         const val TRIGGER = "TRIGGER"
-        const val TIME = "TIME"
         const val HOUR = "HOUR"
         const val MINUTE = "MINUTE"
         const val ACTION_TYPE = "action_type" // Int
+        const val REMINDER_TYPE = "reminder_type"
     }
 
     object Value {
@@ -23,6 +23,11 @@ object Intents {
 
         object NotiType {
             const val FIREBASE_PUSH = 1
+        }
+
+        object ReminderType {
+            const val MORNING = 0
+            const val NIGHT = 1
         }
     }
 }

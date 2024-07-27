@@ -3,22 +3,15 @@ package net.ienlab.sogangassist.ui.utils
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,23 +29,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastFilterNotNull
+import androidx.lifecycle.viewmodel.compose.viewModel
 import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.TAG
+import net.ienlab.sogangassist.data.lms.Lms
+import net.ienlab.sogangassist.ui.AppViewModelProvider
+import net.ienlab.sogangassist.ui.screen.edit.LmsDetails
 import net.ienlab.sogangassist.ui.theme.AppTheme
 import net.ienlab.sogangassist.ui.theme.ColorSaturday
 import net.ienlab.sogangassist.ui.theme.ColorSunday
 import net.ienlab.sogangassist.ui.utils.Utils.UpdateEffect
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
-import java.time.temporal.TemporalAdjusters
-import java.time.temporal.TemporalField
 import java.util.Locale
 
 data class HorizontalCalendarConfig(
@@ -67,7 +59,6 @@ fun HorizontalCalendar(
     selectedDate: LocalDate,
     onSelectedDate: (LocalDate) -> Unit,
     onAddMonth: (Long) -> Unit,
-    isFolded: Boolean,
     config: HorizontalCalendarConfig = HorizontalCalendarConfig()
 ) {
     val initialPage = (currentDate.year - config.yearRange.first) * 12 + currentDate.monthValue - 1
@@ -80,7 +71,6 @@ fun HorizontalCalendar(
     LaunchedEffect(Unit) {
         onSelectedDate(currentDate)
     }
-
     LaunchedEffect(pagerState.currentPage) {
         val addMonth = (pagerState.currentPage - currentPage).toLong()
         onAddMonth(addMonth)
@@ -94,7 +84,8 @@ fun HorizontalCalendar(
     }
 
     HorizontalPager(
-        state = pagerState
+        state = pagerState,
+        modifier = modifier
     ) { page ->
         val date = LocalDate.of(
             config.yearRange.first + page / 12,
@@ -125,7 +116,7 @@ fun CalendarMonthItem(
     modifier: Modifier = Modifier,
     currentDate: LocalDate,
     selectedDate: LocalDate = LocalDate.now(),
-    onSelectedDate: (LocalDate) -> Unit
+    onSelectedDate: (LocalDate) -> Unit,
 ) {
     val dayLast by remember { mutableIntStateOf(currentDate.lengthOfMonth())}
     val firstDayOfWeek by remember { mutableIntStateOf(currentDate.withDayOfMonth(1).dayOfWeek.value) }
@@ -158,8 +149,12 @@ fun CalendarMonthItem(
         LazyColumn {
             items(items = dayList, key = { it }) { list ->
                 Row(
-                    modifier = Modifier.fillMaxWidth()
-                        .background(if (selectedDate in list) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent, RoundedCornerShape(16.dp))
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            if (selectedDate in list) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
+                            RoundedCornerShape(16.dp)
+                        )
                 ) {
                     list.forEach { day ->
                         CalendarDay(
@@ -167,7 +162,13 @@ fun CalendarMonthItem(
                             selected = selectedDate == day,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(16.dp))
-                                .clickable { onSelectedDate(day ?: list.fastFilterNotNull().first() ) }
+                                .clickable {
+                                    onSelectedDate(
+                                        day ?: list
+                                            .fastFilterNotNull()
+                                            .first()
+                                    )
+                                }
                                 .weight(1 / 7f, fill = true)
                         )
                     }
@@ -212,13 +213,17 @@ fun CalendarDay(
         textAlign = TextAlign.Center,
         fontSize = if (date?.isEqual(LocalDate.now()) == true) 18.sp else 14.sp,
         fontWeight = if (date?.isEqual(LocalDate.now()) == true) FontWeight.Bold else FontWeight.Normal,
-        color = when (date?.dayOfWeek) {
+        color = if (selected) MaterialTheme.colorScheme.onSecondary
+        else when (date?.dayOfWeek) {
             DayOfWeek.SATURDAY -> ColorSaturday
             DayOfWeek.SUNDAY -> ColorSunday
             else -> MaterialTheme.colorScheme.onBackground
         },
         modifier = modifier
-            .background(if (selected) MaterialTheme.colorScheme.tertiaryContainer else Color.Transparent, RoundedCornerShape(16.dp))
+            .background(
+                if (selected) MaterialTheme.colorScheme.secondary else Color.Transparent,
+                RoundedCornerShape(16.dp)
+            )
             .aspectRatio(1f)
             .wrapContentHeight(align = Alignment.CenterVertically)
     )
@@ -232,11 +237,17 @@ private fun CalendarPreview() {
             CalendarHeader(
 
             )
-            CalendarMonthItem(
-                currentDate = LocalDate.now(),
-                onSelectedDate = {},
-                modifier = Modifier.fillMaxWidth()
-            )
+//            CalendarMonthItem(
+//                currentDate = LocalDate.now(),
+//                onSelectedDate = {},
+//                modifier = Modifier.fillMaxWidth()
+//            )
+            Row {
+                repeat(7) {
+                    CalendarDay(selected = false, date = LocalDate.now(), modifier = Modifier.weight(1f))
+                }
+            }
+
         }
     }
 }

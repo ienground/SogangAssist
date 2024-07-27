@@ -9,12 +9,15 @@ import net.ienlab.sogangassist.MyApplication
 import net.ienlab.sogangassist.ui.screen.edit.LmsEditViewModel
 import net.ienlab.sogangassist.ui.screen.home.HomeViewModel
 import net.ienlab.sogangassist.ui.screen.home.list.LmsListViewModel
+import net.ienlab.sogangassist.ui.utils.CalendarMonthItem
+import net.ienlab.sogangassist.ui.utils.CalendarMonthItemViewModel
 
 object AppViewModelProvider {
     val factory = viewModelFactory {
         initializer {
             HomeViewModel(
-
+                myApplication(),
+                myApplication().container.lmsRepository
             )
         }
 
@@ -28,6 +31,15 @@ object AppViewModelProvider {
 
         initializer {
             LmsEditViewModel(
+                myApplication(),
+                this.createSavedStateHandle(),
+                myApplication().container.lmsRepository
+            )
+        }
+
+        // calendar
+        initializer {
+            CalendarMonthItemViewModel(
                 myApplication(),
                 this.createSavedStateHandle(),
                 myApplication().container.lmsRepository

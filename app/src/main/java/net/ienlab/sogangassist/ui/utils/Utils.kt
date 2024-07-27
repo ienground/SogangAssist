@@ -3,6 +3,12 @@ package net.ienlab.sogangassist.ui.utils
 import android.content.Context
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -15,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.CoroutineScope
+import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.TAG
 import net.ienlab.sogangassist.data.lms.Lms
 import net.ienlab.sogangassist.icon.MyIconPack
 import net.ienlab.sogangassist.icon.myiconpack.Assignment
@@ -24,9 +32,14 @@ import net.ienlab.sogangassist.icon.myiconpack.Team
 import net.ienlab.sogangassist.icon.myiconpack.Test
 import net.ienlab.sogangassist.icon.myiconpack.Video
 import net.ienlab.sogangassist.icon.myiconpack.VideoSup
+import net.ienlab.sogangassist.utils.Utils.parseLongToLocalDate
+import net.ienlab.sogangassist.utils.Utils.parseLongToLocalDateTime
+import net.ienlab.sogangassist.utils.Utils.timeInMillis
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Calendar
@@ -113,5 +126,23 @@ object Utils {
         val horizontal by animateFloatAsState(biased.horizontalBias, label = "horizontal")
         val vertical by animateFloatAsState(biased.verticalBias, label = "vertical")
         return derivedStateOf { BiasAlignment(horizontal, vertical) }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun rememberMyDatePickerState(
+        @Suppress("AutoBoxing") initialSelectedDateMillis: Long? = null,
+        @Suppress("AutoBoxing") initialDisplayedMonthMillis: Long? = initialSelectedDateMillis,
+        yearRange: IntRange = DatePickerDefaults.YearRange,
+        initialDisplayMode: DisplayMode = DisplayMode.Picker,
+        selectableDates: SelectableDates = DatePickerDefaults.AllDates
+    ): DatePickerState {
+        return rememberDatePickerState(
+            initialDisplayedMonthMillis = initialDisplayedMonthMillis,
+            yearRange = yearRange,
+            initialDisplayMode = initialDisplayMode,
+            selectableDates = selectableDates,
+            initialSelectedDateMillis = initialSelectedDateMillis?.let { parseLongToLocalDateTime(it).timeInMillis(zoneId = ZoneId.of("UTC")) }
+        )
     }
 }

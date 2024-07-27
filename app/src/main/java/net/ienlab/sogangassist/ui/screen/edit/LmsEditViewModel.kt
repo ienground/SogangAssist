@@ -11,7 +11,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.MyApplication
+import net.ienlab.sogangassist.TAG
 import net.ienlab.sogangassist.data.lms.Lms
 import net.ienlab.sogangassist.data.lms.LmsRepository
 import net.ienlab.sogangassist.utils.Utils.deleteLmsSchedule
@@ -62,7 +64,7 @@ class LmsEditViewModel(
     suspend fun saveItem(): Boolean {
         return if (validateInput()) {
             val id = lmsRepository.upsert(uiState.item.toLms())
-            setLmsSchedule(context, am, uiState.item.toLms().apply { this.id = id })
+            setLmsSchedule(context, am, uiState.item.toLms().apply { if (id != -1L) this.id = id })
             true
         } else false
     }

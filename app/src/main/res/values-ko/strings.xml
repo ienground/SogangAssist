@@ -10,7 +10,7 @@
     <string name="zoom">실시간 강의 (Zoom)</string>
     <string name="team_project">팀프로젝트</string>
     <string name="exam">시험</string>
-    <string name="allow_auto_edit_lms">LMS 알림에 의한 자동 수정을 허용</string>
+    <string name="allow_auto_edit_lms">LMS 알림에 의한 자동 수정 허용</string>
     <string name="class_name">과목명</string>
     <string name="week">주</string>
     <string name="lesson">차시</string>
@@ -108,10 +108,13 @@
     <string name="review_title">유용하게 사용하고 계신가요?</string>
     <string name="review_content">만족하신다면 리뷰와 평점을 남겨주세요!</string>
     <string name="mark_all_read">모두 읽음으로 표시</string>
+    <string name="dnd_time_category">방해 금지 모드</string>
+    <string name="item_notification_category">항목별 알림 설정</string>
+    <string name="reminder_category">리마인더</string>
     <string name="delete_all">모두 지우기</string>
     <string name="dnd_time">방해 금지 시간 설정</string>
     <string name="dnd_time_check">방해 금지 모드</string>
-    <string name="dnd_time_check_on">설정된 시간에는 알림을 받지 않습니다. 대신, 앱 내의 알림 창에 보관됩니다.</string>
+    <string name="dnd_time_check_on">설정된 시간에는 알림을 받지 않습니다.</string>
     <string name="dnd_time_check_off">방해 금지 모드를 사용하지 않습니다.</string>
     <string name="start_at">시작 시간</string>
     <string name="end_at">종료 시간</string>
@@ -152,16 +155,8 @@
     <string name="agree">동의</string>
     <string name="disagree">동의하지 않음</string>
     <string name="quit">나가기</string>
-    <string name="one_hour">1시간</string>
-    <string name="two_hour">2시간</string>
-    <string name="six_hour">6시간</string>
-    <string name="twelve_hour">12시간</string>
-    <string name="twfour_hour">24시간</string>
-    <string name="three_minute">3분</string>
-    <string name="five_minute">5분</string>
-    <string name="ten_minute">10분</string>
-    <string name="twenty_minute">20분</string>
-    <string name="thirty_minute">30분</string>
+    <string name="pref_hour_format">%1$d시간</string>
+    <string name="pref_minute_format">%1$d분</string>
     <string name="deleted_noti">취소된 알림입니다</string>
     <string name="enter_blank">빈 칸 입력</string>
     <string name="confirm">확인</string>
@@ -331,4 +326,10 @@
     <string name="use_dynamic_colors_sum_on">동적 색상을 앱 전반에 적용합니다.</string>
     <string name="no_todos">할 일 없음</string>
     <string name="more_options">옵션 더보기</string>
+    <string name="select_date">Select date</string>
+    <string name="select_time">Select time</string>
+
+    <string name="app_version">알바트로스 리마인더 버전</string>
+    <string name="settings_general">일반</string>
+    <string name="select_the_menu_settings">메뉴를 선택하세요</string>
 </resources>

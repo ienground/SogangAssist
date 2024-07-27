@@ -53,6 +53,14 @@ object Utils {
         return builder.toString()
     }
 
+    fun checkTimeRange(startTime: Int, endTime: Int, currentTime: Int): Boolean {
+        return if (endTime <= startTime) {
+            currentTime in startTime..(24 * 60) || currentTime in 0..endTime
+        } else {
+            currentTime in startTime..endTime
+        }
+    }
+
     fun isNotiPermissionAllowed(context: Context): Boolean {
         return NotificationManagerCompat.getEnabledListenerPackages(context).any { it == context.packageName }
     }
@@ -67,7 +75,7 @@ object Utils {
         return false
     }
 
-    fun LocalDateTime.timeInMillis(): Long = atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    fun LocalDateTime.timeInMillis(zoneId: ZoneId = ZoneId.systemDefault()): Long = atZone(zoneId).toInstant().toEpochMilli()
 
     fun LocalDate.timeInMillis(): Long = atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
@@ -100,7 +108,7 @@ object Utils {
                 val trigger = parseLongToLocalDateTime(entity.endTime).minusMinutes(minute.toLong())
                 intent.putExtra(Intents.Key.TRIGGER, trigger.timeInMillis())
                 intent.putExtra(Intents.Key.MINUTE, minute)
-                val pendingIntent = PendingIntent.getBroadcast(context, PendingReq.LAUNCH_NOTI + (entity.id?.toInt() ?: 0) * 10 + index, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                val pendingIntent = PendingIntent.getBroadcast(context, PendingReq.REMINDER + (entity.id?.toInt() ?: 0) * 10 + index, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                 if (trigger.isAfter(LocalDateTime.now())) am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, trigger.timeInMillis(), pendingIntent)
             }
         } else {
@@ -108,7 +116,7 @@ object Utils {
                 val trigger = parseLongToLocalDateTime(entity.endTime).minusHours(hour.toLong())
                 intent.putExtra(Intents.Key.TRIGGER, trigger.timeInMillis())
                 intent.putExtra(Intents.Key.HOUR, hour)
-                val pendingIntent = PendingIntent.getBroadcast(context, PendingReq.LAUNCH_NOTI + (entity.id?.toInt() ?: 0) * 10 + index, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                val pendingIntent = PendingIntent.getBroadcast(context, PendingReq.REMINDER + (entity.id?.toInt() ?: 0) * 10 + index, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                 if (trigger.isAfter(LocalDateTime.now())) am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, trigger.timeInMillis(), pendingIntent)
             }
         }
@@ -120,8 +128,10 @@ object Utils {
         }
 
         for (i in 0 until 5) {
-            val pendingIntent = PendingIntent.getBroadcast(context, PendingReq.LAUNCH_NOTI + (entity.id?.toInt() ?: 0) * 10 + i, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            val pendingIntent = PendingIntent.getBroadcast(context, PendingReq.REMINDER + (entity.id?.toInt() ?: 0) * 10 + i, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             am.cancel(pendingIntent)
         }
     }
+
+    fun Int.notifyToList() = this.toUInt().toString(radix = 2).padStart(5, '0').toList().reversed().map { it == '1' }
 }

@@ -89,7 +89,7 @@
     <color name="system_neutral2_1000">#000000</color>
 
     <color name="navigationBarColor">@color/system_neutral1_900</color>
-    <color name="background">@color/system_neutral1_900</color>
+    <color name="background">#FFFFFFFF</color>
 
 <!--    <color name="navigationBarColor">#834D4F</color>-->
     <color name="colorBackground">#FFF0F2</color>

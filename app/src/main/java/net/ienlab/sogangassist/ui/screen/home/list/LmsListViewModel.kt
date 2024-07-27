@@ -48,7 +48,7 @@ class LmsListViewModel(
             initialValue = LmsListUiState()
         )
     val date: LocalDate = savedStateHandle.get<Long?>(LmsListDestination.timeArg)?.let { parseLongToLocalDate(it) } ?: LocalDate.now()
-    val todayStateList = lmsRepository.getByEndTimeStream(date).map { LmsListUiState(it.map { lms ->
+    val todayStateList = lmsRepository.getByEndTimeStream(LocalDate.now()).map { LmsListUiState(it.map { lms ->
         lms.toLmsDetails()
     }, isInitialized = true) }
         .stateIn(
