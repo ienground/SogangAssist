@@ -8,7 +8,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -28,18 +27,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.rounded.AddAPhoto
-import androidx.compose.material.icons.rounded.Alarm
-import androidx.compose.material.icons.rounded.Apps
-import androidx.compose.material.icons.rounded.DeveloperMode
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -73,6 +70,8 @@ import kotlinx.coroutines.flow.map
 import net.ienlab.sogangassist.R
 import net.ienlab.sogangassist.constant.Pref
 import net.ienlab.sogangassist.dataStore
+import net.ienlab.sogangassist.icon.MyIconPack
+import net.ienlab.sogangassist.icon.myiconpack.AppIcon
 import net.ienlab.sogangassist.ui.navigation.NavigationDestination
 import net.ienlab.sogangassist.ui.navigation.SettingsNavigationGraph
 import net.ienlab.sogangassist.ui.theme.AppTheme
@@ -84,6 +83,7 @@ object SettingsDestination: NavigationDestination {
     val generalRoute: String = "${route}_general"
     val notiRoute: String = "${route}_notification"
     val infoRoute: String = "${route}_info"
+    val policyRoute: String = "${route}_policy"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +97,10 @@ fun SettingsScreen(
     val currentDestination = navBackStackEntry?.destination
     var selectedRoute by rememberSaveable { mutableStateOf("") }
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    val snackbarState = remember { SnackbarHostState() }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarState) },
         topBar = {
             AnimatedVisibility(
                 visible = true,
@@ -124,6 +127,7 @@ fun SettingsScreen(
                 SettingsNavigationGraph(
                     windowSize = windowSize,
                     navController = navController,
+                    snackbarState = snackbarState,
                     modifier = Modifier.padding(it)
                 )
             }
@@ -142,6 +146,7 @@ fun SettingsScreen(
                     SettingsNavigationGraph(
                         windowSize = windowSize,
                         navController = navController,
+                        snackbarState = snackbarState,
                         enterTransition = fadeIn(animationSpec = tween(700)),
                         exitTransition = fadeOut(animationSpec = tween(700)),
                         modifier = Modifier.weight(0.5f)
@@ -163,6 +168,7 @@ fun SettingsScreen(
                     SettingsNavigationGraph(
                         windowSize = windowSize,
                         navController = navController,
+                        snackbarState = snackbarState,
                         enterTransition = fadeIn(animationSpec = tween(700)),
                         exitTransition = fadeOut(animationSpec = tween(700)),
                         modifier = Modifier.weight(0.6f)
@@ -207,7 +213,7 @@ fun SettingsHomeScreen(
         SettingsCategory(
             icon = Icons.Rounded.Info,
             title = stringResource(id = R.string.info_and_ask),
-            content = getMenuContent(R.string.changelog, R.string.ask_to_dev),
+            content = getMenuContent(R.string.update_log, R.string.ask_to_dev),
             route = SettingsDestination.infoRoute
         ),
     )
@@ -273,8 +279,8 @@ fun SettingsHomeScreen(
                         .size(45.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.Apps,
-                        contentDescription = stringResource(id = R.string.real_app_name),
+                        imageVector = MyIconPack.AppIcon,
+                        contentDescription = stringResource(id = R.string.app_name),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .size(32.dp)
@@ -283,12 +289,12 @@ fun SettingsHomeScreen(
             } else {
                 Image(
                     painter = painterResource(id = R.drawable.ic_icon_color),
-                    contentDescription = stringResource(id = R.string.real_app_name),
+                    contentDescription = stringResource(id = R.string.app_name),
                     modifier = Modifier.size(45.dp)
                 )
             }
             Text(
-                text = stringResource(id = R.string.real_app_name),
+                text = stringResource(id = R.string.app_name),
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
@@ -300,7 +306,7 @@ fun SettingsHomeScreen(
             )
             Image(
                 painter = painterResource(id = R.drawable.img_dev),
-                contentDescription = stringResource(id = R.string.real_app_name),
+                contentDescription = stringResource(id = R.string.app_name),
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .width(140.dp)
@@ -322,8 +328,8 @@ fun SettingsHomeScreen(
 
     if (showAppInfoDialog) {
         AlertDialog(
-            icon = Icons.Rounded.Apps,
-            title = stringResource(id = R.string.real_app_name),
+            icon = MyIconPack.AppIcon,
+            title = stringResource(id = R.string.app_name),
             content = {
                 Text(text = stringResource(id = R.string.dev_ienlab))
             },

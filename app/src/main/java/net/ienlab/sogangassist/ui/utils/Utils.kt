@@ -1,7 +1,5 @@
 package net.ienlab.sogangassist.ui.utils
 
-import android.content.Context
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerState
@@ -11,19 +9,13 @@ import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.CoroutineScope
-import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.TAG
 import net.ienlab.sogangassist.data.lms.Lms
 import net.ienlab.sogangassist.icon.MyIconPack
 import net.ienlab.sogangassist.icon.myiconpack.Assignment
@@ -32,24 +24,17 @@ import net.ienlab.sogangassist.icon.myiconpack.Team
 import net.ienlab.sogangassist.icon.myiconpack.Test
 import net.ienlab.sogangassist.icon.myiconpack.Video
 import net.ienlab.sogangassist.icon.myiconpack.VideoSup
-import net.ienlab.sogangassist.utils.Utils.parseLongToLocalDate
 import net.ienlab.sogangassist.utils.Utils.parseLongToLocalDateTime
 import net.ienlab.sogangassist.utils.Utils.timeInMillis
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import kotlin.math.min
 
 object Utils {
     @Composable
-    fun UpdateEffect(key: Any, block: suspend CoroutineScope.() -> Unit) {
+    fun UpdateEffect(vararg key: Any, block: suspend CoroutineScope.() -> Unit) {
         var isTriggered by remember { mutableStateOf(false) }
 
         LaunchedEffect(key) {
@@ -103,29 +88,19 @@ object Utils {
 
     @Composable
     fun getDateLabel(date: LocalDate): String {
-        val dateFormat = DateTimeFormatter.ofPattern(stringResource(id = R.string.dateFormat))
-        val dateFormatNoYear = DateTimeFormatter.ofPattern(stringResource(id = R.string.dateFormatNoYear))
+        val dateFormat = DateTimeFormatter.ofPattern(stringResource(id = R.string.date_format))
+        val dateFormatNoYear = DateTimeFormatter.ofPattern(stringResource(id = R.string.date_format_no_year))
         val current = LocalDate.now()
         return if (date.year == current.year) {
-            when {
-                date.isEqual(current) -> stringResource(R.string.today)
-                date.isAfter(current) -> stringResource(R.string.tomorrow)
-                date.isBefore(current) -> stringResource(R.string.yesterday)
+            when (ChronoUnit.DAYS.between(current, date)) {
+                0L -> stringResource(R.string.today)
+                1L -> stringResource(R.string.tomorrow)
+                -1L -> stringResource(R.string.yesterday)
                 else -> date.format(dateFormatNoYear)
             }
         } else {
             date.format(dateFormat)
         }
-    }
-
-    @Composable
-    fun animateAlignmentAsState(
-        targetAlignment: Alignment,
-    ): State<Alignment> {
-        val biased = targetAlignment as BiasAlignment
-        val horizontal by animateFloatAsState(biased.horizontalBias, label = "horizontal")
-        val vertical by animateFloatAsState(biased.verticalBias, label = "vertical")
-        return derivedStateOf { BiasAlignment(horizontal, vertical) }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)

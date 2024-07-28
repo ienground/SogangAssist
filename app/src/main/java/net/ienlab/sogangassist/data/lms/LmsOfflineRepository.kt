@@ -22,11 +22,9 @@ class LmsOfflineRepository(private val dao: LmsDao): LmsRepository {
     }
 
     override fun getByMonthStream(yearMonth: YearMonth): Flow<List<Lms>> {
-        val startDate = yearMonth.atDay(1)
-        val endDate = yearMonth.atEndOfMonth()
-        Dlog.d(TAG, "${startDate} ~ ${endDate}")
-        return dao.getByEndTime(startDate.timeInMillis(), endDate.timeInMillis()).apply { map { Dlog.d(
-            TAG, "$it") } }
+        val startDate = yearMonth.atDay(1).minusWeeks(1)
+        val endDate = yearMonth.atEndOfMonth().plusWeeks(1)
+        return dao.getByEndTime(startDate.timeInMillis(), endDate.timeInMillis())
     }
 
     override fun getByDataStream(className: String, week: Int, lesson: Int, homework_name: String): Flow<Lms> = dao.getByData(className, week, lesson, homework_name)

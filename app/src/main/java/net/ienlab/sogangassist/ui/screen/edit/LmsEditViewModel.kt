@@ -24,6 +24,7 @@ import net.ienlab.sogangassist.utils.Utils.toSafeInt
 import net.ienlab.sogangassist.utils.Utils.toSafeString
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.YearMonth
 
 class LmsEditViewModel(
     application: MyApplication,
@@ -35,6 +36,7 @@ class LmsEditViewModel(
     private val am: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     private val itemId: Long = checkNotNull(savedStateHandle[LmsEditDestination.itemIdArg])
+    private val initDate: LocalDate = savedStateHandle.get<String?>(LmsEditDestination.initDateArg)?.let { LocalDate.parse(it) } ?: LocalDate.now()
 
     var classNames = listOf<String>()
         private set
@@ -52,7 +54,7 @@ class LmsEditViewModel(
                             LmsUiState(it.toLmsDetails(), isInitialized = true)
                         }
                 } else {
-                    LmsUiState(isInitialized = true)
+                    LmsUiState(item = LmsDetails(endTime = LocalDateTime.now().let { initDate.atTime(it.hour, it.minute) }), isInitialized = true)
                 }
         }
     }
@@ -76,10 +78,11 @@ class LmsEditViewModel(
 
     private fun validateInput(item: LmsDetails = uiState.item): Boolean {
         val listLesson = listOf(Lms.Type.LESSON, Lms.Type.SUP_LESSON)
+        val listHomework = listOf(Lms.Type.HOMEWORK, Lms.Type.TEAMWORK)
         return if (item.className.isEmpty()) false
             else if (item.type in listLesson && (item.week.isEmpty() || item.lesson.isEmpty())) false
             else if (item.type !in listLesson && item.homeworkName.isEmpty()) false
-            else if (!item.startTime.isBefore(item.endTime)) false
+            else if (item.type in listHomework && !item.startTime.isBefore(item.endTime)) false
             else true
      }
 
@@ -103,6 +106,7 @@ data class LmsDetails(
     var lesson: String = "",
     var homeworkName: String = "",
 
+    val showError: Boolean = false,
     val dropdownExpanded: Boolean = false,
     val tempDate: LocalDate = LocalDate.MIN,
     val showStartDatePicker: Boolean = false,

@@ -3,19 +3,13 @@ package net.ienlab.sogangassist.ui.screen.edit
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,26 +20,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.ArrowDropUp
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DoneAll
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.RemoveDone
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Today
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -55,7 +44,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
@@ -65,8 +53,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -77,9 +63,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
-import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.TAG
 import net.ienlab.sogangassist.data.lms.Lms
 import net.ienlab.sogangassist.ui.AppViewModelProvider
 import net.ienlab.sogangassist.ui.navigation.NavigationDestination
@@ -90,20 +74,17 @@ import net.ienlab.sogangassist.ui.utils.AlertDialog
 import net.ienlab.sogangassist.ui.utils.DatePickerDialog
 import net.ienlab.sogangassist.ui.utils.DeleteAlertDialog
 import net.ienlab.sogangassist.ui.utils.TimePickerDialog
-import net.ienlab.sogangassist.ui.utils.Utils.animateAlignmentAsState
 import net.ienlab.sogangassist.ui.utils.Utils.getDateLabel
 import net.ienlab.sogangassist.ui.utils.Utils.rememberMyDatePickerState
 import net.ienlab.sogangassist.utils.Utils.parseLongToLocalDate
 import net.ienlab.sogangassist.utils.Utils.timeInMillis
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 object LmsEditDestination: NavigationDestination {
     override val route: String = "lms_edit"
     const val itemIdArg = "itemId"
-    val routeWithArgs = "$route?${itemIdArg}={$itemIdArg}"
+    const val initDateArg = "initDateArg"
+    val routeWithArgs = "$route?${itemIdArg}={$itemIdArg}&${initDateArg}={${initDateArg}}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -140,7 +121,12 @@ fun LmsEditScreen(
                             onClick = {
                                 coroutineScope.launch {
                                     val result = viewModel.saveItem()
-                                    if (result) navigateBack()
+                                    if (result) {
+                                        focusManager.clearFocus()
+                                        navigateBack()
+                                    } else {
+                                        viewModel.updateUiState(viewModel.uiState.item.copy(showError = true))
+                                    }
                                 }
                             }
                         )
@@ -300,6 +286,8 @@ fun LmsEditScreen(
                     if (result) {
                         focusManager.clearFocus()
                         navigateBack()
+                    } else {
+                        viewModel.updateUiState(viewModel.uiState.item.copy(showError = true))
                     }
                 }
             }
@@ -326,7 +314,7 @@ fun LmsEditScreenBody(
     val listLesson = listOf(Lms.Type.LESSON, Lms.Type.SUP_LESSON)
     val listAssignment = listOf(Lms.Type.HOMEWORK, Lms.Type.TEAMWORK)
     val pattern = remember { Regex("^\\d+\$") }
-    val timeFormat = DateTimeFormatter.ofPattern(stringResource(id = R.string.apmTimeFormat))
+    val timeFormat = DateTimeFormatter.ofPattern(stringResource(id = R.string.apm_time_format))
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -356,13 +344,14 @@ fun LmsEditScreenBody(
         ) {
             TextField(
                 value = uiState.item.className,
-                onValueChange = { onItemValueChanged(uiState.item.copy(className = it)) },
+                onValueChange = { onItemValueChanged(uiState.item.copy(className = it, showError = false)) },
                 trailingIcon = {
                     IconButton(onClick = { onItemValueChanged(uiState.item.copy(dropdownExpanded = !uiState.item.dropdownExpanded)) }) {
                         Icon(imageVector = if (uiState.item.dropdownExpanded) Icons.Rounded.ArrowDropUp else Icons.Rounded.ArrowDropDown, contentDescription = null)
                     }
                 },
                 textStyle = TextStyle(fontSize = 32.sp),
+                isError = uiState.item.showError && uiState.item.className.isEmpty(),
                 singleLine = true,
                 label = { Text(text = stringResource(id = R.string.class_name)) },
                 enabled = !uiState.item.isFinished,
@@ -400,9 +389,10 @@ fun LmsEditScreenBody(
                 ) {
                     TextField(
                         value = uiState.item.week,
-                        onValueChange = { if (pattern.matches(it) || it.isEmpty()) onItemValueChanged(uiState.item.copy(week = it)) },
+                        onValueChange = { if (pattern.matches(it) || it.isEmpty()) onItemValueChanged(uiState.item.copy(week = it, showError = false)) },
                         label = { Text(text = stringResource(id = R.string.week)) },
                         suffix = { Text(text = stringResource(id = R.string.week)) },
+                        isError = uiState.item.showError && (uiState.item.type in listLesson && uiState.item.week.isEmpty()),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         textStyle = TextStyle(fontSize = 26.sp),
@@ -410,9 +400,10 @@ fun LmsEditScreenBody(
                     )
                     TextField(
                         value = uiState.item.lesson,
-                        onValueChange = { if (pattern.matches(it) || it.isEmpty()) onItemValueChanged(uiState.item.copy(lesson = it)) },
+                        onValueChange = { if (pattern.matches(it) || it.isEmpty()) onItemValueChanged(uiState.item.copy(lesson = it, showError = false)) },
                         label = { Text(text = stringResource(id = R.string.lesson)) },
                         suffix = { Text(text = stringResource(id = R.string.lesson)) },
+                        isError = uiState.item.showError && (uiState.item.type in listLesson && uiState.item.lesson.isEmpty()),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         textStyle = TextStyle(fontSize = 26.sp),
@@ -427,8 +418,9 @@ fun LmsEditScreenBody(
             ) {
                 TextField(
                     value = uiState.item.homeworkName,
-                    onValueChange = { onItemValueChanged(uiState.item.copy(homeworkName = it)) },
+                    onValueChange = { onItemValueChanged(uiState.item.copy(homeworkName = it, showError = false)) },
                     label = { Text(text = stringResource(id = R.string.assignment_name)) },
+                    isError = uiState.item.showError && (uiState.item.type !in listLesson && uiState.item.homeworkName.isEmpty()),
                     singleLine = true,
                     textStyle = TextStyle(fontSize = 26.sp),
                     enabled = !uiState.item.isFinished,
@@ -514,6 +506,7 @@ fun LmsEditScreenBody(
                             Text(
                                 text = it,
                                 fontSize = 18.sp,
+                                color = if (uiState.item.type !in listAssignment || uiState.item.startTime.isBefore(uiState.item.endTime)) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.error,
                             )
                         }
                         Text(

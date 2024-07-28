@@ -9,6 +9,8 @@ import net.ienlab.sogangassist.MyApplication
 import net.ienlab.sogangassist.ui.screen.edit.LmsEditViewModel
 import net.ienlab.sogangassist.ui.screen.home.HomeViewModel
 import net.ienlab.sogangassist.ui.screen.home.list.LmsListViewModel
+import net.ienlab.sogangassist.ui.screen.settings.general.SettingsGeneralScreen
+import net.ienlab.sogangassist.ui.screen.settings.general.SettingsGeneralViewModel
 import net.ienlab.sogangassist.ui.utils.CalendarMonthItem
 import net.ienlab.sogangassist.ui.utils.CalendarMonthItemViewModel
 
@@ -42,6 +44,13 @@ object AppViewModelProvider {
             CalendarMonthItemViewModel(
                 myApplication(),
                 this.createSavedStateHandle(),
+                myApplication().container.lmsRepository
+            )
+        }
+
+        initializer {
+            SettingsGeneralViewModel(
+                myApplication(),
                 myApplication().container.lmsRepository
             )
         }

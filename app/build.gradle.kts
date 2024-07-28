@@ -8,6 +8,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            storeFile = file(project.properties["SIGNED_STORE_FILE"] ?: "")
+            storePassword = project.properties["SIGNED_STORE_PASSWORD"].toString()
+            keyAlias = project.properties["SIGNED_KEY_ALIAS"].toString()
+            keyPassword = project.properties["SIGNED_KEY_PASSWORD"].toString()
+        }
+    }
     namespace = "net.ienlab.sogangassist"
     compileSdk = 34
 
@@ -28,8 +36,10 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {

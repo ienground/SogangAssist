@@ -1,20 +1,34 @@
 package net.ienlab.sogangassist.utils
 
+import android.Manifest
 import android.app.ActivityManager
 import android.app.AlarmManager
+import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
+import android.os.PowerManager
+import android.service.notification.NotificationListenerService
 import android.text.Html
 import android.text.Spanned
 import androidx.core.app.NotificationManagerCompat
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import net.ienlab.sogangassist.Dlog
+import net.ienlab.sogangassist.TAG
 import net.ienlab.sogangassist.constant.Intents
 import net.ienlab.sogangassist.constant.PendingReq
+import net.ienlab.sogangassist.constant.Pref
+import net.ienlab.sogangassist.data.Permissions
 import net.ienlab.sogangassist.data.lms.Lms
+import net.ienlab.sogangassist.dataStore
+import net.ienlab.sogangassist.receiver.ReminderReceiver
 import net.ienlab.sogangassist.receiver.TimeReceiver
+import net.ienlab.sogangassist.service.LMSListenerService
 import java.io.*
 import java.nio.charset.Charset
 import java.time.Instant
@@ -133,5 +147,89 @@ object Utils {
         }
     }
 
+    fun setDayReminder(context: Context, enableMorningReminder: Boolean, enableNightReminder: Boolean, morningReminder: Int, nightReminder: Int) {
+        val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val morningReminderTime = LocalDateTime.now().withHour(morningReminder / 60).withMinute(morningReminder % 60).withSecond(0)
+        val nightReminderTime = LocalDateTime.now().withHour(nightReminder / 60).withMinute(nightReminder % 60).withSecond(0)
+        val morningPending = PendingIntent.getBroadcast(context, PendingReq.MORNING_REMINDER, Intent(context, ReminderReceiver::class.java).apply { putExtra(Intents.Key.REMINDER_TYPE, Intents.Value.ReminderType.MORNING) },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val nightPending = PendingIntent.getBroadcast(context, PendingReq.NIGHT_REMINDER, Intent(context, ReminderReceiver::class.java).apply { putExtra(Intents.Key.REMINDER_TYPE, Intents.Value.ReminderType.NIGHT) },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        if (enableMorningReminder) {
+            am.setInexactRepeating(AlarmManager.RTC_WAKEUP, morningReminderTime.timeInMillis(), AlarmManager.INTERVAL_DAY, morningPending)
+        } else {
+            am.cancel(morningPending)
+        }
+
+        if (enableNightReminder) {
+            am.setInexactRepeating(AlarmManager.RTC_WAKEUP, nightReminderTime.timeInMillis(), AlarmManager.INTERVAL_DAY, nightPending)
+        } else {
+            am.cancel(nightPending)
+        }
+    }
+
     fun Int.notifyToList() = this.toUInt().toString(radix = 2).padStart(5, '0').toList().reversed().map { it == '1' }
+
+    fun isNotificationPermissionGranted(context: Context): Boolean {
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        return notificationManager.isNotificationListenerAccessGranted(ComponentName(context, LMSListenerService::class.java))
+    }
+
+    fun isNotificationPolicyGranted(context: Context): Boolean {
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        return notificationManager.isNotificationPolicyAccessGranted
+    }
+
+    fun checkPermissions(context: Context, list: List<Permissions>): Boolean {
+        var result = true
+        list.forEach { permissions ->
+            if (permissions.permissions.any { it == Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE }) {
+                if (!isNotificationPermissionGranted(context)) {
+                    result = false
+                }
+            } else if (permissions.permissions.any { it == Manifest.permission.ACCESS_NOTIFICATION_POLICY }) {
+                if (!isNotificationPolicyGranted(context)) {
+                    result = false
+                }
+            } else if (permissions.permissions.any { it == Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS }) {
+                val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                if (!pm.isIgnoringBatteryOptimizations(context.packageName)) {
+                    result = false
+                }
+            } else if (permissions.permissions.any { it == LMSListenerService.LMS_PACKAGE_NAME }) {
+                if (!isPackageInstalled(context, LMSListenerService.LMS_PACKAGE_NAME)) {
+                    result = false
+                }
+            } else if (!checkPermission(context, permissions.permissions)) {
+                result = false
+            }
+        }
+        return result
+    }
+
+    fun checkPermission(context: Context, permissions: List<String>): Boolean {
+        var result = true
+        permissions.forEach { permission ->
+            if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                result = false
+            }
+        }
+        return result
+    }
+
+    fun isPackageInstalled(context: Context, packageName: String): Boolean {
+        val pm = context.packageManager
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0L))
+            } else {
+                pm.getPackageInfo(packageName, 0)
+            }
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+    }
 }

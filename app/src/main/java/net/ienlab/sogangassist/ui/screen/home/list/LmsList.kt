@@ -1,5 +1,8 @@
 package net.ienlab.sogangassist.ui.screen.home.list
 
+import android.app.Activity
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -50,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -75,6 +79,7 @@ import net.ienlab.sogangassist.ui.theme.AppTheme
 import net.ienlab.sogangassist.ui.utils.DeleteAlertDialog
 import net.ienlab.sogangassist.ui.utils.Utils.getTypeIcon
 import net.ienlab.sogangassist.ui.utils.Utils.leftTimeToLabel
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -89,14 +94,30 @@ object LmsListDestination: NavigationDestination {
 @Composable
 fun LmsList(
     modifier: Modifier = Modifier,
-    navigateToItemDetail: (Long) -> Unit,
+    navigateToItemDetail: (Long, LocalDate) -> Unit,
     setEnabledSize: (Int) -> Unit,
     viewModel: LmsListViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val uiStateList by viewModel.uiStateList.collectAsState()
     val todayStateList by viewModel.todayStateList.collectAsState()
     var showDeleteDialog by remember { mutableStateOf<LmsDetails?>(null) }
+
+    // backpress
+    val FINISH_INTERVAL_TIME: Long = 2000
+    var backPressedTime: Long = 0
+
+    BackHandler {
+        val tempTime = System.currentTimeMillis()
+        val intervalTime = tempTime - backPressedTime
+        if (intervalTime in 0 .. FINISH_INTERVAL_TIME) {
+            (context as Activity).finish()
+        } else {
+            backPressedTime = tempTime
+            Toast.makeText(context, context.getString(R.string.press_back_to_exit), Toast.LENGTH_SHORT).show()
+        }
+    }
 
     LaunchedEffect(todayStateList) {
         if (todayStateList.isInitialized) {
@@ -178,7 +199,7 @@ fun LmsList(
                 items(items = uiStateList.lmsList, key = { it.id }) { lms ->
                     LmsEventRow(
                         item = lms,
-                        onClick = { navigateToItemDetail(lms.id) },
+                        onClick = { navigateToItemDetail(lms.id, LocalDate.now()) },
                         onLongClick = {
                             coroutineScope.launch {
                                 viewModel.saveItem(lms.copy(isFinished = !lms.isFinished))

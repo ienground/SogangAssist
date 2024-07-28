@@ -11,14 +11,14 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" /> <!-- <uses-permission android:name="com.android.vending.BILLING" /> -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
 
     <application
         android:name=".MyApplication"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/real_app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Albatross.Splash"
         tools:replace="android:label,android:allowBackup">
@@ -27,6 +27,9 @@
             android:resource="@xml/gma_ad_services_config"
             tools:replace="android:resource" />
 
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/Theme.AppCompat" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true"
@@ -56,25 +59,26 @@
         <receiver
             android:name=".receiver.TimeReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
         <receiver
             android:name=".receiver.ReminderReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
         <receiver
             android:name=".receiver.MarkFinishReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
         <receiver
             android:name=".receiver.DeleteMissReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
         <receiver
             android:name=".receiver.BootDeviceReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver> <!-- <receiver -->
         <!-- android:name=".widget.DeadlineWidget" -->

@@ -1,7 +1,21 @@
 package net.ienlab.sogangassist.ui.utils
 
+import android.Manifest
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.PowerManager
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.repeatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -15,6 +29,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,8 +40,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccessTime
+import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Keyboard
+import androidx.compose.material.icons.rounded.Security
+import androidx.compose.material.icons.rounded.Today
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerState
@@ -43,6 +63,7 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,15 +72,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.data.Permissions
+import net.ienlab.sogangassist.service.LMSListenerService
 import net.ienlab.sogangassist.ui.theme.AppTheme
+import net.ienlab.sogangassist.utils.Utils.checkPermissions
+import net.ienlab.sogangassist.utils.Utils.isNotificationPermissionGranted
+import net.ienlab.sogangassist.utils.Utils.isNotificationPolicyGranted
+import net.ienlab.sogangassist.utils.Utils.isPackageInstalled
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -290,4 +321,139 @@ fun AlertDialog(icon: ImageVector, title: String, content: @Composable (Modifier
             if (onPositive != null) TextButton(onClick = onPositive) { Text(textPositive) }
         }
     })
+}
+
+@Composable
+fun PermissionRow(
+    modifier: Modifier = Modifier,
+    permissions: Permissions,
+    isGranted: Boolean,
+    isError: Boolean,
+    onClick: () -> Unit
+) {
+    val containerColor by animateColorAsState(targetValue = if (isError) MaterialTheme.colorScheme.errorContainer else if (!isGranted) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.secondaryContainer, animationSpec = tween(700), label = "containerColor")
+    val contentColor by animateColorAsState(targetValue = if (isError) MaterialTheme.colorScheme.error else if (!isGranted) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSecondaryContainer, animationSpec = tween(700), label = "contentColor")
+    Card(
+        colors = CardColors(containerColor = containerColor, contentColor = contentColor, disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f), disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)),
+        modifier = modifier
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clickable(enabled = !isGranted) { onClick() }
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            AnimatedContent(
+                targetState = if (!isGranted) permissions.icon else Icons.Rounded.CheckCircle,
+                label = "permission_icon"
+            ) {
+                Icon(
+                    imageVector = it,
+                    contentDescription = if (!isGranted) permissions.title else stringResource(id = R.string.allowed),
+                )
+            }
+            Column {
+                AnimatedContent(
+                    targetState = if (!isGranted) permissions.title else stringResource(id = R.string.allowed),
+                    label = "permission_title"
+                ) {
+                    Text(text = it, fontSize = 18.sp)
+                }
+                Text(text = permissions.content, lineHeight = 14.sp)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun PermissionDialog(permissions: List<Permissions>, onConfirm: () -> Unit) {
+    val context = LocalContext.current
+    var isError by remember { mutableStateOf(false) }
+    var isDialogCycle by remember { mutableStateOf(false) }
+    val offset by animateDpAsState(targetValue = if (isDialogCycle) 10.dp else 20.dp, animationSpec = repeatable(iterations = 5, animation = tween(70, easing = LinearEasing), repeatMode = RepeatMode.Reverse), finishedListener = {
+        isDialogCycle = false
+    }, label = "permission_dialog_animation")
+
+    BaseDialog(
+        icon = Icons.Rounded.Security,
+        title = stringResource(id = R.string.permission_title),
+        content = {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = it.padding(horizontal = 16.dp)) {
+                permissions.forEach { permission ->
+                    if (permission.permissions.any { it == Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE }) {
+                        var isGranted by remember { mutableStateOf(isNotificationPermissionGranted(context)) }
+                        val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+                            isGranted = isNotificationPermissionGranted(context)
+                        }
+                        PermissionRow(permissions = permission, isGranted = isGranted, isError = !isGranted && isError, onClick = {
+                            launcher.launch(Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                        }, modifier = Modifier.fillMaxWidth())
+                    } else if (permission.permissions.any { it == Manifest.permission.ACCESS_NOTIFICATION_POLICY }) {
+                        var isGranted by remember { mutableStateOf(isNotificationPolicyGranted(context)) }
+                        val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+                            isGranted = isNotificationPolicyGranted(context)
+                        }
+                        PermissionRow(permissions = permission, isGranted = isGranted, isError = !isGranted && isError, onClick = {
+                            launcher.launch(Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
+                        }, modifier = Modifier.fillMaxWidth())
+                    } else if (permission.permissions.any { it == Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS }) {
+                        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                        var isGranted by remember { mutableStateOf(pm.isIgnoringBatteryOptimizations(context.packageName)) }
+                        val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+                            isGranted = pm.isIgnoringBatteryOptimizations(context.packageName)
+                        }
+                        PermissionRow(permissions = permission, isGranted = isGranted, isError = !isGranted && isError, onClick = {
+                            launcher.launch(
+                                Intent().apply {
+                                    action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                                    data = Uri.parse("package:${context.packageName}")
+                                }
+                            )
+                        }, modifier = Modifier.fillMaxWidth())
+                    } else if (permission.permissions.any { it == LMSListenerService.LMS_PACKAGE_NAME }) {
+                        var isGranted by remember { mutableStateOf(isPackageInstalled(context, LMSListenerService.LMS_PACKAGE_NAME)) }
+                        val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+                            isGranted = isPackageInstalled(context, LMSListenerService.LMS_PACKAGE_NAME)
+                        }
+                        PermissionRow(permissions = permission, isGranted = isGranted, isError = !isGranted && isError, onClick = {
+                            try {
+                                launcher.launch(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${LMSListenerService.LMS_PACKAGE_NAME}")))
+                            } catch (e: ActivityNotFoundException) {
+                                launcher.launch(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${LMSListenerService.LMS_PACKAGE_NAME}")))
+                            }
+                        }, modifier = Modifier.fillMaxWidth())
+                    } else {
+                        val permissionState = rememberMultiplePermissionsState(permissions = permission.permissions)
+                        PermissionRow(permissions = permission, isGranted = permissionState.allPermissionsGranted, isError = !permissionState.allPermissionsGranted && isError, onClick = {
+                            permissionState.launchMultiplePermissionRequest()
+                        }, modifier = Modifier.fillMaxWidth())
+
+                        LaunchedEffect(permissionState.allPermissionsGranted) {
+                            if (permissionState.allPermissionsGranted) {
+                                permission.launcher()
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        onCancel = {},
+        buttons = {
+            Row(modifier = it) {
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(onClick = {
+                    if (checkPermissions(context, permissions)) {
+                        onConfirm()
+                    } else {
+                        isError = true
+                        isDialogCycle = true
+                    }
+                }) { Text(stringResource(id = R.string.close)) }
+            }
+        },
+        modifier = Modifier.offset(x = offset - 20.dp)
+    )
 }

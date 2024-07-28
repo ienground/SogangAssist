@@ -39,6 +39,7 @@ private const val PRESS_VERSION_INTERVAL = 700
 @Composable
 fun SettingsInfoScreen(
     modifier: Modifier = Modifier,
+    navigateToPolicy: () -> Unit
 ) {
     val context = LocalContext.current
     val datastore = context.dataStore
@@ -52,7 +53,7 @@ fun SettingsInfoScreen(
     ) {
         var showUpdateLogDialog by remember { mutableStateOf(false) }
 
-        val emailSubject = "${stringResource(R.string.real_app_name)} ${BuildConfig.VERSION_NAME} ${stringResource(R.string.ask)}"
+        val emailSubject = "${stringResource(R.string.app_name)} ${BuildConfig.VERSION_NAME} ${stringResource(R.string.ask)}"
         val emailText = "${stringResource(R.string.email_text)}\n${Build.BRAND} ${Build.MODEL} Android ${Build.VERSION.RELEASE}\n_\n"
 
         PrefsScreen(dataStore = datastore) {
@@ -82,13 +83,13 @@ fun SettingsInfoScreen(
                     }
                 )
                 TextPref(
-                    title = stringResource(id = R.string.changelog),
-                    summary = stringResource(id = R.string.pref_changelog_exp),
+                    title = stringResource(id = R.string.update_log),
+                    summary = stringResource(id = R.string.update_log_desc),
                     modifier = Modifier.clickable { showUpdateLogDialog = true }
                 )
                 TextPref(
                     title = stringResource(id = R.string.ask_to_dev),
-                    summary = stringResource(id = R.string.pref_ask_exp),
+                    summary = stringResource(id = R.string.ask_to_dev_desc),
                     modifier = Modifier.clickable {
                         val intent = Intent(Intent.ACTION_SEND).apply {
                             putExtra(Intent.EXTRA_EMAIL, arrayOf("my@ien.zone"))
@@ -106,23 +107,20 @@ fun SettingsInfoScreen(
                         context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
                     }
                 )
-                /*
                 TextPref(
                     title = stringResource(R.string.privacy_policy),
-                    summary = "개인정보 처리방침을 확인할 수 있습니다.",
+                    summary = stringResource(R.string.privacy_policy_desc),
                     modifier = Modifier.clickable {
                         navigateToPolicy()
                     }
                 )
-
-                 */
             }
         }
 
         if (showUpdateLogDialog) {
             BaseDialog(
                 icon = Icons.Rounded.Alarm,
-                title = "${stringResource(id = R.string.real_app_name)} ${stringResource(id = R.string.versionName)} ${stringResource(id = R.string.changelog)}",
+                title = "${stringResource(id = R.string.app_name)} ${stringResource(id = R.string.versionName)} ${stringResource(id = R.string.update_log)}",
                 content = {
                     Text(
                         text = fromHtml(readTextFromRaw(context.resources, R.raw.changelog)).toString(),
@@ -147,6 +145,7 @@ fun SettingsInfoScreen(
 private fun SettingsInfoPreview() {
     AppTheme {
         SettingsInfoScreen(
+            navigateToPolicy = {}
         )
     }
 }

@@ -1,19 +1,15 @@
 package net.ienlab.sogangassist.ui.screen.settings.notifications
 
-import android.content.Intent
-import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Alarm
 import androidx.compose.material.icons.rounded.DoNotDisturbOn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
@@ -21,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,19 +40,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.jamal.composeprefs3.ui.PrefsScreen
 import com.jamal.composeprefs3.ui.prefs.SwitchPref
 import com.jamal.composeprefs3.ui.prefs.TextPref
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import net.ienlab.sogangassist.BuildConfig
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.constant.Intents
 import net.ienlab.sogangassist.constant.Pref
-import net.ienlab.sogangassist.data.lms.Lms
 import net.ienlab.sogangassist.dataStore
-import net.ienlab.sogangassist.icon.MyIcon
 import net.ienlab.sogangassist.icon.MyIconPack
 import net.ienlab.sogangassist.icon.myiconpack.Assignment
 import net.ienlab.sogangassist.icon.myiconpack.LiveClass
@@ -65,11 +55,10 @@ import net.ienlab.sogangassist.icon.myiconpack.Test
 import net.ienlab.sogangassist.icon.myiconpack.Video
 import net.ienlab.sogangassist.ui.theme.AppTheme
 import net.ienlab.sogangassist.ui.utils.AlertDialog
-import net.ienlab.sogangassist.ui.utils.BaseDialog
 import net.ienlab.sogangassist.ui.utils.TimePickerDialog
-import net.ienlab.sogangassist.utils.Utils.fromHtml
+import net.ienlab.sogangassist.ui.utils.Utils.UpdateEffect
 import net.ienlab.sogangassist.utils.Utils.notifyToList
-import net.ienlab.sogangassist.utils.Utils.readTextFromRaw
+import net.ienlab.sogangassist.utils.Utils.setDayReminder
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.pow
@@ -82,7 +71,7 @@ fun SettingsNotificationsScreen(
     val context = LocalContext.current
     val datastore = context.dataStore
     val coroutineScope = rememberCoroutineScope()
-    val timeFormatter = DateTimeFormatter.ofPattern(stringResource(id = R.string.apmTimeFormat))
+    val timeFormatter = DateTimeFormatter.ofPattern(stringResource(id = R.string.apm_time_format))
     val hours = listOf(1, 2, 6, 12, 24)
     val minutes = listOf(3, 5, 10, 20, 30)
 
@@ -106,6 +95,13 @@ fun SettingsNotificationsScreen(
     val morningReminderTime by datastore.data.map { it[Pref.Key.TIME_MORNING_REMINDER] ?: Pref.Default.TIME_MORNING_REMINDER }.collectAsState(initial = Pref.Default.TIME_MORNING_REMINDER)
     val enableNightReminder by datastore.data.map { it[Pref.Key.ALLOW_NIGHT_REMINDER] ?: Pref.Default.ALLOW_NIGHT_REMINDER }.collectAsState(initial = Pref.Default.ALLOW_NIGHT_REMINDER)
     val nightReminderTime by datastore.data.map { it[Pref.Key.TIME_NIGHT_REMINDER] ?: Pref.Default.TIME_NIGHT_REMINDER }.collectAsState(initial = Pref.Default.TIME_NIGHT_REMINDER)
+
+    UpdateEffect(enableMorningReminder, morningReminderTime) {
+        setDayReminder(context, enableMorningReminder, enableNightReminder, morningReminderTime, nightReminderTime)
+    }
+    UpdateEffect(enableNightReminder, nightReminderTime) {
+        setDayReminder(context, enableMorningReminder, enableNightReminder, morningReminderTime, nightReminderTime)
+    }
 
     Column(
         modifier = modifier

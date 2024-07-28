@@ -1,8 +1,10 @@
 package net.ienlab.sogangassist.icon
 
 import androidx.compose.ui.graphics.vector.ImageVector
+import net.ienlab.sogangassist.icon.myiconpack.AppIcon
 import net.ienlab.sogangassist.icon.myiconpack.Assignment
 import net.ienlab.sogangassist.icon.myiconpack.LiveClass
+import net.ienlab.sogangassist.icon.myiconpack.Lms
 import net.ienlab.sogangassist.icon.myiconpack.Team
 import net.ienlab.sogangassist.icon.myiconpack.Test
 import net.ienlab.sogangassist.icon.myiconpack.Video
@@ -18,6 +20,6 @@ public val MyIconPack.MyIcon: ____KtList<ImageVector>
     if (__MyIcon != null) {
       return __MyIcon!!
     }
-    __MyIcon= listOf(VideoSup, LiveClass, Team, Assignment, Video, Test)
+    __MyIcon= listOf(VideoSup, LiveClass, AppIcon, Lms, Team, Assignment, Video, Test)
     return __MyIcon!!
   }

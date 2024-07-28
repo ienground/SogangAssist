@@ -6,6 +6,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +22,7 @@ import net.ienlab.sogangassist.constant.Pref
 import net.ienlab.sogangassist.data.lms.LmsDatabase
 import net.ienlab.sogangassist.data.lms.Lms
 import net.ienlab.sogangassist.dataStore
+import net.ienlab.sogangassist.utils.Utils.setDayReminder
 import net.ienlab.sogangassist.utils.Utils.setLmsSchedule
 import net.ienlab.sogangassist.utils.Utils.timeInMillis
 import java.time.LocalDate
@@ -56,21 +59,13 @@ class BootDeviceReceiver : BroadcastReceiver() {
     private fun scheduleReminder(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             val datastore = context.dataStore
+
+            val enableMorningReminder = datastore.data.map { it[Pref.Key.ALLOW_MORNING_REMINDER] ?: Pref.Default.ALLOW_MORNING_REMINDER }.first()
+            val enableNightReminder = datastore.data.map { it[Pref.Key.ALLOW_NIGHT_REMINDER] ?: Pref.Default.ALLOW_NIGHT_REMINDER }.first()
             val morningReminder = datastore.data.map { it[Pref.Key.TIME_MORNING_REMINDER] ?: Pref.Default.TIME_MORNING_REMINDER }.first()
             val nightReminder = datastore.data.map { it[Pref.Key.TIME_NIGHT_REMINDER] ?: Pref.Default.TIME_NIGHT_REMINDER }.first()
 
-            val morningDate = LocalDateTime.now().withHour(morningReminder / 60).withMinute(morningReminder % 60)
-            val nightDate = LocalDateTime.now().withHour(nightReminder / 60).withMinute(nightReminder % 60)
-
-            val reminderIntent = Intent(context, ReminderReceiver::class.java)
-            am.setRepeating(AlarmManager.RTC_WAKEUP, morningDate.timeInMillis(), AlarmManager.INTERVAL_DAY,
-                PendingIntent.getBroadcast(context, PendingReq.MORNING_REMINDER, reminderIntent.apply { putExtra(Intents.Key.REMINDER_TYPE, Intents.Value.ReminderType.MORNING) },
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-            )
-            am.setRepeating(AlarmManager.RTC_WAKEUP, nightDate.timeInMillis(), AlarmManager.INTERVAL_DAY,
-                PendingIntent.getBroadcast(context, PendingReq.NIGHT_REMINDER, reminderIntent.apply { putExtra(Intents.Key.REMINDER_TYPE, Intents.Value.ReminderType.NIGHT) },
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-            )
+            setDayReminder(context, enableMorningReminder, enableNightReminder, morningReminder, nightReminder)
         }
     }
 }

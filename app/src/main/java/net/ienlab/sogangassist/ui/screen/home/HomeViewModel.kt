@@ -6,11 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -42,36 +45,17 @@ class HomeViewModel(
 
     private var _uiStateList = MutableStateFlow(HomeUiStateList())
     var uiStateList = _uiStateList.asStateFlow()
-//    private val _uiStateList = Channel<HomeUiStateList>()
-//    var uiStateList = _uiStateList.receiveAsFlow()
-//        .stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-//            initialValue = HomeUiStateList()
-//        )
-
-    private val _states = MutableStateFlow(HomeUiStateList())
-    val states: StateFlow<HomeUiStateList> = _states
+    private var job: Job? = null
 
     fun updateUiState(details: HomeDetails) {
         uiState = HomeUiState(item = details)
     }
 
     fun updateUiStateList() {
-        Dlog.d(TAG, "updateUiStateList")
-        viewModelScope.launch {
-//            uiStateList = lmsRepository.getByMonthStream(uiState.item.currentMonth).map { HomeUiStateList(it.map { lms ->
-//                lms.toLmsDetails()
-//            }) }
-//                .stateIn(
-//                    scope = viewModelScope,
-//                    started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-//                    initialValue = HomeUiStateList()
-//                )
-            lmsRepository.getByMonthStream(uiState.item.currentMonth).apply { Dlog.d(TAG, "apply ${this.first()}") }.map {
-                it.map { lms -> lms.toLmsDetails() }
-            }.collect {
-                _uiStateList.value = HomeUiStateList(it)
+        job?.cancel()
+        job = viewModelScope.launch {
+            lmsRepository.getByMonthStream(uiState.item.currentMonth).collect {
+                _uiStateList.value = HomeUiStateList(it.map { lms -> lms.toLmsDetails() })
             }
         }
     }

@@ -1,5 +1,8 @@
 package net.ienlab.sogangassist.ui.screen.home
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -11,6 +14,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,7 +24,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Alarm
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.NotificationAdd
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Today
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -29,11 +36,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -41,21 +51,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import net.ienlab.sogangassist.Dlog
+import kotlinx.coroutines.flow.map
 import net.ienlab.sogangassist.R
-import net.ienlab.sogangassist.TAG
+import net.ienlab.sogangassist.constant.Pref
+import net.ienlab.sogangassist.data.Permissions
+import net.ienlab.sogangassist.dataStore
+import net.ienlab.sogangassist.icon.MyIconPack
+import net.ienlab.sogangassist.icon.myiconpack.Lms
+import net.ienlab.sogangassist.service.LMSListenerService
 import net.ienlab.sogangassist.ui.AppViewModelProvider
 import net.ienlab.sogangassist.ui.navigation.NavigationDestination
 import net.ienlab.sogangassist.ui.screen.home.list.LmsList
@@ -64,10 +81,15 @@ import net.ienlab.sogangassist.ui.theme.AppTheme
 import net.ienlab.sogangassist.ui.utils.ActionMenuItem
 import net.ienlab.sogangassist.ui.utils.ActionsMenu
 import net.ienlab.sogangassist.ui.utils.AppBar
+import net.ienlab.sogangassist.ui.utils.BaseDialog
 import net.ienlab.sogangassist.ui.utils.HorizontalCalendar
+import net.ienlab.sogangassist.ui.utils.PermissionDialog
 import net.ienlab.sogangassist.ui.utils.SingleRowCalendar
 import net.ienlab.sogangassist.ui.utils.Utils.UpdateEffect
 import net.ienlab.sogangassist.ui.utils.Utils.lastVisibleItemIndex
+import net.ienlab.sogangassist.utils.Utils.checkPermissions
+import net.ienlab.sogangassist.utils.Utils.fromHtml
+import net.ienlab.sogangassist.utils.Utils.readTextFromRaw
 import net.ienlab.sogangassist.utils.Utils.timeInMillis
 import java.time.LocalDate
 import java.time.YearMonth
@@ -80,17 +102,52 @@ object HomeDestination: NavigationDestination {
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navigateToItemDetail: (Long) -> Unit,
+    navigateToItemDetail: (Long, LocalDate) -> Unit,
     navigateToSettings: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val calendarScrollState = rememberLazyListState(initialFirstVisibleItemScrollOffset = LocalDate.now().dayOfWeek.value % 7)
     var enabledSize by rememberSaveable { mutableIntStateOf(0) }
-    val uiStateList by viewModel.states.collectAsState()
+    val uiStateList by viewModel.uiStateList.collectAsState()
 
-    LaunchedEffect(viewModel.uiStateList) {
-        Dlog.d(TAG, "uiStateList: ${uiStateList}")
+    // changelog
+    val info = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        context.packageManager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0L))
+    } else {
+        context.packageManager.getPackageInfo(context.packageName, 0)
+    }
+    var showChangelogDialog by remember { mutableStateOf(false) }
+    val lastVersion by context.dataStore.data.map { it[Pref.Key.LAST_VERSION] ?: -1 }.collectAsState(initial = -999)
+    val currentVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.longVersionCode.toInt() else info.versionCode
+
+    // check init launch
+    val isFirstLaunch by context.dataStore.data.map { it[Pref.Key.IS_FIRST_VISIT] ?: true }.collectAsState(initial = false)
+
+    // permission
+    val permissions = listOf(
+        Permissions(icon = MyIconPack.Lms, title = stringResource(id = R.string.lms_install), content = stringResource(id = R.string.lms_install_desc), listOf(
+            LMSListenerService.LMS_PACKAGE_NAME
+        )),
+        Permissions(icon = Icons.Rounded.Notifications, title = stringResource(id = R.string.read_notification), content = stringResource(id = R.string.read_notification_desc), listOf(
+            Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE
+        )),
+        Permissions(icon = Icons.Rounded.NotificationAdd, title = stringResource(id = R.string.post_notification), content = stringResource(id = R.string.post_notification_desc), listOf(Manifest.permission.POST_NOTIFICATIONS)),
+        Permissions(icon = Icons.Rounded.Notifications, title = stringResource(id = R.string.ignore_battery_optimize), content = stringResource(id = R.string.ignore_battery_optimize_desc), listOf(
+            Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+        )),
+    )
+    var showPermissionDialog by remember { mutableStateOf(!checkPermissions(context, permissions)) }
+
+    LaunchedEffect(lastVersion) {
+        if (lastVersion != -999) {
+            if (currentVersion > lastVersion && !isFirstLaunch) {
+                context.dataStore.edit { it[Pref.Key.LAST_VERSION] = currentVersion }
+                showChangelogDialog = true
+
+            }
+        }
     }
 
     Scaffold(
@@ -135,7 +192,7 @@ fun HomeScreen(
             ExtendedFloatingActionButton(
                 text = { Text(text = stringResource(id = R.string.add_reminder))},
                 icon = { Icon(imageVector = Icons.Rounded.Add, contentDescription = stringResource(R.string.add_reminder)) },
-                onClick = { navigateToItemDetail(-1) }
+                onClick = { navigateToItemDetail(-1, viewModel.uiState.item.selectedDate) }
             )
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -143,6 +200,7 @@ fun HomeScreen(
     ) {
         HomeScreenBody(
             uiState = viewModel.uiState,
+            uiStateList = uiStateList,
             onItemValueChanged = viewModel::updateUiState,
             navigateToItemDetail = navigateToItemDetail,
             onMonthChanged = viewModel::updateUiStateList,
@@ -151,15 +209,44 @@ fun HomeScreen(
             modifier = Modifier.padding(it)
         )
     }
+
+    if (showPermissionDialog) {
+        PermissionDialog(
+            permissions = permissions,
+            onConfirm = { showPermissionDialog = false }
+        )
+    }
+
+    if (showChangelogDialog) {
+        BaseDialog(
+            icon = Icons.Rounded.Alarm,
+            title = "${stringResource(id = R.string.app_name)} ${stringResource(id = R.string.versionName)} ${stringResource(id = R.string.update_log)}",
+            content = {
+                Text(
+                    text = fromHtml(readTextFromRaw(context.resources, R.raw.changelog)).toString(),
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                ) },
+            onCancel = { showChangelogDialog = false },
+            buttons = {
+                Row(modifier = it) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    TextButton(onClick = { showChangelogDialog = false }) { Text(stringResource(id = R.string.close)) }
+                }
+            }
+        )
+    }
 }
 
 @Composable
 fun HomeScreenBody(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
+    uiStateList: HomeUiStateList,
     onItemValueChanged: (HomeDetails) -> Unit,
     onMonthChanged: () -> Unit,
-    navigateToItemDetail: (Long) -> Unit,
+    navigateToItemDetail: (Long, LocalDate) -> Unit,
     setEnabledSize: (Int) -> Unit,
     calendarScrollState: LazyListState
 ) {
@@ -172,7 +259,6 @@ fun HomeScreenBody(
     }
 
     LaunchedEffect(uiState.item.currentMonth) {
-        Dlog.d(TAG, "current month changed: ${uiState.item.currentMonth}")
         onMonthChanged()
     }
 
@@ -209,12 +295,14 @@ fun HomeScreenBody(
                 )
             }
         }
+
         AnimatedVisibility(
             visible = uiState.item.isCalendarExpand,
             enter = expandVertically(),
             exit = shrinkVertically()
         ) {
             HorizontalCalendar(
+                currentDate = uiState.item.selectedDate,
                 selectedDate = uiState.item.selectedDate,
                 onSelectedDate = {
                     onItemValueChanged(uiState.item.copy(selectedDate = it))
@@ -222,6 +310,7 @@ fun HomeScreenBody(
                 onAddMonth = {
                     onItemValueChanged(uiState.item.copy(currentMonth = uiState.item.currentMonth.plusMonths(it)))
                 },
+                lmsList = uiStateList.lmsList
             )
         }
         SingleRowCalendar(
@@ -231,6 +320,7 @@ fun HomeScreenBody(
             onSelectedDate = {
                 onItemValueChanged(uiState.item.copy(selectedDate = it))
             },
+            lmsMap = uiStateList.lmsList.groupBy { it.endTime.toLocalDate() },
             modifier = Modifier.padding(top = 16.dp)
         )
 
@@ -269,9 +359,10 @@ private fun HomeScreenPreview() {
                     isCalendarExpand = true
                 )
             ),
+            uiStateList = HomeUiStateList(),
             onItemValueChanged = {},
             onMonthChanged = {},
-            navigateToItemDetail = {},
+            navigateToItemDetail = { _, _ -> },
             calendarScrollState = rememberLazyListState(),
             setEnabledSize = {}
         )

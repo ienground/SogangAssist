@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -33,6 +34,7 @@ import net.ienlab.sogangassist.ui.screen.settings.SettingsHomeScreen
 import net.ienlab.sogangassist.ui.screen.settings.SettingsScreen
 import net.ienlab.sogangassist.ui.screen.settings.general.SettingsGeneralScreen
 import net.ienlab.sogangassist.ui.screen.settings.info.SettingsInfoScreen
+import net.ienlab.sogangassist.ui.screen.settings.info.SettingsPrivacyPolicyScreen
 import net.ienlab.sogangassist.ui.screen.settings.notifications.SettingsNotificationsScreen
 
 object RootDestination: NavigationDestination {
@@ -58,25 +60,9 @@ fun RootNavigationGraph(
             route = HomeDestination.route
         ) {
             HomeScreen(
-                navigateToItemDetail = { navController.navigate("${LmsEditDestination.route}?${LmsEditDestination.itemIdArg}=${it}") },
+                navigateToItemDetail = { id, date ->navController.navigate("${LmsEditDestination.route}?${LmsEditDestination.itemIdArg}=${id}&${LmsEditDestination.initDateArg}=${date}") },
                 navigateToSettings = { navController.navigate(SettingsDestination.route) }
             )
-//                windowSize = windowSize,
-//                onAction = { action ->
-//                    when (action) {
-//                        UiAction.NavigateToSettings -> {
-//                            navController.navigate(SettingsDestination.route)
-//                        }
-//                        UiAction.NavigateToDeskclock -> {
-//                            navController.navigate(DeskclockDestination.route)
-//                        }
-//                        UiAction.NavigateToGuide -> {
-//                            navController.navigate(GuideDestination.route)
-//                        }
-//                    }
-//                },
-//                bundle = bundle
-//            )
         }
 
         composable(
@@ -103,6 +89,7 @@ fun SettingsNavigationGraph(
     modifier: Modifier = Modifier,
     windowSize: WindowSizeClass,
     navController: NavHostController,
+    snackbarState: SnackbarHostState,
     enterTransition: EnterTransition = slideInHorizontally(tween(700), initialOffsetX = { it }),
     exitTransition: ExitTransition = slideOutHorizontally(tween(700), targetOffsetX = { it })
 ) {
@@ -116,25 +103,36 @@ fun SettingsNavigationGraph(
             }
         }
         composable(
+            route = SettingsDestination.notiRoute,
+            enterTransition = { enterTransition },
+            exitTransition = { exitTransition }
+        ) {
+            SettingsNotificationsScreen()
+        }
+        composable(
             route = SettingsDestination.generalRoute,
             enterTransition = { enterTransition },
             exitTransition = { exitTransition }
         ) {
-            SettingsGeneralScreen()
+            SettingsGeneralScreen(
+                snackbarState = snackbarState
+            )
         }
         composable(
             route = SettingsDestination.infoRoute,
             enterTransition = { enterTransition },
             exitTransition = { exitTransition }
         ) {
-            SettingsInfoScreen()
+            SettingsInfoScreen(
+                navigateToPolicy = { navController.navigate(SettingsDestination.policyRoute) },
+            )
         }
         composable(
-            route = SettingsDestination.notiRoute,
+            route = SettingsDestination.policyRoute,
             enterTransition = { enterTransition },
             exitTransition = { exitTransition }
         ) {
-            SettingsNotificationsScreen()
+            SettingsPrivacyPolicyScreen()
         }
         /*
         composable(

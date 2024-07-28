@@ -26,7 +26,7 @@ class FirebasePushService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        nm.createNotificationChannel(NotificationChannel(Notifications.Channel.FIREBASE_ID, getString(R.string.real_app_name), NotificationManager.IMPORTANCE_HIGH))
+        nm.createNotificationChannel(NotificationChannel(Notifications.Channel.FIREBASE_ID, getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH))
 
         if (remoteMessage.data.isNotEmpty()) {
             sendNotification(remoteMessage.data)
@@ -61,7 +61,7 @@ class FirebasePushService : FirebaseMessagingService() {
             setContentText(if (Locale.getDefault() == Locale.KOREA) messageKor else message)
             setAutoCancel(true)
             setContentIntent(pendingIntent)
-            color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
+            color = ContextCompat.getColor(applicationContext, R.color.color_sogang)
             setSmallIcon(R.drawable.ic_icon)
 //            setSmallIcon(when (type) {
 //                FirebasePushKey.Types.NONE -> R.drawable.ic_calarm

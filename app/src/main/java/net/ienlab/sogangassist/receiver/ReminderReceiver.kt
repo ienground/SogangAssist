@@ -13,7 +13,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.TAG
 import net.ienlab.sogangassist.activity.MainActivity
 import net.ienlab.sogangassist.constant.Intents
 import net.ienlab.sogangassist.constant.Notifications
@@ -47,6 +49,7 @@ class ReminderReceiver: BroadcastReceiver() {
             Lms.Type.TEAMWORK to Pair(context.getString(R.string.daily_reminder_teamwork), context.getString(R.string.team_project)),
             Lms.Type.EXAM to Pair(context.getString(R.string.daily_reminder_exam), context.getString(R.string.exam)),
         )
+        Dlog.d(TAG, "$type")
 
         nm.createNotificationChannel(NotificationChannel(Notifications.Channel.DAILY_REMINDER_ID, context.getString(
             R.string.channel_daily_reminder), NotificationManager.IMPORTANCE_HIGH))

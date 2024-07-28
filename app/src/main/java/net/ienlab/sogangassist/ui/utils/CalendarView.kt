@@ -1,17 +1,23 @@
 package net.ienlab.sogangassist.ui.utils
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,9 +27,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -32,11 +40,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastFilterNotNull
-import androidx.lifecycle.viewmodel.compose.viewModel
 import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.TAG
-import net.ienlab.sogangassist.data.lms.Lms
-import net.ienlab.sogangassist.ui.AppViewModelProvider
 import net.ienlab.sogangassist.ui.screen.edit.LmsDetails
 import net.ienlab.sogangassist.ui.theme.AppTheme
 import net.ienlab.sogangassist.ui.theme.ColorSaturday
@@ -59,29 +64,31 @@ fun HorizontalCalendar(
     selectedDate: LocalDate,
     onSelectedDate: (LocalDate) -> Unit,
     onAddMonth: (Long) -> Unit,
+    lmsList: List<LmsDetails>,
     config: HorizontalCalendarConfig = HorizontalCalendarConfig()
 ) {
     val initialPage = (currentDate.year - config.yearRange.first) * 12 + currentDate.monthValue - 1
-    var currentPage by remember { mutableIntStateOf(initialPage) }
+    var currentPage by rememberSaveable { mutableIntStateOf(initialPage) }
     val pagerState = rememberPagerState(
         initialPage = initialPage,
         pageCount = { (config.yearRange.second - config.yearRange.first + 1) * 12 }
     )
-
-    LaunchedEffect(Unit) {
-        onSelectedDate(currentDate)
-    }
-    LaunchedEffect(pagerState.currentPage) {
-        val addMonth = (pagerState.currentPage - currentPage).toLong()
-        onAddMonth(addMonth)
-        currentPage = pagerState.currentPage
-    }
 
     UpdateEffect(selectedDate) {
         val page = (selectedDate.year - config.yearRange.first) * 12 + selectedDate.monthValue - 1
         currentPage = page
         pagerState.animateScrollToPage(page)
     }
+    LaunchedEffect(Unit) {
+        onSelectedDate(currentDate)
+    }
+    LaunchedEffect(pagerState.currentPage) {
+        val addMonth = (pagerState.currentPage - currentPage).toLong() // 현재 값이 두 번 빠짐.
+        onAddMonth(addMonth)
+        currentPage = pagerState.currentPage
+        onSelectedDate(currentDate.plusMonths(addMonth))
+    }
+
 
     HorizontalPager(
         state = pagerState,
@@ -97,6 +104,7 @@ fun HorizontalCalendar(
                 currentDate = date,
                 selectedDate = selectedDate,
                 onSelectedDate = onSelectedDate,
+                lmsMap = lmsList.groupBy { it.endTime.toLocalDate() },
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -117,6 +125,7 @@ fun CalendarMonthItem(
     currentDate: LocalDate,
     selectedDate: LocalDate = LocalDate.now(),
     onSelectedDate: (LocalDate) -> Unit,
+    lmsMap: Map<LocalDate, List<LmsDetails>>
 ) {
     val dayLast by remember { mutableIntStateOf(currentDate.lengthOfMonth())}
     val firstDayOfWeek by remember { mutableIntStateOf(currentDate.withDayOfMonth(1).dayOfWeek.value) }
@@ -156,18 +165,15 @@ fun CalendarMonthItem(
                             RoundedCornerShape(16.dp)
                         )
                 ) {
-                    list.forEach { day ->
+                    list.forEach { date ->
                         CalendarDay(
-                            date = day,
-                            selected = selectedDate == day,
+                            date = date,
+                            selected = selectedDate == date,
+                            count = lmsMap[date]?.filter { !it.isFinished }?.size ?: 0,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(16.dp))
-                                .clickable {
-                                    onSelectedDate(
-                                        day ?: list
-                                            .fastFilterNotNull()
-                                            .first()
-                                    )
+                                .clickable(date != null) {
+                                    date?.let { onSelectedDate(it) }
                                 }
                                 .weight(1 / 7f, fill = true)
                         )
@@ -206,27 +212,45 @@ fun DayOfWeekView(
 fun CalendarDay(
     modifier: Modifier = Modifier,
     selected: Boolean,
-    date: LocalDate?
+    date: LocalDate?,
+    count: Int
 ) {
-    Text(
-        text = date?.dayOfMonth?.toString() ?: "",
-        textAlign = TextAlign.Center,
-        fontSize = if (date?.isEqual(LocalDate.now()) == true) 18.sp else 14.sp,
-        fontWeight = if (date?.isEqual(LocalDate.now()) == true) FontWeight.Bold else FontWeight.Normal,
-        color = if (selected) MaterialTheme.colorScheme.onSecondary
-        else when (date?.dayOfWeek) {
-            DayOfWeek.SATURDAY -> ColorSaturday
-            DayOfWeek.SUNDAY -> ColorSunday
-            else -> MaterialTheme.colorScheme.onBackground
-        },
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         modifier = modifier
             .background(
                 if (selected) MaterialTheme.colorScheme.secondary else Color.Transparent,
                 RoundedCornerShape(16.dp)
             )
             .aspectRatio(1f)
-            .wrapContentHeight(align = Alignment.CenterVertically)
-    )
+    ) {
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(
+            text = date?.dayOfMonth?.toString() ?: "",
+            textAlign = TextAlign.Center,
+            fontSize = if (date?.isEqual(LocalDate.now()) == true) 18.sp else 14.sp,
+            fontWeight = if (date?.isEqual(LocalDate.now()) == true) FontWeight.Bold else FontWeight.Normal,
+            color =
+            if (selected) MaterialTheme.colorScheme.onSecondary
+            else when (date?.dayOfWeek) {
+                DayOfWeek.SATURDAY -> ColorSaturday
+                DayOfWeek.SUNDAY -> ColorSunday
+                else -> MaterialTheme.colorScheme.onBackground
+            },
+            modifier = Modifier
+        )
+        val alpha by animateFloatAsState(targetValue = if (count >= 1) 1f else 0f, label = "alpha")
+        Box(
+            modifier = Modifier
+                .alpha(alpha)
+                .size(8.dp)
+                .background(
+                    if (selected) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.error,
+                    CircleShape
+                )
+        )
+    }
 }
 
 @Preview(showBackground = true)
@@ -237,17 +261,16 @@ private fun CalendarPreview() {
             CalendarHeader(
 
             )
-//            CalendarMonthItem(
-//                currentDate = LocalDate.now(),
-//                onSelectedDate = {},
-//                modifier = Modifier.fillMaxWidth()
-//            )
-            Row {
-                repeat(7) {
-                    CalendarDay(selected = false, date = LocalDate.now(), modifier = Modifier.weight(1f))
-                }
-            }
-
+            CalendarMonthItem(
+                currentDate = LocalDate.now(),
+                onSelectedDate = {},
+                lmsMap = mapOf(
+                    LocalDate.now().plusDays(1) to listOf(LmsDetails(), LmsDetails()),
+                    LocalDate.now() to listOf(LmsDetails(), LmsDetails()),
+                    LocalDate.now().minusDays(2) to listOf(LmsDetails(), LmsDetails()),
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }
