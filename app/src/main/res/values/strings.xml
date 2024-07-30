@@ -1,188 +1,105 @@
 <resources>
-    <string name="real_app_name">Albatross Reminder</string>
-    <string name="move_today">Move to Today</string>
-    <string name="settings">Settings</string>
-    <string name="save">Save</string>
-    <string name="edit_detail">Edit Detail</string>
+    <!--서비스 이름-->
+    <string name="app_name">Albatross Reminder</string>
     <string name="classtime">Lesson</string>
     <string name="sup_classtime">Make-up Lesson</string>
     <string name="assignment">Assignment</string>
     <string name="zoom">Live Lecture (Zoom)</string>
     <string name="team_project">Team Project</string>
     <string name="exam">Exam</string>
-    <string name="allow_auto_edit_lms">Allows automatic edit by LMS notification</string>
+    <string name="settings">Settings</string>
+    <string name="help">Guide</string>
+
+    <!--Permissions-->
+    <string name="permission_title">Permission to use application</string>
+    <string name="lms_install">Install HelloLMS</string>
+    <string name="lms_install_desc">App for HelloLMS user.</string>
+    <string name="read_notification">Read notifications</string>
+    <string name="read_notification_desc">Read notifications when getting informations from LMS.</string>
+    <string name="post_notification">Send notifications</string>
+    <string name="post_notification_desc">The app sends notifications such as timers and alarms.</string>
+    <string name="ignore_battery_optimize">Exclude Power Saving</string>
+    <string name="ignore_battery_optimize_desc">Exclude apps from power saving to ensure normal service.</string>
+    <string name="allowed">Allowed</string>
+
+    <!--Time Format for Formatting-->
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="time_left_day">%1$dd left</string>
+    <string name="time_left_hour_min">%1$dh %2$dm left</string>
+    <string name="time_left_hour">%1$dh left</string>
+    <string name="time_left_min">%1$dm left</string>
+    <string name="time_past_day">%1$dd past</string>
+    <string name="time_past_hour_min">%1$dh %2$dm past</string>
+    <string name="time_past_hour">%1$dh past</string>
+    <string name="time_past_min">%1$dm past</string>
+
+    <!--Time Format for DateTimeFormatter-->
+    <string name="date_format">EEEE, MMM d yyyy</string>
+    <string name="date_format_no_year">EEEE, MMM d</string>
+    <string name="calendar_format">MMMM yyyy</string>
+    <string name="apm_time_format">h:mm a</string>
+
+    <!--Daytime Hello Message-->
+    <string name="user_hello_morning">Good morning☀️</string>
+    <string name="user_hello_afternoon">Have a great lunch🍽️</string>
+    <string name="user_hello_evening">Good evening🎆</string>
+    <string name="user_hello_night">Sleep tight🌙</string>
+
+    <!--Delete Dialog-->
+    <string name="delete">Delete</string>
+    <string name="delete_title">Delete?</string>
+    <string name="delete_msg">Are you sure to delete this?</string>
+    <string name="cannot_be_undone">This action cannot be undone.</string>
+
+    <!--Save Dialog-->
+    <string name="ask_to_save">Save?</string>
+    <string name="ask_to_save_message">Unsaved changes will be lost.</string>
+    <string name="not_save">Not save</string>
+
+    <!--Time (Picker) String-->
+    <string name="select_date">Select date</string>
+    <string name="select_time">Select time</string>
+
+    <!--Common String Value-->
+    <string name="save">Save</string>
+    <string name="press_back_to_exit">Press the back button again to exit.</string>
+    <string name="agree">Agree</string>
+    <string name="disagree">Disagree</string>
+    <string name="close">Close</string>
+    <string name="more_options">More options</string>
+
+    <!--Main Screen-->
+    <string name="add_reminder">Add new reminder</string>
+    <string name="event_count">You have %1$d todos today</string>
+    <string name="event_count_one">You have one todo today</string>
+    <string name="event_count_none">You have no todos today</string>
+    <string name="move_today">Move to today</string>
+    <string name="week_lesson_format">%1$s-%2$s</string>
+    <string name="no_todos">No todos</string>
+
+    <!--Detail Screen-->
+    <string name="allow_auto_edit_lms">Allows auto edit by LMS notification</string>
     <string name="class_name">Subject Name</string>
     <string name="week">Week</string>
     <string name="lesson">Hour</string>
     <string name="assignment_name">Assignment Name</string>
     <string name="zoom_name">Zoom Title</string>
     <string name="exam_name">Exam Title</string>
-    <string name="dateFormat">EEEE, MMM d yyyy</string>
-    <string name="dateFormatNoYear">EEEE, MMM d</string>
-    <string name="calendarFormat">MMMM yyyy</string>
-    <string name="timeFormat">h:mm a</string>
     <string name="mark_as_finish">Mark as complete</string>
-    <string name="delete">Delete</string>
     <string name="mark_as_not_finish">Mark as not complete</string>
-    <string name="delete_msg">Are you sure to delete this?</string>
-    <string name="changelog">Update log</string>
-    <string name="ask">Ask</string>
-    <string name="info_and_ask"><![CDATA[Info & Ask]]></string>
-    <string name="email_text">Albatross Reminder User Comment</string>
-    <string name="pref_changelog_exp">Check new features from this version.</string>
-    <string name="pref_ask_exp">Please send us bugs, questions, or your backup data in case of data aggregation errors!</string>
-    <string name="ask_to_dev">Ask to Developer</string>
-    <string name="open_source_license">Open Source License</string>
-    <string name="pref_opens_exp">Licenses of Open Sources Used in App</string>
-    <string name="notify_1hour">Notify before 1 hour</string>
-    <string name="notify_2hour">Notify before 2 hours</string>
-    <string name="notify_6hour">Notify before 6 hours</string>
-    <string name="notify_12hour">Notify before 12 hours</string>
-    <string name="notify_24hour">Notify before 24 hours</string>
-    <string name="notify_hw_on">You will receive a notification %1$s hour(s) before the submission deadline.</string>
-    <string name="notify_hw_off">You will not receive a notification $1$s hour(s) before the submission deadline.</string>
-    <string name="notify_lec_on">You will receive a notification %1$s hour(s) before the course deadline.</string>
-    <string name="notify_lec_off">You will not receive a notification %1$s hour(s) before the course deadline.</string>
-    <string name="notify_zoom_on">You will receive a notification %1$s minutes before the zoom class starts.</string>
-    <string name="notify_zoom_off">You will not receive a notification %1$s minutes before the zoom class starts.</string>
-    <string name="notify_exam_on">You will receive a notification %1$s minutes before the exam starts.</string>
-    <string name="notify_exam_off">You will not receive a notification %1$s minutes before the exam starts.</string>
-    <string name="notify_1hour_lec_on">You will receive a notification 1 hour before the course deadline.</string>
-    <string name="notify_1hour_lec_off">You will not receive a notification 1 hour before the course deadline.</string>
-    <string name="notify_2hour_lec_on">You will receive a notification 2 hours before the course deadline.</string>
-    <string name="notify_2hour_lec_off">You will not receive a notification 2 hours before the course deadline.</string>
-    <string name="notify_6hour_lec_on">You will receive a notification 6 hours before the course deadline.</string>
-    <string name="notify_6hour_lec_off">You will not receive a notification 6 hours before the course deadline.</string>
-    <string name="notify_12hour_lec_on">You will receive a notification 12 hours before the course deadline.</string>
-    <string name="notify_12hour_lec_off">You will not receive a notification 12 hours before the course deadline.</string>
-    <string name="notify_24hour_lec_on">You will receive a notification 24 hours before the course deadline.</string>
-    <string name="notify_24hour_lec_off">You will not receive a notification 24 hours before the course deadline.</string>
-    <string name="notify_all_off">You will not receive a notification.</string>
-    <string name="notifications">Notifications</string>
-    <string name="notify_hw">Assignment &amp; Team Project Notify</string>
-    <string name="notify_lec">Lecture Notify</string>
-    <string name="notify_zoom">Zoom Notify</string>
-    <string name="notify_exam">Exam Notify</string>
-    <string name="channel_name">LMS Reminder</string>
-    <string name="channel_daily_reminder">Daily Reminder</string>
-    <string name="channel_time_reminder">Time Reminder</string>
-    <string name="reminder_content_lec">%1$d-%2$d: %3$d hours left until the class deadline. Take the class on time.</string>
-    <string name="reminder_content_sup_lec">%1$d-%2$d: %3$d hours left until the make-up class deadline. Take the class on time.</string>
-    <string name="reminder_content_hw">\"%1$s\" %2$d hour(s) left until the assignment deadline. Don\' be late.</string>
-    <string name="reminder_content_zoom">\"%1$s\" %2$d minutes left until the Zoom lecture starts. Don\' be late.</string>
-    <string name="reminder_content_team">\"%1$s\" %2$d hour(s) left until the team project deadline. Don\' be late.</string>
-    <string name="reminder_content_exam">\"%1$s\" %2$d minutes left until the exam starts. Don\' be late.</string>
-    <string name="reminder_content_lec_register">%1$d-%2$d: Class has been enrolled. Take the class until %3$s.</string>
-    <string name="reminder_content_sup_lec_register">%1$d-%2$d: Make-up class has been enrolled. Take the class until %3$s.</string>
-    <string name="reminder_content_hw_register">\"%1$s\" The assignment has been enrolled. Submit up until %2$s.</string>
-    <string name="reminder_content_zoom_register">\"%1$s\" Zoom lecture has been enrolled. Attend until %2$s.</string>
-    <string name="reminder_content_team_register">\"%1$s\" Team project has been enrolled. Submit up until %2$s.</string>
-    <string name="reminder_content_exam_register">\"%1$s\" Exam has been enrolled. Start taking the exam until %2$s.</string>
-    <string name="reminder_content_lec_update">%1$d-%2$d: Class has been updated. Take the class until %3$s.</string>
-    <string name="reminder_content_sup_lec_update">%1$d-%2$d: Make-up class has been updated. Take the class until %3$s.</string>
-    <string name="reminder_content_hw_update">\"%1$s\" The assignment has been updated. Submit up until %2$s.</string>
-    <string name="reminder_content_zoom_update">\"%1$s\" Zoom lecture has been updated. Attend until %2$s.</string>
-    <string name="reminder_content_team_update">\"%1$s\" Team project has been updated. Submit up until %2$s.</string>
-    <string name="reminder_content_exam_update">\"%1$s\" Exam has been updated. Start taking the exam until %2$s.</string>
-    <string name="week_lesson_format">%1$d-%2$d</string>
-    <string name="finished">Complete</string>
-    <string name="deadline">Deadline : %1$s</string>
-    <string name="start">Start : %1$s</string>
-    <string name="no_deadline_today">There are no assignments or lectures until chosen day.</string>
-    <string name="dev_ienlab">Designed, Developed By ienlab\n(Sogang Univ. Art&amp;Technology 20 Ericano Rhee)</string>
-    <string name="other_settings">Other Settings</string>
-    <string name="notify_when_lms">Notify when LMS info is received</string>
-    <string name="notify_when_lms_sum_on">Notify when information is received from LMS.</string>
-    <string name="notify_when_lms_sum_off">Not notify when information is received from LMS.</string>
-    <string name="backup">Data Backup</string>
-    <string name="backup_desc">Backup application data in json format.</string>
-    <string name="backup_msg">Backup completed.</string>
-    <string name="restore">Data Restore</string>
-    <string name="restore_desc">Restore data from json format file.</string>
-    <string name="restore_msg">Existing data will be lost and replaced with backup data. Proceed?</string>
-    <string name="restore_finish">Data restoration complete. Please relaunch the application.</string>
-    <string name="restart_to_apply">Applied after rerunning the application.</string>
-    <string name="help">Help</string>
-    <string name="review_title">Is this app useful?</string>
-    <string name="review_content">If you are satisfied, please leave a review and rating!</string>
-    <string name="mark_all_read">Mark all read</string>
-    <string name="delete_all">Delete all</string>
-    <string name="dnd_time">Set Do Not Disturb time</string>
-    <string name="dnd_time_check">Enable Do Not Disturb time</string>
-    <string name="dnd_time_check_on">Won\'t be notified at the set time. Instead, it is kept in a notification window of the app.</string>
-    <string name="dnd_time_check_off">Won\'t use Do Not Disturb mode.</string>
     <string name="start_at">Start at..</string>
     <string name="end_at">End at..</string>
-    <string name="widget_dark_mode_title">Apply system dark mode on widget</string>
-    <string name="widget_dark_mode_desc_on">Dark mode is applied to the widget.</string>
-    <string name="widget_dark_mode_desc_off">Widgets always have day mode (bright).</string>
-    <string name="load_data">Loading data..</string>
 
-    <!--Onboarding-->
-    <string name="tag_one">One.</string>
-    <string name="tag_two">Two.</string>
-    <string name="tag_three">Three.</string>
-    <string name="tag_four">Four.</string>
-    <string name="tag_five">Five.</string>
-    <string name="tag_six">Six.</string>
-    <string name="intro_page0_title">Welcome.</string>
-    <string name="intro_page0_exp">Albatross Reminder, notifies you so as not to be late for assignments and lectures.</string>
-    <string name="intro_page1_title">Please use it with HelloLMS installed.</string>
-    <string name="intro_page2_title">Allow notification access, to get notifications</string>
-    <string name="intro_page2_exp">We need notification access in order to read notifications.</string>
-    <string name="intro_page3_title">Assignment, teamwork Deadline Reminder</string>
-    <string name="intro_page3_exp">Unit: hour. Select the notifications you want to receive.</string>
-    <string name="intro_page4_title">Lecture Deadline Reminder</string>
-    <string name="intro_page4_exp">Unit: hour. Select the notifications you want to receive.</string>
-    <string name="intro_page5_title">Lecture Deadline Reminder</string>
-    <string name="intro_page5_exp">Unit: minute. Select the notifications you want to receive.</string>
-    <string name="intro_page6_title">Exam Deadline Reminder</string>
-    <string name="intro_page6_exp">Unit: Minute. Select the notifications you want to receive.</string>
-    <string name="noti_access_allow">Allow notification access</string>
-    <string name="noti_access_allowed">Access Allowed</string>
+    <!--Notification-->
+    <string name="channel_name">LMS reminder</string>
+    <string name="channel_daily_reminder">Daily reminder</string>
+    <string name="channel_time_reminder">Time reminder</string>
+    <string name="channel_lms_register">LMS Register</string>
 
-    <!--Overall Activity-->
-    <string name="press_back_to_exit">Press the Back button again to exit.</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="agree">Agree</string>
-    <string name="disagree">Disagree</string>
-    <string name="quit">Quit</string>
-    <string name="one_hour">1 hr</string>
-    <string name="two_hour">2 hrs</string>
-    <string name="six_hour">6 hrs</string>
-    <string name="twelve_hour">12 hrs</string>
-    <string name="twfour_hour">24 hrs</string>
-    <string name="three_minute">3 mins</string>
-    <string name="five_minute">5 mins</string>
-    <string name="ten_minute">10 mins</string>
-    <string name="twenty_minute">20 mins</string>
-    <string name="thirty_minute">30 mins</string>
-    <string name="deleted_noti">Notification Canceled</string>
-    <string name="enter_blank">Fill out</string>
-    <string name="confirm">Confirm</string>
-
-    <string name="lms_install">HelloLMS Install</string>
-    <string name="lms_installed">HelloLMS Installed</string>
-    <string name="add_reminder">Add new reminder</string>
-    <string name="enrich_study">(Sup)</string>
-    <string name="err_input_class">Please enter the subject name.</string>
-    <string name="err_input_week">Please enter the week.</string>
-    <string name="err_input_lesson">Please enter the hour.</string>
-    <string name="err_input_blank">Please fill out all blanks.</string>
-    <string name="err_time_late">The deadline must be later than the start date.</string>
-    <string name="err_input_assignment">Please enter the assignment name.</string>
-    <string name="err_input_zoom_title">Please enter the Zoom title.</string>
-    <string name="err_input_exam_title">Please enter the Exam title.</string>
-    <string name="err_assignment_time">Please enter the assignment name, and the deadline must be later than the start date.</string>
-    <string name="err_class_time">Please enter the subject name, and the deadline must be later than the start date.</string>
-    <string name="err_class_assignment">Please enter the class and assignment name.</string>
-    <string name="err_all">Please enter the class and assignment name, and the deadline must be later than the start date.</string>
-
-    <string name="banner_ad_unit_id">ca-app-pub-8050897224557020/6527850959</string>
-    <string name="full_ad_unit_id">ca-app-pub-8050897224557020/5023197593</string>
+    <!--LMS Listener Service -->
+    <string name="deleted_noti">Notification canceled</string>
 
     <string name="format_new_assignment">New assignment is posted</string>
     <string name="format_change_assignment">Edited assignment is posted</string>
@@ -201,56 +118,29 @@
     <string name="format_lecture_regex">^Week(\\d+) Hour (\\d+).*\\(Must complete the course by: (.+) \\)$</string>
     <string name="format_zoom_regex">^.+\"(.+)\" \\(start at:(.+)\\)$</string>
 
-    <!--EditActivity-->
-    <string name="save_ask">Save?</string>
-    <string name="schedule">Schedule</string>
-    <string name="events_today">Events Until %1$s</string>
-    <string name="tag_date">MMM dd</string>
-    <string name="onboarding0_ex_class">Advanced Applied C Programming(01)</string>
-    <string name="onboarding0_ex_week">Week 1 Hour 3</string>
-    <string name="onboarding0_ex_time">Deadline : PM 11:59</string>
-    <string name="onboarding0_ex_hw">Homework1</string>
+    <!--TimeReceiver-->
+    <string name="reminder_content_lec">%1$d-%2$d: %3$d hours left until the class deadline. Take the class on time.</string>
+    <string name="reminder_content_sup_lec">%1$d-%2$d: %3$d hours left until the make-up class deadline. Take the class on time.</string>
+    <string name="reminder_content_hw">\"%1$s\" %2$d hour(s) left until the assignment deadline. Don\' be late.</string>
+    <string name="reminder_content_zoom">\"%1$s\" %2$d minutes left until the Zoom lecture starts. Don\' be late.</string>
+    <string name="reminder_content_team">\"%1$s\" %2$d hour(s) left until the team project deadline. Don\' be late.</string>
+    <string name="reminder_content_exam">\"%1$s\" %2$d minutes left until the exam starts. Don\' be late.</string>
+    <string name="reminder_content_lec_register">%1$d-%2$d: Class has been enrolled. Take the class until %3$s.</string>
+    <string name="reminder_content_sup_lec_register">%1$d-%2$d: Make-up class has been enrolled. Take the class until %3$s.</string>
+    <string name="reminder_content_hw_register">\"%1$s\" The assignment has been enrolled. Submit up until %2$s.</string>
+    <string name="reminder_content_zoom_register">\"%1$s\" Zoom lecture has been enrolled. Attend until %2$s.</string>
+    <string name="reminder_content_team_register">\"%1$s\" Team project has been enrolled. Submit up until %2$s.</string>
+    <string name="reminder_content_exam_register">\"%1$s\" Exam has been enrolled. Start taking the exam until %2$s.</string>
+    <string name="reminder_content_lec_update">%1$d-%2$d: Class has been updated. Take the class until %3$s.</string>
+    <string name="reminder_content_sup_lec_update">%1$d-%2$d: Make-up class has been updated. Take the class until %3$s.</string>
+    <string name="reminder_content_hw_update">\"%1$s\" The assignment has been updated. Submit up until %2$s.</string>
+    <string name="reminder_content_zoom_update">\"%1$s\" Zoom lecture has been updated. Attend until %2$s.</string>
+    <string name="reminder_content_team_update">\"%1$s\" Team project has been updated. Submit up until %2$s.</string>
+    <string name="reminder_content_exam_update">\"%1$s\" Exam has been updated. Start taking the exam until %2$s.</string>
 
-    <!--MainWorkAdapter-->
-    <string name="ask_mark_as_not_finish">Would you like to mark this as not finished?</string>
-    <string name="ask_mark_as_finish">Would you like to mark this as finished?</string>
-    <string name="undo">Undo</string>
-    <string name="marked_as_finish">Marked as finish</string>
-    <string name="marked_as_not_finish">Marked as not finish</string>
-
-    <!--NotificationsAdapter, Activity-->
-    <string name="no_new_noti">No Messages</string>
-    <string name="new_a_noti">A Message</string>
-    <string name="new_noti">%1$d Messages</string>
-    <string name="ask_mark_as_not_read">Would you like to mark this as not read?</string>
-    <string name="ask_mark_as_read">Would you like to mark this as read?</string>
-    <string name="mark_as_read">Mark as read</string>
-    <string name="mark_as_not_read">Mark as not read</string>
-    <string name="marked_as_read">Marked as read</string>
-    <string name="marked_as_not_read">Marked as not read</string>
-    <string name="no_notifications">No notifications here.</string>
-    <string name="ask_delete_all">Are you sure to delete all?</string>
-    <string name="ask_delete_all_msg">Deleted notifications cannot be restored.</string>
-    <string name="just_now">Just now</string>
-    <string name="a_minute_format">a minute ago</string>
-    <string name="a_hour_format">an hour ago</string>
-    <string name="minutes_format">%1$d minutes ago</string>
-    <string name="hours_format">%1$d hours ago</string>
-    <string name="err_date_deleted">This event has been deleted and cannot be found</string>
-
-    <!--DayNight Reminder-->
+    <!--ReminderReceiver-->
     <string name="reminder_class_format">[%1$s] %2$d-%3$d</string>
     <string name="reminder_zoom_format">[%1$s] %2$s</string>
-
-    <!--Preferences-->
-    <string name="morning_reminder">Morning Reminder</string>
-    <string name="night_reminder">Night Reminder</string>
-    <string name="morning_reminder_time">Morning Reminder Time</string>
-    <string name="night_reminder_time">Night Reminder Time</string>
-    <string name="morning_reminder_desc_on">At morning, we will inform you of assignments or lectures with an impending deadline.</string>
-    <string name="morning_reminder_desc_off">At morning, we won\'t inform you of assignments or lectures with an impending deadline.</string>
-    <string name="night_reminder_desc_on">At night, we will inform you of assignments or lectures with an impending deadline.</string>
-    <string name="night_reminder_desc_off">At night, we won\'t inform you of assignments or lectures with an impending deadline.</string>
 
     <string name="daily_reminder_title_morning">🌤 Good morning</string>
     <string name="daily_reminder_title_night">🌙 Sun\'s getting real low</string>
@@ -261,18 +151,81 @@
     <string name="daily_reminder_teamwork">%1$d Team Project(s)</string>
     <string name="daily_reminder_exam">%1$d Exam(s)</string>
     <string name="daily_reminder_content_format">There\'re %1$s until today.\n%2$s</string>
-    <string name="calendar_icon_view">Display detailed icons on the main screen calendar</string>
-    <string name="calendar_icon_view_desc_on">Detailed icons are displayed for each item, and completed/not completed are classified by color.</string>
-    <string name="calendar_icon_view_desc_off">Regardless of the type, complete/incomplete are classified by a circle shape.</string>
-    <string name="date_delete_title">Delete schedules that match conditions</string>
-    <string name="date_delete_summary">Touch to improve the speed of your application by deleting old events that match the conditions</string>
-    <string name="check_delete_finish">Delete only finished events</string>
-    <string name="err_start_date">Must be earlier than the end date</string>
-    <string name="err_end_date">Must be later than the start date</string>
-    <string name="delete_successfully">Deleted %1$d event(s). Please relaunch the application.</string>
-    <string name="no_delete_event">There are no deleted events.</string>
-    <string name="ads_free">Remove Ads</string>
-    <string name="iab_license">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAil9jvrEW2lDjT3COykUCvyIK97hEZrWKvgd8158Dc+270RLeC8HJNbsqIRyOe2WX51F624kOUl01wX72WUqlJGt0AjdkPeFs0v2Unoj+AqWq2obxIzbKsPv4zIOxh2NJoDy2s22ImccwL0eI8ew4kWwt5qVMI7lmPyBU9uxSYhMAa370y1Qzh9cvrW4w6lXw8JRNg/fUjTS3YSqnGVN34nbx7CXO0amZE6DT8GzGLi8TUeRgmWA5PH95gV5gI4+SK0h7PtldmbIEMQ2oh2HO5PBD4LOCIRWAfLO3o5ltQ6rCDFC6D2s/Smn+SMjZlUmPOWXOOCHvrhTbl7W3VzjgfwIDAQAB</string>
+
+    <!--Settings Category-->
+    <string name="settings_general">General</string>
+    <string name="notifications">Notifications</string>
+    <string name="info_and_ask"><![CDATA[Info & Ask]]></string>
+    <string name="select_the_menu_settings">Select the menu</string>
+
+    <!--General Settings-->
+    <string name="use_dynamic_colors">Use dynamic colors</string>
+    <string name="use_dynamic_colors_sum_off">Apply the default color throughout the app.</string>
+    <string name="use_dynamic_colors_sum_on">Apply dynamic colors throughout the app.</string>
+    <string name="notify_when_lms">Notify when LMS info is received</string>
+    <string name="notify_when_lms_sum_on">Notify when information is received from LMS.</string>
+    <string name="notify_when_lms_sum_off">Not notify when information is received from LMS.</string>
+    <string name="backup">Data backup</string>
+    <string name="backup_desc">Backup application data in json format.</string>
+    <string name="backup_msg">Backup completed.</string>
+    <string name="restore">Data restore</string>
+    <string name="restore_desc">Restore data from JSON format file.</string>
+    <string name="restore_msg">Existing data will be lost and replaced with backup data. Proceed?</string>
+    <string name="restore_finish">Data restoration complete.</string>
+
+    <!--Notification Settings-->
+    <string name="dnd_time_category">Do Not Disturb mode</string>
+    <string name="dnd_time_check">Enable Do Not Disturb time</string>
+    <string name="dnd_time_check_on">Won\'t be notified at the set time.</string>
+    <string name="dnd_time_check_off">Won\'t use Do Not Disturb mode.</string>
+    <string name="dnd_time">Set Do Not Disturb time</string>
+
+    <string name="item_notification_category">Notifications by item</string>
+    <string name="notify_hw">Assignment &amp; Team Project notify</string>
+    <string name="notify_lec">Lecture notify</string>
+    <string name="notify_zoom">Zoom notify</string>
+    <string name="notify_exam">Exam notify</string>
+
+    <string name="pref_hour_format">%1$dh</string>
+    <string name="pref_minute_format">%1$dmin</string>
+
+    <string name="notify_hw_on">You will receive a notification %1$s hour(s) before the submission deadline.</string>
+    <string name="notify_hw_off">You will not receive a notification $1$s hour(s) before the submission deadline.</string>
+    <string name="notify_lec_on">You will receive a notification %1$s hour(s) before the course deadline.</string>
+    <string name="notify_lec_off">You will not receive a notification %1$s hour(s) before the course deadline.</string>
+    <string name="notify_zoom_on">You will receive a notification %1$s minutes before the zoom class starts.</string>
+    <string name="notify_zoom_off">You will not receive a notification %1$s minutes before the zoom class starts.</string>
+    <string name="notify_exam_on">You will receive a notification %1$s minutes before the exam starts.</string>
+    <string name="notify_exam_off">You will not receive a notification %1$s minutes before the exam starts.</string>
+    <string name="notify_all_off">You will not receive a notification.</string>
+
+    <string name="reminder_category">Reminder</string>
+    <string name="morning_reminder">Morning Reminder</string>
+    <string name="night_reminder">Night Reminder</string>
+    <string name="morning_reminder_time">Morning Reminder Time</string>
+    <string name="night_reminder_time">Night Reminder Time</string>
+    <string name="morning_reminder_desc_on">At morning, we will inform you of assignments or lectures with an impending deadline.</string>
+    <string name="morning_reminder_desc_off">At morning, we won\'t inform you of assignments or lectures with an impending deadline.</string>
+    <string name="night_reminder_desc_on">At night, we will inform you of assignments or lectures with an impending deadline.</string>
+    <string name="night_reminder_desc_off">At night, we won\'t inform you of assignments or lectures with an impending deadline.</string>
+
+    <!--Info Settings-->
+    <string name="app_version">Albatross Reminder Version</string>
+    <string name="dev_ienlab">Designed, Developed By ienlab\n(Sogang Univ. Art&amp;Technology 20 Ericano Rhee)</string>
+    <string name="update_log">Update log</string>
+    <string name="update_log_desc">Check new features from this version.</string>
+    <string name="ask_to_dev">Ask to Developer</string>
+    <string name="ask_to_dev_desc">Please send us bugs, questions, or your backup data in case of data aggregation errors!</string>
+    <string name="ask">Ask</string>
+    <string name="email_text">Albatross Reminder User Comment</string>
+    <string name="open_source_license">Open Source License</string>
+    <string name="pref_opens_exp">Licenses of Open Sources Used in App</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_desc">Check the privacy policy.</string>
+
+    <!--Review-->
+    <string name="review_title">Is this app useful?</string>
+    <string name="review_content">If you are satisfied, please leave a review and rating!</string>
 
     <!--Deadline Widget-->
     <string name="deadline_zoom_format">%1$d hours %2$d minutes left to start</string>
@@ -281,52 +234,5 @@
     <string name="deadline_format_past">%1$d hours %2$d minutes from deadline</string>
     <string name="no_unfinished">No incomplete assignments or lectures</string>
     <string name="deadline_widget_title">Deadline Widget</string>
-    <string name="mobon_media_code">albatross</string>
-
-    <!--PermissionActivity-->
-    <string name="permission_title">Permission to\nuse application</string>
-    <string name="permission_info">The application can be used even when the selection permission is denied, but some functions may be restricted..</string>
-    <string name="permission_location_title">Location (required)</string>
-    <string name="permission_location_summary">Used to record location after disconnecting from Bluetooth, in the background</string>
-    <string name="background_location_message"><![CDATA[You must change it to Always Allow in Permissions > Location to use it.]]></string>
-    <string name="permission_dnd_title">Access to Do Not Disturb (DND)</string>
-    <string name="permission_dnd_summary">For volume control, find OOO in the list and grant access.</string>
-    <string name="background_dnd_message"><![CDATA[You must change it to Always Allow in Permissions > Location to use it.]]></string>
-    <string name="permission_allow_msg">application can be used after permission is granted.</string>
-    <string name="no_gps_title">GPS not turned on</string>
-    <string name="no_gps_message">GPS is turned off, so the location of the Bluetooth device cannot be obtained. Please turn on GPS.</string>
-    <string name="gps_permission_title">Insufficient location permissions</string>
-    <string name="gps_permission_message">Insufficient location permissions to load the current location. Please set the location permission to always allow in settings.</string>
-    <string name="cannot_get_address">Cannot get address</string>
-    <string name="time_left_day">%1$dd left</string>
-    <string name="time_left_hour_min">%1$dh %2$dm left</string>
-    <string name="time_left_hour">%1$dh left</string>
-    <string name="time_left_min">%1$dm left</string>
-    <string name="time_past_day">%1$dd past</string>
-    <string name="time_past_hour_min">%1$dh %2$dm past</string>
-    <string name="time_past_hour">%1$dh past</string>
-    <string name="time_past_min">%1$dm past</string>
-    <string name="apmTimeFormat">h:mm a</string>
-
-    <string name="user_hello_morning">Good morning☀️</string>
-    <string name="user_hello_afternoon">Have a great lunch🍽️</string>
-    <string name="user_hello_evening">Good evening🎆</string>
-    <string name="user_hello_night">Sleep tight🌙</string>
-
-    <string name="event_count">You have %1$d todos today</string>
-    <string name="event_count_one">You have one todo today</string>
-    <string name="event_count_none">You have no todos today</string>
-
-    <string name="ask_to_save">Save?</string>
-    <string name="ask_to_save_message">Unsaved changes will be lost.</string>
-    <string name="not_save">Not save</string>
-    <string name="close">Close</string>
-    <string name="today">Today</string>
-    <string name="tomorrow">Tomorrow</string>
-    <string name="yesterday">Yesterday</string>
-    <string name="use_dynamic_colors">Use dynamic colors</string>
-    <string name="use_dynamic_colors_sum_off">Apply the default color throughout the app.</string>
-    <string name="use_dynamic_colors_sum_on">Apply dynamic colors throughout the app.</string>
-    <string name="no_todos">No todos</string>
 
 </resources>

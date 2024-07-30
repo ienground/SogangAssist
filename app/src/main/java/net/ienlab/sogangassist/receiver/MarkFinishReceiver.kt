@@ -6,40 +6,28 @@ import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.*
-import net.ienlab.sogangassist.constant.IntentID
-import net.ienlab.sogangassist.constant.IntentKey
-import net.ienlab.sogangassist.constant.NotificationId
-import net.ienlab.sogangassist.room.LMSDatabase
+import kotlinx.coroutines.flow.first
+import net.ienlab.sogangassist.constant.Intents
+import net.ienlab.sogangassist.constant.Notifications
+import net.ienlab.sogangassist.data.lms.LmsDatabase
 
 class MarkFinishReceiver : BroadcastReceiver() {
 
-    lateinit var nm: NotificationManager
+    private lateinit var nm: NotificationManager
+    private var lmsDatabase: LmsDatabase? = null
 
-    private var lmsDatabase: LMSDatabase? = null
-
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onReceive(context: Context, intent: Intent) {
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        lmsDatabase = LMSDatabase.getInstance(context)
+        lmsDatabase = LmsDatabase.getDatabase(context)
 
-        val id = intent.getLongExtra(IntentKey.ITEM_ID, -1)
+        val id = intent.getLongExtra(Intents.Key.ITEM_ID, -1)
 
-        if (id != -1L) {
-            GlobalScope.launch(Dispatchers.IO) {
-                val item = lmsDatabase?.getDao()?.get(id)
-                item?.let {
-                    it.isFinished = true
-                    lmsDatabase?.getDao()?.update(it)
+        CoroutineScope(Dispatchers.IO).launch {
+            val entity = lmsDatabase?.getDao()?.get(id)?.first() ?: return@launch
+            entity.isFinished = true
+            lmsDatabase?.getDao()?.upsert(entity)
 
-                    withContext(Dispatchers.Main) {
-                        LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(IntentID.MARKING_RESULT).apply {
-                            putExtra(IntentKey.ITEM_ID, id)
-                        })
-                    }
-                }
-            }
-
-            nm.cancel(NotificationId.TIME_REMINDER + id.toInt())
+            nm.cancel(Notifications.Id.TIME_REMINDER + id.toInt())
         }
     }
 }

@@ -1,150 +1,125 @@
 package net.ienlab.sogangassist.receiver
 
-import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.TAG
 import net.ienlab.sogangassist.activity.MainActivity
-import net.ienlab.sogangassist.activity.TAG
-import net.ienlab.sogangassist.constant.*
-import net.ienlab.sogangassist.room.LMSDatabase
-import net.ienlab.sogangassist.room.LMSEntity
-import net.ienlab.sogangassist.utils.MyUtils
-import net.ienlab.sogangassist.utils.MyUtils.Companion.timeZero
-import java.util.*
-import kotlin.collections.ArrayList
+import net.ienlab.sogangassist.constant.Intents
+import net.ienlab.sogangassist.constant.Notifications
+import net.ienlab.sogangassist.constant.PendingReq
+import net.ienlab.sogangassist.constant.Pref
+import net.ienlab.sogangassist.data.lms.Lms
+import net.ienlab.sogangassist.data.lms.LmsDatabase
+import net.ienlab.sogangassist.dataStore
+import net.ienlab.sogangassist.utils.Utils.timeInMillis
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
+import kotlin.math.abs
 
 class ReminderReceiver: BroadcastReceiver() {
-    @OptIn(DelicateCoroutinesApi::class)
+
+    private lateinit var nm: NotificationManager
+    private var lmsDatabase: LmsDatabase? = null
+
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d(TAG, "onReceive")
-        val sharedPreferences = context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
-        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val lmsDatabase = LMSDatabase.getInstance(context)
+        nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        lmsDatabase = LmsDatabase.getDatabase(context)
 
-        val type = intent.getIntExtra(TYPE, -1)
+        val datastore = context.dataStore
+        val type = intent.getIntExtra(Intents.Key.REMINDER_TYPE, -1)
+        val typeName = mapOf(
+            Lms.Type.LESSON to Pair(context.getString(R.string.daily_reminder_class), context.getString(R.string.classtime)),
+            Lms.Type.SUP_LESSON to Pair(context.getString(R.string.daily_reminder_sup), context.getString(R.string.sup_classtime)),
+            Lms.Type.HOMEWORK to Pair(context.getString(R.string.daily_reminder_hw), context.getString(R.string.assignment)),
+            Lms.Type.ZOOM to Pair(context.getString(R.string.daily_reminder_zoom), context.getString(R.string.zoom)),
+            Lms.Type.TEAMWORK to Pair(context.getString(R.string.daily_reminder_teamwork), context.getString(R.string.team_project)),
+            Lms.Type.EXAM to Pair(context.getString(R.string.daily_reminder_exam), context.getString(R.string.exam)),
+        )
+        Dlog.d(TAG, "$type")
 
-        nm.createNotificationChannel(NotificationChannel(ChannelId.DAILY_REMINDER_ID, context.getString(R.string.channel_daily_reminder), NotificationManager.IMPORTANCE_HIGH))
+        nm.createNotificationChannel(NotificationChannel(Notifications.Channel.DAILY_REMINDER_ID, context.getString(
+            R.string.channel_daily_reminder), NotificationManager.IMPORTANCE_HIGH))
 
-        GlobalScope.launch(Dispatchers.IO) {
-            val calendar = Calendar.getInstance().timeZero()
-            val data = lmsDatabase?.getDao()?.getByEndTime(calendar.timeInMillis, calendar.timeInMillis + AlarmManager.INTERVAL_DAY)
-            val classes: ArrayList<String> = arrayListOf()
-            val supClasses: ArrayList<String> = arrayListOf()
-            val homeworks: ArrayList<String> = arrayListOf()
-            val zooms: ArrayList<String> = arrayListOf()
-            val teamworks: ArrayList<String> = arrayListOf()
-            val tests: ArrayList<String> = arrayListOf()
+        CoroutineScope(Dispatchers.IO).launch {
+            val morningReminder = datastore.data.map { it[Pref.Key.TIME_MORNING_REMINDER] ?: Pref.Default.TIME_MORNING_REMINDER }.first()
+            val nightReminder = datastore.data.map { it[Pref.Key.TIME_NIGHT_REMINDER] ?: Pref.Default.TIME_NIGHT_REMINDER }.first()
+            val morningEnabled = datastore.data.map { it[Pref.Key.ALLOW_MORNING_REMINDER] ?: Pref.Default.ALLOW_MORNING_REMINDER }.first()
+            val nightEnabled = datastore.data.map { it[Pref.Key.ALLOW_NIGHT_REMINDER] ?: Pref.Default.ALLOW_NIGHT_REMINDER }.first()
 
-            if (data != null) {
-                for (d in data) {
-                    if (!d.isFinished) {
-                        when (d.type) {
-                            LMSEntity.TYPE_LESSON -> classes.add(context.getString(R.string.reminder_class_format, d.className, d.week, d.lesson))
-                            LMSEntity.TYPE_SUP_LESSON -> supClasses.add(context.getString(R.string.reminder_class_format, d.className, d.week, d.lesson))
-                            LMSEntity.TYPE_HOMEWORK -> homeworks.add(context.getString(R.string.reminder_zoom_format, d.className, d.homework_name))
-                            LMSEntity.TYPE_ZOOM -> zooms.add(context.getString(R.string.reminder_zoom_format, d.className, d.homework_name))
-                            LMSEntity.TYPE_TEAMWORK -> teamworks.add(context.getString(R.string.reminder_zoom_format, d.className, d.homework_name))
-                            LMSEntity.TYPE_EXAM -> tests.add(context.getString(R.string.reminder_zoom_format, d.className, d.homework_name))
-                        }
+            val morningDate = LocalDateTime.now().withHour(morningReminder / 60).withMinute(morningReminder % 60).withSecond(0)
+            val nightDate = LocalDateTime.now().withHour(nightReminder / 60).withMinute(nightReminder % 60).withSecond(0)
+
+
+            val entities = lmsDatabase?.getDao()?.getByEndTime(LocalDate.now().timeInMillis(), LocalDate.now().plusDays(1).timeInMillis())?.first() ?: return@launch
+            val groups = entities.groupBy { it.type }.map { (type, items) ->
+                type to items.map {
+                    when (type) {
+                        Lms.Type.LESSON -> context.getString(R.string.reminder_class_format, it.className, it.week, it.lesson)
+                        Lms.Type.SUP_LESSON -> context.getString(R.string.reminder_class_format, it.className, it.week, it.lesson)
+                        Lms.Type.HOMEWORK -> context.getString(R.string.reminder_zoom_format, it.className, it.homework_name)
+                        Lms.Type.ZOOM -> context.getString(R.string.reminder_zoom_format, it.className, it.homework_name)
+                        Lms.Type.TEAMWORK -> context.getString(R.string.reminder_zoom_format, it.className, it.homework_name)
+                        Lms.Type.EXAM -> context.getString(R.string.reminder_zoom_format, it.className, it.homework_name)
+                        else -> ""
                     }
+                }
+            }.toMap()
+
+            val content = arrayListOf<String>()
+            val bigTextContent = arrayListOf<String>()
+
+            for ((t, items) in groups) {
+                typeName[t]?.let {
+                    content.add(String.format(it.first, items.size))
+                    bigTextContent.add("<${it.second}>\n${items.joinToString("\n")}")
                 }
             }
 
-            val content: ArrayList<String> = arrayListOf()
-            val bigTextContent: ArrayList<String> = arrayListOf()
-            if (classes.isNotEmpty()) {
-                content.add(context.getString(R.string.daily_reminder_class, classes.size))
-                bigTextContent.add("<${context.getString(R.string.classtime)}>\n${classes.joinToString("\n")}")
+            val notification = NotificationCompat.Builder(context, Notifications.Channel.DAILY_REMINDER_ID).apply {
+                setContentText(content.joinToString(", "))
+                setStyle(NotificationCompat.BigTextStyle()
+                    .bigText(context.getString(R.string.daily_reminder_content_format, content.joinToString(", "), bigTextContent.joinToString("\n\n")))
+                )
+                setSmallIcon(R.drawable.ic_reminder_icon)
+                setAutoCancel(true)
+                color = ContextCompat.getColor(context, R.color.color_sogang)
             }
-            if (supClasses.isNotEmpty()) {
-                content.add(context.getString(R.string.daily_reminder_sup, supClasses.size))
-                bigTextContent.add("<${context.getString(R.string.sup_classtime)}>\n${supClasses.joinToString("\n")}")
-            }
-            if (homeworks.isNotEmpty()) {
-                content.add(context.getString(R.string.daily_reminder_hw, homeworks.size))
-                bigTextContent.add("<${context.getString(R.string.assignment)}>\n${homeworks.joinToString("\n")}")
-            }
-            if (zooms.isNotEmpty()) {
-                content.add(context.getString(R.string.daily_reminder_zoom, zooms.size))
-                bigTextContent.add("<${context.getString(R.string.zoom)}>\n${zooms.joinToString("\n")}")
-            }
-            if (teamworks.isNotEmpty()) {
-                content.add(context.getString(R.string.daily_reminder_teamwork, teamworks.size))
-                bigTextContent.add("<${context.getString(R.string.team_project)}>\n${zooms.joinToString("\n")}")
-            }
-            if (tests.isNotEmpty()) {
-                content.add(context.getString(R.string.daily_reminder_exam, tests.size))
-                bigTextContent.add("<${context.getString(R.string.exam)}>\n${zooms.joinToString("\n")}")
-            }
-
-            val morningData = sharedPreferences.getInt(SharedKey.TIME_MORNING_REMINDER, DefaultValue.TIME_MORNING_REMINDER)
-            val nightData = sharedPreferences.getInt(SharedKey.TIME_NIGHT_REMINDER, DefaultValue.TIME_NIGHT_REMINDER)
-            val dndStartData = sharedPreferences.getInt(SharedKey.DND_START_TIME, DefaultValue.DND_START_TIME)
-            val dndEndData = sharedPreferences.getInt(SharedKey.DND_END_TIME, DefaultValue.DND_END_TIME)
-            val now = Calendar.getInstance()
-            val nowInt = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
+            val launchIntent = Intent(context, MainActivity::class.java)
 
             when (type) {
-                MORNING -> {
-                    if (sharedPreferences.getBoolean(SharedKey.ALLOW_MORNING_REMINDER, true) && nowInt >= morningData - 2 && nowInt <= morningData + 2) {
-                        NotificationCompat.Builder(context, ChannelId.DAILY_REMINDER_ID).apply {
-                            setContentTitle(context.getString(R.string.daily_reminder_title_morning))
-                            setContentText(content.joinToString(", "))
-                            setStyle(NotificationCompat.BigTextStyle()
-                                .bigText(context.getString(R.string.daily_reminder_content_format, content.joinToString(", "), bigTextContent.joinToString("\n\n")))
-                            )
-                            setContentIntent(PendingIntent.getActivity(context, PendingIntentReqCode.MORNING_REMINDER_LAUNCH, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
-                            setSmallIcon(R.drawable.ic_reminder_icon)
-                            setAutoCancel(true)
-                            color = ContextCompat.getColor(context, R.color.colorPrimary)
+                Intents.Value.ReminderType.MORNING -> {
+                    if (morningEnabled && abs(ChronoUnit.MINUTES.between(LocalDateTime.now(), morningDate)) <= 1) {
+                        notification
+                            .setContentTitle(context.getString(R.string.daily_reminder_title_morning))
+                            .setContentIntent(PendingIntent.getActivity(context, PendingReq.MORNING_REMINDER_LAUNCH, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 
-                            if (content.isNotEmpty() && !sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) && (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt))) {
-                                nm.notify(NotificationId.REMINDER, build())
-                            }
-                        }
+                        nm.notify(Notifications.Id.REMINDER, notification.build())
                     }
                 }
-                NIGHT -> {
-                    if (sharedPreferences.getBoolean(SharedKey.ALLOW_NIGHT_REMINDER, true) && nowInt >= nightData - 2 && nowInt <= nightData + 2) {
-                        NotificationCompat.Builder(context, ChannelId.DAILY_REMINDER_ID).apply {
-                            setContentTitle(context.getString(R.string.daily_reminder_title_night))
-                            setContentText(content.joinToString(", "))
-                            setStyle(NotificationCompat.BigTextStyle()
-                                .bigText(context.getString(R.string.daily_reminder_content_format, content.joinToString(", "), bigTextContent.joinToString("\n\n")))
-                            )
-                            setContentIntent(PendingIntent.getActivity(context, PendingIntentReqCode.NIGHT_REMINDER_LAUNCH, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
-                            setSmallIcon(R.drawable.ic_reminder_icon)
-                            setAutoCancel(true)
-                            color = ContextCompat.getColor(context, R.color.colorPrimary)
+                Intents.Value.ReminderType.NIGHT -> {
+                    if (nightEnabled && abs(ChronoUnit.MINUTES.between(LocalDateTime.now(), nightDate)) <= 1) {
+                        notification
+                            .setContentTitle(context.getString(R.string.daily_reminder_title_night))
+                            .setContentIntent(PendingIntent.getActivity(context, PendingReq.NIGHT_REMINDER_LAUNCH, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
 
-                            if (content.isNotEmpty() && (!sharedPreferences.getBoolean(SharedKey.DND_CHECK, false) && (!MyUtils.isDNDTime(dndStartData, dndEndData, nowInt)))) {
-                                nm.notify(NotificationId.REMINDER, build())
-                            }
-                        }
+                        nm.notify(Notifications.Id.REMINDER, notification.build())
                     }
                 }
             }
         }
-
-    }
-
-    companion object {
-        const val TYPE = "type"
-
-        const val MORNING = 0
-        const val NIGHT = 1
     }
 }

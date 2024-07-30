@@ -1,1 +1,3 @@
-- Android 12 compatible
+- UI tweaks<br>
+- Performance and animation improvements<br>
+- Supports Tablet UI
