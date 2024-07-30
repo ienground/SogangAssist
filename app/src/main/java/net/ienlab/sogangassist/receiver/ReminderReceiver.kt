@@ -60,8 +60,8 @@ class ReminderReceiver: BroadcastReceiver() {
             val morningEnabled = datastore.data.map { it[Pref.Key.ALLOW_MORNING_REMINDER] ?: Pref.Default.ALLOW_MORNING_REMINDER }.first()
             val nightEnabled = datastore.data.map { it[Pref.Key.ALLOW_NIGHT_REMINDER] ?: Pref.Default.ALLOW_NIGHT_REMINDER }.first()
 
-            val morningDate = LocalDateTime.now().withHour(morningReminder / 60).withMinute(morningReminder % 60)
-            val nightDate = LocalDateTime.now().withHour(nightReminder / 60).withMinute(nightReminder % 60)
+            val morningDate = LocalDateTime.now().withHour(morningReminder / 60).withMinute(morningReminder % 60).withSecond(0)
+            val nightDate = LocalDateTime.now().withHour(nightReminder / 60).withMinute(nightReminder % 60).withSecond(0)
 
 
             val entities = lmsDatabase?.getDao()?.getByEndTime(LocalDate.now().timeInMillis(), LocalDate.now().plusDays(1).timeInMillis())?.first() ?: return@launch

@@ -243,7 +243,6 @@ fun LmsEventRow(
 
     val fontWeight = if (!item.isFinished) FontWeight.Bold else FontWeight.Normal
     val fontColor by animateColorAsState(targetValue = if (!item.isFinished) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.outline, label = "font_color")
-    val textDecoration = TextDecoration.None
 
     ElevatedCard(
         modifier = modifier
@@ -274,7 +273,6 @@ fun LmsEventRow(
                         else -> item.homeworkName
                     },
                     fontSize = 20.sp,
-                    style = TextStyle(textDecoration = textDecoration),
                     fontWeight = fontWeight,
                     color = fontColor,
                     maxLines = 1,
@@ -320,6 +318,8 @@ fun LmsEventRow(
                     Text(
                         text = item.endTime.format(apmFormat),
                         fontSize = 18.sp,
+                        fontWeight = fontWeight,
+                        color = fontColor,
                         modifier = Modifier.alignByBaseline()
                     )
                 }

@@ -60,6 +60,7 @@ fun RootNavigationGraph(
             route = HomeDestination.route
         ) {
             HomeScreen(
+                windowSize = windowSize,
                 navigateToItemDetail = { id, date ->navController.navigate("${LmsEditDestination.route}?${LmsEditDestination.itemIdArg}=${id}&${LmsEditDestination.initDateArg}=${date}") },
                 navigateToSettings = { navController.navigate(SettingsDestination.route) }
             )
@@ -70,6 +71,7 @@ fun RootNavigationGraph(
             arguments = listOf(navArgument(LmsEditDestination.itemIdArg) { type = NavType.LongType} )
         ) {
             LmsEditScreen(
+                windowSize = windowSize,
                 navigateBack = { navController.popBackStack() }
             )
         }

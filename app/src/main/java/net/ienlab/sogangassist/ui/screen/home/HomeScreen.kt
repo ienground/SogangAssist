@@ -12,6 +12,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Alarm
+import androidx.compose.material.icons.rounded.BatterySaver
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.NotificationAdd
 import androidx.compose.material.icons.rounded.Notifications
@@ -37,6 +39,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -55,6 +59,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,8 +70,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.gigamole.composefadingedges.FadingEdgesGravity
+import com.gigamole.composefadingedges.content.FadingEdgesContentType
+import com.gigamole.composefadingedges.content.scrollconfig.FadingEdgesScrollConfig
+import com.gigamole.composefadingedges.horizontalFadingEdges
 import kotlinx.coroutines.flow.map
+import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.TAG
 import net.ienlab.sogangassist.constant.Pref
 import net.ienlab.sogangassist.data.Permissions
 import net.ienlab.sogangassist.dataStore
@@ -87,6 +98,7 @@ import net.ienlab.sogangassist.ui.utils.PermissionDialog
 import net.ienlab.sogangassist.ui.utils.SingleRowCalendar
 import net.ienlab.sogangassist.ui.utils.Utils.UpdateEffect
 import net.ienlab.sogangassist.ui.utils.Utils.lastVisibleItemIndex
+import net.ienlab.sogangassist.ui.utils.previewDeviceSize
 import net.ienlab.sogangassist.utils.Utils.checkPermissions
 import net.ienlab.sogangassist.utils.Utils.fromHtml
 import net.ienlab.sogangassist.utils.Utils.readTextFromRaw
@@ -102,6 +114,7 @@ object HomeDestination: NavigationDestination {
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    windowSize: WindowSizeClass,
     navigateToItemDetail: (Long, LocalDate) -> Unit,
     navigateToSettings: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.factory)
@@ -134,7 +147,7 @@ fun HomeScreen(
             Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE
         )),
         Permissions(icon = Icons.Rounded.NotificationAdd, title = stringResource(id = R.string.post_notification), content = stringResource(id = R.string.post_notification_desc), listOf(Manifest.permission.POST_NOTIFICATIONS)),
-        Permissions(icon = Icons.Rounded.Notifications, title = stringResource(id = R.string.ignore_battery_optimize), content = stringResource(id = R.string.ignore_battery_optimize_desc), listOf(
+        Permissions(icon = Icons.Rounded.BatterySaver, title = stringResource(id = R.string.ignore_battery_optimize), content = stringResource(id = R.string.ignore_battery_optimize_desc), listOf(
             Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
         )),
     )
@@ -145,7 +158,6 @@ fun HomeScreen(
             if (currentVersion > lastVersion && !isFirstLaunch) {
                 context.dataStore.edit { it[Pref.Key.LAST_VERSION] = currentVersion }
                 showChangelogDialog = true
-
             }
         }
     }
@@ -199,6 +211,7 @@ fun HomeScreen(
         modifier = modifier.statusBarsPadding()
     ) {
         HomeScreenBody(
+            windowSize = windowSize,
             uiState = viewModel.uiState,
             uiStateList = uiStateList,
             onItemValueChanged = viewModel::updateUiState,
@@ -242,6 +255,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenBody(
     modifier: Modifier = Modifier,
+    windowSize: WindowSizeClass,
     uiState: HomeUiState,
     uiStateList: HomeUiStateList,
     onItemValueChanged: (HomeDetails) -> Unit,
@@ -251,15 +265,10 @@ fun HomeScreenBody(
     calendarScrollState: LazyListState
 ) {
     val navController = rememberNavController()
-
     LaunchedEffect(uiState.item.selectedDate) {
         if (uiState.item.selectedDate.dayOfWeek.value % 7 !in calendarScrollState.firstVisibleItemIndex .. calendarScrollState.lastVisibleItemIndex()) {
             calendarScrollState.animateScrollToItem(uiState.item.selectedDate.dayOfWeek.value % 7)
         }
-    }
-
-    LaunchedEffect(uiState.item.currentMonth) {
-        onMonthChanged()
     }
 
     UpdateEffect(uiState.item.selectedDate) {
@@ -267,93 +276,188 @@ fun HomeScreenBody(
         navController.navigate("${LmsListDestination.route}?${LmsListDestination.timeArg}=${uiState.item.selectedDate.timeInMillis()}")
     }
 
-    Column(
-        modifier = modifier
-    ) {
-        val angle by animateFloatAsState(targetValue = if (uiState.item.isCalendarExpand) 180f else 0f, label = "angle", animationSpec = spring())
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .clickable { onItemValueChanged(uiState.item.copy(isCalendarExpand = !uiState.item.isCalendarExpand)) }
-        ) {
-            Text(
-                text = uiState.item.currentMonth.month.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault()),
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .weight(1f)
-            )
-            IconButton(onClick = {
-                onItemValueChanged(uiState.item.copy(isCalendarExpand = !uiState.item.isCalendarExpand))
-            }) {
-                Icon(
-                    imageVector = Icons.Rounded.KeyboardArrowDown,
-                    contentDescription = null,
-                    modifier = Modifier.rotate(angle)
-                )
-            }
-        }
-
-        AnimatedVisibility(
-            visible = uiState.item.isCalendarExpand,
-            enter = expandVertically(),
-            exit = shrinkVertically()
-        ) {
-            HorizontalCalendar(
-                currentDate = uiState.item.selectedDate,
-                selectedDate = uiState.item.selectedDate,
-                onSelectedDate = {
-                    onItemValueChanged(uiState.item.copy(selectedDate = it))
-                },
-                onAddMonth = {
-                    onItemValueChanged(uiState.item.copy(currentMonth = uiState.item.currentMonth.plusMonths(it)))
-                },
-                lmsList = uiStateList.lmsList
-            )
-        }
-        SingleRowCalendar(
-            scrollState = calendarScrollState,
-            currentMonth = uiState.item.currentMonth,
-            selectedDate = uiState.item.selectedDate,
-            onSelectedDate = {
-                onItemValueChanged(uiState.item.copy(selectedDate = it))
-            },
-            lmsMap = uiStateList.lmsList.groupBy { it.endTime.toLocalDate() },
-            modifier = Modifier.padding(top = 16.dp)
-        )
-
-        if (!LocalInspectionMode.current)
-        NavHost(
-            navController = navController,
-            startDestination = "${LmsListDestination.route}?${LmsListDestination.timeArg}=${LocalDate.now().timeInMillis()}",
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            composable(
-                route = LmsListDestination.routeWithArgs,
-                arguments = listOf(navArgument(LmsListDestination.timeArg) { type = NavType.LongType }),
-                enterTransition = { fadeIn(tween(700)) },
-                exitTransition = { fadeOut(tween(700)) }
-            ) {
-                LmsList(
-                    navigateToItemDetail = navigateToItemDetail,
-                    setEnabledSize = setEnabledSize
-                )
-            }
-        }
-
+    LaunchedEffect(uiState.item.currentMonth) {
+        onMonthChanged()
     }
+
+    when (windowSize.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+            Column(
+                modifier = modifier
+            ) {
+                val angle by animateFloatAsState(targetValue = if (uiState.item.isCalendarExpand) 180f else 0f, label = "angle", animationSpec = spring())
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable { onItemValueChanged(uiState.item.copy(isCalendarExpand = !uiState.item.isCalendarExpand)) }
+                ) {
+                    Text(
+                        text = uiState.item.currentMonth.month.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault()),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .weight(1f)
+                    )
+                    IconButton(onClick = {
+                        onItemValueChanged(uiState.item.copy(isCalendarExpand = !uiState.item.isCalendarExpand))
+                    }) {
+                        Icon(
+                            imageVector = Icons.Rounded.KeyboardArrowDown,
+                            contentDescription = null,
+                            modifier = Modifier.rotate(angle)
+                        )
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = uiState.item.isCalendarExpand,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    HorizontalCalendar(
+                        currentDate = uiState.item.selectedDate,
+                        selectedDate = uiState.item.selectedDate,
+                        onSelectedDate = {
+                            onItemValueChanged(uiState.item.copy(selectedDate = it))
+                        },
+                        onAddMonth = {
+                            onItemValueChanged(uiState.item.copy(currentMonth = uiState.item.currentMonth.plusMonths(it)))
+                        },
+                        lmsList = uiStateList.lmsList
+                    )
+                }
+                SingleRowCalendar(
+                    windowSize = windowSize,
+                    scrollState = calendarScrollState,
+                    currentMonth = uiState.item.currentMonth,
+                    selectedDate = uiState.item.selectedDate,
+                    onSelectedDate = {
+                        onItemValueChanged(uiState.item.copy(selectedDate = it))
+                    },
+                    lmsMap = uiStateList.lmsList.groupBy { it.endTime.toLocalDate() },
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+
+                if (!LocalInspectionMode.current)
+                NavHost(
+                    navController = navController,
+                    startDestination = "${LmsListDestination.route}?${LmsListDestination.timeArg}=${LocalDate.now().timeInMillis()}",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    composable(
+                        route = LmsListDestination.routeWithArgs,
+                        arguments = listOf(navArgument(LmsListDestination.timeArg) { type = NavType.LongType }),
+                        enterTransition = { fadeIn(tween(700)) },
+                        exitTransition = { fadeOut(tween(700)) }
+                    ) {
+                        LmsList(
+                            navigateToItemDetail = navigateToItemDetail,
+                            setEnabledSize = setEnabledSize
+                        )
+                    }
+                }
+            }
+        }
+        WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {
+            Row(
+                modifier = modifier
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.weight(0.5f)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = uiState.item.currentMonth.month.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault()),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .weight(1f)
+                        )
+                    }
+                    HorizontalCalendar(
+                        currentDate = uiState.item.selectedDate,
+                        selectedDate = uiState.item.selectedDate,
+                        onSelectedDate = {
+                            onItemValueChanged(uiState.item.copy(selectedDate = it))
+                        },
+                        onAddMonth = {
+                            onItemValueChanged(uiState.item.copy(currentMonth = uiState.item.currentMonth.plusMonths(it)))
+                        },
+                        lmsList = uiStateList.lmsList,
+                        modifier = Modifier
+                            .horizontalFadingEdges(
+                                gravity = FadingEdgesGravity.End,
+                                length = 16.dp,
+                            )
+                    )
+                }
+                Column(
+                    modifier = Modifier.weight(0.5f)
+                ) {
+                    SingleRowCalendar(
+                        windowSize = windowSize,
+                        scrollState = calendarScrollState,
+                        currentMonth = uiState.item.currentMonth,
+                        selectedDate = uiState.item.selectedDate,
+                        onSelectedDate = {
+                            onItemValueChanged(uiState.item.copy(selectedDate = it))
+                        },
+                        lmsMap = uiStateList.lmsList.groupBy { it.endTime.toLocalDate() },
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .horizontalFadingEdges(
+                                gravity = FadingEdgesGravity.Start,
+                                length = 16.dp,
+                                contentType = FadingEdgesContentType.Dynamic.Lazy.List(
+                                    scrollConfig = FadingEdgesScrollConfig.Full(),
+                                    state = calendarScrollState
+                                )
+                            )
+                    )
+
+                    if (!LocalInspectionMode.current)
+                    NavHost(
+                        navController = navController,
+                        startDestination = "${LmsListDestination.route}?${LmsListDestination.timeArg}=${LocalDate.now().timeInMillis()}",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        composable(
+                            route = LmsListDestination.routeWithArgs,
+                            arguments = listOf(navArgument(LmsListDestination.timeArg) { type = NavType.LongType }),
+                            enterTransition = { fadeIn(tween(700)) },
+                            exitTransition = { fadeOut(tween(700)) }
+                        ) {
+                            LmsList(
+                                navigateToItemDetail = navigateToItemDetail,
+                                setEnabledSize = setEnabledSize
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 
+@Preview(showSystemUi = true, device = Devices.PIXEL_TABLET)
 @Preview(showSystemUi = true)
 @Composable
 private fun HomeScreenPreview() {
     AppTheme {
         HomeScreenBody(
+            windowSize = previewDeviceSize(),
             uiState = HomeUiState(
                 item = HomeDetails(
                     isCalendarExpand = true

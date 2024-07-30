@@ -45,7 +45,10 @@ import com.jamal.composeprefs3.ui.prefs.SwitchPref
 import com.jamal.composeprefs3.ui.prefs.TextPref
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.TAG
+import net.ienlab.sogangassist.constant.Intents
 import net.ienlab.sogangassist.constant.Pref
 import net.ienlab.sogangassist.dataStore
 import net.ienlab.sogangassist.icon.MyIconPack
@@ -97,10 +100,10 @@ fun SettingsNotificationsScreen(
     val nightReminderTime by datastore.data.map { it[Pref.Key.TIME_NIGHT_REMINDER] ?: Pref.Default.TIME_NIGHT_REMINDER }.collectAsState(initial = Pref.Default.TIME_NIGHT_REMINDER)
 
     UpdateEffect(enableMorningReminder, morningReminderTime) {
-        setDayReminder(context, enableMorningReminder, enableNightReminder, morningReminderTime, nightReminderTime)
+        setDayReminder(context, Intents.Value.ReminderType.MORNING, enableMorningReminder, morningReminderTime)
     }
     UpdateEffect(enableNightReminder, nightReminderTime) {
-        setDayReminder(context, enableMorningReminder, enableNightReminder, morningReminderTime, nightReminderTime)
+        setDayReminder(context, Intents.Value.ReminderType.NIGHT, enableNightReminder, nightReminderTime)
     }
 
     Column(

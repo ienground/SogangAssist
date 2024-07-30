@@ -18,6 +18,8 @@ import net.ienlab.sogangassist.activity.*
 import net.ienlab.sogangassist.constant.*
 import net.ienlab.sogangassist.data.lms.LmsDatabase
 import net.ienlab.sogangassist.data.lms.Lms
+import net.ienlab.sogangassist.data.lms.LmsOfflineRepository
+import net.ienlab.sogangassist.data.lms.LmsRepository
 import net.ienlab.sogangassist.utils.Utils.checkTimeRange
 import net.ienlab.sogangassist.utils.Utils.notifyToList
 import net.ienlab.sogangassist.utils.Utils.parseLongToLocalDateTime
@@ -28,13 +30,13 @@ import kotlin.math.abs
 class TimeReceiver : BroadcastReceiver() {
 
     private lateinit var nm: NotificationManager
-    private var lmsDatabase: LmsDatabase? = null
+    private lateinit var lmsRepository: LmsRepository
 
     override fun onReceive(context: Context, intent: Intent) {
         val datastore = context.dataStore
 
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        lmsDatabase = LmsDatabase.getDatabase(context)
+        lmsRepository = LmsOfflineRepository(LmsDatabase.getDatabase(context).getDao())
 
         nm.createNotificationChannel(NotificationChannel(Notifications.Channel.DEFAULT_ID, context.getString(R.string.channel_name), NotificationManager.IMPORTANCE_HIGH))
         nm.createNotificationChannel(NotificationChannel(Notifications.Channel.TIME_REMINDER_ID, context.getString(R.string.channel_time_reminder), NotificationManager.IMPORTANCE_HIGH))
@@ -43,6 +45,8 @@ class TimeReceiver : BroadcastReceiver() {
         val hour = intent.getIntExtra(Intents.Key.HOUR, -1)
         val minute = intent.getIntExtra(Intents.Key.MINUTE, -1)
         val triggerTime = parseLongToLocalDateTime(intent.getLongExtra(Intents.Key.TRIGGER, -1))
+
+        Dlog.d(TAG, "timeReceiver: ${id} ${hour} ${minute} ${triggerTime}")
 
         val hours = listOf(1, 2, 6, 12, 24)
         val minutes = listOf(3, 5, 10, 20, 30)
@@ -57,7 +61,7 @@ class TimeReceiver : BroadcastReceiver() {
             val dndEndTime = datastore.data.map { it[Pref.Key.DND_END_TIME] ?: Pref.Default.DND_END_TIME }.first()
             val isDndEnabled = datastore.data.map { it[Pref.Key.DND_CHECK] ?: Pref.Default.DND_CHECK }.first()
 
-            val entity = lmsDatabase?.getDao()?.get(id)?.first() ?: return@launch
+            val entity = lmsRepository.getStream(id).first() ?: return@launch
             val launchIntent = Intent(context, MainActivity::class.java).apply { putExtra(Intents.Key.ITEM_ID, id) }
             val launchPending = PendingIntent.getActivity(context, PendingReq.REMINDER + id.toInt(), launchIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             val markIntent = Intent(context, MarkFinishReceiver::class.java).apply { putExtra(Intents.Key.ITEM_ID, id) }

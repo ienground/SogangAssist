@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -31,6 +33,8 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastForEach
 import androidx.core.util.toRange
 import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.TAG
@@ -63,6 +68,7 @@ import java.util.Locale
 @Composable
 fun SingleRowCalendar(
     modifier: Modifier = Modifier,
+    windowSize: WindowSizeClass,
     scrollState: LazyListState,
     currentMonth: YearMonth,
     selectedDate: LocalDate,
@@ -77,7 +83,11 @@ fun SingleRowCalendar(
         week = _week
     }
 
-    LazyRow(state = scrollState, modifier = modifier) {
+    LazyRow(
+        state = scrollState,
+        horizontalArrangement = Arrangement.spacedBy(if (windowSize.widthSizeClass == WindowWidthSizeClass.Compact) 0.dp else 16.dp),
+        modifier = modifier
+    ) {
         items(items = week, key = { it.dayOfWeek }) { date ->
             SingleRowCalendarItem(
                 date = date,
@@ -85,11 +95,11 @@ fun SingleRowCalendar(
                 selectedDate = selectedDate,
                 onSelectedDate = onSelectedDate,
                 count = lmsMap[date]?.filter { !it.isFinished }?.size ?: 0,
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier.padding(start = if (windowSize.widthSizeClass == WindowWidthSizeClass.Compact) 16.dp else 0.dp)
             )
         }
         item {
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(if (windowSize.widthSizeClass == WindowWidthSizeClass.Compact) 16.dp else 0.dp))
         }
     }
 }
@@ -159,6 +169,7 @@ private fun SingleRowCalendarPreview() {
     AppTheme {
         Column {
             SingleRowCalendar(
+                windowSize = previewDeviceSize(),
                 scrollState = rememberLazyListState(),
                 currentMonth = YearMonth.now(),
                 selectedDate = LocalDate.now(),

@@ -39,6 +39,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -47,6 +48,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,6 +60,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -76,6 +80,7 @@ import net.ienlab.sogangassist.ui.utils.DeleteAlertDialog
 import net.ienlab.sogangassist.ui.utils.TimePickerDialog
 import net.ienlab.sogangassist.ui.utils.Utils.getDateLabel
 import net.ienlab.sogangassist.ui.utils.Utils.rememberMyDatePickerState
+import net.ienlab.sogangassist.ui.utils.previewDeviceSize
 import net.ienlab.sogangassist.utils.Utils.parseLongToLocalDate
 import net.ienlab.sogangassist.utils.Utils.timeInMillis
 import java.time.format.DateTimeFormatter
@@ -91,6 +96,7 @@ object LmsEditDestination: NavigationDestination {
 @Composable
 fun LmsEditScreen(
     modifier: Modifier = Modifier,
+    windowSize: WindowSizeClass,
     navigateBack: () -> Unit,
     viewModel: LmsEditViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
@@ -171,6 +177,7 @@ fun LmsEditScreen(
         modifier = modifier,
     ) {
         LmsEditScreenBody(
+            windowSize = windowSize,
             uiState = viewModel.uiState,
             onItemValueChanged = viewModel::updateUiState,
             classNames = viewModel.classNames,
@@ -299,9 +306,69 @@ fun LmsEditScreen(
 @Composable
 fun LmsEditScreenBody(
     modifier: Modifier = Modifier,
+    windowSize: WindowSizeClass,
     uiState: LmsUiState,
     onItemValueChanged: (LmsDetails) -> Unit,
     classNames: List<String>
+) {
+    when (windowSize.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = modifier
+            ) {
+                TypeSelectChips(
+                    uiState = uiState,
+                    onItemValueChanged = onItemValueChanged,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                BasicEdit(
+                    uiState = uiState,
+                    onItemValueChanged = onItemValueChanged,
+                    classNames = classNames
+                )
+                HorizontalDivider()
+                DetailEdit(
+                    uiState = uiState,
+                    onItemValueChanged = onItemValueChanged
+                )
+            }
+        }
+        WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = modifier
+            ) {
+                TypeSelectChips(
+                    uiState = uiState,
+                    onItemValueChanged = onItemValueChanged,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Row(
+                    modifier = Modifier
+                ) {
+                    BasicEdit(
+                        uiState = uiState,
+                        onItemValueChanged = onItemValueChanged,
+                        classNames = classNames,
+                        modifier = Modifier.weight(0.5f)
+                    )
+                    DetailEdit(
+                        uiState = uiState,
+                        onItemValueChanged = onItemValueChanged,
+                        modifier = Modifier.weight(0.5f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TypeSelectChips(
+    modifier: Modifier = Modifier,
+    uiState: LmsUiState,
+    onItemValueChanged: (LmsDetails) -> Unit,
 ) {
     val types = mapOf(
         Lms.Type.LESSON to stringResource(id = R.string.classtime),
@@ -311,32 +378,42 @@ fun LmsEditScreenBody(
         Lms.Type.TEAMWORK to stringResource(id = R.string.team_project),
         Lms.Type.EXAM to stringResource(id = R.string.exam),
     )
+    LazyRow(
+        modifier = modifier
+    ) {
+        item {
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+        items(items = types.toList(), key = { it.first }) { (key, value) ->
+            FilterChip(
+                selected = uiState.item.type == key,
+                label = { Text(text = value) },
+                onClick = { onItemValueChanged(uiState.item.copy(type = key)) },
+                enabled = !uiState.item.isFinished,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BasicEdit(
+    modifier: Modifier = Modifier,
+    uiState: LmsUiState,
+    onItemValueChanged: (LmsDetails) -> Unit,
+    classNames: List<String>
+) {
     val listLesson = listOf(Lms.Type.LESSON, Lms.Type.SUP_LESSON)
-    val listAssignment = listOf(Lms.Type.HOMEWORK, Lms.Type.TEAMWORK)
     val pattern = remember { Regex("^\\d+\$") }
-    val timeFormat = DateTimeFormatter.ofPattern(stringResource(id = R.string.apm_time_format))
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier
     ) {
-        LazyRow {
-            item {
-                Spacer(modifier = Modifier.width(8.dp))
-            }
-            items(items = types.toList(), key = { it.first }) { (key, value) ->
-                FilterChip(
-                    selected = uiState.item.type == key,
-                    label = { Text(text = value) },
-                    onClick = { onItemValueChanged(uiState.item.copy(type = key)) },
-                    enabled = !uiState.item.isFinished,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
-            item {
-                Spacer(modifier = Modifier.width(8.dp))
-            }
-        }
         ExposedDropdownMenuBox(
             expanded = uiState.item.dropdownExpanded,
             onExpandedChange = { onItemValueChanged(uiState.item.copy(dropdownExpanded = it)) },
@@ -350,7 +427,7 @@ fun LmsEditScreenBody(
                         Icon(imageVector = if (uiState.item.dropdownExpanded) Icons.Rounded.ArrowDropUp else Icons.Rounded.ArrowDropDown, contentDescription = null)
                     }
                 },
-                textStyle = TextStyle(fontSize = 32.sp),
+                textStyle = LocalTextStyle.current.copy(fontSize = 32.sp),
                 isError = uiState.item.showError && uiState.item.className.isEmpty(),
                 singleLine = true,
                 label = { Text(text = stringResource(id = R.string.class_name)) },
@@ -395,7 +472,7 @@ fun LmsEditScreenBody(
                         isError = uiState.item.showError && (uiState.item.type in listLesson && uiState.item.week.isEmpty()),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
-                        textStyle = TextStyle(fontSize = 26.sp),
+                        textStyle = LocalTextStyle.current.copy(fontSize = 26.sp),
                         modifier = Modifier.weight(0.5f)
                     )
                     TextField(
@@ -406,7 +483,7 @@ fun LmsEditScreenBody(
                         isError = uiState.item.showError && (uiState.item.type in listLesson && uiState.item.lesson.isEmpty()),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
-                        textStyle = TextStyle(fontSize = 26.sp),
+                        textStyle = LocalTextStyle.current.copy(fontSize = 26.sp),
                         modifier = Modifier.weight(0.5f)
                     )
                 }
@@ -422,7 +499,7 @@ fun LmsEditScreenBody(
                     label = { Text(text = stringResource(id = R.string.assignment_name)) },
                     isError = uiState.item.showError && (uiState.item.type !in listLesson && uiState.item.homeworkName.isEmpty()),
                     singleLine = true,
-                    textStyle = TextStyle(fontSize = 26.sp),
+                    textStyle = LocalTextStyle.current.copy(fontSize = 26.sp),
                     enabled = !uiState.item.isFinished,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -430,13 +507,34 @@ fun LmsEditScreenBody(
                 )
             }
         }
-        HorizontalDivider()
+    }
+}
+
+@Composable
+fun DetailEdit(
+    modifier: Modifier = Modifier,
+    uiState: LmsUiState,
+    onItemValueChanged: (LmsDetails) -> Unit
+) {
+    val listAssignment = listOf(Lms.Type.HOMEWORK, Lms.Type.TEAMWORK)
+    val timeFormat = DateTimeFormatter.ofPattern(stringResource(id = R.string.apm_time_format))
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
-                .clickable(enabled = !uiState.item.isFinished) { onItemValueChanged(uiState.item.copy(isRenewAllowed = !uiState.item.isRenewAllowed)) }
+                .clickable(enabled = !uiState.item.isFinished) {
+                    onItemValueChanged(
+                        uiState.item.copy(
+                            isRenewAllowed = !uiState.item.isRenewAllowed
+                        )
+                    )
+                }
                 .padding(horizontal = 16.dp)
         ) {
             Icon(
@@ -476,7 +574,11 @@ fun LmsEditScreenBody(
                     Column(
                         modifier = Modifier
                             .padding(bottom = 16.dp)
-                            .clickable(enabled = !uiState.item.isFinished) { onItemValueChanged(uiState.item.copy(showStartDatePicker = true)) }
+                            .clickable(enabled = !uiState.item.isFinished) {
+                                onItemValueChanged(
+                                    uiState.item.copy(showStartDatePicker = true)
+                                )
+                            }
                             .fillMaxWidth()
                     ) {
                         Text(
@@ -496,7 +598,11 @@ fun LmsEditScreenBody(
                 ) {
                     Column(
                         modifier = Modifier
-                            .clickable(enabled = !uiState.item.isFinished) { onItemValueChanged(uiState.item.copy(showEndDatePicker = true)) }
+                            .clickable(enabled = !uiState.item.isFinished) {
+                                onItemValueChanged(
+                                    uiState.item.copy(showEndDatePicker = true)
+                                )
+                            }
                             .fillMaxWidth()
                     ) {
                         AnimatedContent(
@@ -521,11 +627,13 @@ fun LmsEditScreenBody(
     }
 }
 
+@Preview(showSystemUi = true, device = Devices.PIXEL_TABLET)
 @Preview(showSystemUi = true)
 @Composable
 private fun LmsEditScreenPreview() {
     AppTheme {
         LmsEditScreenBody(
+            windowSize = previewDeviceSize(),
             uiState = LmsUiState(
                 item = LmsDetails(
                     id = 0,
@@ -544,6 +652,7 @@ private fun LmsEditScreenPreview() {
 private fun LmsEditScreenPreview2() {
     AppTheme {
         LmsEditScreenBody(
+            windowSize = previewDeviceSize(),
             uiState = LmsUiState(
                 item = LmsDetails(
                     id = 0,

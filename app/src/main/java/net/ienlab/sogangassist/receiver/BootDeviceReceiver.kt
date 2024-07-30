@@ -65,7 +65,8 @@ class BootDeviceReceiver : BroadcastReceiver() {
             val morningReminder = datastore.data.map { it[Pref.Key.TIME_MORNING_REMINDER] ?: Pref.Default.TIME_MORNING_REMINDER }.first()
             val nightReminder = datastore.data.map { it[Pref.Key.TIME_NIGHT_REMINDER] ?: Pref.Default.TIME_NIGHT_REMINDER }.first()
 
-            setDayReminder(context, enableMorningReminder, enableNightReminder, morningReminder, nightReminder)
+            setDayReminder(context, Intents.Value.ReminderType.MORNING, enableMorningReminder, morningReminder)
+            setDayReminder(context, Intents.Value.ReminderType.NIGHT, enableNightReminder, nightReminder)
         }
     }
 }

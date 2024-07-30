@@ -7,15 +7,25 @@ import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.TextUnit
 import kotlinx.coroutines.CoroutineScope
+import net.ienlab.sogangassist.Dlog
 import net.ienlab.sogangassist.R
+import net.ienlab.sogangassist.TAG
 import net.ienlab.sogangassist.data.lms.Lms
 import net.ienlab.sogangassist.icon.MyIconPack
 import net.ienlab.sogangassist.icon.myiconpack.Assignment
@@ -24,6 +34,7 @@ import net.ienlab.sogangassist.icon.myiconpack.Team
 import net.ienlab.sogangassist.icon.myiconpack.Test
 import net.ienlab.sogangassist.icon.myiconpack.Video
 import net.ienlab.sogangassist.icon.myiconpack.VideoSup
+import net.ienlab.sogangassist.ui.utils.Utils.pxToDp
 import net.ienlab.sogangassist.utils.Utils.parseLongToLocalDateTime
 import net.ienlab.sogangassist.utils.Utils.timeInMillis
 import java.time.LocalDate
@@ -33,6 +44,58 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 object Utils {
+    @Composable
+    fun dpToPx(size: Dp): Float = with (LocalDensity.current) { size.toPx() }
+    @Composable
+    fun pxToDp(size: Float): Dp = with (LocalDensity.current) { size.toDp() }
+    @Composable
+    fun pxToSp(size: Float): TextUnit = with (LocalDensity.current) { size.toSp() }
+
+    fun LazyListState.lastVisibleItemIndex(): Int = if (layoutInfo.visibleItemsInfo.isNotEmpty()) layoutInfo.visibleItemsInfo.last().index else -1
+    fun LazyListState.lastVisibleItemScrollOffset(): Int = if (layoutInfo.visibleItemsInfo.isNotEmpty()) layoutInfo.visibleItemsInfo.last().offset else -1
+
+    fun LazyListState.isFirstItemDisappear(): Boolean = (firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0)
+    fun LazyListState.isLastItemDisappear(lastIndex: Int): Boolean = (lastVisibleItemIndex() == lastIndex && lastVisibleItemScrollOffset() == layoutInfo.viewportEndOffset - layoutInfo.visibleItemsInfo.first().size)
+
+    @Composable
+    fun UpdateEffect(key1: Any, block: suspend CoroutineScope.() -> Unit) {
+        var isTriggered by remember { mutableStateOf(false) }
+
+        LaunchedEffect(key1) {
+            if (isTriggered) {
+                block()
+            } else {
+                isTriggered = true
+            }
+        }
+    }
+
+    @Composable
+    fun UpdateEffect(key1: Any, key2: Any, block: suspend CoroutineScope.() -> Unit) {
+        var isTriggered by remember { mutableStateOf(false) }
+
+        LaunchedEffect(key1, key2) {
+            if (isTriggered) {
+                block()
+            } else {
+                isTriggered = true
+            }
+        }
+    }
+
+    @Composable
+    fun UpdateEffect(key1: Any, key2: Any, key3: Any, block: suspend CoroutineScope.() -> Unit) {
+        var isTriggered by remember { mutableStateOf(false) }
+
+        LaunchedEffect(key1, key2, key3) {
+            if (isTriggered) {
+                block()
+            } else {
+                isTriggered = true
+            }
+        }
+    }
+
     @Composable
     fun UpdateEffect(vararg key: Any, block: suspend CoroutineScope.() -> Unit) {
         var isTriggered by remember { mutableStateOf(false) }
@@ -46,11 +109,6 @@ object Utils {
         }
     }
 
-    fun LazyListState.lastVisibleItemIndex(): Int = if (layoutInfo.visibleItemsInfo.isNotEmpty()) layoutInfo.visibleItemsInfo.last().index else -1
-    fun LazyListState.lastVisibleItemScrollOffset(): Int = if (layoutInfo.visibleItemsInfo.isNotEmpty()) layoutInfo.visibleItemsInfo.last().offset else -1
-
-    fun LazyListState.isFirstItemDisappear(): Boolean = (firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0)
-    fun LazyListState.isLastItemDisappear(lastIndex: Int): Boolean = (lastVisibleItemIndex() == lastIndex && lastVisibleItemScrollOffset() == layoutInfo.viewportEndOffset - layoutInfo.visibleItemsInfo.first().size)
 
     @Composable
     fun leftTimeToLabel(endTime: LocalDateTime): String {
@@ -120,4 +178,14 @@ object Utils {
             initialSelectedDateMillis = initialSelectedDateMillis?.let { parseLongToLocalDateTime(it).timeInMillis(zoneId = ZoneId.of("UTC")) }
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@Composable
+fun previewDeviceSize(): WindowSizeClass {
+    val dm = LocalContext.current.resources.displayMetrics
+    val widthPixels = pxToDp(size = dm.widthPixels.toFloat())
+    val heightPixels = pxToDp(size = dm.heightPixels.toFloat())
+
+    return WindowSizeClass.calculateFromSize(DpSize(widthPixels, heightPixels))
 }

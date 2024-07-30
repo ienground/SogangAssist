@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,9 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastFilterNotNull
-import net.ienlab.sogangassist.Dlog
-import net.ienlab.sogangassist.TAG
 import net.ienlab.sogangassist.ui.screen.edit.LmsDetails
 import net.ienlab.sogangassist.ui.theme.AppTheme
 import net.ienlab.sogangassist.ui.theme.ColorSaturday
@@ -74,11 +70,6 @@ fun HorizontalCalendar(
         pageCount = { (config.yearRange.second - config.yearRange.first + 1) * 12 }
     )
 
-    UpdateEffect(selectedDate) {
-        val page = (selectedDate.year - config.yearRange.first) * 12 + selectedDate.monthValue - 1
-        currentPage = page
-        pagerState.animateScrollToPage(page)
-    }
     LaunchedEffect(Unit) {
         onSelectedDate(currentDate)
     }
@@ -88,7 +79,11 @@ fun HorizontalCalendar(
         currentPage = pagerState.currentPage
         onSelectedDate(currentDate.plusMonths(addMonth))
     }
-
+    UpdateEffect(selectedDate) {
+        val page = (selectedDate.year - config.yearRange.first) * 12 + selectedDate.monthValue - 1
+        currentPage = page
+        pagerState.animateScrollToPage(page)
+    }
 
     HorizontalPager(
         state = pagerState,

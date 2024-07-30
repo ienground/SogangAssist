@@ -147,26 +147,18 @@ object Utils {
         }
     }
 
-    fun setDayReminder(context: Context, enableMorningReminder: Boolean, enableNightReminder: Boolean, morningReminder: Int, nightReminder: Int) {
+    fun setDayReminder(context: Context, type: Int, enableReminder: Boolean, timeInt: Int) {
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val morningReminderTime = LocalDateTime.now().withHour(morningReminder / 60).withMinute(morningReminder % 60).withSecond(0)
-        val nightReminderTime = LocalDateTime.now().withHour(nightReminder / 60).withMinute(nightReminder % 60).withSecond(0)
-        val morningPending = PendingIntent.getBroadcast(context, PendingReq.MORNING_REMINDER, Intent(context, ReminderReceiver::class.java).apply { putExtra(Intents.Key.REMINDER_TYPE, Intents.Value.ReminderType.MORNING) },
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        val nightPending = PendingIntent.getBroadcast(context, PendingReq.NIGHT_REMINDER, Intent(context, ReminderReceiver::class.java).apply { putExtra(Intents.Key.REMINDER_TYPE, Intents.Value.ReminderType.NIGHT) },
+        val requestCode = if (type == Intents.Value.ReminderType.MORNING) PendingReq.MORNING_REMINDER else PendingReq.NIGHT_REMINDER
+        val reminderTime = LocalDateTime.now().withHour(timeInt / 60).withMinute(timeInt % 60).withSecond(0)
+        val pending = PendingIntent.getBroadcast(context, requestCode, Intent(context, ReminderReceiver::class.java).apply { putExtra(Intents.Key.REMINDER_TYPE, type) },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        if (enableMorningReminder) {
-            am.setInexactRepeating(AlarmManager.RTC_WAKEUP, morningReminderTime.timeInMillis(), AlarmManager.INTERVAL_DAY, morningPending)
+        if (enableReminder) {
+            am.setInexactRepeating(AlarmManager.RTC_WAKEUP, reminderTime.timeInMillis(), AlarmManager.INTERVAL_DAY, pending)
         } else {
-            am.cancel(morningPending)
-        }
-
-        if (enableNightReminder) {
-            am.setInexactRepeating(AlarmManager.RTC_WAKEUP, nightReminderTime.timeInMillis(), AlarmManager.INTERVAL_DAY, nightPending)
-        } else {
-            am.cancel(nightPending)
+            am.cancel(pending)
         }
     }
 
