@@ -46,8 +46,6 @@ class TimeReceiver : BroadcastReceiver() {
         val minute = intent.getIntExtra(Intents.Key.MINUTE, -1)
         val triggerTime = parseLongToLocalDateTime(intent.getLongExtra(Intents.Key.TRIGGER, -1))
 
-        Dlog.d(TAG, "timeReceiver: ${id} ${hour} ${minute} ${triggerTime}")
-
         val hours = listOf(1, 2, 6, 12, 24)
         val minutes = listOf(3, 5, 10, 20, 30)
 

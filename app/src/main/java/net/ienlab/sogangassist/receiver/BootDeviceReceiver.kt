@@ -21,6 +21,8 @@ import net.ienlab.sogangassist.constant.PendingReq
 import net.ienlab.sogangassist.constant.Pref
 import net.ienlab.sogangassist.data.lms.LmsDatabase
 import net.ienlab.sogangassist.data.lms.Lms
+import net.ienlab.sogangassist.data.lms.LmsOfflineRepository
+import net.ienlab.sogangassist.data.lms.LmsRepository
 import net.ienlab.sogangassist.dataStore
 import net.ienlab.sogangassist.utils.Utils.setDayReminder
 import net.ienlab.sogangassist.utils.Utils.setLmsSchedule
@@ -44,10 +46,10 @@ class BootDeviceReceiver : BroadcastReceiver() {
     }
 
     private fun scheduleLms(context: Context) {
-        val lmsDatabase = LmsDatabase.getDatabase(context)
+        val lmsRepository = LmsOfflineRepository(LmsDatabase.getDatabase(context).getDao())
 
         CoroutineScope(Dispatchers.IO).launch {
-            val flow = lmsDatabase.getDao().getAll()
+            val flow = lmsRepository.getAllStream()
             for (entity in flow.first()) {
                 if (!entity.isFinished && entity.endTime > System.currentTimeMillis()) {
                     setLmsSchedule(context, am, entity)

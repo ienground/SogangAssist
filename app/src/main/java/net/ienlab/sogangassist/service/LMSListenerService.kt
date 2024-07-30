@@ -27,6 +27,8 @@ import net.ienlab.sogangassist.constant.*
 import net.ienlab.sogangassist.receiver.DeleteMissReceiver
 import net.ienlab.sogangassist.data.lms.LmsDatabase
 import net.ienlab.sogangassist.data.lms.Lms
+import net.ienlab.sogangassist.data.lms.LmsOfflineRepository
+import net.ienlab.sogangassist.data.lms.LmsRepository
 import net.ienlab.sogangassist.utils.Utils
 import net.ienlab.sogangassist.utils.Utils.checkTimeRange
 import net.ienlab.sogangassist.utils.Utils.parseLongToLocalDateTime
@@ -45,7 +47,7 @@ class LMSListenerService : NotificationListenerService() {
 
     private lateinit var timeFormat: DateTimeFormatter
 
-    private var lmsDatabase: LmsDatabase? = null
+    private lateinit var lmsRepository: LmsRepository
     private var setRegisterAlert: Boolean = Pref.Default.SET_REGISTER_ALERT
     private var dndStartTime: Int = Pref.Default.DND_START_TIME
     private var dndEndTime: Int = Pref.Default.DND_END_TIME
@@ -56,7 +58,7 @@ class LMSListenerService : NotificationListenerService() {
         pm = packageManager
         am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        lmsDatabase = LmsDatabase.getDatabase(this)
+        lmsRepository = LmsOfflineRepository(LmsDatabase.getDatabase(applicationContext).getDao())
         timeFormat = DateTimeFormatter.ofPattern(getString(R.string.format_lms_date))
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -139,10 +141,10 @@ class LMSListenerService : NotificationListenerService() {
         }
 
         val entity = Lms(className, timestamp, type, startTime.timeInMillis(), endTime.timeInMillis(), isRenewAllowed = true, isFinished = false, week, lesson, homeworkName)
-        val prev = lmsDatabase?.getDao()?.getByData(className, week, lesson, homeworkName)?.first()
+        val prev = lmsRepository.getByDataStream(className, week, lesson, homeworkName).first()
 
         if (prev == null) {
-            val id = lmsDatabase?.getDao()?.upsert(entity) ?: -1
+            val id = lmsRepository.upsert(entity) ?: -1
             if (id != -1L) entity.id = id
         } else {
             entity.id = prev.id
@@ -150,7 +152,7 @@ class LMSListenerService : NotificationListenerService() {
             entity.isRenewAllowed = prev.isRenewAllowed
 
             if (entity.isRenewAllowed) {
-                lmsDatabase?.getDao()?.upsert(entity)
+                lmsRepository.upsert(entity)
             }
         }
 

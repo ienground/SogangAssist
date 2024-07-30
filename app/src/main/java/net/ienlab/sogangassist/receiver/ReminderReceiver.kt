@@ -23,6 +23,8 @@ import net.ienlab.sogangassist.constant.PendingReq
 import net.ienlab.sogangassist.constant.Pref
 import net.ienlab.sogangassist.data.lms.Lms
 import net.ienlab.sogangassist.data.lms.LmsDatabase
+import net.ienlab.sogangassist.data.lms.LmsOfflineRepository
+import net.ienlab.sogangassist.data.lms.LmsRepository
 import net.ienlab.sogangassist.dataStore
 import net.ienlab.sogangassist.utils.Utils.timeInMillis
 import java.time.LocalDate
@@ -33,11 +35,11 @@ import kotlin.math.abs
 class ReminderReceiver: BroadcastReceiver() {
 
     private lateinit var nm: NotificationManager
-    private var lmsDatabase: LmsDatabase? = null
+    private lateinit var lmsRepository: LmsRepository
 
     override fun onReceive(context: Context, intent: Intent) {
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        lmsDatabase = LmsDatabase.getDatabase(context)
+        lmsRepository = LmsOfflineRepository(LmsDatabase.getDatabase(context).getDao())
 
         val datastore = context.dataStore
         val type = intent.getIntExtra(Intents.Key.REMINDER_TYPE, -1)
@@ -64,7 +66,7 @@ class ReminderReceiver: BroadcastReceiver() {
             val nightDate = LocalDateTime.now().withHour(nightReminder / 60).withMinute(nightReminder % 60).withSecond(0)
 
 
-            val entities = lmsDatabase?.getDao()?.getByEndTime(LocalDate.now().timeInMillis(), LocalDate.now().plusDays(1).timeInMillis())?.first() ?: return@launch
+            val entities = lmsRepository.getByEndTimeStream(LocalDate.now()).first()
             val groups = entities.groupBy { it.type }.map { (type, items) ->
                 type to items.map {
                     when (type) {
